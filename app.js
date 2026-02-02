@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbyQkoinsAke8ffIxpd-UAVUTpPBVa6GfOKLFagt9AILxYo8OzMPs8m7o4J2CGSBtuo1/exec";
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNHq8kaunWROtKWdRBMnwltHm3Z7lghMivlLnqGntRQMC21/exec";
 
 // test semplice
 function testBackend() {
@@ -27,6 +27,7 @@ function caricaClienti() {
   s.src = BACKEND_URL + "?action=clienti&callback=clientiCallback";
   document.body.appendChild(s);
 }
+
 
 
 
