@@ -28,6 +28,11 @@ function caricaClienti() {
   document.body.appendChild(s);
 }
 
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("service-worker.js");
+}
+
+
 
 
 
