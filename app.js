@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycby7hUf8Kd1l4oRQKUFs8ZSZfLketxKpLpBTzAxyY2MzRnfo8YG15_du8HDDEVXfL4PW/exec";
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbxd3waQJf7MbKCCzQaSvjuV-3vHDcLI_PEdk-zCDr2YnNV11exMB39CSRAbXtlMfokj/exec";
 
 function testBackend() {
   fetch(BACKEND_URL)
@@ -15,3 +15,4 @@ function testBackend() {
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("service-worker.js");
 }
+
