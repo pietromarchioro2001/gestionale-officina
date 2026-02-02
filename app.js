@@ -1,3 +1,5 @@
+
+const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNHq8kaunWROtKWdRBMnwltHm3Z7lghMivlLnqGntRQMC21/exec";
 /* =====================================================
    ADAPTER google.script.run
    Serve per far funzionare il codice Apps Script su web
@@ -54,12 +56,6 @@
 
   google.script.run = proxy;
 })();
-
-const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNHq8kaunWROtKWdRBMnwltHm3Z7lghMivlLnqGntRQMC21/exec";
-
-
-
-
 
 
 
