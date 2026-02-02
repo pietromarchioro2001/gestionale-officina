@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Gestionale Officina</title>
 
@@ -13,20 +13,125 @@
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <h1>Gestionale Officina</h1>
+<!-- MENU LATERALE MOBILE -->
+<div id="mobileDrawer" class="mobile-drawer">
+  <button data-page="home">Home</button>
+  <button data-page="appuntamenti">Appuntamenti</button>
+  <button data-page="ordini">Ordini</button>
+  <button data-page="clienti">Clienti</button>
+  <button data-page="schede">Schede</button>
+</div>
 
-  <button onclick="testBackend()">Test backend</button>
-  <button onclick="caricaClienti()">Carica clienti</button>
+<div id="drawerOverlay" class="drawer-overlay"></div>
 
-  <pre id="output"></pre>
+<!-- HEADER -->
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.png" class="logo" alt="GoldenCar">
+    <span class="brand-name">GOLDENCAR</span>
+  </div>
 
-  <!-- JS -->
-  <script src="app.js"></script>
+  <div class="menu">
+    <button onclick="showSection('home')">Home</button>
+    <button onclick="showSection('appuntamenti')">Appuntamenti</button>
+    <button onclick="showSection('clienti')">Clienti</button>
+    <button onclick="showSection('schede')">Schede</button>
+    <button onclick="showSection('ordini')">Ordini</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HOME -->
+  <section id="home" class="page">
+    <div class="home-container">
+
+      <section class="home-block today">
+        <h3>Oggi</h3>
+        <div id="oggiEventi"></div>
+      </section>
+
+      <section class="home-block ordini">
+        <h3>Ordini</h3>
+        <button onclick="homeNuovoOrdine()">➕ Nuovo ordine</button>
+        <button onclick="homeOrdineVocale()">🎤 Ordine vocale</button>
+      </section>
+
+      <section class="home-block clienti">
+        <h3>Clienti</h3>
+        <button onclick="showSection('clienti')">📄 Carica libretto</button>
+      </section>
+
+      <section class="home-block schede">
+        <h3>Schede</h3>
+        <button onclick="homeSchede()">🛠 Nuova scheda</button>
+      </section>
+
+      <section class="home-block fatture">
+        <h3>Fatture</h3>
+        <button onclick="window.open('https://metropolis.seac.it/login','_blank')">
+          📑 Portale fatture
+        </button>
+      </section>
+
+    </div>
+  </section>
+
+  <!-- APPUNTAMENTI -->
+  <section id="appuntamenti" class="page">
+    <h2 class="page-title">APPUNTAMENTI</h2>
+
+    <iframe
+      src="https://calendar.google.com/calendar/embed?src=appuntamenti.goldencar@gmail.com&ctz=Europe/Rome"
+      frameborder="0"
+      scrolling="no">
+    </iframe>
+  </section>
+
+  <!-- CLIENTI -->
+  <section id="clienti" class="page">
+    <h2 class="page-title">CLIENTI</h2>
+
+    <input id="ricercaTarga" placeholder="Targa">
+    <button onclick="cercaCliente()">Cerca</button>
+
+    <!-- resto invariato -->
+  </section>
+
+  <!-- SCHEDE -->
+  <section id="schede" class="page">
+    <h2 class="page-title">SCHEDE</h2>
+    <button onclick="apriAssistente()">➕ Nuova scheda</button>
+    <div id="listaSchede"></div>
+  </section>
+
+  <!-- ORDINI -->
+  <section id="ordini" class="page">
+    <h2 class="page-title">ORDINI</h2>
+    <button onclick="nuovoOrdine()">➕ Nuovo ordine</button>
+    <div id="listaOrdini"></div>
+  </section>
+
+  <!-- ASSISTENTE -->
+  <section id="assistente" class="page assistente">
+    <header class="assistente-top">
+      <span>ASSISTENTE</span>
+      <button onclick="esciAssistente()">✕</button>
+    </header>
+
+    <div id="assistenteChat"></div>
+
+    <input id="assistenteInput" placeholder="Scrivi o parla">
+    <button id="btnMic">🎤</button>
+  </section>
+
+</main>
+
+<!-- JS -->
+<script src="app.js"></script>
+
 </body>
-
 </html>
-
-
-
