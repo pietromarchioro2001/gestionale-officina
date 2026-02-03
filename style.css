@@ -972,6 +972,12 @@ div[aria-label*="Apps Script"] {
   opacity: 0.85;
 }
 
+.home-block:not(.today) {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
 #oggiEventi {
   display: flex;
   flex-direction: column;
@@ -2072,6 +2078,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
