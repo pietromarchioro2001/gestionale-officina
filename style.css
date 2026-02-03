@@ -23,6 +23,7 @@ body {
 }
 
 html {
+  margin: 0;
   height: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
@@ -79,11 +80,10 @@ html {
 /* ================= MAIN ================= */
 
 main {
-  display: flex;
-  flex-direction: column;
   flex: 1;
-  min-height: calc(100vh - 64px); /* header */
+  width: 100%;
   padding: 20px;
+  overflow-y: auto;
 }
 
 /* DESKTOP */
@@ -2092,6 +2092,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
