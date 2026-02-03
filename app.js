@@ -2016,20 +2016,5 @@ function sbloccaAudio() {
   }
 }
 
-/* =========================
-   SEZIONE CLIENTI – FIX
-   ========================= */
 
-#clienti {
-  display: block;              /* 🔑 fondamentale */
-  padding: 16px;
-}
-
-#clienti .clienti-form {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
 
