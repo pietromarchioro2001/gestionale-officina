@@ -596,7 +596,6 @@ function showSection(id) {
   // menu desktop
   document.querySelectorAll(".menu button, .mobile-drawer button").forEach(b => {
     b.classList.toggle("active", b.dataset.page === id);
-  );
 
   const menuBtn = document.querySelector(
     `.menu button[onclick="showSection('${id}')"]`
@@ -1976,6 +1975,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
