@@ -55,6 +55,24 @@ const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNH
 
   google.script.run = proxy;
 })();
+
+function detectMobile() {
+  const isMobile =
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+    window.innerWidth < 900;
+
+  if (isMobile) {
+    document.documentElement.classList.add("is-mobile");
+    document.body.classList.add("is-mobile");
+  } else {
+    document.documentElement.classList.remove("is-mobile");
+    document.body.classList.remove("is-mobile");
+  }
+}
+
+window.addEventListener("resize", detectMobile);
+document.addEventListener("DOMContentLoaded", detectMobile);
+
 const SIGLE_MAIUSCOLE = [
   "DSG",
   "ABS",
@@ -573,13 +591,11 @@ function showSection(id) {
     p.classList.remove("active")
   );
 
-  const page = document.getElementById(id);
-  if (!page) return;
-  page.classList.add("active");
+  document.getElementById(id)?.classList.add("active");
 
   // menu desktop
-  document.querySelectorAll(".menu button").forEach(btn =>
-    btn.classList.remove("active")
+  document.querySelectorAll(".menu button, .mobile-drawer button").forEach(b => {
+    b.classList.toggle("active", b.dataset.page === id);
   );
 
   const menuBtn = document.querySelector(
@@ -1960,6 +1976,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
