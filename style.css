@@ -2100,6 +2100,25 @@ button.riprendi:hover {
   height: 100%;
 }
 
+/* === FIX VISIBILITÀ SEZIONI === */
+
+main {
+  height: auto !important;
+  overflow: visible !important;
+}
+
+.page {
+  height: auto !important;
+  min-height: calc(100vh - 70px);
+  overflow: visible !important;
+}
+
+#clienti {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+
 
 
 
