@@ -813,6 +813,9 @@ div[aria-label*="Apps Script"] {
 
 .home-block.ordini {
   grid-area: ordini;
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* ← aumenta o riduci a gusto (14–22) */
 }
 
 .home-block.clienti {
@@ -1007,12 +1010,12 @@ div[aria-label*="Apps Script"] {
 }
 
 .home-block.clienti button {
-  border-left-color: #3498db;
+  border-left-color: #E53935;
 }
 
 .home-block.ordini button {
   flex: 1;
-  border-left-color: #7b61ff;
+  border-left-color: #FFD400;
 }
 
 .home-block.fatture button {
@@ -2078,6 +2081,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
