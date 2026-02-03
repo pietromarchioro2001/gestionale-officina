@@ -795,15 +795,36 @@ div[aria-label*="Apps Script"] {
 }
 
 .home-container {
-  min-height: calc(100vh - 56px);
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "today today today today"
+    "ordini clienti schede fatture";
   gap: 16px;
-  padding: 12px 14px;
 }
 
 .home-container > * {
   width: 100%;
+}
+
+.home-block.today {
+  grid-area: today;
+}
+
+.home-block.ordini {
+  grid-area: ordini;
+}
+
+.home-block.clienti {
+  grid-area: clienti;
+}
+
+.home-block.schede {
+  grid-area: schede;
+}
+
+.home-block.fatture {
+  grid-area: fatture;
 }
 
 .home-today {
@@ -864,12 +885,10 @@ div[aria-label*="Apps Script"] {
 /* SEZIONI */
 
 .home-block {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-height: 160px;
-  height: 100%;
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .home-block h3 {
@@ -2053,6 +2072,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
