@@ -1,37 +1,4 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbxQrFkKgnHwyGPxa3KHqgkA_FrVWDViaJNJibOzycfbrRkM17ZzMJ0jxnKP6x_MMk27/exec";
-// === ADAPTER google.script.run → callBackend (JSONP) ===
-if (!window.google) window.google = {};
-if (!google.script) google.script = {};
-
-google.script.run = {
-  _success: null,
-  _failure: null,
-
-  withSuccessHandler(cb) {
-    this._success = cb;
-    return this;
-  },
-
-  withFailureHandler(cb) {
-    this._failure = cb;
-    return this;
-  }
-};
-
-google.script.run = new Proxy(google.script.run, {
-  get(target, prop) {
-    if (prop in target) return target[prop];
-
-    return function (...args) {
-      callBackend(
-        prop,
-        args,
-        res => target._success && target._success(res),
-        err => target._failure && target._failure(err)
-      );
-    };
-  }
-});
 
 function callBackend(action, args, onSuccess, onError) {
   const cbName = "cb_" + Math.random().toString(36).slice(2);
@@ -115,32 +82,40 @@ function analizza() {
     return;
   }
 
-  document.getElementById("stato").textContent = "Analisi in corso...";
+  const statoEl = document.getElementById("stato");
+  if (statoEl) statoEl.textContent = "Analisi in corso...";
 
   const reader = new FileReader();
+
   reader.onload = e => {
     const base64 = e.target.result.split(",")[1];
 
-    google.script.run
-      .withSuccessHandler(dati => {
-        document.getElementById("nome").value = dati.nomeCliente || "";
-        document.getElementById("indirizzo").value = dati.indirizzo || "";
+    callBackend(
+      "analizzaFoto",
+      [base64],
+      dati => {
+        document.getElementById("nome").value = dati?.nomeCliente || "";
+        document.getElementById("indirizzo").value = dati?.indirizzo || "";
         document.getElementById("telefono").value = "";
-        document.getElementById("data").value = dati.dataNascita || "";
-        document.getElementById("cf").value = dati.codiceFiscale || "";
+        document.getElementById("data").value = dati?.dataNascita || "";
+        document.getElementById("cf").value = dati?.codiceFiscale || "";
 
-        document.getElementById("veicolo").value = dati.veicolo || "";
-        document.getElementById("motore").value = dati.motore || "";
-        document.getElementById("targa").value = dati.targa || "";
+        document.getElementById("veicolo").value = dati?.veicolo || "";
+        document.getElementById("motore").value = dati?.motore || "";
+        document.getElementById("targa").value = dati?.targa || "";
         document.getElementById("immatricolazione").value =
-          dati.immatricolazione || "";
+          dati?.immatricolazione || "";
 
-        document.getElementById("stato").textContent = "Dati caricati";
-      })
-      .withFailureHandler(() => {
-        document.getElementById("stato").textContent = "Errore OCR";
-      })
-      .analizzaFoto(base64);
+        if (statoEl) statoEl.textContent = "Dati caricati";
+      },
+      () => {
+        if (statoEl) statoEl.textContent = "Errore OCR";
+      }
+    );
+  };
+
+  reader.onerror = () => {
+    if (statoEl) statoEl.textContent = "Errore lettura file";
   };
 
   reader.readAsDataURL(fileLibretto);
@@ -240,18 +215,20 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    google.script.run
-      .withSuccessHandler(function (res) {
+    callBackend(
+      "salvaClienteEVeicolo",
+      [dati],
+      res => {
         if (!res || res.status !== "OK") {
           alert("Errore nel salvataggio");
           return;
         }
         alert(res.message);
-      })
-      .withFailureHandler(function (err) {
-        alert(err.message || "Errore nel salvataggio");
-      })
-      .salvaClienteEVeicolo(dati);
+      },
+      err => {
+        alert(err?.message || "Errore nel salvataggio");
+      }
+    );
   });
 }
 
@@ -270,9 +247,14 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  google.script.run
-    .withSuccessHandler(res => {
+  callBackend(
+    "cercaVeicolo_PROXY",
+    [targa],
+
+    // ✅ SUCCESS
+    res => {
       console.log("BACKEND RAW:", JSON.stringify(res, null, 2));
+
       if (!res || !res.veicolo) {
         esito.textContent = "Veicolo non trovato";
         return;
@@ -281,22 +263,29 @@ function cercaVeicolo() {
       const c = res.cliente || {};
       const v = res.veicolo || {};
 
+      // ======================
       // DATI CLIENTE
+      // ======================
       document.getElementById("nome").value = c.nome || "";
       document.getElementById("indirizzo").value = c.indirizzo || "";
       document.getElementById("telefono").value = c.telefono || "";
       document.getElementById("data").value = c.dataNascita || "";
       document.getElementById("cf").value = c.codiceFiscale || "";
 
+      // ======================
       // DATI VEICOLO
+      // ======================
       document.getElementById("veicolo").value = v.veicolo || "";
       document.getElementById("motore").value = v.motore || "";
       document.getElementById("targa").value = v.targa || "";
-      document.getElementById("immatricolazione").value = v.immatricolazione || "";
+      document.getElementById("immatricolazione").value =
+        v.immatricolazione || "";
 
       esito.textContent = "Veicolo trovato";
 
+      // ======================
       // 🔗 LIBRETTO
+      // ======================
       if (res.librettoUrl) {
         librettoLink.href = res.librettoUrl;
         librettoLink.style.display = "inline-block";
@@ -304,7 +293,9 @@ function cercaVeicolo() {
         librettoLink.style.display = "none";
       }
 
+      // ======================
       // 🔗 FOTO TARGA
+      // ======================
       if (res.targaUrl) {
         targaLink.href = res.targaUrl;
         targaLink.style.display = "inline-block";
@@ -312,7 +303,9 @@ function cercaVeicolo() {
         targaLink.style.display = "none";
       }
 
+      // ======================
       // 📁 CARTELLA CLIENTE
+      // ======================
       if (res.cartellaClienteUrl) {
         btnCartellaCliente.style.display = "inline-block";
         btnCartellaCliente.onclick = () =>
@@ -322,14 +315,14 @@ function cercaVeicolo() {
       }
 
       clienteEsistente = true;
+    },
 
-    })
-    .withFailureHandler(() => {
+    // ❌ ERROR
+    () => {
       esito.textContent = "Errore ricerca";
-    })
-    .cercaVeicolo_PROXY(targa);
+    }
+  );
 }
-
 /********************
  * CONTATORE FILE (X file)
  ********************/
@@ -805,8 +798,17 @@ function apriAssistente() {
   const input = document.getElementById("assistenteInput");
   input.disabled = true;
 
-  google.script.run
-    .withSuccessHandler(res => {
+  // ✅ CHIAMATA BACKEND JSONP
+  callBackend(
+    "creaNuovaScheda",
+    [],
+    res => {
+      if (!res || !res.docId) {
+        messaggioBot("Errore creazione scheda.");
+        input.disabled = false;
+        return;
+      }
+
       sessioneAssistente.schedaId = res.docId;
       input.disabled = false;
       input.focus();
@@ -816,9 +818,14 @@ function apriAssistente() {
       setTimeout(() => {
         rispostaInElaborazione = false;
         prossimaDomanda();
-      }, 600); // ⬅️ FONDAMENTALE su mobile
-    })
-    .creaNuovaScheda();
+      }, 600); // ⬅️ fondamentale su mobile
+    },
+    err => {
+      console.error("Errore backend creaNuovaScheda", err);
+      messaggioBot("Errore di comunicazione con il server.");
+      input.disabled = false;
+    }
+  );
 }
 
 function esciAssistente() {
@@ -851,11 +858,13 @@ function riprendiScheda(id) {
     valoriEsistenti: {}
   });
 
-  google.script.run
-    .withSuccessHandler(info => {
+  callBackend(
+    "statoScheda",
+    [id],
+    info => {
       messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
 
-      if (info.mancanti.includes("CHILOMETRI")) {
+      if (Array.isArray(info.mancanti) && info.mancanti.includes("CHILOMETRI")) {
         sessioneAssistente.stepQueue.push("CHILOMETRI");
       }
 
@@ -871,8 +880,12 @@ function riprendiScheda(id) {
       sessioneAssistente.valoriEsistenti = info.valori || {};
       rispostaInElaborazione = false;
       prossimaDomanda();
-    })
-    .statoScheda(id);
+    },
+    err => {
+      console.error("Errore ripresa scheda", err);
+      messaggioBot("Errore nel riprendere la scheda.");
+    }
+  );
 }
 
 let voceBot = null;
@@ -884,9 +897,6 @@ let micPronto = false;
 let micTentativi = 0;
 let rispostaGestita = false;
 let botStaParlando = false;
-
-
-
 
 function initVoce() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -966,16 +976,23 @@ function gestisciRisposta(testo) {
 
   switch (sessioneAssistente.step) {
 
+    /* ======================
+     * TARGA
+     * ====================== */
     case "TARGA": {
       const targaNorm = normalizzaTarga(testo);
 
       faiDomanda(`Targa rilevata: ${targaNorm}`);
 
-      google.script.run
-        .withSuccessHandler(res => {
+      callBackend(
+        "completaSchedaDaTarga",
+        [sessioneAssistente.schedaId, targaNorm],
+        res => {
           if (!res || !res.ok) {
             messaggioBot("Veicolo non trovato. Ripeti la targa.");
-            if (modalitaAssistente === "vocale") parlaEDopoAscolta("Veicolo non trovato. Ripeti la targa.");
+            if (modalitaAssistente === "vocale") {
+              parlaEDopoAscolta("Veicolo non trovato. Ripeti la targa.");
+            }
             rispostaInElaborazione = false;
             return;
           }
@@ -984,23 +1001,31 @@ function gestisciRisposta(testo) {
           messaggioBot(msg);
           if (modalitaAssistente === "vocale") parlaEDopoAscolta(msg);
 
-          // ⬅️ SOLO QUI si avanza
           setTimeout(() => {
             rispostaInElaborazione = false;
-            prossimaDomanda();   // ➜ CHILOMETRI
+            prossimaDomanda(); // ➜ CHILOMETRI
           }, 500);
-        })
-        .completaSchedaDaTarga(sessioneAssistente.schedaId, targaNorm);
+        },
+        () => {
+          messaggioBot("Errore ricerca veicolo.");
+          rispostaInElaborazione = false;
+        }
+      );
 
       return;
     }
 
+    /* ======================
+     * CHILOMETRI
+     * ====================== */
     case "CHILOMETRI": {
       const km = normalizzaChilometri(testo);
 
       if (!km) {
         messaggioBot("Non ho capito i chilometri. Ripeti.");
-        if (modalitaAssistente === "vocale") parlaEDopoAscolta("Non ho capito i chilometri. Ripeti.");
+        if (modalitaAssistente === "vocale") {
+          parlaEDopoAscolta("Non ho capito i chilometri. Ripeti.");
+        }
         rispostaInElaborazione = false;
         return;
       }
@@ -1008,48 +1033,43 @@ function gestisciRisposta(testo) {
       messaggioBot(`Chilometri registrati: ${km}`);
       salvaCampoScheda("CHILOMETRI", km + " km");
 
-      // 🔓 SBLOCCO FONDAMENTALE
       rispostaInElaborazione = false;
-
-      setTimeout(() => {
-        prossimaDomanda(); // ➜ PROBLEMI
-      }, 400);
-
+      setTimeout(() => prossimaDomanda(), 400);
       return;
     }
 
+    /* ======================
+     * PROBLEMI
+     * ====================== */
     case "PROBLEMI": {
-      const risposta = testo.trim().toUpperCase();
+      const risposta = testo.toUpperCase();
 
-      // ignora eco del bot
       if (risposta.startsWith("PROBLEMI")) {
         rispostaInElaborazione = false;
         return;
       }
 
-      // USCITA
       if (isComandoUscita(risposta)) {
-        if (sessioneAssistente.listaProblemi.length > 0) {
+        if (sessioneAssistente.listaProblemi.length) {
           salvaCampoScheda(
             "PROBLEMI",
             "• " + sessioneAssistente.listaProblemi.join("\n• ")
           );
         }
-
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 400);
         return;
       }
 
-      // RISPOSTA VALIDA
       sessioneAssistente.listaProblemi.push(risposta);
-
       rispostaInElaborazione = false;
-
       faiDomanda("Ok. Altro problema?");
       return;
     }
 
+    /* ======================
+     * LAVORI
+     * ====================== */
     case "LAVORI": {
       const risposta = testo.trim();
 
@@ -1061,167 +1081,114 @@ function gestisciRisposta(testo) {
       }
 
       if (isComandoUscita(risposta)) {
-        if (sessioneAssistente.listaLavori.length > 0) {
+        if (sessioneAssistente.listaLavori.length) {
           salvaCampoScheda(
             "LAVORI",
             "• " + sessioneAssistente.listaLavori.join("\n• ")
           );
         }
-
         rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 400); // ➜ PRODOTTI
+        setTimeout(prossimaDomanda, 400);
         return;
       }
 
       sessioneAssistente.listaLavori.push(risposta);
-
-      faiDomanda("Ok. Altro lavoro?");
-
       rispostaInElaborazione = false;
-
+      faiDomanda("Ok. Altro lavoro?");
       return;
     }
 
+    /* ======================
+     * PRODOTTI
+     * ====================== */
     case "PRODOTTI": {
       const risposta = testo.trim();
 
-      // ⛔ risposta vuota
       if (!risposta) {
         rispostaInElaborazione = false;
         faiDomanda("Non ho capito. Ripeti il prodotto.");
         return;
       }
 
-      // ✅ USCITA
       if (isComandoUscita(risposta)) {
-        if (sessioneAssistente.listaProdotti.length > 0) {
+        if (sessioneAssistente.listaProdotti.length) {
           salvaCampoScheda(
             "PRODOTTI",
             "• " + sessioneAssistente.listaProdotti.join("\n• ")
           );
         }
-
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 300);
         return;
       }
 
-      // ✅ SALVA PRODOTTO
       sessioneAssistente.listaProdotti.push(risposta);
-
       rispostaInElaborazione = false;
-
-      setTimeout(() => {
-        faiDomanda("Ok. Altro prodotto?");
-      }, 200);
-
+      setTimeout(() => faiDomanda("Ok. Altro prodotto?"), 200);
       return;
     }
 
+    /* ======================
+     * ORE
+     * ====================== */
     case "ORE_IMPIEGATE": {
-      const t = testo.toUpperCase();
-
-      // ✅ SKIP CONSENTITO
-      if (
-        t.includes("NO") ||
-        t.includes("SALTA") ||
-        t.includes("NESSUNO") ||
-        t.includes("AVANTI") ||
-        t.includes("SUCCESSIVO")
-      ) {
-        messaggioBot("Ok, ore non inserite.");
-        rispostaInElaborazione = false;
-
-        setTimeout(() => {
-          prossimaDomanda();
-        }, 500);
-
-        return;
-      }
-
       const oreNum = normalizzaOre(testo);
 
       if (!oreNum) {
         messaggioBot("Non ho capito le ore. Ripeti o dì 'salta'.");
         rispostaInElaborazione = false;
-        return; // ✅ QUESTO MANCAVA
+        return;
       }
 
       const valore = `${oreNum} h`;
-
-      // feedback immediato
       messaggioBot(`Ore registrate: ${valore}`);
-
-      // 🔥 PASSA SUBITO ALLA DOMANDA DOPO
-      rispostaInElaborazione = false;
-      prossimaDomanda();
-
-      // 💾 salva in background (NON BLOCCA)
       salvaCampoScheda("ORE_IMPIEGATE", valore);
 
+      rispostaInElaborazione = false;
+      prossimaDomanda();
       return;
     }
 
+    /* ======================
+     * NOTE
+     * ====================== */
     case "NOTE": {
-      const risposta = testo.trim();
-
-      // SKIP
-      if (isComandoUscita(risposta)) {
+      if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 300);
         return;
       }
 
-      // ⛔ risposta vuota → RIPETI
-      if (!risposta) {
-        rispostaInElaborazione = false;
-        faiDomanda("Non ho capito la nota. Ripeti.");
-        return;
-      }
-
-      // ✅ SALVA
-      salvaCampoScheda("NOTE", risposta);
-
+      salvaCampoScheda("NOTE", testo);
       rispostaInElaborazione = false;
-
       faiDomanda("Nota salvata.");
-
-      // ✅ MICROFIX: riarmo SOLO UNA VOLTA se l’evento era vuoto
-      setTimeout(() => {
-        if (modalitaAssistente === "vocale" && !ascoltoAttivo) {
-          try {
-            recognition.start();
-            console.log("🎤 retry note");
-          } catch (e) {}
-        }
-      }, 300);
-
       setTimeout(prossimaDomanda, 600);
       return;
     }
 
+    /* ======================
+     * CHIUSURA
+     * ====================== */
     case "CHIUSURA": {
-      const risposta = testo.trim().toUpperCase();
-
-      // stop definitivo microfono
       try { recognition?.stop(); } catch (e) {}
 
       modalitaAssistente = "manuale";
 
-      // ❌ SOLO no / annulla = non chiudere
       if (
-        risposta === "NO" ||
-        risposta === "ANNULLA" ||
-        risposta === "LASCIA APERTA"
+        testo === "NO" ||
+        testo === "ANNULLA" ||
+        testo === "LASCIA APERTA"
       ) {
         messaggioBot("Scheda lasciata aperta.");
       } else {
         messaggioBot("Scheda chiusa.");
-        google.script.run.chiudiScheda(sessioneAssistente.schedaId);
+        callBackend(
+          "chiudiScheda",
+          [sessioneAssistente.schedaId]
+        );
       }
 
       rispostaInElaborazione = false;
-
       setTimeout(() => {
         resetModalitaAssistente();
         esciAssistente();
@@ -1264,24 +1231,26 @@ function salvaCampoScheda(campo, valore) {
   console.log("campo:", campo);
   console.log("valore:", valore);
 
-  // BLOCCO DI SICUREZZA
+  // 🔒 BLOCCO DI SICUREZZA
   if (!sessioneAssistente.schedaId) {
     console.error("ERRORE: schedaId non presente, salvataggio annullato");
     return;
   }
 
-  google.script.run
-    .withSuccessHandler(() => {
-      console.log("Campo salvato su Sheet:", campo);
-    })
-    .withFailureHandler(err => {
-      console.error("Errore backend:", err);
-    })
-    .aggiornaSchedaCampo(
+  callBackend(
+    "aggiornaSchedaCampo",
+    [
       sessioneAssistente.schedaId,
       campo,
       valore
-    );
+    ],
+    () => {
+      console.log("Campo salvato su Sheet:", campo);
+    },
+    err => {
+      console.error("Errore backend:", err);
+    }
+  );
 }
 
 function normalizzaTarga(testo) {
@@ -1567,24 +1536,33 @@ function onChangeCliente(row, cliente) {
   // aggiorna UI subito (istantaneo)
   aggiornaSelectVeicoliUI(row, cliente);
 
-  // salva su Sheet in background
-  google.script.run
-    .withFailureHandler(err => {
+  // salva su Sheet in background (JSONP)
+  callBackend(
+    "aggiornaClienteOrdine",
+    [row, cliente],
+    () => {
+      // successo silenzioso (non blocca UI)
+      console.log("Cliente ordine aggiornato:", row, cliente);
+    },
+    err => {
       console.error("Errore aggiornamento cliente", err);
       alert("Errore nel salvataggio del cliente");
-    })
-    .aggiornaClienteOrdine(row, cliente);
+    }
+  );
 }
 
 function onChangeVeicolo(row, veicolo) {
   if (!veicolo) return;
 
-  google.script.run
-    .withFailureHandler(err => {
+  callBackend(
+    "aggiornaVeicoloOrdine",
+    [row, veicolo],
+    null, // non serve success handler
+    err => {
       console.error("Errore aggiornamento veicolo", err);
       alert("Errore nel salvataggio del veicolo");
-    })
-    .aggiornaVeicoloOrdine(row, veicolo);
+    }
+  );
 }
 
 function fornitoreHtml(o) {
@@ -1622,12 +1600,18 @@ function inviaWhatsApp(btn) {
 }
 
 function onToggleCheckbox(row, checked) {
-  google.script.run
-    .withFailureHandler(err => {
+  callBackend(
+    "aggiornaCheckboxOrdine",
+    [row, checked],
+    () => {
+      // opzionale: feedback silenzioso
+      console.log("Checkbox aggiornata:", row, checked);
+    },
+    err => {
       console.error("Errore aggiornamento checkbox", err);
       alert("Errore nel salvataggio");
-    })
-    .aggiornaCheckboxOrdine(row, checked);
+    }
+  );
 }
 
 function aggiornaSelectVeicoliUI(row, cliente) {
@@ -1658,17 +1642,17 @@ function nuovoOrdine() {
   const descrizione = prompt("Inserisci la descrizione del nuovo ordine:");
   if (!descrizione || !descrizione.trim()) return;
 
-  google.script.run
-    .withSuccessHandler(() => {
+  callBackend(
+    "creaNuovoOrdine",
+    [normalizzaDescrizioneOrdine(descrizione)],
+    () => {
       caricaOrdiniUI(); // ricarica lista
-    })
-    .withFailureHandler(err => {
+    },
+    err => {
       console.error("Errore creazione ordine", err);
       alert("Errore nella creazione dell'ordine");
-    })
-    .creaNuovoOrdine(
-      normalizzaDescrizioneOrdine(descrizione)
-    );
+    }
+  );
 }
 
 function editDescrizione(span, row) {
@@ -1676,30 +1660,39 @@ function editDescrizione(span, row) {
 
   const input = document.createElement("input");
   input.type = "text";
-  input.value = testoAttuale === "Scrivi descrizione ordine…" ? "" : testoAttuale;
+  input.value =
+    testoAttuale === "Scrivi descrizione ordine…" ? "" : testoAttuale;
   input.className = "ordine-input";
 
   span.replaceWith(input);
   input.focus();
 
   input.addEventListener("keydown", e => {
-    if (e.key === "Enter") {
-      const nuovoTesto = input.value.trim();
+    if (e.key !== "Enter") return;
 
-      google.script.run
-        .withSuccessHandler(() => {
-          const nuovoSpan = document.createElement("span");
-          nuovoSpan.className = "ordine-descr";
-          nuovoSpan.textContent = nuovoTesto || "Scrivi descrizione ordine…";
-          nuovoSpan.onclick = () => editDescrizione(nuovoSpan, row);
+    const nuovoTesto = input.value.trim();
 
-          input.replaceWith(nuovoSpan);
-        })
-        .withFailureHandler(() => {
-          alert("Errore nel salvataggio");
-        })
-        .aggiornaDescrizioneOrdine(row, nuovoTesto);
-    }
+    callBackend(
+      "aggiornaDescrizioneOrdine",
+      [row, nuovoTesto],
+      () => {
+        // ✅ SUCCESS
+        const nuovoSpan = document.createElement("span");
+        nuovoSpan.className = "ordine-descr";
+        nuovoSpan.textContent =
+          nuovoTesto || "Scrivi descrizione ordine…";
+
+        nuovoSpan.onclick = () =>
+          editDescrizione(nuovoSpan, row);
+
+        input.replaceWith(nuovoSpan);
+      },
+      () => {
+        // ❌ ERROR
+        alert("Errore nel salvataggio");
+        input.focus();
+      }
+    );
   });
 }
 /********************
@@ -1736,17 +1729,19 @@ function avviaOrdineVocale() {
 
     if (!testo) return;
 
-    google.script.run
-      .withSuccessHandler(() => {
+    const descrizione = normalizzaDescrizioneOrdine(testo);
+
+    callBackend(
+      "inserisciNuovoOrdineVocale",
+      [descrizione],
+      () => {
         caricaOrdiniUI(); // aggiorna lista
-      })
-      .withFailureHandler(err => {
-        console.error(err);
+      },
+      err => {
+        console.error("Errore inserimento ordine vocale", err);
         alert("Errore inserimento ordine vocale");
-      })
-      .inserisciNuovoOrdineVocale(
-        normalizzaDescrizioneOrdine(testo)
-      );
+      }
+    );
   };
 
   recognitionOrdine.onerror = e => {
@@ -1756,22 +1751,30 @@ function avviaOrdineVocale() {
   recognitionOrdine.start();
 }
 
+
 function preloadOrdini() {
   // se già in cache valida, non fare nulla
   const now = Date.now();
   if (CACHE_ORDINI && now - CACHE_TS < CACHE_TTL) return;
 
-  google.script.run
-    .withSuccessHandler(bundle => {
-      CACHE_ORDINI = bundle;
+  callBackend(
+    "getOrdiniBundle",
+    [],
+    bundle => {
+      CACHE_ORDINI = {
+        ordini: bundle?.ordini || [],
+        clienti: bundle?.clienti || [],
+        veicoli: bundle?.veicoli || [],
+        fornitori: bundle?.fornitori || []
+      };
       CACHE_TS = Date.now();
       console.log("Ordini preload completato");
       // ⚠️ NON chiamare renderOrdini
-    })
-    .withFailureHandler(err => {
+    },
+    err => {
       console.warn("Preload ordini fallito", err);
-    })
-    .getOrdiniBundle();
+    }
+  );
 }
 
 function caricaAppuntamentiOggi() {
@@ -1924,14 +1927,18 @@ function eliminaScheda(idScheda, status, linkDoc) {
 
   if (!conferma) return;
 
-  google.script.run
-    .withSuccessHandler(() => {
-      caricaSchede(); // refresh UI
-    })
-    .withFailureHandler(err => {
-      alert(err.message || "Errore eliminazione scheda");
-    })
-    .eliminaScheda(idScheda);
+  callBackend(
+    "eliminaScheda",
+    [idScheda],
+    () => {
+      // ✅ success
+      caricaSchede();
+    },
+    err => {
+      // ❌ errore backend
+      alert(err?.message || "Errore eliminazione scheda");
+    }
+  );
 }
 
 (function () {
@@ -2008,18 +2015,3 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
