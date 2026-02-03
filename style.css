@@ -892,10 +892,11 @@ div[aria-label*="Apps Script"] {
 /* SEZIONI */
 
 .home-block {
-  background: #fff;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  min-height: 160px;           /* 👈 uguale per tutti */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;     /* centra verticalmente */
+  gap: 14px;                   /* spazio tra pulsanti */
 }
 
 .home-block h3 {
@@ -2085,6 +2086,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
