@@ -1,46 +1,37 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNHq8kaunWROtKWdRBMnwltHm3Z7lghMivlLnqGntRQMC21/exec";
-/* =====================================================
-   ADAPTER google.script.run
-   Serve per far funzionare il codice Apps Script su web
-   ===================================================== */
+// === ADAPTER google.script.run → callBackend (JSONP) ===
+if (!window.google) window.google = {};
+if (!google.script) google.script = {};
 
-(function () {
-  if (window.google && window.google.script && window.google.script.run) {
-    // Siamo ancora in Apps Script → non fare nulla
-    return;
+google.script.run = {
+  _success: null,
+  _failure: null,
+
+  withSuccessHandler(cb) {
+    this._success = cb;
+    return this;
+  },
+
+  withFailureHandler(cb) {
+    this._failure = cb;
+    return this;
   }
+};
 
-  window.google = window.google || {};
-  google.script = google.script || {};
+google.script.run = new Proxy(google.script.run, {
+  get(target, prop) {
+    if (prop in target) return target[prop];
 
-  let _success = null;
-  let _failure = null;
-
-  google.script.run = {
-    withSuccessHandler(cb) {
-      _success = cb;
-      return this;
-    },
-    withFailureHandler(cb) {
-      _failure = cb;
-      return this;
-    }
-  };
-
-  const proxy = new Proxy(google.script.run, {
-    get(target, prop) {
-      if (prop in target) return target[prop];
-
-      // chiamata backend generica
-      return function (...args) {
-        fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: prop,
-            args
-          })
-        })
+    return function (...args) {
+      callBackend(
+        prop,
+        args,
+        res => target._success && target._success(res),
+        err => target._failure && target._failure(err)
+      );
+    };
+  }
+});
           .then(r => r.json())
           .then(res => {
             _success && _success(res);
@@ -55,6 +46,32 @@ const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNH
 
   google.script.run = proxy;
 })();
+
+function callBackend(action, args, onSuccess, onError) {
+  const cbName = "cb_" + Math.random().toString(36).slice(2);
+
+  window[cbName] = function (data) {
+    delete window[cbName];
+    script.remove();
+    onSuccess && onSuccess(data);
+  };
+
+  const params = new URLSearchParams({
+    action,
+    callback: cbName,
+    args: JSON.stringify(args || [])
+  });
+
+  const script = document.createElement("script");
+  script.src = API_URL + "?" + params.toString();
+  script.onerror = () => {
+    delete window[cbName];
+    script.remove();
+    onError && onError(new Error("Errore backend"));
+  };
+
+  document.body.appendChild(script);
+}
 
 function detectMobile() {
   const isMobile =
@@ -1349,15 +1366,16 @@ function normalizzaDescrizioneOrdine(testo) {
 }
 
 function caricaSchede() {
-  
-  google.script.run
-    .withSuccessHandler(lista => {
+  callBackend(
+    "listaSchede",
+    [],
+    lista => {
       renderSchede(lista);
-    })
-    .withFailureHandler(err => {
+    },
+    err => {
       console.error("Errore caricamento schede", err);
-    })
-    .listaSchede();
+    }
+  );
 }
 
 function prossimaDomanda() {
@@ -1984,6 +2002,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
