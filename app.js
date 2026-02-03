@@ -1355,11 +1355,14 @@ function caricaSchede() {
   callBackend(
     "listaSchede",
     [],
-    lista => {
+    res => {
+      const lista = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+        ? res.data
+        : [];
+
       renderSchede(lista);
-    },
-    err => {
-      console.error("Errore caricamento schede", err);
     }
   );
 }
@@ -1453,34 +1456,36 @@ function caricaOrdiniUI(force = false) {
     now - CACHE_TS < CACHE_TTL
   ) {
     renderOrdini(
-      CACHE_ORDINI.ordini,
-      CACHE_ORDINI.clienti,
-      CACHE_ORDINI.veicoli,
-      CACHE_ORDINI.fornitori
+      CACHE_ORDINI.ordini || [],
+      CACHE_ORDINI.clienti || [],
+      CACHE_ORDINI.veicoli || [],
+      CACHE_ORDINI.fornitori || []
     );
     return;
   }
 
-  // 🔄 fetch backend
-  google.script.run
-    .withSuccessHandler(bundle => {
-      CACHE_ORDINI = bundle;
+  // 🔄 fetch backend via JSONP
+  callBackend(
+    "getOrdiniBundle",
+    [],
+    res => {
+      const ordini = res?.ordini || [];
+      const clienti = res?.clienti || [];
+      const veicoli = res?.veicoli || [];
+      const fornitori = res?.fornitori || [];
+
+      CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
       CACHE_TS = Date.now();
 
-      window.VEICOLI_ALL = bundle.veicoli || [];
+      window.VEICOLI_ALL = veicoli;
 
-      renderOrdini(
-        bundle.ordini,
-        bundle.clienti,
-        bundle.veicoli,
-        bundle.fornitori
-      );
-    })
-    .withFailureHandler(err => {
+      renderOrdini(ordini, clienti, veicoli, fornitori);
+    },
+    err => {
       console.error("Errore caricamento ordini", err);
       alert("Errore caricamento ordini");
-    })
-    .getOrdiniBundle();
+    }
+  );
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
@@ -1773,18 +1778,33 @@ function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   if (!box) return;
 
-  google.script.run.withSuccessHandler(eventi => {
-    if (!eventi.length) {
-      box.innerHTML = "<p>Nessun appuntamento oggi</p>";
-      return;
-    }
+  callBackend(
+    "getAppuntamentiOggi",
+    [],
+    res => {
+      // 🔑 NORMALIZZAZIONE
+      const eventi = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+        ? res.data
+        : [];
 
-    box.innerHTML = eventi.map(e => `
-      <div class="evento-oggi">
-        <strong>${e.ora}</strong> – ${e.titolo}
-      </div>
-    `).join("");
-  }).getAppuntamentiOggi();
+      if (!eventi.length) {
+        box.innerHTML = "<p>Nessun appuntamento oggi</p>";
+        return;
+      }
+
+      box.innerHTML = eventi.map(e => `
+        <div class="evento-oggi">
+          <strong>${e.ora}</strong> – ${e.titolo}
+        </div>
+      `).join("");
+    },
+    err => {
+      console.error("Errore appuntamenti", err);
+      box.innerHTML = "<p>Errore caricamento appuntamenti</p>";
+    }
+  );
 }
 /* ======================
  * PONTI HOME → SEZIONI
@@ -1988,6 +2008,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
