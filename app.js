@@ -32,20 +32,6 @@ google.script.run = new Proxy(google.script.run, {
     };
   }
 });
-          .then(r => r.json())
-          .then(res => {
-            _success && _success(res);
-          })
-          .catch(err => {
-            console.error("Backend error:", err);
-            _failure && _failure(err);
-          });
-      };
-    }
-  });
-
-  google.script.run = proxy;
-})();
 
 function callBackend(action, args, onSuccess, onError) {
   const cbName = "cb_" + Math.random().toString(36).slice(2);
@@ -2002,6 +1988,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
