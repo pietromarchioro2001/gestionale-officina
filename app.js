@@ -370,9 +370,9 @@ document.addEventListener("DOMContentLoaded", () => {
   targaLink = document.getElementById("targaLink");
   btnCartellaCliente = document.getElementById("btnCartellaCliente");
 
-  librettoLink.style.display = "none";
-  targaLink.style.display = "none";
-  btnCartellaCliente.style.display = "none";
+  if (librettoLink) librettoLink.style.display = "none";
+  if (targaLink) targaLink.style.display = "none";
+  if (btnCartellaCliente) btnCartellaCliente.style.display = "none";
 
   document.getElementById("btnAnalizza")?.addEventListener("click", analizza);
   document.getElementById("btnSalva")?.addEventListener("click", salva);
@@ -705,6 +705,7 @@ function normalizzaChilometri(testo) {
 
 function renderSchede(lista) {
   const container = document.getElementById("listaSchede");
+  if (!container) return;
   container.innerHTML = "";
 
   // 🔽 ultima scheda in alto
@@ -1462,6 +1463,8 @@ function caricaOrdiniUI(force = false) {
       CACHE_ORDINI = bundle;
       CACHE_TS = Date.now();
 
+      window.VEICOLI_ALL = bundle.veicoli || [];
+
       renderOrdini(
         bundle.ordini,
         bundle.clienti,
@@ -1928,11 +1931,11 @@ logo?.addEventListener("click", () => {
   overlay.classList.add("show");
 });
 
-overlay.addEventListener("click", closeDrawer);
+overlay?.addEventListener("click", closeDrawer);
 
 function closeDrawer() {
-  drawer.classList.remove("open");
-  overlay.classList.remove("show");
+  drawer?.classList.remove("open");
+  overlay?.classList.remove("show");
 }
 
 document.querySelectorAll("#mobileDrawer button").forEach(btn => {
@@ -1981,6 +1984,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
