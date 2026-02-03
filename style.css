@@ -1027,6 +1027,12 @@ div[aria-label*="Apps Script"] {
 .home-block.ordini button {
   flex: 1;
   border-left-color: #FFD400;
+  min-height: 48px;          /* 🔑 stessa altezza degli altri */
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
 }
 
 .home-block.fatture button {
@@ -2117,6 +2123,7 @@ main {
   overflow: visible !important;
   height: auto !important;
 }
+
 
 
 
