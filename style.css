@@ -99,13 +99,13 @@ main {
 .page {
   display: none; !important;
   width: 100%;
-  min-height: 100%;
 }
 
 .page.active {
   display: block; !important;
-  flex-direction: column;
-  height: 100%;
+  width: 100%;
+  min-height: calc(100vh - 70px); /* sotto la topbar */
+  padding-bottom: 40px;
 }
 
 .page-title {
@@ -1147,6 +1147,13 @@ button.riprendi:hover {
   background: #fdecea;
 }
 
+#clienti {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+
 /* ================= MOBILE ONLY (PULITO) ================= */
 
 .is-mobile main {
@@ -2092,6 +2099,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
