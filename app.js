@@ -586,39 +586,45 @@ function messaggioUtente(testo) {
 
 function showSection(id) {
   console.log("➡️ showSection:", id);
-  // nascondi tutte
-  document.querySelectorAll(".page").forEach(p =>
-    p.classList.remove("active")
-  );
 
-  document.getElementById(id)?.classList.add("active");
+  // nascondi tutte le pagine
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.remove("active");
+  });
 
-  // menu desktop
+  // mostra pagina richiesta
+  const page = document.getElementById(id);
+  if (page) page.classList.add("active");
+
+  // menu desktop + drawer
   document.querySelectorAll(".menu button, .mobile-drawer button").forEach(b => {
     b.classList.toggle("active", b.dataset.page === id);
+  });
 
-  const menuBtn = document.querySelector(
-    `.menu button[onclick="showSection('${id}')"]`
-  );
-  if (menuBtn) menuBtn.classList.add("active");
-
-  // 🔹 INIT SEZIONI
+  // INIT SEZIONI
   switch (id) {
     case "home":
-      caricaAppuntamentiOggi();
+      if (typeof caricaAppuntamentiOggi === "function") {
+        caricaAppuntamentiOggi();
+      }
       break;
 
     case "ordini":
-      caricaOrdiniUI();
+      if (typeof caricaOrdiniUI === "function") {
+        caricaOrdiniUI();
+      }
       break;
 
     case "schede":
-      caricaSchede();
+      if (typeof caricaSchede === "function") {
+        caricaSchede();
+      }
       break;
 
-
     case "clienti":
-      resetClienti();
+      if (typeof resetClienti === "function") {
+        resetClienti();
+      }
       break;
   }
 }
@@ -1975,6 +1981,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
