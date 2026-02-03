@@ -55,11 +55,1911 @@ const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNH
 
   google.script.run = proxy;
 })();
+const SIGLE_MAIUSCOLE = [
+  "DSG",
+  "ABS",
+  "ESP",
+  "ASR",
+  "TDI",
+  "TSI",
+  "GPL",
+  "METANO",
+  "EGR",
+  "FAP",
+  "DPF",
+  "AIRBAG",
+  "ADAS"
+];
 
+
+let CACHE_ORDINI = null;
+let CACHE_TS = 0;
+const CACHE_TTL = 60 * 1000; // 60 secondi
+let librettoLink;
+let targaLink;
+let btnCartellaCliente;
+let clienteEsistente = false;
+let assistenteInChiusura = false;
+let rispostaInElaborazione = false;
+
+
+function analizza() {
+  const fileLibretto = getFileFromInputs(
+    "librettoGallery",
+    "librettoCamera"
+  );
+
+  if (!fileLibretto) {
+    alert("Seleziona o fotografa il libretto");
+    return;
+  }
+
+  document.getElementById("stato").textContent = "Analisi in corso...";
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const base64 = e.target.result.split(",")[1];
+
+    google.script.run
+      .withSuccessHandler(dati => {
+        document.getElementById("nome").value = dati.nomeCliente || "";
+        document.getElementById("indirizzo").value = dati.indirizzo || "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("data").value = dati.dataNascita || "";
+        document.getElementById("cf").value = dati.codiceFiscale || "";
+
+        document.getElementById("veicolo").value = dati.veicolo || "";
+        document.getElementById("motore").value = dati.motore || "";
+        document.getElementById("targa").value = dati.targa || "";
+        document.getElementById("immatricolazione").value =
+          dati.immatricolazione || "";
+
+        document.getElementById("stato").textContent = "Dati caricati";
+      })
+      .withFailureHandler(() => {
+        document.getElementById("stato").textContent = "Errore OCR";
+      })
+      .analizzaFoto(base64);
+  };
+
+  reader.readAsDataURL(fileLibretto);
+}
+
+/********************
+ * SALVATAGGIO
+ ********************/
+function salva() {
+  const fileLibretto = getFileFromInputs(
+    "librettoGallery",
+    "librettoCamera"
+  );
+
+  const fileTarga = getFileFromInputs(
+    "targaGallery",
+    "targaCamera"
+  );
+
+  // 🔴 nuovo cliente → OBBLIGATORI
+  if (!fileLibretto || !fileTarga) {
+    alert("Per un nuovo cliente servono libretto e foto targa");
+    return;
+  }
+
+  const readerLibretto = new FileReader();
+  readerLibretto.onload = e => {
+    const base64Libretto = e.target.result.split(",")[1];
+
+    const readerTarga = new FileReader();
+    readerTarga.onload = e2 => {
+      const base64Targa = e2.target.result.split(",")[1];
+      inviaSalvataggio(base64Libretto, base64Targa);
+    };
+
+    readerTarga.readAsDataURL(fileTarga);
+  };
+
+  readerLibretto.readAsDataURL(fileLibretto);
+}
+
+/********************
+ * ALTRI DOCUMENTI
+ ********************/
+function leggiAltriDocumenti(callback) {
+  const input = document.getElementById("altriDocumenti");
+  if (!input || !input.files || input.files.length === 0) {
+    callback([]);
+    return;
+  }
+
+  const files = [];
+  let i = 0;
+
+  const next = () => {
+    if (i >= input.files.length) {
+      callback(files);
+      return;
+    }
+
+    const f = input.files[i];
+    const r = new FileReader();
+    r.onload = e => {
+      files.push({
+        nome: f.name,
+        base64: e.target.result.split(",")[1],
+        mimeType: f.type
+      });
+      i++;
+      next();
+    };
+    r.readAsDataURL(f);
+  };
+
+  next();
+}
+
+/********************
+ * INVIO BACKEND
+ ********************/
+function inviaSalvataggio(base64Libretto, base64Targa) {
+  leggiAltriDocumenti(altriFiles => {
+    const dati = {
+      nomeCliente: document.getElementById("nome").value,
+      indirizzo: document.getElementById("indirizzo").value,
+      telefono: document.getElementById("telefono").value,
+      dataNascita: document.getElementById("data").value,
+      codiceFiscale: document.getElementById("cf").value,
+
+      veicolo: document.getElementById("veicolo").value,
+      motore: document.getElementById("motore").value,
+      targa: document.getElementById("targa").value,
+      immatricolazione: document.getElementById("immatricolazione").value,
+
+      librettoBase64: base64Libretto,
+      targaBase64: base64Targa,
+      altriDocumenti: altriFiles
+    };
+
+    google.script.run
+      .withSuccessHandler(function (res) {
+        if (!res || res.status !== "OK") {
+          alert("Errore nel salvataggio");
+          return;
+        }
+        alert(res.message);
+      })
+      .withFailureHandler(function (err) {
+        alert(err.message || "Errore nel salvataggio");
+      })
+      .salvaClienteEVeicolo(dati);
+  });
+}
+
+/********************
+ * RICERCA VEICOLO
+ ********************/
+function cercaVeicolo() {
+  const input = document.getElementById("ricercaTarga");
+  const esito = document.getElementById("esitoRicerca");
+  const targa = input.value.trim();
+
+  if (!targa) {
+    esito.textContent = "Inserisci una targa";
+    return;
+  }
+
+  esito.textContent = "Ricerca in corso...";
+
+  google.script.run
+    .withSuccessHandler(res => {
+      console.log("BACKEND RAW:", JSON.stringify(res, null, 2));
+      if (!res || !res.veicolo) {
+        esito.textContent = "Veicolo non trovato";
+        return;
+      }
+
+      const c = res.cliente || {};
+      const v = res.veicolo || {};
+
+      // DATI CLIENTE
+      document.getElementById("nome").value = c.nome || "";
+      document.getElementById("indirizzo").value = c.indirizzo || "";
+      document.getElementById("telefono").value = c.telefono || "";
+      document.getElementById("data").value = c.dataNascita || "";
+      document.getElementById("cf").value = c.codiceFiscale || "";
+
+      // DATI VEICOLO
+      document.getElementById("veicolo").value = v.veicolo || "";
+      document.getElementById("motore").value = v.motore || "";
+      document.getElementById("targa").value = v.targa || "";
+      document.getElementById("immatricolazione").value = v.immatricolazione || "";
+
+      esito.textContent = "Veicolo trovato";
+
+      // 🔗 LIBRETTO
+      if (res.librettoUrl) {
+        librettoLink.href = res.librettoUrl;
+        librettoLink.style.display = "inline-block";
+      } else {
+        librettoLink.style.display = "none";
+      }
+
+      // 🔗 FOTO TARGA
+      if (res.targaUrl) {
+        targaLink.href = res.targaUrl;
+        targaLink.style.display = "inline-block";
+      } else {
+        targaLink.style.display = "none";
+      }
+
+      // 📁 CARTELLA CLIENTE
+      if (res.cartellaClienteUrl) {
+        btnCartellaCliente.style.display = "inline-block";
+        btnCartellaCliente.onclick = () =>
+          window.open(res.cartellaClienteUrl, "_blank");
+      } else {
+        btnCartellaCliente.style.display = "none";
+      }
+
+      clienteEsistente = true;
+
+    })
+    .withFailureHandler(() => {
+      esito.textContent = "Errore ricerca";
+    })
+    .cercaVeicolo_PROXY(targa);
+}
+
+/********************
+ * CONTATORE FILE (X file)
+ ********************/
+function bindFileCount(inputId, countId, linkId) {
+  const input = document.getElementById(inputId);
+  const label = document.getElementById(countId);
+  const link = document.getElementById(linkId);
+
+  if (!input) return;
+
+  input.addEventListener("change", () => {
+    const n = input.files ? input.files.length : 0;
+
+    // 🔹 SOLO "Altri documenti" mostra il numero file
+    if (countId === "altriCount") {
+      label.textContent = n > 0 ? n + " file" : "";
+      label.classList.toggle("ok", n > 0);
+    } else if (label) {
+      // ❌ libretto e targa: niente contatore
+      label.textContent = "";
+    }
+
+    // 🔹 libretto / targa: mostra solo "Visualizza"
+    if (link && n > 0) {
+      const file = input.files[0];
+      link.href = URL.createObjectURL(file);
+      link.textContent = "Visualizza";
+      link.style.display = "inline-block";
+    } else if (link) {
+      link.style.display = "none";
+      link.href = "#";
+    }
+  });
+}
+
+/********************
+ * INIT
+ ********************/
 document.addEventListener("DOMContentLoaded", () => {
+  librettoLink = document.getElementById("librettoLink");
+  targaLink = document.getElementById("targaLink");
+  btnCartellaCliente = document.getElementById("btnCartellaCliente");
+
+  librettoLink.style.display = "none";
+  targaLink.style.display = "none";
+  btnCartellaCliente.style.display = "none";
+
+  document.getElementById("btnAnalizza")?.addEventListener("click", analizza);
+  document.getElementById("btnSalva")?.addEventListener("click", salva);
+  document.getElementById("btnCerca")?.addEventListener("click", cercaVeicolo);
+
+  bindFileCount("librettoGallery", "librettoCount", "librettoLink");
+  bindFileCount("librettoCamera", "librettoCount", "librettoLink");
+
+  bindFileCount("targaGallery", "targaCount", "targaLink");
+  bindFileCount("targaCamera", "targaCount", "targaLink");
+
+  bindFileCount("altriDocumenti", "altriCount");
+
+  caricaSchede();
+  preloadOrdini();
+
+  // ==========================
+  // ASSISTENTE (TESTO)
+  // ==========================
+  const input = document.getElementById("assistenteInput");
+  if (input) {
+    input.onkeydown = e => {
+      if (e.key === "Enter" && e.target.value.trim()) {
+        const testo = e.target.value.trim();
+        e.target.value = "";
+        messaggioUtente(testo);
+        gestisciRisposta(testo);
+      }
+    };
+  }
+
+  // ==========================
+  // 🔥 MICROFONO ASSISTENTE
+  // ==========================
+  document.getElementById("btnMic")?.addEventListener("click", () => {
+    modalitaAssistente = "vocale";
+
+    sbloccaAudio();       // 🔥 FONDAMENTALE
+    bipMicrofono();       // feedback
+    avviaMicrofono();     // mic reale
+  });
+
+
+
+  // ==========================
+  // ALTRI BOTTONI
+  // ==========================
+  document.getElementById("btnApriCartella")?.addEventListener("click", () => {
+    window.open(
+      "https://drive.google.com/drive/folders/1qFPSHURqe_vAXuJ2A6_Ta2eLloLWRkod",
+      "_blank"
+    );
+  });
+
+  document
+    .getElementById("btnOrdineVocale")
+    ?.addEventListener("click", avviaOrdineVocale);
+
   showSection("home");
 });
 
+let sessioneAssistente = {
+  schedaId: null,
+  step: null,
+  stepQueue: [],
+  inRipresa: false,
+
+  listaProblemi: [],
+  listaLavori: [],
+  listaProdotti: [],
+
+  ultimoProblema: null,
+  ultimoLavoro: null,
+  ultimoProdotto: null,
+
+  valoriEsistenti: {}
+};
+
+function resetClienti() {
+  // 🔹 svuota tutti gli input testuali
+  document
+    .querySelectorAll("#clienti input:not([type='file'])")
+    .forEach(i => (i.value = ""));
+
+  // 🔹 reset input file
+  ["libretto", "fotoTarga", "altriDocumenti"].forEach(id => {
+    const input = document.getElementById(id);
+    if (input) input.value = "";
+  });
+
+  // 🔹 reset contatori file
+  ["librettoCount", "targaCount", "altriCount"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = "";
+  });
+
+  // 🔹 nascondi link Visualizza
+  ["librettoLink", "targaLink"].forEach(id => {
+    const link = document.getElementById(id);
+    if (link) {
+      link.style.display = "none";
+      link.href = "#";
+    }
+  });
+
+  // 🔹 nascondi pulsante File cliente
+  const btnCartella = document.getElementById("btnCartellaCliente");
+  if (btnCartella) btnCartella.style.display = "none";
+
+  // 🔹 reset messaggi stato
+  const esito = document.getElementById("esitoRicerca");
+  if (esito) esito.textContent = "";
+
+  const stato = document.getElementById("stato");
+  if (stato) stato.textContent = "";
+
+  clienteEsistente = false;
+
+}
+
+function messaggioBot(testo) {
+  const chat = document.getElementById("assistenteChat");
+  const div = document.createElement("div");
+  div.className = "msg bot";
+  div.textContent = testo;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+
+  // ⛔️ TOGLI COMPLETAMENTE LA VOCE DA QUI
+}
+
+function avviaMicrofono() {
+  if (!recognition) initVoce();
+  if (ascoltoAttivo) return;
+
+  try {
+    recognition.start();
+    console.log("🎤 recognition.start()");
+  } catch (e) {
+    console.warn("Mic non avviato:", e);
+  }
+}
+
+function parlaEDopoAscolta(testo) {
+  if (modalitaAssistente !== "vocale") return;
+
+  botStaParlando = true;
+  const utter = new SpeechSynthesisUtterance(testo);
+  utter.lang = "it-IT";
+
+  utter.onend = () => {
+    botStaParlando = false;
+    bipMicrofono();
+    setTimeout(() => {
+      if (!ascoltoAttivo) recognition.start();
+    }, 300);
+  };
+
+  speechSynthesis.cancel();
+  speechSynthesis.speak(utter);
+}
+
+function avviaAscolto() {
+  if (modalitaAssistente !== "vocale") return;
+  if (!recognition) initVoce();
+  if (ascoltoAttivo) return;
+
+  bipMicrofono();
+
+}
+
+function faiDomanda(testo) {
+  messaggioBot(testo); // chat
+
+  if (modalitaAssistente !== "vocale") return;
+
+  sbloccaAudio();          // 🔓 fondamentale su desktop
+  speechSynthesis.cancel();
+  botStaParlando = true;
+
+  const utter = new SpeechSynthesisUtterance(testo);
+  utter.lang = "it-IT";
+
+  utter.onend = () => {
+    botStaParlando = false;
+
+    setTimeout(() => {
+      bipMicrofono();
+      try {
+        recognition.start();   // 🎤 QUI, NON ALTROVE
+        console.log("🎤 ascolto per:", sessioneAssistente.step);
+      } catch (e) {
+        console.warn("Mic già attivo");
+      }
+    }, 500); // tempo umano
+  };
+
+  speechSynthesis.speak(utter);
+}
+
+function messaggioUtente(testo) {
+  const chat = document.getElementById("assistenteChat");
+  if (!chat) return;
+
+  const div = document.createElement("div");
+  div.className = "msg user";
+  div.textContent = testo;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function showSection(id) {
+  console.log("➡️ showSection:", id);
+  // nascondi tutte
+  document.querySelectorAll(".page").forEach(p =>
+    p.classList.remove("active")
+  );
+
+  const page = document.getElementById(id);
+  if (!page) return;
+  page.classList.add("active");
+
+  // menu desktop
+  document.querySelectorAll(".menu button").forEach(btn =>
+    btn.classList.remove("active")
+  );
+
+  const menuBtn = document.querySelector(
+    `.menu button[onclick="showSection('${id}')"]`
+  );
+  if (menuBtn) menuBtn.classList.add("active");
+
+  // 🔹 INIT SEZIONI
+  switch (id) {
+    case "home":
+      caricaAppuntamentiOggi();
+      break;
+
+    case "ordini":
+      caricaOrdiniUI();
+      break;
+
+    case "schede":
+      caricaSchede();
+      break;
+
+
+    case "clienti":
+      resetClienti();
+      break;
+  }
+}
+
+function isComandoUscita(testo) {
+  const t = testo.toUpperCase();
+
+  return (
+    t === "STOP" ||
+    t === "SALTA" ||
+    t === "SUCCESSIVO" ||
+    t === "NO" ||
+    t === "NESSUNO" ||
+    t === "AVANTI" ||
+    t === "PROSEGUI"
+  );
+}
+
+function normalizzaOre(testo) {
+  const t = testo.toUpperCase();
+
+  // 1️⃣ minuti espliciti → conversione in ore
+  if (t.includes("MINUTO")) {
+    const num = t.replace(/[^\d]/g, "");
+    if (!num) return "";
+    return (parseInt(num, 10) / 60).toFixed(2);
+  }
+
+  // 2️⃣ numeri con virgola o punto → ore dirette
+  const cifre = t.replace(/[^\d.,]/g, "");
+  if (cifre) {
+    return cifre.replace(",", ".");
+  }
+
+  // 3️⃣ numeri in lettere
+  const oreMap = {
+    "UNA": 1, "UN": 1, "UNO": 1,
+    "DUE": 2,
+    "TRE": 3,
+    "QUATTRO": 4,
+    "CINQUE": 5,
+    "SEI": 6,
+    "SETTE": 7,
+    "OTTO": 8,
+    "NOVE": 9,
+    "DIECI": 10
+  };
+
+  let ore = null;
+  for (const k in oreMap) {
+    if (t.includes(k)) {
+      ore = oreMap[k];
+      break;
+    }
+  }
+
+  if (ore === null) return "";
+
+  let frazione = 0;
+  if (t.includes("MEZZA")) frazione = 0.5;
+  else if (t.includes("UN QUARTO")) frazione = 0.25;
+  else if (t.includes("TRE QUARTI")) frazione = 0.75;
+
+  return String(ore + frazione);
+}
+
+function normalizzaChilometri(testo) {
+  const t = testo.toUpperCase();
+
+  // prende solo cifre e separatori
+  const cifre = t.replace(/[^\d]/g, "");
+
+  if (!cifre) return "";
+
+  // niente punti/virgole nei km
+  return parseInt(cifre, 10);
+}
+
+function renderSchede(lista) {
+  const container = document.getElementById("listaSchede");
+  container.innerHTML = "";
+
+  // 🔽 ultima scheda in alto
+  lista.sort((a, b) => b.numero - a.numero);
+
+  lista.forEach(s => {
+    const card = document.createElement("div");
+    card.className = `scheda-card scheda-${s.status}`;
+
+    let centerHtml = "";
+
+    if (s.status !== "CHIUSA") {
+      centerHtml = `
+        <button class="secondary riprendi btn-pill" onclick="riprendiScheda('${s.id}')">
+          ▶ Riprendi
+        </button>
+      `;
+    } else if (s.linkDoc) {
+      centerHtml = `
+        <a href="${s.linkDoc}" target="_blank">
+          <button class="secondary scheda btn-pill">
+            📄 Scheda
+          </button>
+        </a>
+      `;
+    }
+
+    card.innerHTML = `
+      <div class="scheda-left">
+        <div class="scheda-numero">#${s.numero}</div>
+
+        <div class="scheda-info">
+          <div class="scheda-cliente">${s.cliente}</div>
+          <div class="scheda-meta">${s.data}</div>
+        </div>
+      </div>
+
+      <div class="scheda-center">
+        ${centerHtml}
+      </div>
+
+      <div class="scheda-right">
+        <span class="scheda-status">${s.status}</span>
+
+        <div class="scheda-menu">
+          <button class="scheda-menu-btn" onclick="toggleMenu(this)">⋮</button>
+
+          <div class="scheda-menu-popup">
+            <button
+              class="scheda-delete"
+              onclick="eliminaScheda('${s.id}', '${s.status}', '${s.linkDoc || ""}')"
+            >
+              Elimina
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    container.appendChild(card);
+  });
+}
+
+function apriAssistente() {
+  showSection("assistente");
+  document.getElementById("assistenteChat").innerHTML = "";
+
+  // 🔴 FIX CRITICO
+  if (modalitaAssistente === "vocale" && !recognition) {
+    initVoce();
+    console.log("🎤 recognition inizializzato");
+  }
+
+  Object.assign(sessioneAssistente, {
+    schedaId: null,
+    inRipresa: false,
+    step: null,
+    stepQueue: [
+      "TARGA",
+      "CHILOMETRI",
+      "PROBLEMI",
+      "LAVORI",
+      "PRODOTTI",
+      "ORE_IMPIEGATE",
+      "NOTE",
+      "CHIUSURA"
+    ],
+    listaProblemi: [],
+    listaLavori: [],
+    listaProdotti: [],
+    valoriEsistenti: {}
+  });
+
+  const input = document.getElementById("assistenteInput");
+  input.disabled = true;
+
+  google.script.run
+    .withSuccessHandler(res => {
+      sessioneAssistente.schedaId = res.docId;
+      input.disabled = false;
+      input.focus();
+
+      messaggioBot(`Scheda #${res.numeroScheda} creata.`);
+
+      setTimeout(() => {
+        rispostaInElaborazione = false;
+        prossimaDomanda();
+      }, 600); // ⬅️ FONDAMENTALE su mobile
+    })
+    .creaNuovaScheda();
+}
+
+function esciAssistente() {
+  resetModalitaAssistente();
+  showSection("schede");
+  caricaSchede();
+}
+
+function resetModalitaAssistente() {
+  modalitaAssistente = "manuale";
+
+  const switchVocale = document.getElementById("modeSwitch");
+  if (switchVocale) {
+    switchVocale.checked = false;
+  }
+}
+
+function riprendiScheda(id) {
+  showSection("assistente");
+  document.getElementById("assistenteChat").innerHTML = "";
+
+  Object.assign(sessioneAssistente, {
+    schedaId: id,
+    inRipresa: true,
+    step: null,
+    stepQueue: [],
+    listaProblemi: [],
+    listaLavori: [],
+    listaProdotti: [],
+    valoriEsistenti: {}
+  });
+
+  google.script.run
+    .withSuccessHandler(info => {
+      messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
+
+      if (info.mancanti.includes("CHILOMETRI")) {
+        sessioneAssistente.stepQueue.push("CHILOMETRI");
+      }
+
+      sessioneAssistente.stepQueue.push(
+        "PROBLEMI",
+        "LAVORI",
+        "PRODOTTI",
+        "ORE_IMPIEGATE",
+        "NOTE",
+        "CHIUSURA"
+      );
+
+      sessioneAssistente.valoriEsistenti = info.valori || {};
+      rispostaInElaborazione = false;
+      prossimaDomanda();
+    })
+    .statoScheda(id);
+}
+
+let voceBot = null;
+let recognition = null;
+let ascoltoAttivo = false;
+let micTimeout = null;
+let micSbloccato = false;
+let micPronto = false;
+let micTentativi = 0;
+let rispostaGestita = false;
+let botStaParlando = false;
+
+
+
+
+function initVoce() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = "it-IT";
+  recognition.interimResults = false;
+  recognition.continuous = false;
+
+  recognition.onstart = () => {
+    ascoltoAttivo = true;
+    console.log("🎤 ascolto ON");
+  };
+
+  recognition.onend = () => {
+    ascoltoAttivo = false;
+    console.log("🎤 ascolto OFF");
+  };
+
+  recognition.onresult = e => {
+    if (!e.results[0][0].transcript) return;
+
+    const testo = e.results[0][0].transcript.trim();
+    console.log("🗣️ UTENTE:", testo);
+
+    messaggioUtente(testo);
+    gestisciRisposta(testo);
+  };
+}
+
+function pulisciTesto(testo) {
+  return testo
+    .toLowerCase()
+    .replace(/ehm|allora|cioè|dunque/g, "")
+    .trim();
+}
+
+function domandaCorrente() {
+  let testo = "";
+
+  switch (sessioneAssistente.step) {
+    case "TARGA":
+      testo = "Targa del veicolo?";
+      break;
+    case "CHILOMETRI":
+      testo = "Chilometri del veicolo?";
+      break;
+    case "PROBLEMI":
+      testo = "Problemi rilevati?";
+      break;
+    case "LAVORI":
+      testo = "Lavori effettuati?";
+      break;
+    case "PRODOTTI":
+      testo = "Prodotti utilizzati?";
+      break;
+    case "ORE_IMPIEGATE":
+      testo = "Quante ore sono state impiegate?";
+      break;
+    case "NOTE":
+      testo = "Vuoi aggiungere altre note?";
+      break;
+    case "CHIUSURA":
+      testo = "Vuoi chiudere la scheda definitivamente?";
+      break;
+  }
+
+  // ❌ NON usare più messaggioBot qui
+  // ✅ QUESTO è l’unico punto corretto
+  faiDomanda(testo);
+}
+
+function gestisciRisposta(testo) {
+  if (rispostaInElaborazione) return;
+  rispostaInElaborazione = true;
+
+  testo = testo.toUpperCase().trim();
+
+  switch (sessioneAssistente.step) {
+
+    case "TARGA": {
+      const targaNorm = normalizzaTarga(testo);
+
+      faiDomanda(`Targa rilevata: ${targaNorm}`);
+
+      google.script.run
+        .withSuccessHandler(res => {
+          if (!res || !res.ok) {
+            messaggioBot("Veicolo non trovato. Ripeti la targa.");
+            if (modalitaAssistente === "vocale") parlaEDopoAscolta("Veicolo non trovato. Ripeti la targa.");
+            rispostaInElaborazione = false;
+            return;
+          }
+
+          const msg = `Veicolo trovato. Cliente ${res.nomeCliente}.`;
+          messaggioBot(msg);
+          if (modalitaAssistente === "vocale") parlaEDopoAscolta(msg);
+
+          // ⬅️ SOLO QUI si avanza
+          setTimeout(() => {
+            rispostaInElaborazione = false;
+            prossimaDomanda();   // ➜ CHILOMETRI
+          }, 500);
+        })
+        .completaSchedaDaTarga(sessioneAssistente.schedaId, targaNorm);
+
+      return;
+    }
+
+    case "CHILOMETRI": {
+      const km = normalizzaChilometri(testo);
+
+      if (!km) {
+        messaggioBot("Non ho capito i chilometri. Ripeti.");
+        if (modalitaAssistente === "vocale") parlaEDopoAscolta("Non ho capito i chilometri. Ripeti.");
+        rispostaInElaborazione = false;
+        return;
+      }
+
+      messaggioBot(`Chilometri registrati: ${km}`);
+      salvaCampoScheda("CHILOMETRI", km + " km");
+
+      // 🔓 SBLOCCO FONDAMENTALE
+      rispostaInElaborazione = false;
+
+      setTimeout(() => {
+        prossimaDomanda(); // ➜ PROBLEMI
+      }, 400);
+
+      return;
+    }
+
+    case "PROBLEMI": {
+      const risposta = testo.trim().toUpperCase();
+
+      // ignora eco del bot
+      if (risposta.startsWith("PROBLEMI")) {
+        rispostaInElaborazione = false;
+        return;
+      }
+
+      // USCITA
+      if (isComandoUscita(risposta)) {
+        if (sessioneAssistente.listaProblemi.length > 0) {
+          salvaCampoScheda(
+            "PROBLEMI",
+            "• " + sessioneAssistente.listaProblemi.join("\n• ")
+          );
+        }
+
+        rispostaInElaborazione = false;
+        setTimeout(prossimaDomanda, 400);
+        return;
+      }
+
+      // RISPOSTA VALIDA
+      sessioneAssistente.listaProblemi.push(risposta);
+
+      rispostaInElaborazione = false;
+
+      faiDomanda("Ok. Altro problema?");
+      return;
+    }
+
+    case "LAVORI": {
+      const risposta = testo.trim();
+
+      if (!risposta) {
+        messaggioBot("Non ho capito. Ripeti il lavoro.");
+        if (modalitaAssistente === "vocale") parlaEDopoAscolta("Non ho capito. Ripeti il lavoro.");
+        rispostaInElaborazione = false;
+        return;
+      }
+
+      if (isComandoUscita(risposta)) {
+        if (sessioneAssistente.listaLavori.length > 0) {
+          salvaCampoScheda(
+            "LAVORI",
+            "• " + sessioneAssistente.listaLavori.join("\n• ")
+          );
+        }
+
+        rispostaInElaborazione = false;
+        setTimeout(prossimaDomanda, 400); // ➜ PRODOTTI
+        return;
+      }
+
+      sessioneAssistente.listaLavori.push(risposta);
+
+      faiDomanda("Ok. Altro lavoro?");
+
+      rispostaInElaborazione = false;
+
+      return;
+    }
+
+    case "PRODOTTI": {
+      const risposta = testo.trim();
+
+      // ⛔ risposta vuota
+      if (!risposta) {
+        rispostaInElaborazione = false;
+        faiDomanda("Non ho capito. Ripeti il prodotto.");
+        return;
+      }
+
+      // ✅ USCITA
+      if (isComandoUscita(risposta)) {
+        if (sessioneAssistente.listaProdotti.length > 0) {
+          salvaCampoScheda(
+            "PRODOTTI",
+            "• " + sessioneAssistente.listaProdotti.join("\n• ")
+          );
+        }
+
+        rispostaInElaborazione = false;
+        setTimeout(prossimaDomanda, 300);
+        return;
+      }
+
+      // ✅ SALVA PRODOTTO
+      sessioneAssistente.listaProdotti.push(risposta);
+
+      rispostaInElaborazione = false;
+
+      setTimeout(() => {
+        faiDomanda("Ok. Altro prodotto?");
+      }, 200);
+
+      return;
+    }
+
+    case "ORE_IMPIEGATE": {
+      const t = testo.toUpperCase();
+
+      // ✅ SKIP CONSENTITO
+      if (
+        t.includes("NO") ||
+        t.includes("SALTA") ||
+        t.includes("NESSUNO") ||
+        t.includes("AVANTI") ||
+        t.includes("SUCCESSIVO")
+      ) {
+        messaggioBot("Ok, ore non inserite.");
+        rispostaInElaborazione = false;
+
+        setTimeout(() => {
+          prossimaDomanda();
+        }, 500);
+
+        return;
+      }
+
+      const oreNum = normalizzaOre(testo);
+
+      if (!oreNum) {
+        messaggioBot("Non ho capito le ore. Ripeti o dì 'salta'.");
+        rispostaInElaborazione = false;
+        return; // ✅ QUESTO MANCAVA
+      }
+
+      const valore = `${oreNum} h`;
+
+      // feedback immediato
+      messaggioBot(`Ore registrate: ${valore}`);
+
+      // 🔥 PASSA SUBITO ALLA DOMANDA DOPO
+      rispostaInElaborazione = false;
+      prossimaDomanda();
+
+      // 💾 salva in background (NON BLOCCA)
+      salvaCampoScheda("ORE_IMPIEGATE", valore);
+
+      return;
+    }
+
+    case "NOTE": {
+      const risposta = testo.trim();
+
+      // SKIP
+      if (isComandoUscita(risposta)) {
+        rispostaInElaborazione = false;
+        setTimeout(prossimaDomanda, 300);
+        return;
+      }
+
+      // ⛔ risposta vuota → RIPETI
+      if (!risposta) {
+        rispostaInElaborazione = false;
+        faiDomanda("Non ho capito la nota. Ripeti.");
+        return;
+      }
+
+      // ✅ SALVA
+      salvaCampoScheda("NOTE", risposta);
+
+      rispostaInElaborazione = false;
+
+      faiDomanda("Nota salvata.");
+
+      // ✅ MICROFIX: riarmo SOLO UNA VOLTA se l’evento era vuoto
+      setTimeout(() => {
+        if (modalitaAssistente === "vocale" && !ascoltoAttivo) {
+          try {
+            recognition.start();
+            console.log("🎤 retry note");
+          } catch (e) {}
+        }
+      }, 300);
+
+      setTimeout(prossimaDomanda, 600);
+      return;
+    }
+
+    case "CHIUSURA": {
+      const risposta = testo.trim().toUpperCase();
+
+      // stop definitivo microfono
+      try { recognition?.stop(); } catch (e) {}
+
+      modalitaAssistente = "manuale";
+
+      // ❌ SOLO no / annulla = non chiudere
+      if (
+        risposta === "NO" ||
+        risposta === "ANNULLA" ||
+        risposta === "LASCIA APERTA"
+      ) {
+        messaggioBot("Scheda lasciata aperta.");
+      } else {
+        messaggioBot("Scheda chiusa.");
+        google.script.run.chiudiScheda(sessioneAssistente.schedaId);
+      }
+
+      rispostaInElaborazione = false;
+
+      setTimeout(() => {
+        resetModalitaAssistente();
+        esciAssistente();
+      }, 900);
+
+      return;
+    }
+  }
+}
+
+function ascoltaSubito() {
+  if (modalitaAssistente !== "vocale") return;
+  if (!recognition || ascoltoAttivo) return;
+
+  bipMicrofono();
+
+}
+
+// MODALITÀ ASSISTENTE
+let modalitaAssistente = "manuale";
+
+document.getElementById("modeSwitch")?.addEventListener("change", e => {
+  if (e.target.checked) {
+    modalitaAssistente = "vocale";
+
+    // 🔓 sblocco microfono con gesto utente
+    if (!recognition) initVoce();
+
+    micSbloccato = true;
+
+    messaggioBot("Modalità vocale attiva, iniziamo.");
+  } else {
+    modalitaAssistente = "manuale";
+  }
+});
+
+function salvaCampoScheda(campo, valore) {
+  console.log("salvaCampoScheda chiamata");
+  console.log("schedaId:", sessioneAssistente.schedaId);
+  console.log("campo:", campo);
+  console.log("valore:", valore);
+
+  // BLOCCO DI SICUREZZA
+  if (!sessioneAssistente.schedaId) {
+    console.error("ERRORE: schedaId non presente, salvataggio annullato");
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(() => {
+      console.log("Campo salvato su Sheet:", campo);
+    })
+    .withFailureHandler(err => {
+      console.error("Errore backend:", err);
+    })
+    .aggiornaSchedaCampo(
+      sessioneAssistente.schedaId,
+      campo,
+      valore
+    );
+}
+
+function normalizzaTarga(testo) {
+  let t = testo.toUpperCase();
+
+  // 1️⃣ LETTERE TIPO "G DI GENOVA"
+  // prende solo la lettera prima di "DI"
+  t = t.replace(/\b([A-Z])\s+DI\s+[A-ZÀ-Ù]+\b/g, "$1");
+
+  // 2️⃣ numeri composti prima (IMPORTANTE)
+  const numeriComposti = {
+    "DICIANNOVE": "19",
+    "DICIASSETTE": "17",
+    "DICIOTTO": "18",
+    "QUINDICI": "15",
+    "SEDICI": "16",
+    "QUATTORDICI": "14",
+    "TREDICI": "13",
+    "DODICI": "12",
+    "UNDICI": "11",
+    "DIECI": "10"
+  };
+
+  for (const k in numeriComposti) {
+    t = t.replaceAll(k, numeriComposti[k]);
+  }
+
+  // 3️⃣ numeri singoli
+  const numeri = {
+    "ZERO": "0",
+    "UNO": "1",
+    "DUE": "2",
+    "TRE": "3",
+    "QUATTRO": "4",
+    "CINQUE": "5",
+    "SEI": "6",
+    "SETTE": "7",
+    "OTTO": "8",
+    "NOVE": "9"
+  };
+
+  for (const k in numeri) {
+    t = t.replaceAll(k, numeri[k]);
+  }
+
+  // 4️⃣ rimuove parole inutili residue
+  t = t.replace(/\bDI\b|\bE\b/g, " ");
+
+  // 5️⃣ rimuove tutto ciò che non è targa
+  return t.replace(/[^A-Z0-9]/g, "");
+}
+
+function normalizzaDescrizioneOrdine(testo) {
+  if (!testo) return "";
+
+  testo = testo.trim().toLowerCase();
+
+  // Prima lettera maiuscola
+  testo = testo.charAt(0).toUpperCase() + testo.slice(1);
+
+  // Forza le sigle in MAIUSCOLO
+  SIGLE_MAIUSCOLE.forEach(sigla => {
+    const regex = new RegExp(`\\b${sigla.toLowerCase()}\\b`, "gi");
+    testo = testo.replace(regex, sigla);
+  });
+
+  return testo;
+}
+
+function caricaSchede() {
+  
+  google.script.run
+    .withSuccessHandler(lista => {
+      renderSchede(lista);
+    })
+    .withFailureHandler(err => {
+      console.error("Errore caricamento schede", err);
+    })
+    .listaSchede();
+}
+
+function prossimaDomanda() {
+  if (sessioneAssistente.stepQueue.length === 0) {
+    messaggioBot("Procedura completata.");
+    return;
+  }
+
+  sessioneAssistente.step = sessioneAssistente.stepQueue.shift();
+  domandaCorrente();
+}
+
+function inizializzaVoceBot() {
+  const voci = speechSynthesis.getVoices();
+  if (!voci.length) return;
+
+  // 🔍 priorità assoluta
+  const preferite = [
+    v => v.lang === "it-IT" && /google/i.test(v.name),
+    v => v.lang === "it-IT" && /natural|neural|chrome/i.test(v.name),
+    v => v.lang === "it-IT" && !/cosimo/i.test(v.name), // escludi Cosimo
+    v => v.lang === "it-IT"
+  ];
+
+  for (const test of preferite) {
+    const trovata = voci.find(test);
+    if (trovata) {
+      voceBot = trovata;
+      console.log("🎙️ Voce selezionata:", trovata.name);
+      return;
+    }
+  }
+
+  voceBot = null;
+  console.warn("⚠️ Nessuna voce italiana valida trovata");
+}
+speechSynthesis.onvoiceschanged = inizializzaVoceBot;
+
+function parlaTesto(testo, callback) {
+  if (!("speechSynthesis" in window)) {
+    if (callback) callback();
+    return;
+  }
+
+  speechSynthesis.cancel();
+
+  botStaParlando = true;   // 🔒 BLOCCO
+
+  const utter = new SpeechSynthesisUtterance(testo);
+  utter.lang = "it-IT";
+
+  if (voceBot) utter.voice = voceBot;
+
+  utter.rate = 1.1;
+  utter.pitch = 0.9;
+  utter.volume = 1;
+
+  utter.onend = () => {
+    botStaParlando = false;   // 🔓 SBLOCCO
+    if (callback) callback();
+  };
+
+  speechSynthesis.speak(utter);
+}
+
+function bipMicrofono() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+
+  osc.type = "sine";
+  osc.frequency.value = 900;
+  gain.gain.value = 0.08;
+
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+
+  osc.start();
+  osc.stop(ctx.currentTime + 0.12);
+}
+
+function caricaOrdiniUI(force = false) {
+  const now = Date.now();
+
+  // ✅ usa cache se valida
+  if (
+    !force &&
+    CACHE_ORDINI &&
+    now - CACHE_TS < CACHE_TTL
+  ) {
+    renderOrdini(
+      CACHE_ORDINI.ordini,
+      CACHE_ORDINI.clienti,
+      CACHE_ORDINI.veicoli,
+      CACHE_ORDINI.fornitori
+    );
+    return;
+  }
+
+  // 🔄 fetch backend
+  google.script.run
+    .withSuccessHandler(bundle => {
+      CACHE_ORDINI = bundle;
+      CACHE_TS = Date.now();
+
+      renderOrdini(
+        bundle.ordini,
+        bundle.clienti,
+        bundle.veicoli,
+        bundle.fornitori
+      );
+    })
+    .withFailureHandler(err => {
+      console.error("Errore caricamento ordini", err);
+      alert("Errore caricamento ordini");
+    })
+    .getOrdiniBundle();
+}
+
+function renderOrdini(ordini, clienti, veicoli, fornitori) {
+  const container = document.getElementById("listaOrdini");
+  container.innerHTML = "";
+
+  ordini.forEach(o => {
+    const row = document.createElement("div");
+    row.className = "ordine-row";
+
+    row.innerHTML = `
+      <!-- CHECKBOX -->
+      <div class="ordine-check">
+        <input type="checkbox"
+          ${o.check ? "checked" : ""}
+          onchange="onToggleCheckbox(${o.row}, this.checked)">
+      </div>
+
+      <!-- DESCRIZIONE -->
+      <div
+        class="ordine-descr"
+        onclick="editDescrizione(this, ${o.row})"
+      >
+        ${o.descrizione || "Scrivi descrizione ordine…"}
+      </div>
+
+      <!-- SELECT AFFIANCATI -->
+      <div class="ordine-select-group">
+        <select class="ordine-select"
+          onchange="onChangeCliente(${o.row}, this.value)">
+          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
+          ${clienti.map(c =>
+            `<option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>`
+          ).join("")}
+        </select>
+
+        ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
+
+        ${fornitoreHtml(o, fornitori)}
+      </div>
+
+      <!-- INVIA UNICO (FULL WIDTH) -->
+      <button
+        class="ordine-invia"
+        onclick="inviaOrdine(${o.row})">
+        INVIA
+      </button>
+    `;
+
+    container.appendChild(row);
+  });
+}
+
+function renderSelectVeicolo(row, veicoloSelezionato, clienteSelezionato, veicoli) {
+  const lista = clienteSelezionato
+    ? veicoli.filter(v => v.clienteNome === clienteSelezionato)
+    : veicoli;
+
+  const opts = lista.map(v =>
+    `<option value="${v.veicolo}" ${
+      v.veicolo === veicoloSelezionato ? "selected" : ""
+    }>${v.veicolo}</option>`
+  ).join("");
+
+  return `
+    <select class="ordine-select"
+      onchange="onChangeVeicolo(${row}, this.value)">
+      <option value="" disabled ${veicoloSelezionato ? "" : "selected"}>
+        Seleziona veicolo
+      </option>
+      ${opts}
+    </select>
+  `;
+}
+
+function onChangeCliente(row, cliente) {
+  if (!cliente) return;
+
+  // aggiorna UI subito (istantaneo)
+  aggiornaSelectVeicoliUI(row, cliente);
+
+  // salva su Sheet in background
+  google.script.run
+    .withFailureHandler(err => {
+      console.error("Errore aggiornamento cliente", err);
+      alert("Errore nel salvataggio del cliente");
+    })
+    .aggiornaClienteOrdine(row, cliente);
+}
+
+function onChangeVeicolo(row, veicolo) {
+  if (!veicolo) return;
+
+  google.script.run
+    .withFailureHandler(err => {
+      console.error("Errore aggiornamento veicolo", err);
+      alert("Errore nel salvataggio del veicolo");
+    })
+    .aggiornaVeicoloOrdine(row, veicolo);
+}
+
+function fornitoreHtml(o) {
+  return `
+    <select class="ordine-select"
+      onchange="onChangeFornitore(${o.row}, this.value)">
+
+      <option value="" selected disabled>
+        Fornitore
+      </option>
+
+      <option value="autoparts">
+        Autoparts
+      </option>
+
+      <option value="teamcar">
+        Teamcar
+      </option>
+
+      <option value="giuliano">
+        Giuliano
+      </option>
+    </select>
+  `;
+}
+
+function inviaWhatsApp(btn) {
+  const select = btn.previousElementSibling;
+  const link = select.value;
+  if (!link) {
+    alert("Fornitore");
+    return;
+  }
+  window.open(link, "_blank");
+}
+
+function onToggleCheckbox(row, checked) {
+  google.script.run
+    .withFailureHandler(err => {
+      console.error("Errore aggiornamento checkbox", err);
+      alert("Errore nel salvataggio");
+    })
+    .aggiornaCheckboxOrdine(row, checked);
+}
+
+function aggiornaSelectVeicoliUI(row, cliente) {
+  const ordineRow = [...document.querySelectorAll(".ordine-row")]
+    .find(r => r.innerHTML.includes(`onChangeCliente(${row}`));
+
+  if (!ordineRow) return;
+
+  const selectVeicolo = ordineRow.querySelector(
+    'select[onchange^="onChangeVeicolo"]'
+  );
+
+  if (!selectVeicolo) return;
+
+  const lista = cliente
+    ? VEICOLI_ALL.filter(v => v.clienteNome === cliente)
+    : VEICOLI_ALL;
+
+  selectVeicolo.innerHTML = `
+    <option value="" disabled selected>Seleziona veicolo</option>
+    ${lista.map(v =>
+      `<option value="${v.veicolo}">${v.veicolo}</option>`
+    ).join("")}
+  `;
+}
+
+function nuovoOrdine() {
+  const descrizione = prompt("Inserisci la descrizione del nuovo ordine:");
+  if (!descrizione || !descrizione.trim()) return;
+
+  google.script.run
+    .withSuccessHandler(() => {
+      caricaOrdiniUI(); // ricarica lista
+    })
+    .withFailureHandler(err => {
+      console.error("Errore creazione ordine", err);
+      alert("Errore nella creazione dell'ordine");
+    })
+    .creaNuovoOrdine(
+      normalizzaDescrizioneOrdine(descrizione)
+    );
+}
+
+function editDescrizione(span, row) {
+  const testoAttuale = span.textContent.trim();
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = testoAttuale === "Scrivi descrizione ordine…" ? "" : testoAttuale;
+  input.className = "ordine-input";
+
+  span.replaceWith(input);
+  input.focus();
+
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+      const nuovoTesto = input.value.trim();
+
+      google.script.run
+        .withSuccessHandler(() => {
+          const nuovoSpan = document.createElement("span");
+          nuovoSpan.className = "ordine-descr";
+          nuovoSpan.textContent = nuovoTesto || "Scrivi descrizione ordine…";
+          nuovoSpan.onclick = () => editDescrizione(nuovoSpan, row);
+
+          input.replaceWith(nuovoSpan);
+        })
+        .withFailureHandler(() => {
+          alert("Errore nel salvataggio");
+        })
+        .aggiornaDescrizioneOrdine(row, nuovoTesto);
+    }
+  });
+}
+/********************
+ * ORDINE VOCALE
+ ********************/
+let recognitionOrdine = null;
+
+function avviaOrdineVocale() {
+  if (modalitaAssistente === "vocale") {
+    alert("Chiudi prima l’assistente");
+    return;
+  }
+
+  const SpeechRecognition =
+    window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  if (!SpeechRecognition) {
+    alert("Il riconoscimento vocale non è supportato da questo browser");
+    return;
+  }
+
+  recognitionOrdine = new SpeechRecognition();
+  recognitionOrdine.lang = "it-IT";
+  recognitionOrdine.interimResults = false;
+  recognitionOrdine.continuous = false;
+
+  recognitionOrdine.onstart = () => {
+    console.log("🎤 Ascolto nuovo ordine...");
+  };
+
+  recognitionOrdine.onresult = e => {
+    const testo = e.results[0][0].transcript.trim();
+    console.log("📝 Ordine vocale:", testo);
+
+    if (!testo) return;
+
+    google.script.run
+      .withSuccessHandler(() => {
+        caricaOrdiniUI(); // aggiorna lista
+      })
+      .withFailureHandler(err => {
+        console.error(err);
+        alert("Errore inserimento ordine vocale");
+      })
+      .inserisciNuovoOrdineVocale(
+        normalizzaDescrizioneOrdine(testo)
+      );
+  };
+
+  recognitionOrdine.onerror = e => {
+    console.error("Errore microfono ordine", e);
+  };
+
+  recognitionOrdine.start();
+}
+
+function preloadOrdini() {
+  // se già in cache valida, non fare nulla
+  const now = Date.now();
+  if (CACHE_ORDINI && now - CACHE_TS < CACHE_TTL) return;
+
+  google.script.run
+    .withSuccessHandler(bundle => {
+      CACHE_ORDINI = bundle;
+      CACHE_TS = Date.now();
+      console.log("Ordini preload completato");
+      // ⚠️ NON chiamare renderOrdini
+    })
+    .withFailureHandler(err => {
+      console.warn("Preload ordini fallito", err);
+    })
+    .getOrdiniBundle();
+}
+
+function caricaAppuntamentiOggi() {
+  const box = document.getElementById("oggiEventi");
+  if (!box) return;
+
+  google.script.run.withSuccessHandler(eventi => {
+    if (!eventi.length) {
+      box.innerHTML = "<p>Nessun appuntamento oggi</p>";
+      return;
+    }
+
+    box.innerHTML = eventi.map(e => `
+      <div class="evento-oggi">
+        <strong>${e.ora}</strong> – ${e.titolo}
+      </div>
+    `).join("");
+  }).getAppuntamentiOggi();
+}
+/* ======================
+ * PONTI HOME → SEZIONI
+ * ====================== */
+
+// HOME → ORDINI → Nuovo ordine
+function homeNuovoOrdine() {
+  showSection("ordini");
+  setTimeout(() => {
+    nuovoOrdine();
+  }, 150);
+}
+
+// HOME → ORDINI → Ordine vocale
+function homeOrdineVocale() {
+  showSection("ordini");
+  setTimeout(() => {
+    avviaOrdineVocale();
+  }, 150);
+}
+
+// HOME → CARICA LIBRETTO (SOLUZIONE FUNZIONANTE)
+function homeCaricaLibretto() {
+  const input = document.getElementById("libretto");
+  if (!input) {
+    alert("Input libretto non trovato");
+    return;
+  }
+
+  // reset form PRIMA
+  resetClienti();
+
+  // 👇 QUESTO deve stare NEL CLICK UTENTE
+  input.click();
+
+  // dopo lo switch di sezione è sicuro
+  showSection("clienti");
+}
+
+// HOME → SCHEDE
+function homeSchede() {
+  apriAssistente();
+}
+
+function apriPortaleFatture() {
+  window.open(
+    "https://metropolis.seac.it/login",
+    "_blank"
+  );
+}
+
+function scegliLibretto() {
+  const foto = confirm(
+    "Vuoi scattare una foto del libretto?\n\nOK = Fotocamera\nAnnulla = Galleria"
+  );
+
+  if (foto) {
+    document.getElementById("librettoCamera").click();
+  } else {
+    document.getElementById("librettoGallery").click();
+  }
+}
+
+function scegliTarga() {
+  const foto = confirm(
+    "Vuoi scattare una foto della targa?\n\nOK = Fotocamera\nAnnulla = Galleria"
+  );
+
+  if (foto) {
+    document.getElementById("targaCamera").click();
+  } else {
+    document.getElementById("targaGallery").click();
+  }
+}
+
+function getFileFromInputs(...ids) {
+  for (const id of ids) {
+    const input = document.getElementById(id);
+    if (input && input.files && input.files.length > 0) {
+      return input.files[0];
+    }
+  }
+  return null;
+}
+
+function toggleMenu(btn) {
+  // chiudi eventuali menu aperti
+  document
+    .querySelectorAll(".scheda-menu-popup")
+    .forEach(m => {
+      if (m !== btn.nextElementSibling) {
+        m.style.display = "none";
+      }
+    });
+
+  const menu = btn.nextElementSibling;
+  menu.style.display =
+    menu.style.display === "block" ? "none" : "block";
+}
+
+// chiudi menu cliccando fuori
+document.addEventListener("click", e => {
+  if (!e.target.closest(".scheda-menu")) {
+    document
+      .querySelectorAll(".scheda-menu-popup")
+      .forEach(m => (m.style.display = "none"));
+  }
+});
+
+function eliminaScheda(idScheda, status, linkDoc) {
+  const conferma = confirm(
+    "⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
+    (status === "CHIUSA"
+      ? "Verrà eliminato anche il documento associato."
+      : "L'operazione è irreversibile.")
+  );
+
+  if (!conferma) return;
+
+  google.script.run
+    .withSuccessHandler(() => {
+      caricaSchede(); // refresh UI
+    })
+    .withFailureHandler(err => {
+      alert(err.message || "Errore eliminazione scheda");
+    })
+    .eliminaScheda(idScheda);
+}
+
+(function () {
+  const isMobile =
+    window.innerWidth <= 768 ||
+    /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile) {
+    document.documentElement.classList.add("is-mobile");
+  } else {
+    document.documentElement.classList.add("is-desktop");
+  }
+})();
+
+const drawer = document.getElementById("mobileDrawer");
+const overlay = document.getElementById("drawerOverlay");
+const logo = document.querySelector(".logo");
+
+logo?.addEventListener("click", () => {
+  drawer.classList.add("open");
+  overlay.classList.add("show");
+});
+
+overlay.addEventListener("click", closeDrawer);
+
+function closeDrawer() {
+  drawer.classList.remove("open");
+  overlay.classList.remove("show");
+}
+
+document.querySelectorAll("#mobileDrawer button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const page = btn.dataset.page;
+    showSection(page);   // ✅ FUNZIONE REALE
+    closeDrawer();
+  });
+});
+
+function isMobile() {
+  return document.body.classList.contains("is-mobile");
+}
+
+function apriCalendario() {
+  window.open(
+    "https://calendar.google.com/calendar/u/0/r?cid=appuntamenti.goldencar@gmail.com",
+    "_blank"
+  );
+}
+
+function retryAscolto() {
+  if (modalitaAssistente !== "vocale") return;
+
+  clearTimeout(micTimeout);
+  micTimeout = setTimeout(() => {
+  }, 600);
+}
+
+function setAssistenteStatus(testo) {
+  const el = document.getElementById("assistenteStatus");
+  if (el) el.textContent = testo;
+}
+
+function ripetiDomandaCorrente() {
+  console.log("🔁 RIPETI:", sessioneAssistente.step);
+  setTimeout(domandaCorrente, 400);
+}
+
+function sbloccaAudio() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    ctx.resume();
+    console.log("🔓 AudioContext sbloccato");
+  } catch (e) {
+    console.warn("AudioContext non sbloccabile", e);
+  }
+}
 
 
 
