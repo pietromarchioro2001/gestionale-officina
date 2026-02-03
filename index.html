@@ -95,29 +95,98 @@
 
   <!-- CLIENTI -->
   <section id="clienti" class="page">
-  <h2 class="page-title">CLIENTI</h2>
 
-  <div class="clienti-form">
-    <!-- TUTTO quello che avevi già -->
-    <input id="ricercaTarga">
-    <button id="btnCerca">Cerca</button>
+<h2 class="page-title">CLIENTI</h2>
 
-    <!-- campi cliente -->
-    <input id="nome">
-    <input id="indirizzo">
-    <input id="telefono">
-    <input id="data">
-    <input id="cf">
+<!-- ================= RICERCA ================= -->
+<section class="section">
+  <h3>Ricerca veicolo (TARGA)</h3>
 
-    <!-- veicolo -->
-    <input id="veicolo">
-    <input id="motore">
-    <input id="targa">
-    <input id="immatricolazione">
-
-    <!-- file -->
-    <!-- invariato -->
+  <div class="row">
+    <input id="ricercaTarga" class="targa">
+    <button class="secondary" id="btnCerca">Cerca</button>
   </div>
+
+  <p id="esitoRicerca" class="esito"></p>
+</section>
+
+
+<!-- ================= DATI CLIENTE ================= -->
+<section class="section">
+  <h3>Dati cliente</h3>
+
+  <div class="form-grid">
+    <input id="nome" placeholder="Nome cliente">
+    <input id="indirizzo" placeholder="Indirizzo">
+    <input id="telefono" placeholder="Telefono">
+    <input id="data" type="date">
+    <input id="cf" placeholder="Codice fiscale">
+  </div>
+</section>
+
+
+<!-- ================= DATI VEICOLO ================= -->
+<section class="section">
+  <h3>Dati veicolo</h3>
+
+  <div class="form-grid">
+    <input id="veicolo" placeholder="Veicolo">
+    <input id="motore" placeholder="Motore">
+    <input id="targa" placeholder="Targa">
+    <input id="immatricolazione" placeholder="Immatricolazione">
+  </div>
+</section>
+
+
+<!-- ================= DOCUMENTI ================= -->
+<section class="section">
+  <h3>Documenti</h3>
+
+  <div class="doc-grid">
+
+    <div>
+      <label>Libretto</label>
+      <input type="file" id="librettoGallery" accept="image/*">
+      <input type="file" id="librettoCamera" capture="environment" accept="image/*">
+      <a id="librettoLink" target="_blank"></a>
+    </div>
+
+    <div>
+      <label>Foto targa</label>
+      <input type="file" id="targaGallery" accept="image/*">
+      <input type="file" id="targaCamera" capture="environment" accept="image/*">
+      <a id="targaLink" target="_blank"></a>
+    </div>
+
+    <div>
+      <label>Altri documenti</label>
+      <input type="file" id="altriDocumenti" multiple>
+      <span id="altriCount"></span>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ================= BOTTONI ================= -->
+<section class="section actions">
+
+  <button id="btnAnalizza" class="primary">
+    Analizza OCR
+  </button>
+
+  <button id="btnSalva" class="success">
+    Salva cliente
+  </button>
+
+  <button id="btnCartellaCliente" class="secondary">
+    Apri cartella cliente
+  </button>
+
+  <p id="stato"></p>
+
+</section>
+
 </section>
 
   <!-- SCHEDE -->
@@ -154,6 +223,7 @@
 
 </body>
 </html>
+
 
 
 
