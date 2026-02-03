@@ -13,6 +13,8 @@
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   background: var(--bg);
@@ -21,6 +23,7 @@ body {
 }
 
 html {
+  height: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
@@ -76,8 +79,11 @@ html {
 /* ================= MAIN ================= */
 
 main {
-  width: 100%;
-  height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: calc(100vh - 64px); /* header */
+  padding: 20px;
 }
 
 /* DESKTOP */
@@ -93,7 +99,7 @@ main {
 .page {
   display: none; !important;
   width: 100%;
-  height: 100%;
+  min-height: 100%;
 }
 
 .page.active {
@@ -2086,6 +2092,7 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
 
 
