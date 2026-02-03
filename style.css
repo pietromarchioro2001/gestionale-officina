@@ -1153,13 +1153,6 @@ button.riprendi:hover {
   background: #fdecea;
 }
 
-#clienti {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-
 /* ================= MOBILE ONLY (PULITO) ================= */
 
 .is-mobile main {
@@ -2119,11 +2112,27 @@ main {
   overflow: visible !important;
 }
 
+
+/* =========================
+   SEZIONE CLIENTI – FIX
+   ========================= */
+
 #clienti {
+  display: block;            /* mostra la sezione */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
   overflow: visible !important;
   height: auto !important;
 }
 
+#clienti .clienti-form {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
 
 
