@@ -57,5 +57,10 @@ const API_URL = "https://script.google.com/macros/s/AKfycbydH35oTvp5Stne8ei7JsNH
   google.script.run = proxy;
 })();
 
+document.addEventListener("DOMContentLoaded", () => {
+  showSection("home");
+});
+
+
 
 
