@@ -97,7 +97,7 @@ main {
 }
 
 .page.active {
-  display: flex;
+  display: block;
   flex-direction: column;
   height: 100%;
 }
@@ -784,9 +784,9 @@ div[aria-label*="Apps Script"] {
 
 .home-container {
   min-height: calc(100vh - 56px);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
   padding: 12px 14px;
 }
 
@@ -930,6 +930,10 @@ div[aria-label*="Apps Script"] {
   flex-direction: column;
   gap: 12px;
   align-items: center;
+}
+
+.home-actions-column button {
+  flex: 1;
 }
 
 .home-block button span.icon {
@@ -2037,4 +2041,5 @@ button.riprendi:hover {
   align-items: center;      /* sicurezza extra */
   height: 100%;
 }
+
 
