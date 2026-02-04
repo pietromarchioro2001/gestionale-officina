@@ -116,7 +116,7 @@ main {
 }
 
 .page.active {
-  display: block !important;
+  display: block;
 }
 
 .page-title {
@@ -2242,6 +2242,7 @@ button.riprendi:hover {
   min-height: 0;
   overflow-y: auto;
 }
+
 
 
 
