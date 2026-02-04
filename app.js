@@ -410,6 +410,10 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnAnalizza")?.addEventListener("click", analizza);
   document.getElementById("btnSalva")?.addEventListener("click", salva);
   document.getElementById("btnCerca")?.addEventListener("click", cercaVeicolo);
+  document
+  .getElementById("btnRefreshClienti")
+  ?.addEventListener("click", resetSezioneClienti);
+
 
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
@@ -2028,5 +2032,33 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
+function resetSezioneClienti() {
+
+  const sezione = document.getElementById("clienti");
+
+  // Pulisce tutti gli input
+  sezione.querySelectorAll("input").forEach(i => {
+    if (i.type === "file") {
+      i.value = "";
+    } else {
+      i.value = "";
+    }
+  });
+
+  // Eventuali link documenti / preview
+  document.querySelectorAll(".file-indicator").forEach(el => {
+    el.textContent = "";
+    el.removeAttribute("href");
+  });
+
+  // Reset eventuali variabili globali OCR
+  window.librettoBase64 = null;
+  window.targaBase64 = null;
+  window.altriDocumenti = [];
+
+}
+
+
 
 
