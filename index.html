@@ -120,26 +120,46 @@
 
   <!-- LIBRETTO + OCR -->
   <div class="file-upload">
-    <input
-      type="file"
-      id="librettoGallery"
-      accept="image/*"
-      hidden
-    >
-    <button
-      class="file-btn-main"
-      data-target="librettoGallery"
-      id="btnUploadLibretto"
-    >
-      📄 Carica libretto
-    </button>
-    <button
-      class="file-btn-view hidden"
-      id="librettoLink"
-      type="button"
-    >
-      👁 Visualizza
-    </button>
+
+  <!-- FILE NORMALE -->
+  <input
+    type="file"
+    id="librettoGallery"
+    accept="image/*"
+    hidden
+  >
+
+  <!-- FOTOCAMERA -->
+  <input
+    type="file"
+    id="librettoCamera"
+    accept="image/*"
+    capture="environment"
+    hidden
+  >
+
+  <button
+    class="file-btn-main"
+    data-target="librettoGallery"
+  >
+    📄 Carica libretto
+  </button>
+
+  <button
+    class="file-btn-camera"
+    data-target="librettoCamera"
+    title="Scatta foto"
+  >
+    📷
+  </button>
+
+  <button
+    class="file-btn-view hidden"
+    id="librettoLink"
+    type="button"
+  >
+    👁 Visualizza
+  </button>
     <button
       id="btnAnalizza"
       class="primary"
@@ -184,27 +204,46 @@
 
     <!-- FOTO TARGA -->
     <div class="file-upload">
-      <input
-        type="file"
-        id="targaGallery"
-        accept="image/*"
-        hidden
-      >
-      <button
-        class="file-btn-main"
-        data-target="targaGallery"
-        id="btnUploadTarga"
-      >
-        📄 Carica targa
-      </button>
-      <button
-        class="file-btn-view hidden"
-        id="targaLink"
-        type="button"
-      >
-        👁 Visualizza
-      </button>
-    </div>
+
+  <input
+    type="file"
+    id="targaGallery"
+    accept="image/*"
+    hidden
+  >
+
+  <input
+    type="file"
+    id="targaCamera"
+    accept="image/*"
+    capture="environment"
+    hidden
+  >
+
+  <button
+    class="file-btn-main"
+    data-target="targaGallery"
+  >
+    📄 Carica targa
+  </button>
+
+  <button
+    class="file-btn-camera"
+    data-target="targaCamera"
+  >
+    📷
+  </button>
+
+  <button
+    class="file-btn-view hidden"
+    id="targaLink"
+    type="button"
+  >
+    👁 Visualizza
+  </button>
+
+</div>
+
     <!-- ALTRI DOCUMENTI -->
     <div class="file-upload">
       <input
@@ -277,6 +316,7 @@
 
 </body>
 </html>
+
 
 
 
