@@ -29,6 +29,11 @@ html {
   text-size-adjust: 100%;
 }
 
+html, body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 /* ================= HEADER ================= */
 
 .topbar {
@@ -36,7 +41,7 @@ html {
   align-items: center;
   background: var(--dark);
   gap: 40px;
-  padding: 0 20px;
+  padding: 0 25px;
 }
 
 .brand {
@@ -936,7 +941,7 @@ div[aria-label*="Apps Script"] {
   background: #fff;
   border: none;
   border-radius: 14px;
-  padding: 22px 16px;   /* altezza naturale */
+  padding: 30px 16px;   /* altezza naturale */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2149,6 +2154,7 @@ button.riprendi:hover {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
