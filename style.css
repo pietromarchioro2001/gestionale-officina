@@ -2204,24 +2204,17 @@ button.riprendi:hover {
   display: none;
 }
 
+.file-btn-camera {
+  background: #f5c400;
+  border: none;
+  border-radius: 12px;
+  width: 46px;
+  height: 46px;
+  font-size: 20px;
+  cursor: pointer;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.file-btn-camera:hover {
+  background: #e0b200;
+}
 
