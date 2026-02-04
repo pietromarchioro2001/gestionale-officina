@@ -2226,6 +2226,7 @@ button.riprendi:hover {
 .file-btn-camera:hover {
   background: #e0e0e0;
 }
+
 .file-upload {
   display: flex;
   align-items: stretch;
@@ -2244,6 +2245,7 @@ button.riprendi:hover {
   min-height: 0;
   overflow-y: auto;
 }
+
 
 
 
