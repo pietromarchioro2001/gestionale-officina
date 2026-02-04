@@ -2146,27 +2146,36 @@ function gestisciPreview(inputId, viewId) {
   const input = document.getElementById(inputId);
   const viewBtn = document.getElementById(viewId);
 
+  // Nasconde Visualizza all'avvio
+  viewBtn.classList.add("hidden");
+
   input.addEventListener("change", e => {
 
     const file = e.target.files[0];
-    if (!file) return;
+
+    if (!file) {
+      viewBtn.classList.add("hidden");
+      return;
+    }
 
     const url = URL.createObjectURL(file);
 
     viewBtn.classList.remove("hidden");
+
     viewBtn.onclick = () => window.open(url);
 
   });
-
 }
 
-// LIBRETTO
 gestisciPreview("librettoGallery", "librettoLink");
 gestisciPreview("librettoCamera", "librettoLink");
 
-// TARGA
 gestisciPreview("targaGallery", "targaLink");
 gestisciPreview("targaCamera", "targaLink");
+
+gestisciPreview("altriDocumenti", "altriLink");
+
+
 
 
 
