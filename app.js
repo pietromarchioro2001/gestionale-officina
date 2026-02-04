@@ -2080,17 +2080,6 @@ function sbloccaAudio() {
 
 function resetSezioneClienti() {
 
-  const sezione = document.getElementById("clienti");
-
-  // Pulisce tutti gli input
-  sezione.querySelectorAll("input").forEach(i => {
-    if (i.type === "file") {
-      i.value = "";
-    } else {
-      i.value = "";
-    }
-  });
-
   // Eventuali link documenti / preview
   document.querySelectorAll(".file-indicator").forEach(el => {
     el.textContent = "";
@@ -2204,6 +2193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
