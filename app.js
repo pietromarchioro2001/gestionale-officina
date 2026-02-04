@@ -19,21 +19,21 @@ function callBackend(action, args = []) {
     });
 }
 
-function callBackendPost(action, args = []) {
+function callBackendPost(action, args = {}) {
 
   return fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify({ action, args })
+    body: JSON.stringify(
+      typeof args === "object"
+        ? { action, ...args }
+        : { action, args }
+    )
   })
-    .then(res => res.json())
-    .then(data => {
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-
-      return data;
-    });
+  .then(res => res.json())
+  .then(data => {
+    if (data?.error) throw new Error(data.error);
+    return data;
+  });
 }
 
 function detectMobile() {
@@ -102,7 +102,7 @@ function analizza() {
 
       const base64 = e.target.result.split(",")[1];
 
-      callBackendPost("analizzaFoto", [base64])
+      callBackendPost("ocrLibretto", { base64 })
         .then(dati => {
 
           document.getElementById("nome").value = dati?.nomeCliente || "";
@@ -2148,6 +2148,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
