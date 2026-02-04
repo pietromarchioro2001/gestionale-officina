@@ -97,7 +97,7 @@ main {
 }
 
 .page.active {
-  display: block; !important;
+  display: block !important;
   width: 100%;
   min-height: calc(100vh - 70px); /* sotto la topbar */
   padding-bottom: 40px;
@@ -2160,6 +2160,7 @@ main {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
