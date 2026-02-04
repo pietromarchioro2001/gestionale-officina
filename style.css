@@ -117,9 +117,6 @@ main {
 
 .page.active {
   display: block !important;
-  width: 100%;
-  min-height: 100%;
-  padding-bottom: 0;
 }
 
 .page-title {
@@ -2245,6 +2242,7 @@ button.riprendi:hover {
   min-height: 0;
   overflow-y: auto;
 }
+
 
 
 
