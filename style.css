@@ -60,7 +60,7 @@ html {
 .menu {
   display: flex;
   gap: 20px;
-  margin-left: 60px;
+  margin-left: auto;
 }
 
 .menu button {
@@ -75,6 +75,8 @@ html {
   color: #f5c400;
   border-bottom: 3px solid #f5c400;
   padding-bottom: 4px;
+  border: 2px solid #ffffff;
+  background: rgba(255,255,255,0.1);
 }
 
 /* ================= MAIN ================= */
@@ -92,13 +94,6 @@ main {
     max-width: 900px;
     margin: 0 auto;
   }
-}
-
-/* ================= PAGINE ================= */
-
-.page {
-  display: none; !important;
-  width: 100%;
 }
 
 .page.active {
@@ -811,6 +806,7 @@ div[aria-label*="Apps Script"] {
     "today today today today"
     "ordini clienti schede fatture";
   gap: 16px;
+  margin-top: 40px;
 }
 
 .home-container > * {
@@ -1027,8 +1023,7 @@ div[aria-label*="Apps Script"] {
 .home-block.ordini button {
   flex: 1;
   border-left-color: #FFD400;
-  min-height: 48px;          /* 🔑 stessa altezza degli altri */
-  height: 48px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1037,6 +1032,14 @@ div[aria-label*="Apps Script"] {
 
 .home-block.fatture button {
   border-left-color: #999;
+}
+
+.home-main-title {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
 }
 
 .page-header {
@@ -1088,8 +1091,8 @@ button.riprendi:hover {
 
 /* ORDINI – due pulsanti, stessa altezza degli altri */
 #home .home-block.ordini .home-actions-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
   flex: 1;
 }
@@ -2107,6 +2110,8 @@ main {
 }
 
 .page {
+  display: none !important;
+  width: 100%;
   height: auto !important;
   min-height: calc(100vh - 70px);
   overflow: visible !important;
@@ -2155,6 +2160,7 @@ main {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
