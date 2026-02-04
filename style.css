@@ -2117,7 +2117,7 @@ button.riprendi:hover {
 }
 
 .page {
-  display: none !important;
+  display: none;
   width: 100%;
   min-height: calc(100vh - 70px);
 }
@@ -2245,6 +2245,7 @@ button.riprendi:hover {
   min-height: 0;
   overflow-y: auto;
 }
+
 
 
 
