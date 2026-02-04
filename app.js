@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzuwbSpwDRPg_e19Ti-NT5I1-jOi6AtNEjRR49zh8xGG3QaE5C2XQmmz2UNnkjBUJM/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwEPdYK7GTPybozEbkQrvDVOiNMOyP1qdi03I0WpNG1bRw0IXdfsZx-f3NgIFmpf80J/exec";
 
 function callBackend(action, args = []) {
 
@@ -101,8 +101,15 @@ function analizza() {
     try {
 
       const base64 = e.target.result.split(",")[1];
-
-      callBackendPost("ocrLibretto", { base64 })
+      if (!base64) {
+        alert("Errore lettura immagine");
+        return;
+      }
+      
+      callBackendPost("ocrLibretto", {
+        base64,
+        nomeFile: "libretto.jpg"
+      })
         .then(dati => {
 
           document.getElementById("nome").value = dati?.nomeCliente || "";
@@ -2148,6 +2155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
