@@ -2125,12 +2125,9 @@ button.riprendi:hover {
    ========================= */
 
 .page#clienti {
-  display: block;            /* mostra la sezione */
   max-width: 1200px;
   margin: 0 auto;
   padding: 16px;
-  overflow: visible !important;
-  height: auto !important;
 }
 
 #clienti .clienti-form {
@@ -2241,6 +2238,7 @@ button.riprendi:hover {
 .page#ordini {
   flex-direction: column;
 }
+
 
 
 
