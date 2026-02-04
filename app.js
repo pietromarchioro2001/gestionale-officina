@@ -1,33 +1,52 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbypYarTqmDkmwGfQu7QrxZ4kQwjie8zUUoXmsTh9Bm7IJac35NrLU9PqlAaf2hicbM/exec";
 
-async function callBackend(action, args = []) {
+async function callBackend(action, args = [], success, error) {
 
   const params = new URLSearchParams({
     action,
     args: JSON.stringify(args)
   });
 
-  const res = await fetch(`${API_URL}?${params}`);
+  fetch(`${API_URL}?${params}`)
+    .then(res => res.json())
+    .then(data => {
 
-  const data = await res.json();
+      if (data?.error) throw new Error(data.error);
 
-  if (data?.error) throw new Error(data.error);
+      if (success) success(data);
 
-  return data;
+    })
+    .catch(err => {
+
+      console.error("Backend error:", err);
+
+      if (error) error(err);
+
+    });
 }
 
-async function callBackendPost(action, args = []) {
 
-  const res = await fetch(API_URL, {
+async function callBackendPost(action, args = [], success, error) {
+
+  fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({ action, args })
-  });
+  })
+    .then(res => res.json())
+    .then(data => {
 
-  const data = await res.json();
+      if (data?.error) throw new Error(data.error);
 
-  if (data?.error) throw new Error(data.error);
+      if (success) success(data);
 
-  return data;
+    })
+    .catch(err => {
+
+      console.error("Backend POST error:", err);
+
+      if (error) error(err);
+
+    });
 }
 
 
@@ -214,6 +233,7 @@ function leggiAltriDocumenti(callback) {
  ********************/
 function inviaSalvataggio(base64Libretto, base64Targa) {
   leggiAltriDocumenti(altriFiles => {
+
     const dati = {
       nomeCliente: document.getElementById("nome").value,
       indirizzo: document.getElementById("indirizzo").value,
@@ -232,20 +252,22 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
     };
 
     callBackendPost("salvaClienteEVeicolo", [dati])
-     .then(res => {
+      .then(res => {
 
-       if (!res || res.status !== "OK") {
-         alert("Errore nel salvataggio");
-         return;
-       }
+        if (!res || res.status !== "OK") {
+          alert("Errore nel salvataggio");
+          return;
+        }
 
-       alert(res.message);
+        alert(res.message);
 
-     })
-     .catch(err => {
-       alert(err?.message || "Errore nel salvataggio");
-    });
-})
+      })
+      .catch(err => {
+        alert(err?.message || "Errore nel salvataggio");
+      });
+
+  });
+}
 
 /********************
  * RICERCA VEICOLO
@@ -2006,3 +2028,4 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
