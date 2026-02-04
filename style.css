@@ -36,6 +36,7 @@ html {
   align-items: center;
   background: var(--dark);
   gap: 40px;
+  justify-content: space-between;
 }
 
 .brand {
@@ -60,7 +61,8 @@ html {
 .menu {
   display: flex;
   gap: 20px;
-  margin-left: auto;
+  flex: 1;
+  justify-content: center;
 }
 
 .menu button {
@@ -2160,6 +2162,7 @@ main {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
