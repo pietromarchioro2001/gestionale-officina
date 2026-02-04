@@ -1,54 +1,40 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbzuwbSpwDRPg_e19Ti-NT5I1-jOi6AtNEjRR49zh8xGG3QaE5C2XQmmz2UNnkjBUJM/exec";
 
-async function callBackend(action, args = [], success, error) {
+function callBackend(action, args = []) {
 
   const params = new URLSearchParams({
     action,
     args: JSON.stringify(args)
   });
 
-  fetch(`${API_URL}?${params}`)
+  return fetch(`${API_URL}?${params}`)
     .then(res => res.json())
     .then(data => {
 
-      if (data?.error) throw new Error(data.error);
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
-      if (success) success(data);
-
-    })
-    .catch(err => {
-
-      console.error("Backend error:", err);
-
-      if (error) error(err);
-
+      return data;
     });
 }
 
+function callBackendPost(action, args = []) {
 
-async function callBackendPost(action, args = [], success, error) {
-
-  fetch(API_URL, {
+  return fetch(API_URL, {
     method: "POST",
     body: JSON.stringify({ action, args })
   })
     .then(res => res.json())
     .then(data => {
 
-      if (data?.error) throw new Error(data.error);
+      if (data?.error) {
+        throw new Error(data.error);
+      }
 
-      if (success) success(data);
-
-    })
-    .catch(err => {
-
-      console.error("Backend POST error:", err);
-
-      if (error) error(err);
-
+      return data;
     });
 }
-
 
 function detectMobile() {
   const isMobile =
@@ -2162,6 +2148,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
