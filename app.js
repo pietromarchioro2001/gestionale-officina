@@ -2104,6 +2104,24 @@ function resetSezioneClienti() {
 
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+
+  document.querySelectorAll(".file-btn-main").forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      const targetId = btn.dataset.target;
+      const input = document.getElementById(targetId);
+
+      if (input) input.click();
+
+    });
+
+  });
+
+});
+
+
 
 
 
