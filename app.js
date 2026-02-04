@@ -413,14 +413,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetSezioneClienti);
-  document.querySelectorAll(".file-btn-main").forEach(btn => {
-
-  btn.addEventListener("click", () => {
-    const input = document.getElementById(btn.dataset.target);
-    input.click();
-  });
-
-});
+  
   librettoGallery.addEventListener("change", e => {
 
   const file = e.target.files[0];
@@ -2095,23 +2088,6 @@ function resetSezioneClienti() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  document.querySelectorAll(".file-btn-main").forEach(btn => {
-
-    btn.addEventListener("click", () => {
-
-      const targetId = btn.dataset.target;
-      const input = document.getElementById(targetId);
-
-      if (input) input.click();
-
-    });
-
-  });
-
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-
   document
     .querySelectorAll(".file-btn-main, .file-btn-camera")
     .forEach(btn => {
@@ -2136,12 +2112,13 @@ function gestisciPreview(inputId, viewId) {
   const input = document.getElementById(inputId);
   const viewBtn = document.getElementById(viewId);
 
-  // Nasconde Visualizza all'avvio
+  if (!input || !viewBtn) return;
+
   viewBtn.classList.add("hidden");
 
   input.addEventListener("change", e => {
 
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
     if (!file) {
       viewBtn.classList.add("hidden");
@@ -2151,7 +2128,6 @@ function gestisciPreview(inputId, viewId) {
     const url = URL.createObjectURL(file);
 
     viewBtn.classList.remove("hidden");
-
     viewBtn.onclick = () => window.open(url);
 
   });
@@ -2162,8 +2138,6 @@ gestisciPreview("librettoCamera", "librettoLink");
 
 gestisciPreview("targaGallery", "targaLink");
 gestisciPreview("targaCamera", "targaLink");
-
-gestisciPreview("altriDocumenti", "altriLink");
 
 function resetFileInput(inputId, viewId) {
 
@@ -2176,7 +2150,10 @@ function resetFileInput(inputId, viewId) {
   input.value = "";
 
   // nasconde Visualizza
+  if (viewBtn) {
   viewBtn.classList.add("hidden");
+}
+
 
   // rimuove preview precedente
   viewBtn.onclick = null;
@@ -2193,6 +2170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
