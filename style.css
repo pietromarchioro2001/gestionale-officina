@@ -2124,7 +2124,7 @@ button.riprendi:hover {
    SEZIONE CLIENTI – FIX
    ========================= */
 
-#clienti {
+.page#clienti {
   display: block;            /* mostra la sezione */
   max-width: 1200px;
   margin: 0 auto;
@@ -2241,6 +2241,7 @@ button.riprendi:hover {
 .page#ordini {
   flex-direction: column;
 }
+
 
 
 
