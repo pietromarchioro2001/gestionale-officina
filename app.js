@@ -1427,24 +1427,23 @@ function caricaOrdiniUI(force = false) {
   }
 
    callBackend("getOrdiniBundle")
-    .then(res => {
-      const ordini = res?.ordini || [];
-      const clienti = res?.clienti || [];
-      const veicoli = res?.veicoli || [];
-      const fornitori = res?.fornitori || [];
+  .then(res => {
+    const ordini = res?.ordini || [];
+    const clienti = res?.clienti || [];
+    const veicoli = res?.veicoli || [];
+    const fornitori = res?.fornitori || [];
 
-      CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
-      CACHE_TS = Date.now();
+    CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
+    CACHE_TS = Date.now();
 
-      window.VEICOLI_ALL = veicoli;
+    window.VEICOLI_ALL = veicoli;
 
-      renderOrdini(ordini, clienti, veicoli, fornitori);
-    },
-    .catch(err => {
-     console.error("Errore caricamento ordini", err);
-     alert("Errore caricamento ordini");
-    }
-  );
+    renderOrdini(ordini, clienti, veicoli, fornitori);
+  })
+  .catch(err => {
+    console.error("Errore caricamento ordini", err);
+    alert("Errore caricamento ordini");
+  });
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
@@ -1992,6 +1991,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
