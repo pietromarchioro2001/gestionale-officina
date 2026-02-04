@@ -2073,18 +2073,10 @@ function sbloccaAudio() {
 
 function resetSezioneClienti() {
 
-  // Eventuali link documenti / preview
-  document.querySelectorAll(".file-indicator").forEach(el => {
-    el.textContent = "";
-    el.removeAttribute("href");
-  });
-
-  // Reset eventuali variabili globali OCR
-  window.librettoBase64 = null;
-  window.targaBase64 = null;
-  window.altriDocumenti = [];
+  resetClienti();   // 🔥 usa la vera funzione completa
 
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -2170,6 +2162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
