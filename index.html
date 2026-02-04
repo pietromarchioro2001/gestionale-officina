@@ -182,18 +182,46 @@
 
   <div class="doc-grid">
 
-    <div>
-      <label>Foto targa</label>
-      <input type="file" id="targaGallery" accept="image/*">
-      <a id="targaLink" target="_blank"></a>
+    <!-- FOTO TARGA -->
+    <div class="file-upload">
+      <input
+        type="file"
+        id="targaGallery"
+        accept="image/*"
+        hidden
+      >
+      <button
+        class="file-btn-main"
+        data-target="targaGallery"
+        id="btnUploadTarga"
+      >
+        📄 Carica targa
+      </button>
+      <button
+        class="file-btn-view hidden"
+        id="targaLink"
+        type="button"
+      >
+        👁 Visualizza
+      </button>
     </div>
-
-    <div>
-      <label>Altri documenti</label>
-      <input type="file" id="altriDocumenti" multiple>
-      <span id="altriCount"></span>
+    <!-- ALTRI DOCUMENTI -->
+    <div class="file-upload">
+      <input
+        type="file"
+        id="altriDocumenti"
+        multiple
+        hidden
+      >
+      <button
+        class="file-btn-main"
+        data-target="altriDocumenti"
+        id="btnUploadAltri"
+      >
+        📄 Carica documenti
+      </button>
+      <span id="altriCount" class="file-count"></span>
     </div>
-
   </div>
 </section>
 
@@ -249,6 +277,7 @@
 
 </body>
 </html>
+
 
 
 
