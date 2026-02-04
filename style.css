@@ -2230,18 +2230,18 @@ button.riprendi:hover {
   gap: 10px;
 }
 
-#schede,
-#ordini {
-  display: flex;
-  flex-direction: column;
-}
-
 #schedeContent,
 #ordiniContent {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
+
+.page#schede,
+.page#ordini {
+  flex-direction: column;
+}
+
 
 
 
