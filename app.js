@@ -1,29 +1,29 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbznNkdVr9h5ZGRCYh1I63iHAxX2b7_sp3foJxgnEL_tEuBJDd3h2TFfuU5miS_U_hpN/exec";
 
-function callBackend(action, args, onSuccess, onError) {
-  const cbName = "cb_" + Math.random().toString(36).slice(2);
+async function callBackend(action, args = []) {
 
-  window[cbName] = function (data) {
-    delete window[cbName];
-    script.remove();
-    onSuccess && onSuccess(data);
-  };
-
-  const params = new URLSearchParams({
-    action,
-    callback: cbName,
-    args: JSON.stringify(args || [])
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action,
+      args
+    })
   });
 
-  const script = document.createElement("script");
-  script.src = API_URL + "?" + params.toString();
-  script.onerror = () => {
-    delete window[cbName];
-    script.remove();
-    onError && onError(new Error("Errore backend"));
-  };
+  if (!res.ok) {
+    throw new Error("Errore rete");
+  }
 
-  document.body.appendChild(script);
+  const data = await res.json();
+
+  if (data?.error) {
+    throw new Error(data.error);
+  }
+
+  return data;
 }
 
 function detectMobile() {
@@ -766,13 +766,12 @@ function renderSchede(lista) {
 }
 
 function apriAssistente() {
+
   showSection("assistente");
   document.getElementById("assistenteChat").innerHTML = "";
 
-  // 🔴 FIX CRITICO
   if (modalitaAssistente === "vocale" && !recognition) {
     initVoce();
-    console.log("🎤 recognition inizializzato");
   }
 
   Object.assign(sessioneAssistente, {
@@ -798,11 +797,9 @@ function apriAssistente() {
   const input = document.getElementById("assistenteInput");
   input.disabled = true;
 
-  // ✅ CHIAMATA BACKEND JSONP
-  callBackend(
-    "creaNuovaScheda",
-    [],
-    res => {
+  callBackend("creaNuovaScheda")
+    .then(res => {
+
       if (!res || !res.docId) {
         messaggioBot("Errore creazione scheda.");
         input.disabled = false;
@@ -810,6 +807,7 @@ function apriAssistente() {
       }
 
       sessioneAssistente.schedaId = res.docId;
+
       input.disabled = false;
       input.focus();
 
@@ -818,14 +816,14 @@ function apriAssistente() {
       setTimeout(() => {
         rispostaInElaborazione = false;
         prossimaDomanda();
-      }, 600); // ⬅️ fondamentale su mobile
-    },
-    err => {
-      console.error("Errore backend creaNuovaScheda", err);
-      messaggioBot("Errore di comunicazione con il server.");
+      }, 600);
+
+    })
+    .catch(err => {
+      console.error("Errore creaNuovaScheda", err);
+      messaggioBot("Errore server.");
       input.disabled = false;
-    }
-  );
+    });
 }
 
 function esciAssistente() {
@@ -844,6 +842,7 @@ function resetModalitaAssistente() {
 }
 
 function riprendiScheda(id) {
+
   showSection("assistente");
   document.getElementById("assistenteChat").innerHTML = "";
 
@@ -858,10 +857,9 @@ function riprendiScheda(id) {
     valoriEsistenti: {}
   });
 
-  callBackend(
-    "statoScheda",
-    [id],
-    info => {
+  callBackend("statoScheda", [id])
+    .then(info => {
+
       messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
 
       if (Array.isArray(info.mancanti) && info.mancanti.includes("CHILOMETRI")) {
@@ -878,14 +876,15 @@ function riprendiScheda(id) {
       );
 
       sessioneAssistente.valoriEsistenti = info.valori || {};
+
       rispostaInElaborazione = false;
       prossimaDomanda();
-    },
-    err => {
+
+    })
+    .catch(err => {
       console.error("Errore ripresa scheda", err);
       messaggioBot("Errore nel riprendere la scheda.");
-    }
-  );
+    });
 }
 
 let voceBot = null;
@@ -1232,25 +1231,18 @@ function salvaCampoScheda(campo, valore) {
   console.log("valore:", valore);
 
   // 🔒 BLOCCO DI SICUREZZA
-  if (!sessioneAssistente.schedaId) {
-    console.error("ERRORE: schedaId non presente, salvataggio annullato");
-    return;
-  }
+  if (!sessioneAssistente.schedaId) return;
 
   callBackend(
     "aggiornaSchedaCampo",
-    [
-      sessioneAssistente.schedaId,
-      campo,
-      valore
-    ],
-    () => {
-      console.log("Campo salvato su Sheet:", campo);
-    },
-    err => {
-      console.error("Errore backend:", err);
-    }
-  );
+    [sessioneAssistente.schedaId, campo, valore]
+  )
+  .then(() => {
+    console.log("Campo salvato:", campo);
+  })
+  .catch(err => {
+    console.error("Errore backend:", err);
+  });
 }
 
 function normalizzaTarga(testo) {
@@ -1321,10 +1313,9 @@ function normalizzaDescrizioneOrdine(testo) {
 }
 
 function caricaSchede() {
-  callBackend(
-    "listaSchede",
-    [],
-    res => {
+  callBackend("listaSchede")
+    .then(res => {
+
       const lista = Array.isArray(res)
         ? res
         : Array.isArray(res?.data)
@@ -1332,8 +1323,10 @@ function caricaSchede() {
         : [];
 
       renderSchede(lista);
-    }
-  );
+    })
+    .catch(err => {
+      console.error("Errore caricamento schede", err);
+    });
 }
 
 function prossimaDomanda() {
@@ -1433,11 +1426,8 @@ function caricaOrdiniUI(force = false) {
     return;
   }
 
-  // 🔄 fetch backend via JSONP
-  callBackend(
-    "getOrdiniBundle",
-    [],
-    res => {
+   callBackend("getOrdiniBundle")
+    .then(res => {
       const ordini = res?.ordini || [];
       const clienti = res?.clienti || [];
       const veicoli = res?.veicoli || [];
@@ -1450,9 +1440,9 @@ function caricaOrdiniUI(force = false) {
 
       renderOrdini(ordini, clienti, veicoli, fornitori);
     },
-    err => {
-      console.error("Errore caricamento ordini", err);
-      alert("Errore caricamento ordini");
+    .catch(err => {
+     console.error("Errore caricamento ordini", err);
+     alert("Errore caricamento ordini");
     }
   );
 }
@@ -1753,44 +1743,38 @@ function avviaOrdineVocale() {
 
 
 function preloadOrdini() {
-  // se già in cache valida, non fare nulla
+
   const now = Date.now();
   if (CACHE_ORDINI && now - CACHE_TS < CACHE_TTL) return;
 
-  callBackend(
-    "getOrdiniBundle",
-    [],
-    bundle => {
+  callBackend("getOrdiniBundle")
+    .then(bundle => {
+
       CACHE_ORDINI = {
         ordini: bundle?.ordini || [],
         clienti: bundle?.clienti || [],
         veicoli: bundle?.veicoli || [],
         fornitori: bundle?.fornitori || []
       };
+
       CACHE_TS = Date.now();
       console.log("Ordini preload completato");
-      // ⚠️ NON chiamare renderOrdini
-    },
-    err => {
+    })
+    .catch(err => {
       console.warn("Preload ordini fallito", err);
-    }
-  );
+    });
 }
 
 function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   if (!box) return;
 
-  callBackend(
-    "getAppuntamentiOggi",
-    [],
-    res => {
-      // 🔑 NORMALIZZAZIONE
+  callBackend("getAppuntamentiOggi")
+    .then(res => {
+
       const eventi = Array.isArray(res)
         ? res
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
+        : res?.data || [];
 
       if (!eventi.length) {
         box.innerHTML = "<p>Nessun appuntamento oggi</p>";
@@ -1802,12 +1786,11 @@ function caricaAppuntamentiOggi() {
           <strong>${e.ora}</strong> – ${e.titolo}
         </div>
       `).join("");
-    },
-    err => {
+    })
+    .catch(err => {
       console.error("Errore appuntamenti", err);
       box.innerHTML = "<p>Errore caricamento appuntamenti</p>";
-    }
-  );
+    });
 }
 /* ======================
  * PONTI HOME → SEZIONI
@@ -1918,6 +1901,7 @@ document.addEventListener("click", e => {
 });
 
 function eliminaScheda(idScheda, status, linkDoc) {
+
   const conferma = confirm(
     "⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
     (status === "CHIUSA"
@@ -1927,18 +1911,11 @@ function eliminaScheda(idScheda, status, linkDoc) {
 
   if (!conferma) return;
 
-  callBackend(
-    "eliminaScheda",
-    [idScheda],
-    () => {
-      // ✅ success
-      caricaSchede();
-    },
-    err => {
-      // ❌ errore backend
+  callBackend("eliminaScheda", [idScheda])
+    .then(() => caricaSchede())
+    .catch(err => {
       alert(err?.message || "Errore eliminazione scheda");
-    }
-  );
+    });
 }
 
 (function () {
@@ -2015,6 +1992,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
