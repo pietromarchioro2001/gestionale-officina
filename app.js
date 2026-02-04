@@ -2124,14 +2124,15 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
 
   document
-    .querySelectorAll("[data-target]")
+    .querySelectorAll(".file-btn-main, .file-btn-camera")
     .forEach(btn => {
 
-      btn.addEventListener("click", () => {
+      btn.addEventListener("click", e => {
 
-        const input = document.getElementById(
-          btn.dataset.target
-        );
+        e.preventDefault();
+        e.stopPropagation();
+
+        const input = document.getElementById(btn.dataset.target);
 
         if (input) input.click();
 
@@ -2174,6 +2175,35 @@ gestisciPreview("targaGallery", "targaLink");
 gestisciPreview("targaCamera", "targaLink");
 
 gestisciPreview("altriDocumenti", "altriLink");
+
+function resetFileInput(inputId, viewId) {
+
+  const input = document.getElementById(inputId);
+  const viewBtn = document.getElementById(viewId);
+
+  if (!input || !viewBtn) return;
+
+  // svuota file selezionato
+  input.value = "";
+
+  // nasconde Visualizza
+  viewBtn.classList.add("hidden");
+
+  // rimuove preview precedente
+  viewBtn.onclick = null;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  resetFileInput("librettoGallery", "librettoLink");
+  resetFileInput("librettoCamera", "librettoLink");
+
+  resetFileInput("targaGallery", "targaLink");
+  resetFileInput("targaCamera", "targaLink");
+
+  resetFileInput("altriDocumenti", "altriLink");
+
+});
 
 
 
