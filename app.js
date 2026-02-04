@@ -2121,6 +2121,55 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+
+  document
+    .querySelectorAll("[data-target]")
+    .forEach(btn => {
+
+      btn.addEventListener("click", () => {
+
+        const input = document.getElementById(
+          btn.dataset.target
+        );
+
+        if (input) input.click();
+
+      });
+
+    });
+
+});
+
+function gestisciPreview(inputId, viewId) {
+
+  const input = document.getElementById(inputId);
+  const viewBtn = document.getElementById(viewId);
+
+  input.addEventListener("change", e => {
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    viewBtn.classList.remove("hidden");
+    viewBtn.onclick = () => window.open(url);
+
+  });
+
+}
+
+// LIBRETTO
+gestisciPreview("librettoGallery", "librettoLink");
+gestisciPreview("librettoCamera", "librettoLink");
+
+// TARGA
+gestisciPreview("targaGallery", "targaLink");
+gestisciPreview("targaCamera", "targaLink");
+
+
+
 
 
 
