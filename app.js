@@ -413,6 +413,51 @@ document.addEventListener("DOMContentLoaded", () => {
   document
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetSezioneClienti);
+  document.querySelectorAll(".file-btn-main").forEach(btn => {
+
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    input.click();
+  });
+
+});
+  librettoGallery.addEventListener("change", e => {
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+
+  const btnView = document.getElementById("librettoLink");
+  btnView.classList.remove("hidden");
+
+  btnView.onclick = () => window.open(url);
+
+});
+  targaGallery.addEventListener("change", e => {
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+
+  const btnView = document.getElementById("targaLink");
+  btnView.classList.remove("hidden");
+
+  btnView.onclick = () => window.open(url);
+
+});
+  altriDocumenti.addEventListener("change", e => {
+
+  const count = e.target.files.length;
+
+  const label = document.getElementById("altriCount");
+
+  label.textContent =
+    count > 0 ? `${count} file caricati` : "";
+
+});
+
 
 
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
@@ -2058,6 +2103,7 @@ function resetSezioneClienti() {
   window.altriDocumenti = [];
 
 }
+
 
 
 
