@@ -27,6 +27,7 @@ html {
   height: 100%;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 html, body {
@@ -39,10 +40,18 @@ html, body {
 .topbar {
   display: flex;
   align-items: center;
+  justify-content: center;
   background: var(--dark);
-  gap: 40px;
-  padding: 0 25px;
+  padding: 0 20px;
 }
+
+.topbar-inner {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  align-items: center;
+}
+
 
 .brand {
   display: flex;
@@ -94,6 +103,8 @@ main {
   padding: 20px;
   overflow-y: auto;
   box-sizing: border-box;   /* 🔥 fix scroll */
+  box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 /* DESKTOP */
@@ -107,7 +118,7 @@ main {
 .page.active {
   display: block !important;
   width: 100%;
-  min-height: calc(100vh - 70px);
+  min-height: 100%;
   padding-bottom: 0;
 }
 
@@ -2154,6 +2165,7 @@ button.riprendi:hover {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
