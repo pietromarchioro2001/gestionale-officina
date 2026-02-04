@@ -245,7 +245,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
      .catch(err => {
        alert(err?.message || "Errore nel salvataggio");
     });
-}
+})
 
 /********************
  * RICERCA VEICOLO
@@ -2006,6 +2006,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
