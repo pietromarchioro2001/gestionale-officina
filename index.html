@@ -110,22 +110,43 @@
 <section class="section">
   <h3>Ricerca veicolo (TARGA)</h3>
 
+  <!-- RICERCA -->
   <div class="row">
     <input id="ricercaTarga" class="targa">
     <button class="secondary" id="btnCerca">Cerca</button>
   </div>
 
   <p id="esitoRicerca" class="esito"></p>
-  <div>
-      <label>Libretto</label>
-      <input type="file" id="librettoGallery" accept="image/*">
-      <a id="librettoLink" target="_blank"></a>
-    
-      <button id="btnAnalizza" class="primary">
-        Analizza OCR
-      </button>
-    </div>
-  
+
+  <!-- LIBRETTO + OCR -->
+  <div class="file-upload">
+    <input
+      type="file"
+      id="librettoGallery"
+      accept="image/*"
+      hidden
+    >
+    <button
+      class="file-btn-main"
+      data-target="librettoGallery"
+      id="btnUploadLibretto"
+    >
+      📄 Carica libretto
+    </button>
+    <button
+      class="file-btn-view hidden"
+      id="librettoLink"
+      type="button"
+    >
+      👁 Visualizza
+    </button>
+    <button
+      id="btnAnalizza"
+      class="primary"
+    >
+      Analizza OCR
+    </button>
+  </div>
 </section>
   
 <!-- ================= DATI CLIENTE ================= -->
@@ -228,6 +249,7 @@
 
 </body>
 </html>
+
 
 
 
