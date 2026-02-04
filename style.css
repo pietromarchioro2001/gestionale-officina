@@ -36,7 +36,7 @@ html {
   align-items: center;
   background: var(--dark);
   gap: 40px;
-  justify-content: space-between;
+  padding: 0 20px;
 }
 
 .brand {
@@ -88,6 +88,7 @@ main {
   width: 100%;
   padding: 20px;
   overflow-y: auto;
+  box-sizing: border-box;   /* 🔥 fix scroll */
 }
 
 /* DESKTOP */
@@ -935,7 +936,7 @@ div[aria-label*="Apps Script"] {
   background: #fff;
   border: none;
   border-radius: 14px;
-  padding: 18px 16px;   /* altezza naturale */
+  padding: 22px 16px;   /* altezza naturale */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2099,13 +2100,6 @@ button.riprendi:hover {
   height: 100%;
 }
 
-/* === FIX VISIBILITÀ SEZIONI === */
-
-main {
-  height: auto !important;
-  overflow: visible !important;
-}
-
 .page {
   display: none !important;
   width: 100%;
@@ -2155,6 +2149,7 @@ main {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
