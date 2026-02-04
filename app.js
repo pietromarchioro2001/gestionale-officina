@@ -1,30 +1,35 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbznNkdVr9h5ZGRCYh1I63iHAxX2b7_sp3foJxgnEL_tEuBJDd3h2TFfuU5miS_U_hpN/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbypYarTqmDkmwGfQu7QrxZ4kQwjie8zUUoXmsTh9Bm7IJac35NrLU9PqlAaf2hicbM/exec";
 
 async function callBackend(action, args = []) {
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action,
-      args
-    })
+  const params = new URLSearchParams({
+    action,
+    args: JSON.stringify(args)
   });
 
-  if (!res.ok) {
-    throw new Error("Errore rete");
-  }
+  const res = await fetch(`${API_URL}?${params}`);
 
   const data = await res.json();
 
-  if (data?.error) {
-    throw new Error(data.error);
-  }
+  if (data?.error) throw new Error(data.error);
 
   return data;
 }
+
+async function callBackendPost(action, args = []) {
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({ action, args })
+  });
+
+  const data = await res.json();
+
+  if (data?.error) throw new Error(data.error);
+
+  return data;
+}
+
 
 function detectMobile() {
   const isMobile =
@@ -70,7 +75,6 @@ let clienteEsistente = false;
 let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
-
 function analizza() {
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
@@ -88,30 +92,42 @@ function analizza() {
   const reader = new FileReader();
 
   reader.onload = e => {
-    const base64 = e.target.result.split(",")[1];
 
-    callBackend(
-      "analizzaFoto",
-      [base64],
-      dati => {
-        document.getElementById("nome").value = dati?.nomeCliente || "";
-        document.getElementById("indirizzo").value = dati?.indirizzo || "";
-        document.getElementById("telefono").value = "";
-        document.getElementById("data").value = dati?.dataNascita || "";
-        document.getElementById("cf").value = dati?.codiceFiscale || "";
+    try {
 
-        document.getElementById("veicolo").value = dati?.veicolo || "";
-        document.getElementById("motore").value = dati?.motore || "";
-        document.getElementById("targa").value = dati?.targa || "";
-        document.getElementById("immatricolazione").value =
-          dati?.immatricolazione || "";
+      const base64 = e.target.result.split(",")[1];
 
-        if (statoEl) statoEl.textContent = "Dati caricati";
-      },
-      () => {
-        if (statoEl) statoEl.textContent = "Errore OCR";
-      }
-    );
+      callBackendPost("analizzaFoto", [base64])
+        .then(dati => {
+
+          document.getElementById("nome").value = dati?.nomeCliente || "";
+          document.getElementById("indirizzo").value = dati?.indirizzo || "";
+          document.getElementById("telefono").value = "";
+          document.getElementById("data").value = dati?.dataNascita || "";
+          document.getElementById("cf").value = dati?.codiceFiscale || "";
+
+          document.getElementById("veicolo").value = dati?.veicolo || "";
+          document.getElementById("motore").value = dati?.motore || "";
+          document.getElementById("targa").value = dati?.targa || "";
+          document.getElementById("immatricolazione").value =
+            dati?.immatricolazione || "";
+
+          if (statoEl) statoEl.textContent = "Dati caricati";
+
+        })
+        .catch(err => {
+
+          console.error("Errore OCR:", err);
+
+          if (statoEl) statoEl.textContent = "Errore OCR";
+        });
+
+    } catch (err) {
+
+      console.error("Errore lettura base64:", err);
+
+      if (statoEl) statoEl.textContent = "Errore lettura file";
+    }
   };
 
   reader.onerror = () => {
@@ -215,21 +231,20 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackend(
-      "salvaClienteEVeicolo",
-      [dati],
-      res => {
-        if (!res || res.status !== "OK") {
-          alert("Errore nel salvataggio");
-          return;
-        }
-        alert(res.message);
-      },
-      err => {
-        alert(err?.message || "Errore nel salvataggio");
-      }
-    );
-  });
+    callBackendPost("salvaClienteEVeicolo", [dati])
+     .then(res => {
+
+       if (!res || res.status !== "OK") {
+         alert("Errore nel salvataggio");
+         return;
+       }
+
+       alert(res.message);
+
+     })
+     .catch(err => {
+       alert(err?.message || "Errore nel salvataggio");
+    });
 }
 
 /********************
@@ -1991,6 +2006,7 @@ function sbloccaAudio() {
     console.warn("AudioContext non sbloccabile", e);
   }
 }
+
 
 
 
