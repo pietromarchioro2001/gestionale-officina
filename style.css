@@ -798,7 +798,7 @@ div[aria-label*="Apps Script"] {
 
 /* ===== HOME LAYOUT ===== */
 #home {
-  padding: 16px 20px 16px;
+  padding: 6px 20px 16px;
 }
 
 .home-container {
@@ -897,11 +897,9 @@ div[aria-label*="Apps Script"] {
 /* SEZIONI */
 
 .home-block {
-  min-height: 160px;           /* 👈 uguale per tutti */
   display: flex;
   flex-direction: column;
-  justify-content: center;     /* centra verticalmente */
-  gap: 14px;                   /* spazio tra pulsanti */
+  gap: 14px;     
 }
 
 .home-block h3 {
@@ -1026,7 +1024,7 @@ div[aria-label*="Apps Script"] {
 .home-block.ordini button {
   flex: 1;
   border-left-color: #FFD400;
-  height: 100%;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2115,9 +2113,7 @@ main {
 .page {
   display: none !important;
   width: 100%;
-  height: auto !important;
   min-height: calc(100vh - 70px);
-  overflow: visible !important;
 }
 
 
@@ -2163,6 +2159,7 @@ main {
   border-left: 4px solid var(--accent);
   padding-left: 8px;
 }
+
 
 
 
