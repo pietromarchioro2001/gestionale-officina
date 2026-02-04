@@ -110,9 +110,19 @@
   </div>
 
   <p id="esitoRicerca" class="esito"></p>
+  <div>
+      <label>Libretto</label>
+      <input type="file" id="librettoGallery" accept="image/*">
+      <input type="file" id="librettoCamera" capture="environment" accept="image/*">
+      <a id="librettoLink" target="_blank"></a>
+    
+      <button id="btnAnalizza" class="primary">
+        Analizza OCR
+      </button>
+    </div>
+  
 </section>
-
-
+  
 <!-- ================= DATI CLIENTE ================= -->
 <section class="section">
   <h3>Dati cliente</h3>
@@ -121,7 +131,7 @@
     <input id="nome" placeholder="Nome cliente">
     <input id="indirizzo" placeholder="Indirizzo">
     <input id="telefono" placeholder="Telefono">
-    <input id="data" type="date">
+    <input id="data" placeholder="Data di nascita">
     <input id="cf" placeholder="Codice fiscale">
   </div>
 </section>
@@ -147,13 +157,6 @@
   <div class="doc-grid">
 
     <div>
-      <label>Libretto</label>
-      <input type="file" id="librettoGallery" accept="image/*">
-      <input type="file" id="librettoCamera" capture="environment" accept="image/*">
-      <a id="librettoLink" target="_blank"></a>
-    </div>
-
-    <div>
       <label>Foto targa</label>
       <input type="file" id="targaGallery" accept="image/*">
       <input type="file" id="targaCamera" capture="environment" accept="image/*">
@@ -172,10 +175,6 @@
 
 <!-- ================= BOTTONI ================= -->
 <section class="section actions">
-
-  <button id="btnAnalizza" class="primary">
-    Analizza OCR
-  </button>
 
   <button id="btnSalva" class="success">
     Salva cliente
@@ -225,6 +224,7 @@
 
 </body>
 </html>
+
 
 
 
