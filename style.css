@@ -2208,7 +2208,7 @@ button.riprendi:hover {
   background: #ececec;
   width: 48px;
   min-width: 48px;
-  padding: 10px;
+  padding: 8px;
   flex-shrink: 0;
   font-size: 20px;
   height: 48px;
@@ -2244,6 +2244,7 @@ button.riprendi:hover {
   min-height: 0;
   overflow-y: auto;
 }
+
 
 
 
