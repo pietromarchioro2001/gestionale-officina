@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxPmKiSdehCoEdTyUi1Cq4W_MSHje-InkhKLUi6lDM0eUOtqqsLWdvGEuQgyNyn6sCL/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwzfgyiAfzrXCD4Q9ccLN470FggJ4SvVsoYgsAiO5eEaOqqvnjfqx8UjSKpT3dnfkwg/exec";
 
 function callBackend(action, args = []) {
 
@@ -112,20 +112,19 @@ function analizza() {
       })
         .then(res => {
 
-          const cliente = res?.cliente || {};
-          const veicolo = res?.veicolo || {};
+          const dati = res?.datiOCR || {};
         
-          document.getElementById("nome").value = cliente.nome || "";
-          document.getElementById("indirizzo").value = cliente.indirizzo || "";
-          document.getElementById("telefono").value = cliente.telefono || "";
-          document.getElementById("data").value = cliente.dataNascita || "";
-          document.getElementById("cf").value = cliente.codiceFiscale || "";
+          document.getElementById("nome").value = dati.nomeCliente || "";
+          document.getElementById("indirizzo").value = dati.indirizzo || "";
+          document.getElementById("telefono").value = "";
+          document.getElementById("data").value = dati.dataNascita || "";
+          document.getElementById("cf").value = dati.codiceFiscale || "";
         
-          document.getElementById("veicolo").value = veicolo.veicolo || "";
-          document.getElementById("motore").value = veicolo.motore || "";
-          document.getElementById("targa").value = veicolo.targa || "";
+          document.getElementById("veicolo").value = dati.veicolo || "";
+          document.getElementById("motore").value = dati.motore || "";
+          document.getElementById("targa").value = dati.targa || "";
           document.getElementById("immatricolazione").value =
-            veicolo.immatricolazione || "";
+            dati.immatricolazione || "";
         
           if (statoEl) statoEl.textContent = "Dati caricati";
         })
@@ -2158,6 +2157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
