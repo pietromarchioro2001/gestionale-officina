@@ -112,7 +112,10 @@ function analizza() {
       })
         .then(res => {
 
+          console.log("RISPOSTA OCR COMPLETA:", res);
+        
           const dati = res?.datiOCR || {};
+          console.log("DATI OCR:", dati);
         
           document.getElementById("nome").value = dati.nomeCliente || "";
           document.getElementById("indirizzo").value = dati.indirizzo || "";
@@ -126,7 +129,6 @@ function analizza() {
           document.getElementById("immatricolazione").value =
             dati.immatricolazione || "";
         
-          if (statoEl) statoEl.textContent = "Dati caricati";
         })
 
         .catch(err => {
@@ -2157,6 +2159,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
