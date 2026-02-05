@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxhWkoHSy552H6AJndWZYlaWaRvFkMZsy8cfOIN4LtzVCzJFsoiL28y_tqQUEr4mlb5/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz4VBIXIUr3Ha090wBe2D3jrpDFdwZWr2nEDxFTmGImSafDT3i4Xb2AeZhjxYirI-dr/exec";
 
 function callBackend(action, args = []) {
 
@@ -270,7 +270,8 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
 /********************
  * RICERCA VEICOLO
  ********************/
-function cercaVeicolo() {
+async function cercaVeicolo() {
+
   const input = document.getElementById("ricercaTarga");
   const esito = document.getElementById("esitoRicerca");
   const targa = input.value.trim();
@@ -282,81 +283,69 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackend(
-    "cercaVeicolo_PROXY",
-    [targa],
+  try {
 
-    // ✅ SUCCESS
-    res => {
-      console.log("BACKEND RAW:", JSON.stringify(res, null, 2));
+    const res = await callBackend("cercaVeicolo_PROXY", [targa]);
 
-      if (!res || !res.veicolo) {
-        esito.textContent = "Veicolo non trovato";
-        return;
-      }
+    console.log("BACKEND RAW:", res);
 
-      const c = res.cliente || {};
-      const v = res.veicolo || {};
-
-      // ======================
-      // DATI CLIENTE
-      // ======================
-      document.getElementById("nome").value = c.nome || "";
-      document.getElementById("indirizzo").value = c.indirizzo || "";
-      document.getElementById("telefono").value = c.telefono || "";
-      document.getElementById("data").value = c.dataNascita || "";
-      document.getElementById("cf").value = c.codiceFiscale || "";
-
-      // ======================
-      // DATI VEICOLO
-      // ======================
-      document.getElementById("veicolo").value = v.veicolo || "";
-      document.getElementById("motore").value = v.motore || "";
-      document.getElementById("targa").value = v.targa || "";
-      document.getElementById("immatricolazione").value =
-        v.immatricolazione || "";
-
-      esito.textContent = "Veicolo trovato";
-
-      // ======================
-      // 🔗 LIBRETTO
-      // ======================
-      if (res.librettoUrl) {
-        librettoLink.href = res.librettoUrl;
-        librettoLink.style.display = "inline-block";
-      } else {
-        librettoLink.style.display = "none";
-      }
-
-      // ======================
-      // 🔗 FOTO TARGA
-      // ======================
-      if (res.targaUrl) {
-        targaLink.href = res.targaUrl;
-        targaLink.style.display = "inline-block";
-      } else {
-        targaLink.style.display = "none";
-      }
-
-      // ======================
-      // 📁 CARTELLA CLIENTE
-      // ======================
-      if (res.cartellaClienteUrl) {
-        btnCartellaCliente.style.display = "inline-block";
-        btnCartellaCliente.onclick = () =>
-          window.open(res.cartellaClienteUrl, "_blank");
-      } else {
-        btnCartellaCliente.style.display = "none";
-      }
-
-      clienteEsistente = true;
-    },
-
-    // ❌ ERROR
-    () => {
-      esito.textContent = "Errore ricerca";
+    if (!res || !res.veicolo) {
+      esito.textContent = "Veicolo non trovato";
+      return;
     }
-  );
+
+    const c = res.cliente || {};
+    const v = res.veicolo || {};
+
+    // CLIENTE
+    document.getElementById("nome").value = c.nome || "";
+    document.getElementById("indirizzo").value = c.indirizzo || "";
+    document.getElementById("telefono").value = c.telefono || "";
+    document.getElementById("data").value = c.dataNascita || "";
+    document.getElementById("cf").value = c.codiceFiscale || "";
+
+    // VEICOLO
+    document.getElementById("veicolo").value = v.veicolo || "";
+    document.getElementById("motore").value = v.motore || "";
+    document.getElementById("targa").value = v.targa || "";
+    document.getElementById("immatricolazione").value =
+      v.immatricolazione || "";
+
+    esito.textContent = "Veicolo trovato";
+
+    // LIBRETTO
+    if (res.librettoUrl) {
+      librettoLink.href = res.librettoUrl;
+      librettoLink.style.display = "inline-block";
+    } else {
+      librettoLink.style.display = "none";
+    }
+
+    // FOTO TARGA
+    if (res.targaUrl) {
+      targaLink.href = res.targaUrl;
+      targaLink.style.display = "inline-block";
+    } else {
+      targaLink.style.display = "none";
+    }
+
+    // CARTELLA CLIENTE
+    if (res.cartellaClienteUrl) {
+      btnCartellaCliente.style.display = "inline-block";
+      btnCartellaCliente.onclick = () =>
+        window.open(res.cartellaClienteUrl, "_blank");
+    } else {
+      btnCartellaCliente.style.display = "none";
+    }
+
+    clienteEsistente = true;
+
+  } catch (err) {
+
+    console.error(err);
+    esito.textContent = "Errore ricerca";
+
+  }
 }
 /********************
  * CONTATORE FILE (X file)
@@ -2160,6 +2149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
