@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx-m6Auiw56dPuyvEr41cSgDREDNxN2LqYPtF9fCoGFu_kjpSto3q5I03NYyGo8hY9f/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbycdHgkB22ZpFZVn5vZRA-E9-61EACOGv0wL4QT5sR-MgDmz-Ws3OimyNQ5VjSF1qQV/exec";
 
 function callBackend(action, args = []) {
 
@@ -129,6 +129,7 @@ function analizza() {
           document.getElementById("immatricolazione").value =
             dati.immatricolazione || "";
         
+          if (statoEl) statoEl.textContent = "Dati caricati";
         })
 
         .catch(err => {
@@ -2159,6 +2160,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
