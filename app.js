@@ -112,7 +112,7 @@ function analizza() {
         return;
       }
       
-      callBackend("ocrLibretto", [
+      callBackendPost("ocrLibretto", [
         { base64, nomeFile: "libretto.jpg" }
       ])
 
@@ -239,7 +239,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackend("salvaClienteEVeicolo", [dati])
+    callBackendPost("salvaClienteEVeicolo", [dati])
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -264,7 +264,7 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackend("cercaVeicolo_PROXY", [targaRicerca])
+  callBackendPost("cercaVeicolo_PROXY", [targaRicerca])
 
     .then(res => {
 
@@ -2169,6 +2169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
