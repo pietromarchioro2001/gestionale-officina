@@ -324,6 +324,7 @@ function cercaVeicolo() {
 
       if (res.cartellaClienteUrl) {
       
+        btnCartellaCliente.style.display = "";   // 🔥 sblocca inline style
         btnCartellaCliente.classList.remove("hidden");
       
         btnCartellaCliente.onclick = () => {
@@ -332,6 +333,7 @@ function cercaVeicolo() {
       
       } else {
       
+        btnCartellaCliente.style.display = "none"; // 🔥 nasconde davvero
         btnCartellaCliente.classList.add("hidden");
       
       }
@@ -2149,6 +2151,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
