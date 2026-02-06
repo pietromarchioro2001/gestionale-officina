@@ -284,7 +284,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
 
     callBackendPost("salvaClienteEVeicolo", {
       dati
-    });
+    })
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -2176,6 +2176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
