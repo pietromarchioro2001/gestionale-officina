@@ -1955,7 +1955,7 @@ button.riprendi:hover {
 /* ===== FIX MOBILE: UNA SOLA PAGINA VISIBILE ===== */
 
 .is-mobile .page {
-  display: none !important;
+  display: none;
   flex: 0 0 auto;
   height: 100%;
 }
@@ -2238,6 +2238,7 @@ button.riprendi:hover {
 .page#ordini {
   flex-direction: column;
 }
+
 
 
 
