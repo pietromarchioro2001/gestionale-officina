@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzmS8CgLOU0utCQqpAz1uGHHAOeuFPlBGFznoCVpmHHeujQKoT8LGJJhojlVzziUx4s/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw2jOXgliJR_7vxjtTCgWh8Go2QOG4YaG4yBpkLDL7NiVIHAibNsbY0SywQ_aZ-ztaW/exec";
 
 function callBackend(action, args = []) {
 
@@ -126,7 +126,6 @@ function analizza() {
         base64,
         nomeFile: "libretto.jpg"
       })
-
         .then(res => {
 
           console.log("RISPOSTA OCR COMPLETA:", res);
@@ -2176,6 +2175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
