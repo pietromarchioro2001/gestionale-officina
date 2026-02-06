@@ -5,17 +5,35 @@ let BASE64_TARGA = "";
 
 function callBackend(action, args = []) {
 
-  const params = new URLSearchParams({
-    action,
-    args: JSON.stringify(args)
-  });
+  return new Promise((resolve, reject) => {
 
-  return fetch(`${API_URL}?${params}`)
-    .then(res => res.json())
-    .then(data => {
-      if (data?.error) throw new Error(data.error);
-      return data;
+    const callbackName =
+      "cb_" + Math.random().toString(36).substring(2);
+
+    window[callbackName] = data => {
+      delete window[callbackName];
+      script.remove();
+
+      if (data?.error) reject(data.error);
+      else resolve(data);
+    };
+
+    const params = new URLSearchParams({
+      action,
+      args: JSON.stringify(args),
+      callback: callbackName
     });
+
+    const script = document.createElement("script");
+    script.src = `${API_URL}?${params}`;
+
+    script.onerror = () => {
+      delete window[callbackName];
+      reject("Errore backend");
+    };
+
+    document.body.appendChild(script);
+  });
 }
 
 function callBackendPost(action, payload = {}) {
@@ -2173,6 +2191,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
