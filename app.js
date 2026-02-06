@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyqR9m9JHQqtAZXpzgPAILGuoIQ_SIv3gRCZnzukvMWGIVhyelcmSVUCLFELE2F58W1/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzwz46_h_QjLlAAXBV5Et6_X5LzkQJzcaVPb9Q9L50wvWc76G7pSmlE9z3deB58ilE7/exec";
 
 function callBackend(action, args = []) {
 
@@ -272,87 +272,78 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
  ********************/
 function cercaVeicolo() {
 
-  const input = document.getElementById("ricercaTarga");
+  const inputTarga = document.getElementById("ricercaTarga");
   const esito = document.getElementById("esitoRicerca");
-  const targa = input.value.trim();
 
-  if (!targa) {
+  const targaRicerca = inputTarga.value.trim().toUpperCase();
+
+  if (!targaRicerca) {
     esito.textContent = "Inserisci una targa";
     return;
   }
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackend("cercaVeicolo_PROXY", [targa])
-  .then(res => {
+  callBackend("cercaVeicolo_PROXY", [targaRicerca])
 
-    console.log("RISPOSTA BACKEND:", res);
+    .then(res => {
 
-    if (!res || !res.veicolo) {
-      esito.textContent = "Veicolo non trovato";
-      return;
-    }
+      console.log("RISPOSTA BACKEND:", res);
 
-    const c = res.cliente || {};
-    const v = res.veicolo || {};
+      if (!res || !res.veicolo) {
+        esito.textContent = "Veicolo non trovato";
+        return;
+      }
 
-    // ======================
-    // DATI CLIENTE
-    // ======================
-    nome.value = c.nome || "";
-    indirizzo.value = c.indirizzo || "";
-    telefono.value = c.telefono || "";
-    data.value = c.dataNascita || "";
-    cf.value = c.codiceFiscale || "";
+      const c = res.cliente || {};
+      const v = res.veicolo || {};
 
-    // ======================
-    // DATI VEICOLO
-    // ======================
-    veicolo.value = v.veicolo || "";
-    motore.value = v.motore || "";
-    targa.value = v.targa || "";
-    immatricolazione.value = v.immatricolazione || "";
+      // ======================
+      // DATI CLIENTE
+      // ======================
+      document.getElementById("nome").value = c.nome || "";
+      document.getElementById("indirizzo").value = c.indirizzo || "";
+      document.getElementById("telefono").value = c.telefono || "";
+      document.getElementById("data").value = c.dataNascita || "";
+      document.getElementById("cf").value = c.codiceFiscale || "";
 
-    esito.textContent = "Veicolo trovato";
+      // ======================
+      // DATI VEICOLO
+      // ======================
+      document.getElementById("veicolo").value = v.veicolo || "";
+      document.getElementById("motore").value = v.motore || "";
+      document.getElementById("targa").value = v.targa || "";
+      document.getElementById("immatricolazione").value = v.immatricolazione || "";
 
-    // ======================
-    // LIBRETTO
-    // ======================
-    if (res.librettoUrl) {
-      librettoLink.href = res.librettoUrl;
-      librettoLink.classList.remove("hidden");
-    } else {
-      librettoLink.classList.add("hidden");
-    }
+      esito.textContent = "Veicolo trovato";
 
-    // ======================
-    // TARGA
-    // ======================
-    if (res.targaUrl) {
-      targaLink.href = res.targaUrl;
-      targaLink.classList.remove("hidden");
-    } else {
-      targaLink.classList.add("hidden");
-    }
+      // ======================
+      // CARTELLA CLIENTE
+      // ======================
+      const btnCartellaCliente = document.getElementById("btnCartellaCliente");
 
-    // ======================
-    // CARTELLA CLIENTE
-    // ======================
-    if (res.cartellaClienteUrl) {
-      btnCartellaCliente.classList.remove("hidden");
-      btnCartellaCliente.onclick = () =>
-        window.open(res.cartellaClienteUrl, "_blank");
-    } else {
-      btnCartellaCliente.classList.add("hidden");
-    }
+      if (v.cartella) {
 
-    clienteEsistente = true;
+        btnCartellaCliente.classList.remove("hidden");
 
-  })
-  .catch(err => {
-    console.error(err);
-    esito.textContent = "Errore ricerca";
-  });
+        btnCartellaCliente.onclick = () => {
+          window.open(v.cartella, "_blank");
+        };
+
+      } else {
+        btnCartellaCliente.classList.add("hidden");
+      }
+
+      clienteEsistente = true;
+
+    })
+
+    .catch(err => {
+
+      console.error(err);
+      esito.textContent = "Errore ricerca";
+
+    });
 }
 /********************
  * CONTATORE FILE (X file)
@@ -2156,6 +2147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
