@@ -23,32 +23,19 @@ function callBackendPost(action, payload = {}) {
 
   return fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       action,
-      ...payload   // 👈 permette payload oggetto diretto
+      ...payload
     })
   })
-  .then(async res => {
-
-    if (!res.ok) {
-      throw new Error("Errore rete / CORS");
-    }
-
-    const data = await res.json();
+  .then(res => res.json())
+  .then(data => {
 
     if (data?.error) {
       throw new Error(data.error);
     }
 
     return data;
-
-  })
-  .catch(err => {
-    console.error("BACKEND ERROR:", err);
-    throw err;
   });
 }
 
@@ -2175,6 +2162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
