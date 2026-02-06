@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw2jOXgliJR_7vxjtTCgWh8Go2QOG4YaG4yBpkLDL7NiVIHAibNsbY0SywQ_aZ-ztaW/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxLCHRJ484s7qpBJDPvpmccrPzpcdU0pcfMjJRi0AnS4ys-TYeagjm9wh6RO8fe4mzZ/exec";
 
 function callBackend(action, args = []) {
 
@@ -2175,6 +2175,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
