@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzOs7X2T9gQsoqRzlGiuCkouj-Ku958jpTkFiPQoSHv1nlSzrDFOpHlDgnChls4DeHu/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzmS8CgLOU0utCQqpAz1uGHHAOeuFPlBGFznoCVpmHHeujQKoT8LGJJhojlVzziUx4s/exec";
 
 function callBackend(action, args = []) {
 
@@ -19,19 +19,36 @@ let cartellaUrl = "";
     });
 }
 
-function callBackendPost(action, args = []) {
+function callBackendPost(action, payload = {}) {
 
   return fetch(API_URL, {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       action,
-      args
+      ...payload   // 👈 permette payload oggetto diretto
     })
   })
-  .then(res => res.json())
-  .then(data => {
-    if (data?.error) throw new Error(data.error);
+  .then(async res => {
+
+    if (!res.ok) {
+      throw new Error("Errore rete / CORS");
+    }
+
+    const data = await res.json();
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
     return data;
+
+  })
+  .catch(err => {
+    console.error("BACKEND ERROR:", err);
+    throw err;
   });
 }
 
@@ -105,7 +122,10 @@ function analizza() {
         return;
       }
       
-      callBackendPost("ocrLibretto", [base64, "libretto.jpg"])
+      callBackendPost("ocrLibretto", {
+        base64,
+        nomeFile: "libretto.jpg"
+      });
 
         .then(res => {
 
@@ -262,17 +282,9 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackendPost("salvaClienteEVeicolo", [dati])
-      .then(res => {
-
-        if (!res || res.status !== "OK") {
-          alert("Errore nel salvataggio");
-          return;
-        }
-
-        alert(res.message);
-
-      })
+    callBackendPost("salvaClienteEVeicolo", {
+      dati
+    });
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -2164,6 +2176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
