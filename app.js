@@ -158,6 +158,7 @@ function analizza() {
  * SALVATAGGIO
  ********************/
 function salva() {
+
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
@@ -168,26 +169,41 @@ function salva() {
     "targaCamera"
   );
 
-  // 🔴 nuovo cliente → OBBLIGATORI
-  if (!fileLibretto || !fileTarga) {
-    alert("Per un nuovo cliente servono libretto e foto targa");
+  // se NON hai file → salva comunque (cliente esistente)
+  if (!fileLibretto && !fileTarga) {
+    inviaSalvataggio("", "");
     return;
   }
 
   const readerLibretto = new FileReader();
+
   readerLibretto.onload = e => {
+
     const base64Libretto = e.target.result.split(",")[1];
 
+    if (!fileTarga) {
+      inviaSalvataggio(base64Libretto, "");
+      return;
+    }
+
     const readerTarga = new FileReader();
+
     readerTarga.onload = e2 => {
+
       const base64Targa = e2.target.result.split(",")[1];
       inviaSalvataggio(base64Libretto, base64Targa);
+
     };
 
     readerTarga.readAsDataURL(fileTarga);
+
   };
 
-  readerLibretto.readAsDataURL(fileLibretto);
+  if (fileLibretto) {
+    readerLibretto.readAsDataURL(fileLibretto);
+  } else {
+    inviaSalvataggio("", "");
+  }
 }
 
 /********************
@@ -2151,6 +2167,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
