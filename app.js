@@ -13,11 +13,7 @@ function callBackend(action, args = []) {
   return fetch(`${API_URL}?${params}`)
     .then(res => res.json())
     .then(data => {
-
-      if (data?.error) {
-        throw new Error(data.error);
-      }
-let cartellaUrl = "";
+      if (data?.error) throw new Error(data.error);
       return data;
     });
 }
@@ -116,10 +112,10 @@ function analizza() {
         return;
       }
       
-      callBackend("ocrLibretto", {
-        base64,
-        nomeFile: "libretto.jpg"
-      })
+      callBackend("ocrLibretto", [
+        { base64, nomeFile: "libretto.jpg" }
+      ])
+
         .then(res => {
 
           console.log("RISPOSTA OCR COMPLETA:", res);
@@ -243,7 +239,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackend("salvaClienteEVeicolo", dati)
+    callBackend("salvaClienteEVeicolo", [dati])
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -2173,6 +2169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
