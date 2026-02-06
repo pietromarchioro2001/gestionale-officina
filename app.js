@@ -25,16 +25,12 @@ function callBackendPost(action, payload = {}) {
     method: "POST",
     body: JSON.stringify({
       action,
-      ...payload
+      args: [payload]
     })
   })
   .then(res => res.json())
   .then(data => {
-
-    if (data?.error) {
-      throw new Error(data.error);
-    }
-
+    if (data?.error) throw new Error(data.error);
     return data;
   });
 }
@@ -2162,6 +2158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
