@@ -55,30 +55,6 @@ function callBackend(action, args = []) {
   });
 }
 
-
-function callBackendPost(action, payload = {}) {
-
-  return fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action,
-      args: [payload]
-    })
-  })
-  .then(res => res.json())
-  .then(data => {
-
-    if (data?.error) {
-      throw new Error(data.error);
-    }
-
-    return data;
-  });
-}
-
 function detectMobile() {
   const isMobile =
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
@@ -150,7 +126,7 @@ function analizza() {
         return;
       }
       
-      callBackendPost("ocrLibretto", [
+      callBackend("ocrLibretto", [
         { base64, nomeFile: "libretto.jpg" }
       ])
 
@@ -281,7 +257,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackendPost("salvaClienteEVeicolo", [dati])
+    callBackend("salvaClienteEVeicolo", [dati])
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -306,7 +282,7 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackendPost("cercaVeicolo_PROXY", [targaRicerca])
+  callBackend("cercaVeicolo_PROXY", [targa])
 
     .then(res => {
 
@@ -2211,6 +2187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
