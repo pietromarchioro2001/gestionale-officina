@@ -23,9 +23,6 @@ function callBackendPost(action, payload = {}) {
 
   return fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       action,
       args: [payload]
@@ -33,7 +30,11 @@ function callBackendPost(action, payload = {}) {
   })
   .then(res => res.json())
   .then(data => {
-    if (data?.error) throw new Error(data.error);
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
     return data;
   });
 }
@@ -2161,6 +2162,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
