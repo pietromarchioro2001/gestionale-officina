@@ -316,15 +316,15 @@ async function cercaVeicolo() {
     // LIBRETTO
     if (res.librettoUrl) {
       librettoLink.href = res.librettoUrl;
-      librettoLink.style.display = "inline-block";
+      librettoLink.classList.remove("hidden");
     } else {
-      librettoLink.style.display = "none";
+      librettoLink.classList.add("hidden");
     }
 
     // FOTO TARGA
     if (res.targaUrl) {
       targaLink.href = res.targaUrl;
-      targaLink.style.display = "inline-block";
+      targaLink.classList.remove("hidden");
     } else {
       targaLink.style.display = "none";
     }
@@ -2149,6 +2149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
