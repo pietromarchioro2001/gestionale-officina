@@ -270,7 +270,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
 /********************
  * RICERCA VEICOLO
  ********************/
-async function cercaVeicolo() {
+function cercaVeicolo() {
 
   const input = document.getElementById("ricercaTarga");
   const esito = document.getElementById("esitoRicerca");
@@ -2149,6 +2149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
