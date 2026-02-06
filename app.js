@@ -14,7 +14,10 @@ function callBackend(action, args = []) {
       delete window[callbackName];
       script.remove();
 
-      if (data?.error) reject(data.error);
+      if (data?.error) {
+        console.error("BACKEND ERROR:", data);
+        reject(data.error);
+      }
       else resolve(data);
     };
 
@@ -2191,6 +2194,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
