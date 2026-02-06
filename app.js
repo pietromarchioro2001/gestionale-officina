@@ -166,13 +166,13 @@ function analizza() {
  ********************/
 function salva() {
 
-  // ✔ se NON hai immagini → cliente esistente
-  if (!BASE64_LIBRETTO && !BASE64_TARGA) {
-    inviaSalvataggio("", "");
+  // 👇 CLIENTE ESISTENTE → file opzionali
+  if (clienteEsistente) {
+    inviaSalvataggio(BASE64_LIBRETTO || "", BASE64_TARGA || "");
     return;
   }
 
-  // ✔ nuovo cliente → obbligatori
+  // 👇 CLIENTE NUOVO → obbligatori
   if (!BASE64_LIBRETTO || !BASE64_TARGA) {
     alert("Per un nuovo cliente servono libretto e foto targa");
     return;
@@ -533,6 +533,7 @@ let sessioneAssistente = {
 };
 
 function resetClienti() {
+  clienteEsistente = false;
   BASE64_LIBRETTO = "";
   BASE64_TARGA = "";
 
@@ -2171,6 +2172,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
