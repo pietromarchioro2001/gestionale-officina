@@ -25,12 +25,16 @@ function callBackendPost(action, payload = {}) {
     method: "POST",
     body: JSON.stringify({
       action,
-      args: [payload]
+      ...payload
     })
   })
   .then(res => res.json())
   .then(data => {
-    if (data?.error) throw new Error(data.error);
+
+    if (data?.error) {
+      throw new Error(data.error);
+    }
+
     return data;
   });
 }
