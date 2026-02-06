@@ -8,19 +8,7 @@ function callBackend(action, args = []) {
   return new Promise((resolve, reject) => {
 
     const callbackName =
-      "cb_" + Math.random().toString(36).substring(2);
-
-    window[callbackName] = data => {
-      console.log("RISPOSTA BACKEND:", data); // 🔥 AGGIUNGI QUESTO
-      delete window[callbackName];
-      script.remove();
-
-      if (data?.error) {
-        console.error("BACKEND ERROR:", data);
-        reject(data.error);
-      }
-      else resolve(data);
-    };
+      "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
 
     const params = new URLSearchParams({
       action,
@@ -29,14 +17,32 @@ function callBackend(action, args = []) {
     });
 
     const script = document.createElement("script");
-    script.src = `${API_URL}?${params}`;
+
+    window[callbackName] = data => {
+
+      console.log("🔥 RISPOSTA BACKEND:", data);   // <<< QUESTO SERVE
+
+      delete window[callbackName];
+      script.remove();
+
+      if (!data || data.error) {
+        console.error("❌ BACKEND ERROR:", data);
+        reject(data?.error || "Errore backend");
+        return;
+      }
+
+      resolve(data);
+    };
 
     script.onerror = () => {
       delete window[callbackName];
-      reject("Errore backend");
+      script.remove();
+      reject("Errore rete / JSONP");
     };
 
+    script.src = `${API_URL}?${params}`;
     document.body.appendChild(script);
+
   });
 }
 
@@ -2195,6 +2201,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
