@@ -283,11 +283,10 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  try {
+  callBackend("cercaVeicolo_PROXY", [targa])
+  .then(res => {
 
-    const res = await callBackend("cercaVeicolo_PROXY", [targa]);
-
-    console.log("BACKEND RAW:", res);
+    console.log("RISPOSTA BACKEND:", res);
 
     if (!res || !res.veicolo) {
       esito.textContent = "Veicolo non trovato";
@@ -297,23 +296,28 @@ function cercaVeicolo() {
     const c = res.cliente || {};
     const v = res.veicolo || {};
 
-    // CLIENTE
-    document.getElementById("nome").value = c.nome || "";
-    document.getElementById("indirizzo").value = c.indirizzo || "";
-    document.getElementById("telefono").value = c.telefono || "";
-    document.getElementById("data").value = c.dataNascita || "";
-    document.getElementById("cf").value = c.codiceFiscale || "";
+    // ======================
+    // DATI CLIENTE
+    // ======================
+    nome.value = c.nome || "";
+    indirizzo.value = c.indirizzo || "";
+    telefono.value = c.telefono || "";
+    data.value = c.dataNascita || "";
+    cf.value = c.codiceFiscale || "";
 
-    // VEICOLO
-    document.getElementById("veicolo").value = v.veicolo || "";
-    document.getElementById("motore").value = v.motore || "";
-    document.getElementById("targa").value = v.targa || "";
-    document.getElementById("immatricolazione").value =
-      v.immatricolazione || "";
+    // ======================
+    // DATI VEICOLO
+    // ======================
+    veicolo.value = v.veicolo || "";
+    motore.value = v.motore || "";
+    targa.value = v.targa || "";
+    immatricolazione.value = v.immatricolazione || "";
 
     esito.textContent = "Veicolo trovato";
 
+    // ======================
     // LIBRETTO
+    // ======================
     if (res.librettoUrl) {
       librettoLink.href = res.librettoUrl;
       librettoLink.classList.remove("hidden");
@@ -321,31 +325,34 @@ function cercaVeicolo() {
       librettoLink.classList.add("hidden");
     }
 
-    // FOTO TARGA
+    // ======================
+    // TARGA
+    // ======================
     if (res.targaUrl) {
       targaLink.href = res.targaUrl;
       targaLink.classList.remove("hidden");
     } else {
-      targaLink.style.display = "none";
+      targaLink.classList.add("hidden");
     }
 
+    // ======================
     // CARTELLA CLIENTE
+    // ======================
     if (res.cartellaClienteUrl) {
-      btnCartellaCliente.style.display = "inline-block";
+      btnCartellaCliente.classList.remove("hidden");
       btnCartellaCliente.onclick = () =>
         window.open(res.cartellaClienteUrl, "_blank");
     } else {
-      btnCartellaCliente.style.display = "none";
+      btnCartellaCliente.classList.add("hidden");
     }
 
     clienteEsistente = true;
 
-  } catch (err) {
-
+  })
+  .catch(err => {
     console.error(err);
     esito.textContent = "Errore ricerca";
-
-  }
+  });
 }
 /********************
  * CONTATORE FILE (X file)
@@ -2149,6 +2156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
