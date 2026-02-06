@@ -19,15 +19,17 @@ let cartellaUrl = "";
     });
 }
 
-function callBackendPost(action, args = {}) {
+function callBackendPost(action, args = []) {
 
   return fetch(API_URL, {
     method: "POST",
-    body: JSON.stringify(
-      typeof args === "object"
-        ? { action, ...args }
-        : { action, args }
-    )
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action,
+      args
+    })
   })
   .then(res => res.json())
   .then(data => {
@@ -2167,6 +2169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
