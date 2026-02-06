@@ -116,7 +116,7 @@ function analizza() {
         return;
       }
       
-      callBackendPost("ocrLibretto", {
+      callBackend("ocrLibretto", {
         base64,
         nomeFile: "libretto.jpg"
       })
@@ -243,7 +243,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackendPost("salvaClienteEVeicolo", dati)
+    callBackend("salvaClienteEVeicolo", dati)
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -2173,6 +2173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
