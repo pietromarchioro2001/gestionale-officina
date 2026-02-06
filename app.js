@@ -23,9 +23,6 @@ function callBackendPost(action, args = []) {
 
   return fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
     body: JSON.stringify({
       action,
       args
@@ -2169,6 +2166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
