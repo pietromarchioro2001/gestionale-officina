@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycby4MsesaqM8us2WGVDU1zSjAiKpkueWByy6B7IZ624bs86bv7wasv1oNMs-yLXfMCCE/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzbfHZPT4iCskn12eJ1bGohI-WDWOeXs0yGcXAADWpbgx7MzK6U6VwBL2E_qabsxD2w/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -117,6 +117,10 @@ function analizza() {
       ])
 
         .then(res => {
+          if (!res.ok) {
+            alert(res.error || "Errore OCR");
+            return;
+          }
 
           console.log("RISPOSTA OCR COMPLETA:", res);
         
@@ -2169,6 +2173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
