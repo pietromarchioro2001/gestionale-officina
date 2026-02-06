@@ -1,5 +1,8 @@
 const API_URL = "https://script.google.com/macros/s/AKfycby4MsesaqM8us2WGVDU1zSjAiKpkueWByy6B7IZ624bs86bv7wasv1oNMs-yLXfMCCE/exec";
 
+let BASE64_LIBRETTO = "";
+let BASE64_TARGA = "";
+
 function callBackend(action, args = []) {
 
   const params = new URLSearchParams({
@@ -104,6 +107,7 @@ function analizza() {
     try {
 
       const base64 = e.target.result.split(",")[1];
+      BASE64_LIBRETTO = base64;
       if (!base64) {
         alert("Errore lettura immagine");
         return;
@@ -162,51 +166,19 @@ function analizza() {
  ********************/
 function salva() {
 
-  const fileLibretto = getFileFromInputs(
-    "librettoGallery",
-    "librettoCamera"
-  );
-
-  const fileTarga = getFileFromInputs(
-    "targaGallery",
-    "targaCamera"
-  );
-
-  // se NON hai file → salva comunque (cliente esistente)
-  if (!fileLibretto && !fileTarga) {
+  // ✔ se NON hai immagini → cliente esistente
+  if (!BASE64_LIBRETTO && !BASE64_TARGA) {
     inviaSalvataggio("", "");
     return;
   }
 
-  const readerLibretto = new FileReader();
-
-  readerLibretto.onload = e => {
-
-    const base64Libretto = e.target.result.split(",")[1];
-
-    if (!fileTarga) {
-      inviaSalvataggio(base64Libretto, "");
-      return;
-    }
-
-    const readerTarga = new FileReader();
-
-    readerTarga.onload = e2 => {
-
-      const base64Targa = e2.target.result.split(",")[1];
-      inviaSalvataggio(base64Libretto, base64Targa);
-
-    };
-
-    readerTarga.readAsDataURL(fileTarga);
-
-  };
-
-  if (fileLibretto) {
-    readerLibretto.readAsDataURL(fileLibretto);
-  } else {
-    inviaSalvataggio("", "");
+  // ✔ nuovo cliente → obbligatori
+  if (!BASE64_LIBRETTO || !BASE64_TARGA) {
+    alert("Per un nuovo cliente servono libretto e foto targa");
+    return;
   }
+
+  inviaSalvataggio(BASE64_LIBRETTO, BASE64_TARGA);
 }
 
 /********************
@@ -429,17 +401,51 @@ document.addEventListener("DOMContentLoaded", () => {
 });
   targaGallery.addEventListener("change", e => {
 
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    // 🔥 SALVA BASE64
+    const reader = new FileReader();
+  
+    reader.onload = ev => {
+      BASE64_TARGA = ev.target.result.split(",")[1];
+      console.log("BASE64_TARGA salvata");
+    };
+  
+    reader.readAsDataURL(file);
+  
+    // preview
+    const url = URL.createObjectURL(file);
+  
+    const btnView = document.getElementById("targaLink");
+    btnView.classList.remove("hidden");
+  
+    btnView.onclick = () => window.open(url);
+  
+  });
+  targaCamera.addEventListener("change", e => {
 
-  const url = URL.createObjectURL(file);
+    const file = e.target.files[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+  
+    reader.onload = ev => {
+      BASE64_TARGA = ev.target.result.split(",")[1];
+      console.log("BASE64_TARGA salvata");
+    };
+  
+    reader.readAsDataURL(file);
+  
+    const url = URL.createObjectURL(file);
+  
+    const btnView = document.getElementById("targaLink");
+    btnView.classList.remove("hidden");
+  
+    btnView.onclick = () => window.open(url);
+  
+  });
 
-  const btnView = document.getElementById("targaLink");
-  btnView.classList.remove("hidden");
-
-  btnView.onclick = () => window.open(url);
-
-});
   altriDocumenti.addEventListener("change", e => {
 
   const count = e.target.files.length;
@@ -527,6 +533,9 @@ let sessioneAssistente = {
 };
 
 function resetClienti() {
+  BASE64_LIBRETTO = "";
+  BASE64_TARGA = "";
+
   // 🔹 svuota tutti gli input testuali
   document
     .querySelectorAll("#clienti input:not([type='file'])")
@@ -2162,6 +2171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
