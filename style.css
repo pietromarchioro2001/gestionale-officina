@@ -2195,7 +2195,7 @@ button.riprendi:hover {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 .file-btn-camera {
@@ -2238,6 +2238,7 @@ button.riprendi:hover {
 .page#ordini {
   flex-direction: column;
 }
+
 
 
 
