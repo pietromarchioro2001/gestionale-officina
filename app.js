@@ -11,6 +11,7 @@ function callBackend(action, args = []) {
       "cb_" + Math.random().toString(36).substring(2);
 
     window[callbackName] = data => {
+      console.log("RISPOSTA BACKEND:", data); // 🔥 AGGIUNGI QUESTO
       delete window[callbackName];
       script.remove();
 
@@ -2194,6 +2195,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
