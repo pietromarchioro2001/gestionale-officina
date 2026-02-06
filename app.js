@@ -125,7 +125,7 @@ function analizza() {
       callBackendPost("ocrLibretto", {
         base64,
         nomeFile: "libretto.jpg"
-      });
+      })
 
         .then(res => {
 
@@ -2176,6 +2176,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
