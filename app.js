@@ -14,7 +14,7 @@ function callBackend(action, args = []) {
       if (data?.error) {
         throw new Error(data.error);
       }
-
+let cartellaUrl = "";
       return data;
     });
 }
@@ -322,16 +322,18 @@ function cercaVeicolo() {
       // ======================
       const btnCartellaCliente = document.getElementById("btnCartellaCliente");
 
-      if (v.cartella) {
-
+      if (res.cartellaClienteUrl) {
+      
         btnCartellaCliente.classList.remove("hidden");
-
+      
         btnCartellaCliente.onclick = () => {
-          window.open(v.cartella, "_blank");
+          window.open(res.cartellaClienteUrl, "_blank");
         };
-
+      
       } else {
+      
         btnCartellaCliente.classList.add("hidden");
+      
       }
 
       clienteEsistente = true;
@@ -2147,6 +2149,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
