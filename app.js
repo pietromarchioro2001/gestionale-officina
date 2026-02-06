@@ -18,15 +18,22 @@ function callBackend(action, args = []) {
 
     const script = document.createElement("script");
 
+    // 🔥 timeout sicurezza (evita freeze)
+    const timeout = setTimeout(() => {
+      delete window[callbackName];
+      script.remove();
+      reject("Timeout backend");
+    }, 15000);
+
     window[callbackName] = data => {
 
-      console.log("🔥 RISPOSTA BACKEND:", data);   // <<< QUESTO SERVE
+      clearTimeout(timeout);
 
       delete window[callbackName];
       script.remove();
 
       if (!data || data.error) {
-        console.error("❌ BACKEND ERROR:", data);
+        console.error("BACKEND ERROR:", data);
         reject(data?.error || "Errore backend");
         return;
       }
@@ -35,16 +42,19 @@ function callBackend(action, args = []) {
     };
 
     script.onerror = () => {
+      clearTimeout(timeout);
       delete window[callbackName];
       script.remove();
-      reject("Errore rete / JSONP");
+      reject("Errore rete JSONP");
     };
 
     script.src = `${API_URL}?${params}`;
+
     document.body.appendChild(script);
 
   });
 }
+
 
 function callBackendPost(action, payload = {}) {
 
@@ -2201,6 +2211,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
