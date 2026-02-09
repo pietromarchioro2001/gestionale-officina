@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwzuoe5CIC7MzOTwhVbqFjxBu2nMXGsmyXUg9E0KxlFOtns6LqmAdc7HzuayqaIxLtH/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxG0PB0FlH_aSuNH_bQdTe5wU5S0iKcLhMHwcMTqb8cY_I34k3kZ9ZmrbEZpldjuhJX/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -55,7 +55,13 @@ function callBackend(action, args = []) {
   });
 }
 
-function callBackendPost(action, payload = {}) {
+function callBackendPost(action, payload = null) {
+
+  let args;
+
+  if (payload === null) args = [];
+  else if (Array.isArray(payload)) args = payload;
+  else args = [payload];
 
   return fetch(API_URL, {
     method: "POST",
@@ -64,7 +70,7 @@ function callBackendPost(action, payload = {}) {
     },
     body: JSON.stringify({
       action,
-      args: [payload]
+      args
     })
   })
   .then(res => {
@@ -294,7 +300,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackendPost("salvaClienteEVeicolo", [dati])
+    callBackendPost("salvaClienteEVeicolo", dati)
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -319,7 +325,7 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackendPost("cercaVeicolo_PROXY", [targaRicerca])
+  callBackendPost("cercaVeicolo_PROXY", targaRicerca)
 
     .then(res => {
 
@@ -2213,6 +2219,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
