@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzM6MWYD6259cckHHJBZ2hMv2F42CwpDjPYqh8FlRlIUvFiI4VGZb7y8wlV4_k-JNyT/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzdnwIdm2tLWGtnNRNTukUc7Ib05otVEsPfhHmOZtNAqz3e1T6ccZUR1qtbVDoKKPqj/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -162,7 +162,7 @@ function analizza() {
       }
 
       // 🔥 STEP 1 — Upload su Drive
-      callBackend("uploadFileDrive", [base64, "libretto.jpg"])
+      callBackend("uploadFileDrive", [base64, "libretto.jpg", "image/jpeg"])
 
         .then(uploadRes => {
 
@@ -2219,6 +2219,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
