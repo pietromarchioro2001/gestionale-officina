@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzzQ7960j_qjun0qsHcSdSyvADWkwVx20qW3m2Ex4364bcofuDnX30KcPoRcKxhnAOd/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyHb4ccsnzOrWtAjl3RiyT7BgdS5iQpepuxgixqIeoomGcrvOVo-a4nJS8DsGEtC_tz/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -2213,4 +2213,5 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
