@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxcIVeXKAE6B80dCiz_u92hEpvcEqUIvjhupYcP3u9RYdCubNNHFEkLwkLyHlBGDzk0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzzQ7960j_qjun0qsHcSdSyvADWkwVx20qW3m2Ex4364bcofuDnX30KcPoRcKxhnAOd/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -127,6 +127,7 @@ let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
 function analizza() {
+
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
@@ -138,7 +139,7 @@ function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  if (statoEl) statoEl.textContent = "Analisi in corso...";
+  if (statoEl) statoEl.textContent = "Caricamento immagine...";
 
   const reader = new FileReader();
 
@@ -148,38 +149,47 @@ function analizza() {
 
       const base64 = e.target.result.split(",")[1];
       BASE64_LIBRETTO = base64;
+
       if (!base64) {
         alert("Errore lettura immagine");
         return;
       }
-      
-      callBackendPost("ocrLibretto", [
-        { base64, nomeFile: "libretto.jpg" }
-      ])
 
-        .then(res => {
-          if (!res.ok) {
-            alert(res.error || "Errore OCR");
-            return;
+      // 🔥 STEP 1 — Upload su Drive
+      callBackend("uploadFileDrive", [base64, "libretto.jpg"])
+
+        .then(uploadRes => {
+
+          if (!uploadRes.ok) {
+            throw new Error("Upload fallito");
           }
 
-          console.log("RISPOSTA OCR COMPLETA:", res);
-        
+          const fileId = uploadRes.fileId;
+
+          if (statoEl) statoEl.textContent = "Analisi OCR...";
+
+          // 🔥 STEP 2 — OCR dal file Drive
+          return callBackend("ocrLibrettoDaFile", [fileId]);
+        })
+
+        .then(res => {
+
+          console.log("RISPOSTA OCR:", res);
+
           const dati = res?.datiOCR || {};
-          console.log("DATI OCR:", dati);
-        
+
           document.getElementById("nome").value = dati.nomeCliente || "";
           document.getElementById("indirizzo").value = dati.indirizzo || "";
           document.getElementById("telefono").value = "";
           document.getElementById("data").value = dati.dataNascita || "";
           document.getElementById("cf").value = dati.codiceFiscale || "";
-        
+
           document.getElementById("veicolo").value = dati.veicolo || "";
           document.getElementById("motore").value = dati.motore || "";
           document.getElementById("targa").value = dati.targa || "";
           document.getElementById("immatricolazione").value =
             dati.immatricolazione || "";
-        
+
           if (statoEl) statoEl.textContent = "Dati caricati";
         })
 
@@ -309,7 +319,7 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackendPost("cercaVeicolo_PROXY", [targa])
+  callBackendPost("cercaVeicolo_PROXY", [targaRicerca])
 
     .then(res => {
 
@@ -441,52 +451,6 @@ document.addEventListener("DOMContentLoaded", () => {
   btnView.onclick = () => window.open(url);
 
 });
-  targaGallery.addEventListener("change", e => {
-
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    // 🔥 SALVA BASE64
-    const reader = new FileReader();
-  
-    reader.onload = ev => {
-      BASE64_TARGA = ev.target.result.split(",")[1];
-      console.log("BASE64_TARGA salvata");
-    };
-  
-    reader.readAsDataURL(file);
-  
-    // preview
-    const url = URL.createObjectURL(file);
-  
-    const btnView = document.getElementById("targaLink");
-    btnView.classList.remove("hidden");
-  
-    btnView.onclick = () => window.open(url);
-  
-  });
-  targaCamera.addEventListener("change", e => {
-
-    const file = e.target.files[0];
-    if (!file) return;
-  
-    const reader = new FileReader();
-  
-    reader.onload = ev => {
-      BASE64_TARGA = ev.target.result.split(",")[1];
-      console.log("BASE64_TARGA salvata");
-    };
-  
-    reader.readAsDataURL(file);
-  
-    const url = URL.createObjectURL(file);
-  
-    const btnView = document.getElementById("targaLink");
-    btnView.classList.remove("hidden");
-  
-    btnView.onclick = () => window.open(url);
-  
-  });
 
   altriDocumenti.addEventListener("change", e => {
 
@@ -506,6 +470,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   bindFileCount("targaGallery", "targaCount", "targaLink");
   bindFileCount("targaCamera", "targaCount", "targaLink");
+
+  gestisciUploadTarga("targaGallery");
+  gestisciUploadTarga("targaCamera");
 
   bindFileCount("altriDocumenti", "altriCount");
 
@@ -573,6 +540,38 @@ let sessioneAssistente = {
 
   valoriEsistenti: {}
 };
+
+function gestisciUploadTarga(inputId) {
+
+  const input = document.getElementById(inputId);
+  if (!input) return;
+
+  input.addEventListener("change", e => {
+
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 🔥 salva BASE64
+    const reader = new FileReader();
+
+    reader.onload = ev => {
+      BASE64_TARGA = ev.target.result.split(",")[1];
+      console.log("BASE64_TARGA salvata");
+    };
+
+    reader.readAsDataURL(file);
+
+    // preview
+    const url = URL.createObjectURL(file);
+
+    const btnView = document.getElementById("targaLink");
+    btnView.classList.remove("hidden");
+
+    btnView.onclick = () => window.open(url);
+
+  });
+}
+
 
 function resetClienti() {
   clienteEsistente = false;
@@ -2214,94 +2213,4 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
