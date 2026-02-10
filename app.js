@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzdnwIdm2tLWGtnNRNTukUc7Ib05otVEsPfhHmOZtNAqz3e1T6ccZUR1qtbVDoKKPqj/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzM_rPIr_NXQggMQxoZQ3zb2nnMyJi6UnmdnwnOnVEwsQt0VEjSN37veTTU6KAv5SqB/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -1904,7 +1904,7 @@ function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   if (!box) return;
 
-  callBackend("getAppuntamentiOggi")
+  callBackendPost("getAppuntamentiOggi")
     .then(res => {
 
       const eventi = Array.isArray(res)
@@ -2219,6 +2219,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
