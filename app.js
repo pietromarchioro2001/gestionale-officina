@@ -3,80 +3,48 @@ const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzXrrp4gnNKMZhSDiQ_
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
 
-function callBackend(action, args = [], options = {}) {
-
-  const timeoutMs = options.timeout || 15000;
+function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    if (!Array.isArray(args)) {
-      args = [args];
-    }
-
-    const callbackName =
-      "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+    const callbackName = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
 
     const script = document.createElement("script");
 
-    let timeoutId;
-
-    // ===== CALLBACK SUCCESS =====
-    window[callbackName] = data => {
-
-      clearTimeout(timeoutId);
-
-      try {
-        delete window[callbackName];
-        script.remove();
-      } catch (e) {}
-
-      // 🔥 gestione error standard Apps Script
-      if (data?.error) {
-        console.error("Backend error:", data.error);
-        reject(new Error(data.error));
-        return;
-      }
+    window[callbackName] = function(data) {
 
       resolve(data);
+
+      delete window[callbackName];
+
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
     };
 
-    // ===== ERROR RETE =====
-    script.onerror = () => {
+    script.onerror = function() {
 
-      clearTimeout(timeoutId);
+      reject("Errore rete JSONP");
 
-      try {
-        delete window[callbackName];
-        script.remove();
-      } catch (e) {}
+      delete window[callbackName];
 
-      reject(new Error("Errore rete JSONP"));
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+
     };
 
-    // ===== TIMEOUT =====
-    timeoutId = setTimeout(() => {
-
-      try {
-        delete window[callbackName];
-        script.remove();
-      } catch (e) {}
-
-      reject(new Error("Timeout backend"));
-    }, timeoutMs);
-
-    // ===== COSTRUZIONE URL =====
-    const url =
+    script.src =
       BACKEND_URL +
       "?action=" + encodeURIComponent(action) +
       "&args=" + encodeURIComponent(JSON.stringify(args)) +
       "&callback=" + callbackName;
 
-    console.log("📡 CALL BACKEND:", action, args);
-
-    script.src = url;
-
     document.body.appendChild(script);
+
   });
+
 }
 
 function detectMobile() {
@@ -2203,6 +2171,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
