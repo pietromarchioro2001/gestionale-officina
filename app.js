@@ -1,4 +1,4 @@
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzJtlS2DAHHZkgkm3zHxIqW4HPu7EIBZT0mmPblNatH7cJpvbE4MvAqb005GSFBfxVP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzJtlS2DAHHZkgkm3zHxIqW4HPu7EIBZT0mmPblNatH7cJpvbE4MvAqb005GSFBfxVP/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -13,18 +13,15 @@ function callBackend(action, args = []) {
     const callbackName = "cb_" + Math.random().toString(36).substring(2);
 
     window[callbackName] = function(data) {
-      try {
-        resolve(data);
-      } finally {
-        delete window[callbackName];
-        script.remove();
-      }
+      resolve(data);
+      delete window[callbackName];
+      script.remove();
     };
 
     const script = document.createElement("script");
 
     script.src =
-      BACKEND_URL +
+      API_URL +   // 👈 QUESTO è corretto
       "?action=" + encodeURIComponent(action) +
       "&args=" + encodeURIComponent(JSON.stringify(args)) +
       "&callback=" + callbackName;
@@ -2161,6 +2158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
