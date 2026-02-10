@@ -1,38 +1,82 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzXrrp4gnNKMZhSDiQ_pptG47EXFUv7k4v2WopxMxT1EjDCSBc_BHnva8quChObEX8Q/exec";
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzXrrp4gnNKMZhSDiQ_pptG47EXFUv7k4v2WopxMxT1EjDCSBc_BHnva8quChObEX8Q/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
 
-function callBackend(action, args = []) {
+function callBackend(action, args = [], options = {}) {
+
+  const timeoutMs = options.timeout || 15000;
 
   return new Promise((resolve, reject) => {
 
-    const callbackName = "cb_" + Date.now();
+    if (!Array.isArray(args)) {
+      args = [args];
+    }
 
-    window[callbackName] = data => {
-      resolve(data);
-      delete window[callbackName];
-      script.remove();
-    };
+    const callbackName =
+      "cb_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
 
     const script = document.createElement("script");
 
-    script.src =
+    let timeoutId;
+
+    // ===== CALLBACK SUCCESS =====
+    window[callbackName] = data => {
+
+      clearTimeout(timeoutId);
+
+      try {
+        delete window[callbackName];
+        script.remove();
+      } catch (e) {}
+
+      // 🔥 gestione error standard Apps Script
+      if (data?.error) {
+        console.error("Backend error:", data.error);
+        reject(new Error(data.error));
+        return;
+      }
+
+      resolve(data);
+    };
+
+    // ===== ERROR RETE =====
+    script.onerror = () => {
+
+      clearTimeout(timeoutId);
+
+      try {
+        delete window[callbackName];
+        script.remove();
+      } catch (e) {}
+
+      reject(new Error("Errore rete JSONP"));
+    };
+
+    // ===== TIMEOUT =====
+    timeoutId = setTimeout(() => {
+
+      try {
+        delete window[callbackName];
+        script.remove();
+      } catch (e) {}
+
+      reject(new Error("Timeout backend"));
+    }, timeoutMs);
+
+    // ===== COSTRUZIONE URL =====
+    const url =
       BACKEND_URL +
-      "?action=" + action +
+      "?action=" + encodeURIComponent(action) +
       "&args=" + encodeURIComponent(JSON.stringify(args)) +
       "&callback=" + callbackName;
 
-    script.onerror = () => {
-      reject("Errore rete JSONP");
-      delete window[callbackName];
-      script.remove();
-    };
+    console.log("📡 CALL BACKEND:", action, args);
+
+    script.src = url;
 
     document.body.appendChild(script);
-
   });
-
 }
 
 function detectMobile() {
@@ -92,77 +136,44 @@ function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  if (statoEl) statoEl.textContent = "Caricamento immagine...";
+  statoEl.textContent = "Analisi OCR...";
 
   const reader = new FileReader();
 
   reader.onload = e => {
 
-    try {
+    const base64 = e.target.result.split(",")[1];
+    BASE64_LIBRETTO = base64;
 
-      const base64 = e.target.result.split(",")[1];
-      BASE64_LIBRETTO = base64;
+    callBackend("ocrLibretto", [{ base64 }])
 
-      if (!base64) {
-        alert("Errore lettura immagine");
-        return;
-      }
+      .then(res => {
 
-      // 🔥 STEP 1 — Upload su Drive
-      callBackend("uploadFileDrive", [base64, "libretto.jpg", "image/jpeg"])
+        if (!res.ok) {
+          throw new Error(res.error || "OCR fallito");
+        }
 
-        .then(uploadRes => {
+        const dati = res.datiOCR || {};
 
-          if (!uploadRes.ok) {
-            throw new Error("Upload fallito");
-          }
+        document.getElementById("nome").value = dati.nomeCliente || "";
+        document.getElementById("indirizzo").value = dati.indirizzo || "";
+        document.getElementById("data").value = dati.dataNascita || "";
+        document.getElementById("cf").value = dati.codiceFiscale || "";
 
-          const fileId = uploadRes.fileId;
+        document.getElementById("veicolo").value = dati.veicolo || "";
+        document.getElementById("motore").value = dati.motore || "";
+        document.getElementById("targa").value = dati.targa || "";
+        document.getElementById("immatricolazione").value =
+          dati.immatricolazione || "";
 
-          if (statoEl) statoEl.textContent = "Analisi OCR...";
+        statoEl.textContent = "Dati caricati";
+      })
 
-          // 🔥 STEP 2 — OCR dal file Drive
-          return callBackend("ocrLibrettoDaFile", [fileId]);
-        })
+      .catch(err => {
+        console.error(err);
+        statoEl.textContent = "Errore OCR";
+      });
 
-        .then(res => {
-
-          console.log("RISPOSTA OCR:", res);
-
-          const dati = res?.datiOCR || {};
-
-          document.getElementById("nome").value = dati.nomeCliente || "";
-          document.getElementById("indirizzo").value = dati.indirizzo || "";
-          document.getElementById("telefono").value = "";
-          document.getElementById("data").value = dati.dataNascita || "";
-          document.getElementById("cf").value = dati.codiceFiscale || "";
-
-          document.getElementById("veicolo").value = dati.veicolo || "";
-          document.getElementById("motore").value = dati.motore || "";
-          document.getElementById("targa").value = dati.targa || "";
-          document.getElementById("immatricolazione").value =
-            dati.immatricolazione || "";
-
-          if (statoEl) statoEl.textContent = "Dati caricati";
-        })
-
-        .catch(err => {
-
-          console.error("Errore OCR:", err);
-
-          if (statoEl) statoEl.textContent = "Errore OCR";
-        });
-
-    } catch (err) {
-
-      console.error("Errore lettura base64:", err);
-
-      if (statoEl) statoEl.textContent = "Errore lettura file";
-    }
-  };
-
-  reader.onerror = () => {
-    if (statoEl) statoEl.textContent = "Errore lettura file";
   };
 
   reader.readAsDataURL(fileLibretto);
@@ -247,7 +258,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackend("salvaClienteEVeicolo", dati)
+    callBackend("salvaClienteEVeicolo", [dati])
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -2166,6 +2177,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
