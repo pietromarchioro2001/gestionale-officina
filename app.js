@@ -83,19 +83,19 @@ let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
 function analizza() {
-  console.log("BASE64 LENGTH:", base64.length);
+
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
   );
 
   if (!fileLibretto) {
-    alert("Seleziona o fotografa il libretto");
+    alert("Seleziona libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
-  if (statoEl) statoEl.textContent = "Caricamento libretto...";
+  statoEl.textContent = "Upload libretto...";
 
   const reader = new FileReader();
 
@@ -104,28 +104,21 @@ function analizza() {
     const base64 = e.target.result.split(",")[1];
     BASE64_LIBRETTO = base64;
 
-    // 🔥 STEP 1 — Upload temporaneo su Drive
-    callBackend("uploadTempFile", [base64, "libretto_temp.jpg", "image/jpeg"])
+    // STEP 1 Upload
+    callBackend("uploadTempFile", [base64, "libretto.jpg", "image/jpeg"])
 
       .then(uploadRes => {
 
-        if (!uploadRes?.fileId) {
-          throw new Error("Upload temporaneo fallito");
-        }
+        if (!uploadRes.ok) throw new Error("Upload fallito");
 
-        TEMP_LIBRETTO_ID = uploadRes.fileId;
+        statoEl.textContent = "OCR in corso...";
 
-        if (statoEl) statoEl.textContent = "Analisi OCR...";
-
-        // 🔥 STEP 2 — OCR usando file ID
-        return callBackend("ocrLibrettoDaFile", [TEMP_LIBRETTO_ID]);
+        return callBackend("ocrLibrettoDaFile", [uploadRes.fileId]);
       })
 
       .then(res => {
 
-        if (!res?.ok) {
-          throw new Error(res?.error || "OCR fallito");
-        }
+        if (!res.ok) throw new Error("OCR fallito");
 
         const dati = res.datiOCR || {};
 
@@ -140,15 +133,14 @@ function analizza() {
         document.getElementById("immatricolazione").value =
           dati.immatricolazione || "";
 
-        if (statoEl) statoEl.textContent = "Dati caricati";
+        statoEl.textContent = "OCR completato";
       })
 
       .catch(err => {
-
-        console.error("OCR ERROR:", err);
-
-        if (statoEl) statoEl.textContent = "Errore OCR";
+        console.error(err);
+        statoEl.textContent = "Errore OCR";
       });
+
   };
 
   reader.readAsDataURL(fileLibretto);
@@ -2158,6 +2150,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
