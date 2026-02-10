@@ -7,85 +7,32 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const callbackName =
-      "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1000);
+    const callbackName = "cb_" + Date.now();
 
-    const params = new URLSearchParams({
-      action,
-      args: JSON.stringify(args),
-      callback: callbackName
-    });
+    window[callbackName] = data => {
+      resolve(data);
+      delete window[callbackName];
+      script.remove();
+    };
 
     const script = document.createElement("script");
 
-    // 🔥 timeout sicurezza (evita freeze)
-    const timeout = setTimeout(() => {
-      delete window[callbackName];
-      script.remove();
-      reject("Timeout backend");
-    }, 15000);
-
-    window[callbackName] = data => {
-
-      clearTimeout(timeout);
-
-      delete window[callbackName];
-      script.remove();
-
-      if (!data || data.error) {
-        console.error("BACKEND ERROR:", data);
-        reject(data?.error || "Errore backend");
-        return;
-      }
-
-      resolve(data);
-    };
+    script.src =
+      BACKEND_URL +
+      "?action=" + action +
+      "&args=" + encodeURIComponent(JSON.stringify(args)) +
+      "&callback=" + callbackName;
 
     script.onerror = () => {
-      clearTimeout(timeout);
+      reject("Errore rete JSONP");
       delete window[callbackName];
       script.remove();
-      reject("Errore rete JSONP");
     };
-
-    script.src = `${API_URL}?${params}`;
 
     document.body.appendChild(script);
 
   });
-}
 
-function callBackendPost(action, payload = null) {
-
-  let args;
-
-  if (payload === null) args = [];
-  else if (Array.isArray(payload)) args = payload;
-  else args = [payload];
-
-  return fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action,
-      args
-    })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error("Errore rete POST");
-    return res.json();
-  })
-  .then(data => {
-
-    if (!data || data.error) {
-      console.error("BACKEND POST ERROR:", data);
-      throw new Error(data?.error || "Errore backend POST");
-    }
-
-    return data;
-  });
 }
 
 function detectMobile() {
@@ -300,7 +247,7 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       altriDocumenti: altriFiles
     };
 
-    callBackendPost("salvaClienteEVeicolo", dati)
+    callBackend("salvaClienteEVeicolo", dati)
       .catch(err => {
         alert(err?.message || "Errore nel salvataggio");
       });
@@ -325,7 +272,7 @@ function cercaVeicolo() {
 
   esito.textContent = "Ricerca in corso...";
 
-  callBackendPost("cercaVeicolo_PROXY", targaRicerca)
+  callBackend("cercaVeicolo_PROXY", targaRicerca)
 
     .then(res => {
 
@@ -1904,7 +1851,7 @@ function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   if (!box) return;
 
-  callBackendPost("getAppuntamentiOggi")
+  callBackend("getAppuntamentiOggi")
     .then(res => {
 
       const eventi = Array.isArray(res)
@@ -2219,6 +2166,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
