@@ -136,22 +136,43 @@ function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Analisi OCR...";
+  statoEl.textContent = "Caricamento immagine...";
 
   const reader = new FileReader();
 
   reader.onload = e => {
 
-    const base64 = e.target.result.split(",")[1];
-    BASE64_LIBRETTO = base64;
+    try {
 
-    callBackend("ocrLibretto", [{ base64 }])
+      const base64 = e.target.result.split(",")[1];
+      BASE64_LIBRETTO = base64;
+
+      if (!base64) throw new Error("Base64 vuoto");
+
+      // STEP 1 → Upload su Drive
+      callBackend("uploadFileDrive", [
+        base64,
+        "libretto.jpg",
+        "image/jpeg"
+      ])
+
+      .then(uploadRes => {
+
+        if (!uploadRes.ok)
+          throw new Error("Upload fallito");
+
+        statoEl.textContent = "Analisi OCR...";
+
+        // STEP 2 → OCR dal file
+        return callBackend("ocrLibrettoDaFile", [
+          uploadRes.fileId
+        ]);
+      })
 
       .then(res => {
 
-        if (!res.ok) {
+        if (!res.ok)
           throw new Error(res.error || "OCR fallito");
-        }
 
         const dati = res.datiOCR || {};
 
@@ -170,10 +191,14 @@ function analizza() {
       })
 
       .catch(err => {
-        console.error(err);
+        console.error("OCR ERROR:", err);
         statoEl.textContent = "Errore OCR";
       });
 
+    } catch (err) {
+      console.error(err);
+      statoEl.textContent = "Errore lettura file";
+    }
   };
 
   reader.readAsDataURL(fileLibretto);
@@ -2177,6 +2202,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
