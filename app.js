@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzTnEvztLztK_iSTwfXykfWG7b82b2_mU5Gv3K2JbP5ZEiqrbbJowy6S_GEMbZY5bYm/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw2cGJjrpQETCtduikaEOWQM2TNsE75BZYnLq-ARhZFsOmLghsGJALWDAjEj5W0HxBV/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -55,40 +55,40 @@ function uploadFilePOST(base64, nomeFile, mimeType) {
   .then(r => r.json());
 }
 
-function uploadBase64JSONP(base64, nomeFile, mimeType) {
+async function uploadBase64JSONP(base64, nomeFile, mimeType) {
 
-  const CHUNK = 50000; // dimensione sicura URL
+  const CHUNK = 45000;
+
   const parts = [];
 
   for (let i = 0; i < base64.length; i += CHUNK) {
-    parts.push(base64.substring(i, i + CHUNK));
+    parts.push(base64.slice(i, i + CHUNK));
   }
 
-  let uploadId = null;
+  /* START upload */
+  const start = await callBackend(
+    "uploadTempStart",
+    [nomeFile, mimeType]
+  );
 
-  return new Promise(async (resolve, reject) => {
+  if (!start.ok) throw new Error("upload start fallito");
 
-    try {
+  const uploadId = start.uploadId;
 
-      // STEP A — start upload
-      const start = await callBackend("uploadTempStart", [nomeFile, mimeType]);
-      uploadId = start.uploadId;
+  /* INVIO CHUNK */
+  for (const part of parts) {
 
-      // STEP B — invia chunk
-      for (let i = 0; i < parts.length; i++) {
-        await callBackend("uploadTempChunk", [uploadId, parts[i], i]);
-      }
+    await callBackend("uploadTempChunk", [uploadId, part]);
 
-      // STEP C — finalizza
-      const end = await callBackend("uploadTempEnd", [uploadId]);
+    /* pausa anti-timeout */
+    await new Promise(r => setTimeout(r, 120));
+  }
 
-      resolve(end);
-
-    } catch (err) {
-      reject(err);
-    }
-
-  });
+  /* END upload */
+  return await callBackend(
+    "uploadTempEnd",
+    [uploadId, nomeFile, mimeType]
+  );
 }
 
 function detectMobile() {
@@ -137,12 +137,12 @@ let rispostaInElaborazione = false;
 
 function analizza() {
 
-  const fileLibretto = getFileFromInputs(
+  const file = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
   );
 
-  if (!fileLibretto) {
+  if (!file) {
     alert("Seleziona libretto");
     return;
   }
@@ -152,49 +152,54 @@ function analizza() {
 
   const reader = new FileReader();
 
-  reader.onload = e => {
+  reader.onload = async e => {
 
-    const base64 = e.target.result.split(",")[1];
-    BASE64_LIBRETTO = base64;
+    try {
 
-    /* STEP 1 — upload POST */
-    uploadBase64JSONP(base64, "libretto.jpg", "image/jpeg")
+      const base64 = e.target.result.split(",")[1];
 
-    .then(upload => {
-  
+      BASE64_LIBRETTO = base64;
+
+      const upload = await uploadBase64JSONP(
+        base64,
+        "libretto.jpg",
+        "image/jpeg"
+      );
+
       TEMP_LIBRETTO_ID = upload.fileId;
-  
-      return callBackend("ocrLibrettoDaFile", [upload.fileId]);
-    })
 
-      .then(res => {
+      statoEl.textContent = "OCR in corso...";
 
-        if (!res.ok) throw new Error("OCR fallito");
+      const res = await callBackend(
+        "ocrLibrettoDaFile",
+        [upload.fileId]
+      );
 
-        const dati = res.datiOCR || {};
+      const dati = res?.datiOCR || {};
 
-        document.getElementById("nome").value = dati.nomeCliente || "";
-        document.getElementById("indirizzo").value = dati.indirizzo || "";
-        document.getElementById("data").value = dati.dataNascita || "";
-        document.getElementById("cf").value = dati.codiceFiscale || "";
+      document.getElementById("nome").value = dati.nomeCliente || "";
+      document.getElementById("indirizzo").value = dati.indirizzo || "";
+      document.getElementById("data").value = dati.dataNascita || "";
+      document.getElementById("cf").value = dati.codiceFiscale || "";
 
-        document.getElementById("veicolo").value = dati.veicolo || "";
-        document.getElementById("motore").value = dati.motore || "";
-        document.getElementById("targa").value = dati.targa || "";
-        document.getElementById("immatricolazione").value =
-          dati.immatricolazione || "";
+      document.getElementById("veicolo").value = dati.veicolo || "";
+      document.getElementById("motore").value = dati.motore || "";
+      document.getElementById("targa").value = dati.targa || "";
+      document.getElementById("immatricolazione").value =
+        dati.immatricolazione || "";
 
-        statoEl.textContent = "OCR completato";
-      })
+      statoEl.textContent = "OCR completato";
 
-      .catch(err => {
-        console.error(err);
-        statoEl.textContent = "Errore OCR";
-      });
+    } catch (err) {
+
+      console.error(err);
+      statoEl.textContent = "Errore OCR";
+    }
   };
 
-  reader.readAsDataURL(fileLibretto);
+  reader.readAsDataURL(file);
 }
+
 /********************
  * SALVATAGGIO
  ********************/
@@ -522,36 +527,31 @@ function gestisciUploadTarga(inputId) {
   const input = document.getElementById(inputId);
   if (!input) return;
 
-  input.addEventListener("change", e => {
+  input.addEventListener("change", async e => {
 
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
 
-    reader.onload = ev => {
+    reader.onload = async ev => {
 
       const base64 = ev.target.result.split(",")[1];
+
       BASE64_TARGA = base64;
 
-      // 🔥 Upload JSONP (niente OCR qui)
-      uploadBase64JSONP(base64, "targa.jpg", file.type || "image/jpeg")
+      const upload = await uploadBase64JSONP(
+        base64,
+        "targa.jpg",
+        "image/jpeg"
+      );
 
-        .then(upload => {
-          TEMP_TARGA_ID = upload.fileId;
-          console.log("✅ Targa caricata, fileId:", TEMP_TARGA_ID);
-        })
-
-        .catch(err => {
-          console.error("Errore upload targa:", err);
-          alert("Errore caricamento foto targa");
-        });
+      TEMP_TARGA_ID = upload.fileId;
     };
 
     reader.readAsDataURL(file);
   });
 }
-
 
 function resetClienti() {
   clienteEsistente = false;
@@ -2193,6 +2193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
