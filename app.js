@@ -83,7 +83,7 @@ let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
 function analizza() {
-
+  console.log("BASE64 LENGTH:", base64.length);
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
@@ -2158,6 +2158,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
