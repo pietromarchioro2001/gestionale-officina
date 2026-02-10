@@ -158,15 +158,16 @@ function analizza() {
 
       .then(uploadRes => {
 
-        if (!uploadRes.ok)
+        console.log("UPLOAD RES:", uploadRes);
+      
+        const fileId = uploadRes.fileId;
+      
+        if (!fileId)
           throw new Error("Upload fallito");
-
+      
         statoEl.textContent = "Analisi OCR...";
-
-        // STEP 2 → OCR dal file
-        return callBackend("ocrLibrettoDaFile", [
-          uploadRes.fileId
-        ]);
+      
+        return callBackend("ocrLibrettoDaFile", [fileId]);
       })
 
       .then(res => {
@@ -2202,6 +2203,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
