@@ -10,39 +10,30 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const callbackName = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
-
-    const script = document.createElement("script");
+    const callbackName = "cb_" + Math.random().toString(36).substring(2);
 
     window[callbackName] = function(data) {
-
-      resolve(data);
-
-      delete window[callbackName];
-
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      try {
+        resolve(data);
+      } finally {
+        delete window[callbackName];
+        script.remove();
       }
-
     };
 
-    script.onerror = function() {
-
-      reject("Errore rete JSONP");
-
-      delete window[callbackName];
-
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
-
-    };
+    const script = document.createElement("script");
 
     script.src =
       BACKEND_URL +
       "?action=" + encodeURIComponent(action) +
       "&args=" + encodeURIComponent(JSON.stringify(args)) +
       "&callback=" + callbackName;
+
+    script.onerror = () => {
+      delete window[callbackName];
+      script.remove();
+      reject("Errore rete JSONP");
+    };
 
     document.body.appendChild(script);
 
@@ -2170,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
