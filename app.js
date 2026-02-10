@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz5_9LOEALe3pUlGUdhDLOZZo6cFuglpeKv-GhFrHHZwQTOIVWsc1ngDpVREhwldBxf/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzTnEvztLztK_iSTwfXykfWG7b82b2_mU5Gv3K2JbP5ZEiqrbbJowy6S_GEMbZY5bYm/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -55,6 +55,41 @@ function uploadFilePOST(base64, nomeFile, mimeType) {
   .then(r => r.json());
 }
 
+function uploadBase64JSONP(base64, nomeFile, mimeType) {
+
+  const CHUNK = 50000; // dimensione sicura URL
+  const parts = [];
+
+  for (let i = 0; i < base64.length; i += CHUNK) {
+    parts.push(base64.substring(i, i + CHUNK));
+  }
+
+  let uploadId = null;
+
+  return new Promise(async (resolve, reject) => {
+
+    try {
+
+      // STEP A — start upload
+      const start = await callBackend("uploadTempStart", [nomeFile, mimeType]);
+      uploadId = start.uploadId;
+
+      // STEP B — invia chunk
+      for (let i = 0; i < parts.length; i++) {
+        await callBackend("uploadTempChunk", [uploadId, parts[i], i]);
+      }
+
+      // STEP C — finalizza
+      const end = await callBackend("uploadTempEnd", [uploadId]);
+
+      resolve(end);
+
+    } catch (err) {
+      reject(err);
+    }
+
+  });
+}
 
 function detectMobile() {
   const isMobile =
@@ -123,19 +158,14 @@ function analizza() {
     BASE64_LIBRETTO = base64;
 
     /* STEP 1 — upload POST */
-    uploadFilePOST(base64, "libretto.jpg", "image/jpeg")
+    uploadBase64JSONP(base64, "libretto.jpg", "image/jpeg")
 
-      .then(upload => {
-
-        if (!upload.ok) throw new Error("Upload fallito");
-
-        TEMP_LIBRETTO_ID = upload.fileId;
-
-        statoEl.textContent = "OCR in corso...";
-
-        /* STEP 2 — OCR JSONP */
-        return callBackend("ocrLibrettoDaFile", [upload.fileId]);
-      })
+    .then(upload => {
+  
+      TEMP_LIBRETTO_ID = upload.fileId;
+  
+      return callBackend("ocrLibrettoDaFile", [upload.fileId]);
+    })
 
       .then(res => {
 
@@ -504,10 +534,17 @@ function gestisciUploadTarga(inputId) {
       const base64 = ev.target.result.split(",")[1];
       BASE64_TARGA = base64;
 
-      /* Upload POST */
-      uploadFilePOST(base64, "targa.jpg", file.type)
-        .then(res => {
-          TEMP_TARGA_ID = res.fileId;
+      // 🔥 Upload JSONP (niente OCR qui)
+      uploadBase64JSONP(base64, "targa.jpg", file.type || "image/jpeg")
+
+        .then(upload => {
+          TEMP_TARGA_ID = upload.fileId;
+          console.log("✅ Targa caricata, fileId:", TEMP_TARGA_ID);
+        })
+
+        .catch(err => {
+          console.error("Errore upload targa:", err);
+          alert("Errore caricamento foto targa");
         });
     };
 
@@ -2156,6 +2193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
