@@ -1,7 +1,10 @@
-const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzXrrp4gnNKMZhSDiQ_pptG47EXFUv7k4v2WopxMxT1EjDCSBc_BHnva8quChObEX8Q/exec";
+const BACKEND_URL = "https://script.google.com/macros/s/AKfycbz-9_HfgE0sTCf57wIJQwYBBdUbdurk9Rpt2w3R9Y8q2GgIG56aSi0pE7rly6AtXXlj/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
+let TEMP_LIBRETTO_ID = null;
+let TEMP_TARGA_ID = null;
+
 
 function callBackend(action, args = []) {
 
@@ -104,44 +107,37 @@ function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Caricamento immagine...";
+  if (statoEl) statoEl.textContent = "Caricamento libretto...";
 
   const reader = new FileReader();
 
   reader.onload = e => {
 
-    try {
+    const base64 = e.target.result.split(",")[1];
+    BASE64_LIBRETTO = base64;
 
-      const base64 = e.target.result.split(",")[1];
-      BASE64_LIBRETTO = base64;
-
-      if (!base64) throw new Error("Base64 vuoto");
-
-      // STEP 1 → Upload su Drive
-      callBackend("uploadFileDrive", [
-        base64,
-        "libretto.jpg",
-        "image/jpeg"
-      ])
+    // 🔥 STEP 1 — Upload temporaneo su Drive
+    callBackend("uploadTempFile", [base64, "libretto_temp.jpg", "image/jpeg"])
 
       .then(uploadRes => {
 
-        console.log("UPLOAD RES:", uploadRes);
-      
-        const fileId = uploadRes.fileId;
-      
-        if (!fileId)
-          throw new Error("Upload fallito");
-      
-        statoEl.textContent = "Analisi OCR...";
-      
-        return callBackend("ocrLibrettoDaFile", [fileId]);
+        if (!uploadRes?.fileId) {
+          throw new Error("Upload temporaneo fallito");
+        }
+
+        TEMP_LIBRETTO_ID = uploadRes.fileId;
+
+        if (statoEl) statoEl.textContent = "Analisi OCR...";
+
+        // 🔥 STEP 2 — OCR usando file ID
+        return callBackend("ocrLibrettoDaFile", [TEMP_LIBRETTO_ID]);
       })
 
       .then(res => {
 
-        if (!res.ok)
-          throw new Error(res.error || "OCR fallito");
+        if (!res?.ok) {
+          throw new Error(res?.error || "OCR fallito");
+        }
 
         const dati = res.datiOCR || {};
 
@@ -156,18 +152,15 @@ function analizza() {
         document.getElementById("immatricolazione").value =
           dati.immatricolazione || "";
 
-        statoEl.textContent = "Dati caricati";
+        if (statoEl) statoEl.textContent = "Dati caricati";
       })
 
       .catch(err => {
-        console.error("OCR ERROR:", err);
-        statoEl.textContent = "Errore OCR";
-      });
 
-    } catch (err) {
-      console.error(err);
-      statoEl.textContent = "Errore lettura file";
-    }
+        console.error("OCR ERROR:", err);
+
+        if (statoEl) statoEl.textContent = "Errore OCR";
+      });
   };
 
   reader.readAsDataURL(fileLibretto);
@@ -246,6 +239,8 @@ function inviaSalvataggio(base64Libretto, base64Targa) {
       motore: document.getElementById("motore").value,
       targa: document.getElementById("targa").value,
       immatricolazione: document.getElementById("immatricolazione").value,
+      tempLibrettoId: TEMP_LIBRETTO_ID,
+      tempTargaId: TEMP_TARGA_ID,
 
       librettoBase64: base64Libretto,
       targaBase64: base64Targa,
@@ -515,6 +510,10 @@ function gestisciUploadTarga(inputId) {
     reader.onload = ev => {
       BASE64_TARGA = ev.target.result.split(",")[1];
       console.log("BASE64_TARGA salvata");
+      callBackend("uploadTempFile", [BASE64_TARGA, "targa.jpg", file.type])
+      .then(res => {
+         TEMP_TARGA_ID = res.fileId;
+      });
     };
 
     reader.readAsDataURL(file);
@@ -2171,6 +2170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
