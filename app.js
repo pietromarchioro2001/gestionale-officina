@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyXQYJ5GVWvZiARhk5odBFV73dwxQ__NT01ZPYjNAtGlrgIerJF688n0S8lyzE8auSc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyX-6_PbPrKuLEZygJrYLywiuRrwpbcRQIGQe8cDpqpLfxlBeEJ9B2Vsqax5eXGvR0/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -137,69 +137,96 @@ let rispostaInElaborazione = false;
 
 function analizza() {
 
-  const file = getFileFromInputs(
+  const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
   );
 
-  if (!file) {
-    alert("Seleziona libretto");
+  if (!fileLibretto) {
+    alert("Seleziona o fotografa il libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Upload libretto...";
+  if (statoEl) statoEl.textContent = "Caricamento libretto...";
 
   const reader = new FileReader();
 
-  reader.onload = async e => {
+  reader.onload = e => {
 
     try {
 
       const base64 = e.target.result.split(",")[1];
 
-      BASE64_LIBRETTO = base64;
+      if (!base64) {
+        throw new Error("Base64 vuoto");
+      }
 
-      const upload = await uploadBase64JSONP(
+      // 🔥 STEP 1 — Upload temporaneo su Drive
+      callBackend("uploadTempFile", [
         base64,
-        "libretto.jpg",
-        "image/jpeg"
-      );
+        "LIBRETTO.jpg",
+        fileLibretto.type || "image/jpeg"
+      ])
 
-      TEMP_LIBRETTO_ID = upload.fileId;
+      .then(upload => {
 
-      statoEl.textContent = "OCR in corso...";
+        if (!upload || !upload.ok || !upload.fileId) {
+          throw new Error("Upload fallito");
+        }
 
-      const res = await callBackend(
-        "ocrLibrettoDaFile",
-        [upload.fileId]
-      );
+        // salva ID temporaneo
+        TEMP_LIBRETTO_ID = upload.fileId;
 
-      const dati = res?.datiOCR || {};
+        if (statoEl) statoEl.textContent = "Analisi OCR in corso...";
 
-      document.getElementById("nome").value = dati.nomeCliente || "";
-      document.getElementById("indirizzo").value = dati.indirizzo || "";
-      document.getElementById("data").value = dati.dataNascita || "";
-      document.getElementById("cf").value = dati.codiceFiscale || "";
+        // 🔥 STEP 2 — OCR da file Drive
+        return callBackend("ocrLibrettoDaFile", [upload.fileId]);
+      })
 
-      document.getElementById("veicolo").value = dati.veicolo || "";
-      document.getElementById("motore").value = dati.motore || "";
-      document.getElementById("targa").value = dati.targa || "";
-      document.getElementById("immatricolazione").value =
-        dati.immatricolazione || "";
+      .then(res => {
 
-      statoEl.textContent = "OCR completato";
+        if (!res || !res.ok) {
+          throw new Error(res?.error || "OCR fallito");
+        }
+
+        const dati = res.datiOCR || {};
+
+        // ======================
+        // COMPILAZIONE FORM
+        // ======================
+        document.getElementById("nome").value = dati.nomeCliente || "";
+        document.getElementById("indirizzo").value = dati.indirizzo || "";
+        document.getElementById("telefono").value = "";
+        document.getElementById("data").value = dati.dataNascita || "";
+        document.getElementById("cf").value = dati.codiceFiscale || "";
+
+        document.getElementById("veicolo").value = dati.veicolo || "";
+        document.getElementById("motore").value = dati.motore || "";
+        document.getElementById("targa").value = dati.targa || "";
+        document.getElementById("immatricolazione").value =
+          dati.immatricolazione || "";
+
+        if (statoEl) statoEl.textContent = "OCR completato";
+      })
+
+      .catch(err => {
+        console.error("Errore OCR:", err);
+        if (statoEl) statoEl.textContent = "Errore OCR";
+      });
 
     } catch (err) {
-
-      console.error(err);
-      statoEl.textContent = "Errore OCR";
+      console.error("Errore lettura file:", err);
+      if (statoEl) statoEl.textContent = "Errore lettura file";
     }
   };
 
-  reader.readAsDataURL(file);
-}
+  reader.onerror = () => {
+    if (statoEl) statoEl.textContent = "Errore lettura file";
+  };
 
+  reader.readAsDataURL(fileLibretto);
+}
 /********************
  * SALVATAGGIO
  ********************/
@@ -2193,6 +2220,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
