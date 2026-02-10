@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzVbyU7095QogAf7AL3TCfeNGy25mKnYS46ZUS74-zX6ClW0H-YE5Bn3lzUbPK01MtP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbweCzgNVBFwRwM0at5xPSj09w4zMz0-K9qbyhJF6fo2hK3O0Nusugd5_f17xVvQxWNy/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -102,19 +102,20 @@ function analizza() {
   reader.onload = e => {
 
     const base64 = e.target.result.split(",")[1];
-
     BASE64_LIBRETTO = base64;
 
-    // STEP 1 → upload file
-    callBackend("uploadTempFile", [base64, "libretto.jpg", "image/jpeg"])
+    /* STEP 1 — upload POST */
+    uploadFilePOST(base64, "libretto.jpg", "image/jpeg")
 
       .then(upload => {
 
         if (!upload.ok) throw new Error("Upload fallito");
 
+        TEMP_LIBRETTO_ID = upload.fileId;
+
         statoEl.textContent = "OCR in corso...";
 
-        // STEP 2 → OCR usando fileId
+        /* STEP 2 — OCR JSONP */
         return callBackend("ocrLibrettoDaFile", [upload.fileId]);
       })
 
@@ -142,12 +143,10 @@ function analizza() {
         console.error(err);
         statoEl.textContent = "Errore OCR";
       });
-
   };
 
   reader.readAsDataURL(fileLibretto);
 }
-
 /********************
  * SALVATAGGIO
  ********************/
@@ -207,34 +206,28 @@ function leggiAltriDocumenti(callback) {
 /********************
  * INVIO BACKEND
  ********************/
-function inviaSalvataggio(base64Libretto, base64Targa) {
-  leggiAltriDocumenti(altriFiles => {
+function inviaSalvataggio() {
 
-    const dati = {
-      nomeCliente: document.getElementById("nome").value,
-      indirizzo: document.getElementById("indirizzo").value,
-      telefono: document.getElementById("telefono").value,
-      dataNascita: document.getElementById("data").value,
-      codiceFiscale: document.getElementById("cf").value,
+  const dati = {
+    nomeCliente: document.getElementById("nome").value,
+    indirizzo: document.getElementById("indirizzo").value,
+    telefono: document.getElementById("telefono").value,
+    dataNascita: document.getElementById("data").value,
+    codiceFiscale: document.getElementById("cf").value,
 
-      veicolo: document.getElementById("veicolo").value,
-      motore: document.getElementById("motore").value,
-      targa: document.getElementById("targa").value,
-      immatricolazione: document.getElementById("immatricolazione").value,
-      tempLibrettoId: TEMP_LIBRETTO_ID,
-      tempTargaId: TEMP_TARGA_ID,
+    veicolo: document.getElementById("veicolo").value,
+    motore: document.getElementById("motore").value,
+    targa: document.getElementById("targa").value,
+    immatricolazione: document.getElementById("immatricolazione").value,
 
-      librettoBase64: base64Libretto,
-      targaBase64: base64Targa,
-      altriDocumenti: altriFiles
-    };
+    tempLibrettoId: TEMP_LIBRETTO_ID,
+    tempTargaId: TEMP_TARGA_ID
+  };
 
-    callBackend("salvaClienteEVeicolo", [dati])
-      .catch(err => {
-        alert(err?.message || "Errore nel salvataggio");
-      });
-
-  });
+  callBackend("salvaClienteEVeicolo", [dati])
+    .catch(err => {
+      alert(err?.message || "Errore salvataggio");
+    });
 }
 
 /********************
@@ -486,28 +479,21 @@ function gestisciUploadTarga(inputId) {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 🔥 salva BASE64
     const reader = new FileReader();
 
     reader.onload = ev => {
-      BASE64_TARGA = ev.target.result.split(",")[1];
-      console.log("BASE64_TARGA salvata");
-      callBackend("uploadTempFile", [BASE64_TARGA, "targa.jpg", file.type])
-      .then(res => {
-         TEMP_TARGA_ID = res.fileId;
-      });
+
+      const base64 = ev.target.result.split(",")[1];
+      BASE64_TARGA = base64;
+
+      /* Upload POST */
+      uploadFilePOST(base64, "targa.jpg", file.type)
+        .then(res => {
+          TEMP_TARGA_ID = res.fileId;
+        });
     };
 
     reader.readAsDataURL(file);
-
-    // preview
-    const url = URL.createObjectURL(file);
-
-    const btnView = document.getElementById("targaLink");
-    btnView.classList.remove("hidden");
-
-    btnView.onclick = () => window.open(url);
-
   });
 }
 
@@ -2152,6 +2138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
