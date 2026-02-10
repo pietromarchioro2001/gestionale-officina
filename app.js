@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbweCzgNVBFwRwM0at5xPSj09w4zMz0-K9qbyhJF6fo2hK3O0Nusugd5_f17xVvQxWNy/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz5_9LOEALe3pUlGUdhDLOZZo6cFuglpeKv-GhFrHHZwQTOIVWsc1ngDpVREhwldBxf/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -37,6 +37,24 @@ function callBackend(action, args = []) {
   });
 
 }
+
+function uploadFilePOST(base64, nomeFile, mimeType) {
+
+  return fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "uploadTempFile",
+      base64: base64,
+      nomeFile: nomeFile,
+      mimeType: mimeType
+    })
+  })
+  .then(r => r.json());
+}
+
 
 function detectMobile() {
   const isMobile =
@@ -2138,6 +2156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
