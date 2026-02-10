@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzJtlS2DAHHZkgkm3zHxIqW4HPu7EIBZT0mmPblNatH7cJpvbE4MvAqb005GSFBfxVP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzVbyU7095QogAf7AL3TCfeNGy25mKnYS46ZUS74-zX6ClW0H-YE5Bn3lzUbPK01MtP/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -102,18 +102,20 @@ function analizza() {
   reader.onload = e => {
 
     const base64 = e.target.result.split(",")[1];
+
     BASE64_LIBRETTO = base64;
 
-    // STEP 1 Upload
+    // STEP 1 → upload file
     callBackend("uploadTempFile", [base64, "libretto.jpg", "image/jpeg"])
 
-      .then(uploadRes => {
+      .then(upload => {
 
-        if (!uploadRes.ok) throw new Error("Upload fallito");
+        if (!upload.ok) throw new Error("Upload fallito");
 
         statoEl.textContent = "OCR in corso...";
 
-        return callBackend("ocrLibrettoDaFile", [uploadRes.fileId]);
+        // STEP 2 → OCR usando fileId
+        return callBackend("ocrLibrettoDaFile", [upload.fileId]);
       })
 
       .then(res => {
@@ -2150,6 +2152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
