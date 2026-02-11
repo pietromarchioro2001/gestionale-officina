@@ -39,6 +39,14 @@ function callBackend(action, args = []) {
   });
 }
 
+async function uploadTempFileSafe(base64, nomeFile, mimeType) {
+
+  console.log("Upload sempre chunk");
+
+  return uploadFileChunked(base64, nomeFile, mimeType);
+
+}
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
 
@@ -2156,6 +2164,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
