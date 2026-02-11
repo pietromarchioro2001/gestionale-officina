@@ -69,6 +69,42 @@ function popolaFormOCR(dati = {}) {
     dati.immatricolazione || "";
 }
 
+async function uploadFileChunked(base64, nomeFile, mimeType) {
+
+  const CHUNK_SIZE = 250000;
+
+  const uploadId = crypto.randomUUID();
+
+  const chunks = base64.match(
+    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
+  );
+
+  // START
+  await callBackend("uploadTempStart", [
+    uploadId,
+    nomeFile,
+    mimeType
+  ]);
+
+  // CHUNK
+  for (let i = 0; i < chunks.length; i++) {
+
+    await callBackend("uploadTempChunk", [
+      uploadId,
+      chunks[i],
+      i
+    ]);
+
+  }
+
+  // END
+  const res = await callBackend("uploadTempEnd", [uploadId]);
+
+  if (!res?.ok)
+    throw new Error(res?.error || "Upload chunk fallito");
+
+  return res.fileId;
+}
 
 async function uploadTempFileSafe(base64, nomeFile, mimeType) {
 
@@ -2205,6 +2241,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
