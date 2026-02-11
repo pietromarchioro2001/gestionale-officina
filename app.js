@@ -99,7 +99,7 @@ let clienteEsistente = false;
 let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
-function analizza() {
+async function analizza() {
 
   const fileLibretto = getFileFromInputs(
     "librettoGallery",
@@ -2161,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
