@@ -38,6 +38,33 @@ function callBackend(action, args = []) {
 
   });
 }
+async function uploadFileChunked(base64, nomeFile, mimeType) {
+
+  const CHUNK_SIZE = 250000;
+
+  const uploadId = crypto.randomUUID();
+
+  const chunks = base64.match(
+    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
+  );
+
+  await callBackend("uploadTempStart", [uploadId, nomeFile, mimeType]);
+
+  for (let i = 0; i < chunks.length; i++) {
+    await callBackend("uploadTempChunk", [
+      uploadId,
+      chunks[i],
+      i
+    ]);
+  }
+
+  const res = await callBackend("uploadTempEnd", [uploadId]);
+
+  if (!res?.ok)
+    throw new Error(res?.error || "Upload chunk fallito");
+
+  return res.fileId;
+}
 
 async function uploadTempFileSafe(base64, nomeFile, mimeType) {
 
@@ -139,12 +166,13 @@ async function analizza() {
     const base64 = await fileToBase64(fileLibretto);
 
     // 🔥 upload semplice
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, "libretto.jpg", fileLibretto.type]
+    const fileId = await uploadTempFileSafe(
+      base64,
+      "libretto.jpg",
+      fileLibretto.type
     );
-
-    TEMP_LIBRETTO_ID = upload.fileId;
+    
+    TEMP_LIBRETTO_ID = fileId;
 
     statoEl.textContent = "OCR in corso...";
 
@@ -504,9 +532,10 @@ function gestisciUploadTarga(inputId) {
 
       BASE64_TARGA = base64;
 
-      const upload = await callBackend(
-        "uploadTempFile",
-        [base64, "targa.jpg", file.type]
+      TEMP_TARGA_ID = await uploadTempFileSafe(
+        base64,
+        "targa.jpg",
+        file.type
       );
 
       TEMP_TARGA_ID = upload.fileId;
@@ -2164,6 +2193,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
