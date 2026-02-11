@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyX-6_PbPrKuLEZygJrYLywiuRrwpbcRQIGQe8cDpqpLfxlBeEJ9B2Vsqax5eXGvR0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxWzoZ6lATX4rSCLl8GFn1NYgjrLBShQ-NngMvPpvH-SOvMvQsPv5mCM1KhwFfE3Gc0/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -55,42 +55,6 @@ function uploadFilePOST(base64, nomeFile, mimeType) {
   .then(r => r.json());
 }
 
-async function uploadBase64JSONP(base64, nomeFile, mimeType) {
-
-  const CHUNK = 45000;
-
-  const parts = [];
-
-  for (let i = 0; i < base64.length; i += CHUNK) {
-    parts.push(base64.slice(i, i + CHUNK));
-  }
-
-  /* START upload */
-  const start = await callBackend(
-    "uploadTempStart",
-    [nomeFile, mimeType]
-  );
-
-  if (!start.ok) throw new Error("upload start fallito");
-
-  const uploadId = start.uploadId;
-
-  /* INVIO CHUNK */
-  for (const part of parts) {
-
-    await callBackend("uploadTempChunk", [uploadId, part]);
-
-    /* pausa anti-timeout */
-    await new Promise(r => setTimeout(r, 120));
-  }
-
-  /* END upload */
-  return await callBackend(
-    "uploadTempEnd",
-    [uploadId, nomeFile, mimeType]
-  );
-}
-
 function detectMobile() {
   const isMobile =
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
@@ -143,89 +107,66 @@ function analizza() {
   );
 
   if (!fileLibretto) {
-    alert("Seleziona o fotografa il libretto");
+    alert("Seleziona libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
-  if (statoEl) statoEl.textContent = "Caricamento libretto...";
+  statoEl.textContent = "Upload libretto...";
 
-  const reader = new FileReader();
+  try {
 
-  reader.onload = e => {
+    const base64 = await new Promise(resolve => {
+      const reader = new FileReader();
+      reader.onload = e => resolve(e.target.result.split(",")[1]);
+      reader.readAsDataURL(fileLibretto);
+    });
 
-    try {
+    BASE64_LIBRETTO = base64;
 
-      const base64 = e.target.result.split(",")[1];
+    /* STEP 1 upload */
 
-      if (!base64) {
-        throw new Error("Base64 vuoto");
-      }
+    const upload = await callBackend(
+      "uploadTempFile",
+      [base64, "libretto.jpg", "image/jpeg"]
+    );
 
-      // 🔥 STEP 1 — Upload temporaneo su Drive
-      callBackend("uploadTempFile", [
-        base64,
-        "LIBRETTO.jpg",
-        fileLibretto.type || "image/jpeg"
-      ])
+    if (!upload.ok) throw new Error("Upload fallito");
 
-      .then(upload => {
+    TEMP_LIBRETTO_ID = upload.fileId;
 
-        if (!upload || !upload.ok || !upload.fileId) {
-          throw new Error("Upload fallito");
-        }
+    statoEl.textContent = "OCR in corso...";
 
-        // salva ID temporaneo
-        TEMP_LIBRETTO_ID = upload.fileId;
+    /* STEP 2 OCR */
 
-        if (statoEl) statoEl.textContent = "Analisi OCR in corso...";
+    const res = await callBackend(
+      "ocrLibrettoDaFile",
+      [upload.fileId]
+    );
 
-        // 🔥 STEP 2 — OCR da file Drive
-        return callBackend("ocrLibrettoDaFile", [upload.fileId]);
-      })
+    if (!res.ok) throw new Error(res.error);
 
-      .then(res => {
+    const dati = res.datiOCR || {};
 
-        if (!res || !res.ok) {
-          throw new Error(res?.error || "OCR fallito");
-        }
+    document.getElementById("nome").value = dati.nomeCliente || "";
+    document.getElementById("indirizzo").value = dati.indirizzo || "";
+    document.getElementById("data").value = dati.dataNascita || "";
+    document.getElementById("cf").value = dati.codiceFiscale || "";
 
-        const dati = res.datiOCR || {};
+    document.getElementById("veicolo").value = dati.veicolo || "";
+    document.getElementById("motore").value = dati.motore || "";
+    document.getElementById("targa").value = dati.targa || "";
+    document.getElementById("immatricolazione").value =
+      dati.immatricolazione || "";
 
-        // ======================
-        // COMPILAZIONE FORM
-        // ======================
-        document.getElementById("nome").value = dati.nomeCliente || "";
-        document.getElementById("indirizzo").value = dati.indirizzo || "";
-        document.getElementById("telefono").value = "";
-        document.getElementById("data").value = dati.dataNascita || "";
-        document.getElementById("cf").value = dati.codiceFiscale || "";
+    statoEl.textContent = "OCR completato";
 
-        document.getElementById("veicolo").value = dati.veicolo || "";
-        document.getElementById("motore").value = dati.motore || "";
-        document.getElementById("targa").value = dati.targa || "";
-        document.getElementById("immatricolazione").value =
-          dati.immatricolazione || "";
+  } catch (err) {
 
-        if (statoEl) statoEl.textContent = "OCR completato";
-      })
+    console.error(err);
+    statoEl.textContent = "Errore OCR";
 
-      .catch(err => {
-        console.error("Errore OCR:", err);
-        if (statoEl) statoEl.textContent = "Errore OCR";
-      });
-
-    } catch (err) {
-      console.error("Errore lettura file:", err);
-      if (statoEl) statoEl.textContent = "Errore lettura file";
-    }
-  };
-
-  reader.onerror = () => {
-    if (statoEl) statoEl.textContent = "Errore lettura file";
-  };
-
-  reader.readAsDataURL(fileLibretto);
+  }
 }
 /********************
  * SALVATAGGIO
@@ -2220,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
