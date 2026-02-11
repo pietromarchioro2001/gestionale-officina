@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwi10gf_6Hc7bXC5zjiBY90cNM4yH9FkRSIbots9tpL6v8vEfWwo8hi1GKv0odM4LE/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzGl3Ue2xM1IzeymjjDE0nPNhEA3x8a1j-oNrD8-4RIoJbH3PE5_8cZ02v-omf6uSdF/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -199,13 +199,19 @@ async function analizza() {
 
     statoEl.textContent = "Upload libretto...";
 
-    TEMP_LIBRETTO_ID = await uploadFileChunked(
+    TEMP_LIBRETTO_ID = await uploadTempFileSafe(
       base64,
       "libretto.jpg",
       file.type || "image/jpeg"
     );
+    
+    if (!TEMP_LIBRETTO_ID) {
+      throw new Error("Upload libretto fallito");
+    }
 
     statoEl.textContent = "OCR in corso...";
+    
+    console.log("TEMP_LIBRETTO_ID =", TEMP_LIBRETTO_ID);
 
     const res = await callBackend(
       "ocrLibrettoDaFile",
@@ -2223,6 +2229,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
