@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyYymFqO1jiGyMGgyalMz7wjh8D_iOiH6e3aINJ848anYo1bSOwk7PeuMsiYiRAFSHG/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwDl-d0l9TtBg27kiHgMHr1vJ38NhGpqAvtKouKDegFUPRLX1Q2avAHk3s7F5ba93DK/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -39,28 +39,6 @@ function callBackend(action, args = []) {
     document.body.appendChild(script);
 
   });
-}
-
-async function uploadTempFilePOST(base64, nomeFile, mimeType) {
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action: "uploadTempFile",
-      base64,
-      nomeFile,
-      mimeType
-    })
-  });
-
-  const json = await res.json();
-
-  if (!json.ok) throw new Error(json.error || "Upload fallito");
-
-  return json.fileId;
 }
 
 function fileToBase64(file) {
@@ -157,49 +135,63 @@ async function analizza() {
   );
 
   if (!file) {
-    alert("Seleziona libretto");
+    alert("Seleziona o fotografa il libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
+  statoEl.textContent = "Preparazione file...";
 
   try {
 
-    statoEl.textContent = "Preparazione file...";
-
+    /* =========================
+       1. CONVERTI IN BASE64
+    ========================= */
     const base64 = await fileToBase64(file);
     BASE64_LIBRETTO = base64;
 
     statoEl.textContent = "Upload libretto...";
 
-    TEMP_LIBRETTO_ID = await uploadTempFilePOST(
-      base64,
-      "libretto.jpg",
-      file.type || "image/jpeg"
+    /* =========================
+       2. CARICA TEMP SU DRIVE
+    ========================= */
+    const upload = await callBackend(
+      "uploadTempFile",
+      [base64, "libretto.jpg", file.type || "image/jpeg"]
     );
+
+    if (!upload || !upload.ok)
+      throw new Error(upload?.error || "Upload fallito");
+
+    TEMP_LIBRETTO_ID = upload.fileId;
 
     statoEl.textContent = "OCR in corso...";
 
+    /* =========================
+       3. OCR DAL FILE DRIVE
+    ========================= */
     const res = await callBackend(
       "ocrLibrettoDaFile",
       [TEMP_LIBRETTO_ID]
     );
 
-    if (!res.ok)
-      throw new Error(res.error);
+    if (!res || !res.ok)
+      throw new Error(res?.error || "OCR fallito");
 
+    /* =========================
+       4. POPOLA FORM
+    ========================= */
     popolaFormOCR(res.datiOCR);
 
     statoEl.textContent = "OCR completato";
 
   } catch (err) {
 
-    console.error(err);
+    console.error("Errore OCR:", err);
     statoEl.textContent = "Errore OCR";
 
   }
 }
-
 /********************
  * SALVATAGGIO
  ********************/
@@ -2195,6 +2187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
