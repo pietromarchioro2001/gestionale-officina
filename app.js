@@ -72,16 +72,29 @@ function popolaFormOCR(dati = {}) {
 
 async function uploadTempFileSafe(base64, nomeFile, mimeType) {
 
-  const res = await callBackend("uploadTempFile", [
-    base64,
-    nomeFile,
-    mimeType
-  ]);
+  // soglia sicurezza JSONP
+  const LIMITE_JSONP = 150000;
 
-  if (!res?.ok)
-    throw new Error(res?.error || "Upload fallito");
+  if (base64.length < LIMITE_JSONP) {
 
-  return res;
+    console.log("Upload JSONP normale");
+
+    const res = await callBackend("uploadTempFile", [
+      base64,
+      nomeFile,
+      mimeType
+    ]);
+
+    if (!res?.ok)
+      throw new Error(res?.error || "Upload fallito");
+
+    return res.fileId;
+
+  }
+
+  console.log("Upload chunk automatico");
+
+  return uploadFileChunked(base64, nomeFile, mimeType);
 }
 
 function detectMobile() {
@@ -2192,6 +2205,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
