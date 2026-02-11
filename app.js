@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzGl3Ue2xM1IzeymjjDE0nPNhEA3x8a1j-oNrD8-4RIoJbH3PE5_8cZ02v-omf6uSdF/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwnjWqxNudGe4uSw1ZgaDvl_RkmEd3m2ZXe6QjDsSTi7q4v_UW5bRuIafKnMeyglryA/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -94,14 +94,13 @@ async function uploadTempFilePOST(base64, nomeFile, mimeType) {
     method: "POST",
     body: JSON.stringify({
       action: "uploadTempFile",
-      args: [base64, nomeFile, mimeType]
-    }),
-    headers: {
-      "Content-Type": "application/json"
-    }
+      base64,
+      nomeFile,
+      mimeType
+    })
   });
 
-  return res.json();
+  return await res.json();
 }
 
 function popolaFormOCR(dati = {}) {
@@ -2229,6 +2228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
