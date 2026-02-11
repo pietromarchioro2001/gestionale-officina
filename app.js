@@ -55,6 +55,22 @@ function fileToBase64(file) {
   });
 }
 
+async function uploadTempFilePOST(base64, nomeFile, mimeType) {
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      action: "uploadTempFile",
+      args: [base64, nomeFile, mimeType]
+    }),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+
+  return res.json();
+}
+
 function popolaFormOCR(dati = {}) {
 
   document.getElementById("nome").value = dati.nomeCliente || "";
@@ -135,7 +151,7 @@ async function analizza() {
   );
 
   if (!file) {
-    alert("Seleziona o fotografa il libretto");
+    alert("Seleziona libretto");
     return;
   }
 
@@ -144,54 +160,40 @@ async function analizza() {
 
   try {
 
-    /* =========================
-       1. CONVERTI IN BASE64
-    ========================= */
     const base64 = await fileToBase64(file);
+
     BASE64_LIBRETTO = base64;
 
     statoEl.textContent = "Upload libretto...";
 
-    /* =========================
-       2. CARICA TEMP SU DRIVE
-    ========================= */
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, "libretto.jpg", file.type || "image/jpeg"]
+    TEMP_LIBRETTO_ID = await uploadTempFilePOST(
+      base64,
+      "libretto.jpg",
+      file.type || "image/jpeg"
     );
-
-    if (!upload || !upload.ok)
-      throw new Error(upload?.error || "Upload fallito");
-
-    TEMP_LIBRETTO_ID = upload.fileId;
 
     statoEl.textContent = "OCR in corso...";
 
-    /* =========================
-       3. OCR DAL FILE DRIVE
-    ========================= */
     const res = await callBackend(
       "ocrLibrettoDaFile",
       [TEMP_LIBRETTO_ID]
     );
 
-    if (!res || !res.ok)
-      throw new Error(res?.error || "OCR fallito");
+    if (!res.ok)
+      throw new Error(res.error);
 
-    /* =========================
-       4. POPOLA FORM
-    ========================= */
     popolaFormOCR(res.datiOCR);
 
     statoEl.textContent = "OCR completato";
 
   } catch (err) {
 
-    console.error("Errore OCR:", err);
+    console.error(err);
     statoEl.textContent = "Errore OCR";
 
   }
 }
+
 /********************
  * SALVATAGGIO
  ********************/
@@ -527,6 +529,7 @@ function gestisciUploadTarga(inputId) {
     try {
 
       const base64 = await fileToBase64(file);
+
       BASE64_TARGA = base64;
 
       TEMP_TARGA_ID = await uploadTempFilePOST(
@@ -2187,6 +2190,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
