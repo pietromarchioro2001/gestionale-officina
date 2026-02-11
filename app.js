@@ -42,65 +42,17 @@ function callBackend(action, args = []) {
 }
 
 function fileToBase64(file) {
-
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
 
     const reader = new FileReader();
 
     reader.onload = e =>
       resolve(e.target.result.split(",")[1]);
 
+    reader.onerror = reject;
+
     reader.readAsDataURL(file);
-
   });
-}
-
-async function uploadFileChunked(base64, nomeFile, mimeType) {
-
-  const CHUNK_SIZE = 250000; // 250KB
-
-  const uploadId = crypto.randomUUID();
-
-  const chunks = base64.match(
-    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
-  );
-
-  // start
-  await callBackend("uploadTempStart", [uploadId, nomeFile, mimeType]);
-
-  // chunk
-  for (let i = 0; i < chunks.length; i++) {
-
-    await callBackend("uploadTempChunk", [
-      uploadId,
-      chunks[i],
-      i
-    ]);
-
-  }
-
-  // end
-  const res = await callBackend("uploadTempEnd", [uploadId]);
-
-  if (!res?.ok)
-    throw new Error(res?.error || "Upload chunk fallito");
-
-  return res.fileId;
-}
-
-async function uploadTempFilePOST(base64, nomeFile, mimeType) {
-
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: JSON.stringify({
-      action: "uploadTempFile",
-      base64,
-      nomeFile,
-      mimeType
-    })
-  });
-
-  return await res.json();
 }
 
 function popolaFormOCR(dati = {}) {
@@ -120,15 +72,16 @@ function popolaFormOCR(dati = {}) {
 
 async function uploadTempFileSafe(base64, nomeFile, mimeType) {
 
-  const res = await callBackend(
-    "uploadTempFile",
-    [base64, nomeFile, mimeType]
-  );
+  const res = await callBackend("uploadTempFile", [
+    base64,
+    nomeFile,
+    mimeType
+  ]);
 
-  if (!res || !res.ok)
+  if (!res?.ok)
     throw new Error(res?.error || "Upload fallito");
 
-  return res.fileId;
+  return res;
 }
 
 function detectMobile() {
@@ -177,60 +130,69 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  const file = getFileFromInputs(
+  const fileLibretto = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
   );
 
-  if (!file) {
-    alert("Seleziona libretto");
+  if (!fileLibretto) {
+    alert("Seleziona o fotografa il libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
+  statoEl.textContent = "Caricamento file...";
 
   try {
 
-    statoEl.textContent = "Preparazione file...";
+    const base64 = await fileToBase64(fileLibretto);
 
-    const base64 = await fileToBase64(file);
-    BASE64_LIBRETTO = base64;
+    statoEl.textContent = "Upload su Drive...";
 
-    statoEl.textContent = "Upload libretto...";
-
-    TEMP_LIBRETTO_ID = await uploadTempFileSafe(
+    const upload = await uploadTempFileSafe(
       base64,
       "libretto.jpg",
-      file.type || "image/jpeg"
+      fileLibretto.type || "image/jpeg"
     );
-    
-    if (!TEMP_LIBRETTO_ID) {
-      throw new Error("Upload libretto fallito");
-    }
+
+    if (!upload.ok)
+      throw new Error("Upload fallito");
+
+    TEMP_LIBRETTO_ID = upload.fileId;
 
     statoEl.textContent = "OCR in corso...";
-    
-    console.log("TEMP_LIBRETTO_ID =", TEMP_LIBRETTO_ID);
 
     const res = await callBackend(
       "ocrLibrettoDaFile",
-      [TEMP_LIBRETTO_ID]
+      [upload.fileId]
     );
 
     if (!res.ok)
-      throw new Error(res.error);
+      throw new Error(res.error || "OCR fallito");
 
-    popolaFormOCR(res.datiOCR);
+    const dati = res.datiOCR || {};
+
+    document.getElementById("nome").value = dati.nomeCliente || "";
+    document.getElementById("indirizzo").value = dati.indirizzo || "";
+    document.getElementById("data").value = dati.dataNascita || "";
+    document.getElementById("cf").value = dati.codiceFiscale || "";
+
+    document.getElementById("veicolo").value = dati.veicolo || "";
+    document.getElementById("motore").value = dati.motore || "";
+    document.getElementById("targa").value = dati.targa || "";
+    document.getElementById("immatricolazione").value =
+      dati.immatricolazione || "";
 
     statoEl.textContent = "OCR completato";
 
   } catch (err) {
 
-    console.error(err);
+    console.error("Errore OCR:", err);
     statoEl.textContent = "Errore OCR";
 
   }
 }
+
 
 /********************
  * SALVATAGGIO
@@ -570,11 +532,13 @@ function gestisciUploadTarga(inputId) {
 
       BASE64_TARGA = base64;
 
-      TEMP_TARGA_ID = await uploadFileChunked(
+      const upload = await uploadTempFileSafe(
         base64,
         "targa.jpg",
         file.type || "image/jpeg"
       );
+
+      TEMP_TARGA_ID = upload.fileId;
 
       console.log("Targa caricata");
 
@@ -2228,6 +2192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
