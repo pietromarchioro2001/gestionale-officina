@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyR0ZsQT0kIJW1poqSy5HC0ALOnElMRhTHevCBxxcei6ZM3Sr2jwABchnC47cgl0Hg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyYymFqO1jiGyMGgyalMz7wjh8D_iOiH6e3aINJ848anYo1bSOwk7PeuMsiYiRAFSHG/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -39,6 +39,28 @@ function callBackend(action, args = []) {
     document.body.appendChild(script);
 
   });
+}
+
+async function uploadTempFilePOST(base64, nomeFile, mimeType) {
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action: "uploadTempFile",
+      base64,
+      nomeFile,
+      mimeType
+    })
+  });
+
+  const json = await res.json();
+
+  if (!json.ok) throw new Error(json.error || "Upload fallito");
+
+  return json.fileId;
 }
 
 function fileToBase64(file) {
@@ -140,17 +162,17 @@ async function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Preparazione file...";
 
   try {
 
-    const base64 = await fileToBase64(file);
+    statoEl.textContent = "Preparazione file...";
 
+    const base64 = await fileToBase64(file);
     BASE64_LIBRETTO = base64;
 
     statoEl.textContent = "Upload libretto...";
 
-    TEMP_LIBRETTO_ID = await uploadTempFileSafe(
+    TEMP_LIBRETTO_ID = await uploadTempFilePOST(
       base64,
       "libretto.jpg",
       file.type || "image/jpeg"
@@ -513,10 +535,9 @@ function gestisciUploadTarga(inputId) {
     try {
 
       const base64 = await fileToBase64(file);
-
       BASE64_TARGA = base64;
 
-      TEMP_TARGA_ID = await uploadTempFileSafe(
+      TEMP_TARGA_ID = await uploadTempFilePOST(
         base64,
         "targa.jpg",
         file.type || "image/jpeg"
@@ -2174,6 +2195,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
