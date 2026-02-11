@@ -1,7 +1,5 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbw5PCwOJ47es5sYMmC9_K-AXxIV_dXdtKejxlP9FuTNJ8u0WyL1m_bmAxBureRkJE7s/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxKU0eO7LTYQ5nBq2mvpeRrnXLljmxC5_GqqV5IOhCCA0AHhucKXbGYf2eWjKYVhgYW/exec";
 
-let BASE64_LIBRETTO = "";
-let BASE64_TARGA = "";
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 
@@ -69,70 +67,6 @@ function popolaFormOCR(dati = {}) {
     dati.immatricolazione || "";
 }
 
-async function uploadFileChunked(base64, nomeFile, mimeType) {
-
-  const CHUNK_SIZE = 250000;
-
-  const uploadId = crypto.randomUUID();
-
-  const chunks = base64.match(
-    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
-  );
-
-  // START
-  await callBackend("uploadTempStart", [
-    uploadId,
-    nomeFile,
-    mimeType
-  ]);
-
-  // CHUNK
-  for (let i = 0; i < chunks.length; i++) {
-
-    await callBackend("uploadTempChunk", [
-      uploadId,
-      chunks[i],
-      i
-    ]);
-
-  }
-
-  // END
-  const res = await callBackend("uploadTempEnd", [uploadId]);
-
-  if (!res?.ok)
-    throw new Error(res?.error || "Upload chunk fallito");
-
-  return res.fileId;
-}
-
-async function uploadTempFileSafe(base64, nomeFile, mimeType) {
-
-  // soglia sicurezza JSONP
-  const LIMITE_JSONP = 150000;
-
-  if (base64.length < LIMITE_JSONP) {
-
-    console.log("Upload JSONP normale");
-
-    const res = await callBackend("uploadTempFile", [
-      base64,
-      nomeFile,
-      mimeType
-    ]);
-
-    if (!res?.ok)
-      throw new Error(res?.error || "Upload fallito");
-
-    return res.fileId;
-
-  }
-
-  console.log("Upload chunk automatico");
-
-  return uploadFileChunked(base64, nomeFile, mimeType);
-}
-
 function detectMobile() {
   const isMobile =
     /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
@@ -190,22 +124,17 @@ async function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Caricamento file...";
+  statoEl.textContent = "Upload su Drive...";
 
   try {
 
     const base64 = await fileToBase64(fileLibretto);
 
-    statoEl.textContent = "Upload su Drive...";
-
-    const upload = await uploadTempFileSafe(
-      base64,
-      "libretto.jpg",
-      fileLibretto.type || "image/jpeg"
+    // 🔥 upload semplice
+    const upload = await callBackend(
+      "uploadTempFile",
+      [base64, "libretto.jpg", fileLibretto.type]
     );
-
-    if (!upload.ok)
-      throw new Error("Upload fallito");
 
     TEMP_LIBRETTO_ID = upload.fileId;
 
@@ -217,50 +146,36 @@ async function analizza() {
     );
 
     if (!res.ok)
-      throw new Error(res.error || "OCR fallito");
+      throw new Error(res.error);
 
-    const dati = res.datiOCR || {};
-
-    document.getElementById("nome").value = dati.nomeCliente || "";
-    document.getElementById("indirizzo").value = dati.indirizzo || "";
-    document.getElementById("data").value = dati.dataNascita || "";
-    document.getElementById("cf").value = dati.codiceFiscale || "";
-
-    document.getElementById("veicolo").value = dati.veicolo || "";
-    document.getElementById("motore").value = dati.motore || "";
-    document.getElementById("targa").value = dati.targa || "";
-    document.getElementById("immatricolazione").value =
-      dati.immatricolazione || "";
+    popolaFormOCR(res.datiOCR);
 
     statoEl.textContent = "OCR completato";
 
   } catch (err) {
 
-    console.error("Errore OCR:", err);
+    console.error(err);
     statoEl.textContent = "Errore OCR";
 
   }
 }
-
 
 /********************
  * SALVATAGGIO
  ********************/
 function salva() {
 
-  // 👇 CLIENTE ESISTENTE → file opzionali
-  if (clienteEsistente) {
-    inviaSalvataggio(BASE64_LIBRETTO || "", BASE64_TARGA || "");
+  if (!TEMP_LIBRETTO_ID && !clienteEsistente) {
+    alert("Serve il libretto per nuovo cliente");
     return;
   }
 
-  // 👇 CLIENTE NUOVO → obbligatori
-  if (!BASE64_LIBRETTO || !BASE64_TARGA) {
-    alert("Per un nuovo cliente servono libretto e foto targa");
+  if (!TEMP_TARGA_ID && !clienteEsistente) {
+    alert("Serve foto targa per nuovo cliente");
     return;
   }
 
-  inviaSalvataggio(BASE64_LIBRETTO, BASE64_TARGA);
+  inviaSalvataggio();
 }
 
 /********************
@@ -581,10 +496,9 @@ function gestisciUploadTarga(inputId) {
 
       BASE64_TARGA = base64;
 
-      const upload = await uploadTempFileSafe(
-        base64,
-        "targa.jpg",
-        file.type || "image/jpeg"
+      const upload = await callBackend(
+        "uploadTempFile",
+        [base64, "targa.jpg", file.type]
       );
 
       TEMP_TARGA_ID = upload.fileId;
@@ -603,8 +517,9 @@ function gestisciUploadTarga(inputId) {
 
 function resetClienti() {
   clienteEsistente = false;
-  BASE64_LIBRETTO = "";
-  BASE64_TARGA = "";
+  TEMP_LIBRETTO_ID = null;
+  TEMP_TARGA_ID = null;
+
 
   // 🔹 svuota tutti gli input testuali
   document
@@ -2241,6 +2156,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
