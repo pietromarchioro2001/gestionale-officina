@@ -147,6 +147,7 @@ let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
 async function analizza(){
+  console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
 
   const file = getFileFromInputs(
     "librettoGallery",
@@ -166,10 +167,13 @@ async function analizza(){
     const base64 = await fileToBase64(file);
 
     const upload = await callBackend(
-      "uploadTempLibretto",
-      [base64, file.name, file.type]
+      "uploadTempFile",
+      [base64, "libretto.jpg", fileLibretto.type]
     );
-
+    
+    if (!upload?.ok)
+      throw new Error(upload?.error || "Upload fallito");
+    
     TEMP_LIBRETTO_ID = upload.fileId;
 
     stato.textContent = "Analisi OCR...";
@@ -2173,6 +2177,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
