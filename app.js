@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyUytPlmn66afcnLVBOCPawKIHemyBmf4mSXjQMFY_5UU2eWZofmQadImIx6T3XThhf/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwi10gf_6Hc7bXC5zjiBY90cNM4yH9FkRSIbots9tpL6v8vEfWwo8hi1GKv0odM4LE/exec";
 
 let BASE64_LIBRETTO = "";
 let BASE64_TARGA = "";
@@ -53,6 +53,39 @@ function fileToBase64(file) {
     reader.readAsDataURL(file);
 
   });
+}
+
+async function uploadFileChunked(base64, nomeFile, mimeType) {
+
+  const CHUNK_SIZE = 250000; // 250KB
+
+  const uploadId = crypto.randomUUID();
+
+  const chunks = base64.match(
+    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
+  );
+
+  // start
+  await callBackend("uploadTempStart", [uploadId, nomeFile, mimeType]);
+
+  // chunk
+  for (let i = 0; i < chunks.length; i++) {
+
+    await callBackend("uploadTempChunk", [
+      uploadId,
+      chunks[i],
+      i
+    ]);
+
+  }
+
+  // end
+  const res = await callBackend("uploadTempEnd", [uploadId]);
+
+  if (!res?.ok)
+    throw new Error(res?.error || "Upload chunk fallito");
+
+  return res.fileId;
 }
 
 async function uploadTempFilePOST(base64, nomeFile, mimeType) {
@@ -156,17 +189,17 @@ async function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Preparazione file...";
 
   try {
 
-    const base64 = await fileToBase64(file);
+    statoEl.textContent = "Preparazione file...";
 
+    const base64 = await fileToBase64(file);
     BASE64_LIBRETTO = base64;
 
     statoEl.textContent = "Upload libretto...";
 
-    TEMP_LIBRETTO_ID = await uploadTempFilePOST(
+    TEMP_LIBRETTO_ID = await uploadFileChunked(
       base64,
       "libretto.jpg",
       file.type || "image/jpeg"
@@ -532,7 +565,7 @@ function gestisciUploadTarga(inputId) {
 
       BASE64_TARGA = base64;
 
-      TEMP_TARGA_ID = await uploadTempFilePOST(
+      TEMP_TARGA_ID = await uploadFileChunked(
         base64,
         "targa.jpg",
         file.type || "image/jpeg"
@@ -2190,6 +2223,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
