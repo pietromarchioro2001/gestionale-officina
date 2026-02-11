@@ -12,47 +12,75 @@ function callBackend(action, args = []) {
 
     const callbackName = "cb_" + Math.random().toString(36).substring(2);
 
+    const script = document.createElement("script");
+
     window[callbackName] = function(data) {
+
       resolve(data);
+
       delete window[callbackName];
       script.remove();
     };
 
-    const script = document.createElement("script");
+    script.onerror = () => {
+
+      delete window[callbackName];
+      script.remove();
+
+      reject(new Error("Errore rete JSONP: " + action));
+    };
 
     script.src =
-      API_URL +   // 👈 QUESTO è corretto
+      API_URL +
       "?action=" + encodeURIComponent(action) +
       "&args=" + encodeURIComponent(JSON.stringify(args)) +
       "&callback=" + callbackName;
 
-    script.onerror = () => {
-      delete window[callbackName];
-      script.remove();
-      reject("Errore rete JSONP");
-    };
-
     document.body.appendChild(script);
 
   });
-
 }
 
-function uploadFilePOST(base64, nomeFile, mimeType) {
+function fileToBase64(file) {
 
-  return fetch(API_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action: "uploadTempFile",
-      base64: base64,
-      nomeFile: nomeFile,
-      mimeType: mimeType
-    })
-  })
-  .then(r => r.json());
+  return new Promise(resolve => {
+
+    const reader = new FileReader();
+
+    reader.onload = e =>
+      resolve(e.target.result.split(",")[1]);
+
+    reader.readAsDataURL(file);
+
+  });
+}
+
+function popolaFormOCR(dati = {}) {
+
+  document.getElementById("nome").value = dati.nomeCliente || "";
+  document.getElementById("indirizzo").value = dati.indirizzo || "";
+  document.getElementById("data").value = dati.dataNascita || "";
+  document.getElementById("cf").value = dati.codiceFiscale || "";
+
+  document.getElementById("veicolo").value = dati.veicolo || "";
+  document.getElementById("motore").value = dati.motore || "";
+  document.getElementById("targa").value = dati.targa || "";
+  document.getElementById("immatricolazione").value =
+    dati.immatricolazione || "";
+}
+
+
+async function uploadTempFileSafe(base64, nomeFile, mimeType) {
+
+  const res = await callBackend(
+    "uploadTempFile",
+    [base64, nomeFile, mimeType]
+  );
+
+  if (!res || !res.ok)
+    throw new Error(res?.error || "Upload fallito");
+
+  return res.fileId;
 }
 
 function detectMobile() {
@@ -101,63 +129,44 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  const fileLibretto = getFileFromInputs(
+  const file = getFileFromInputs(
     "librettoGallery",
     "librettoCamera"
   );
 
-  if (!fileLibretto) {
+  if (!file) {
     alert("Seleziona libretto");
     return;
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Upload libretto...";
+  statoEl.textContent = "Preparazione file...";
 
   try {
 
-    const base64 = await new Promise(resolve => {
-      const reader = new FileReader();
-      reader.onload = e => resolve(e.target.result.split(",")[1]);
-      reader.readAsDataURL(fileLibretto);
-    });
+    const base64 = await fileToBase64(file);
 
     BASE64_LIBRETTO = base64;
 
-    /* STEP 1 upload */
+    statoEl.textContent = "Upload libretto...";
 
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, "libretto.jpg", "image/jpeg"]
+    TEMP_LIBRETTO_ID = await uploadTempFileSafe(
+      base64,
+      "libretto.jpg",
+      file.type || "image/jpeg"
     );
-
-    if (!upload.ok) throw new Error("Upload fallito");
-
-    TEMP_LIBRETTO_ID = upload.fileId;
 
     statoEl.textContent = "OCR in corso...";
 
-    /* STEP 2 OCR */
-
     const res = await callBackend(
       "ocrLibrettoDaFile",
-      [upload.fileId]
+      [TEMP_LIBRETTO_ID]
     );
 
-    if (!res.ok) throw new Error(res.error);
+    if (!res.ok)
+      throw new Error(res.error);
 
-    const dati = res.datiOCR || {};
-
-    document.getElementById("nome").value = dati.nomeCliente || "";
-    document.getElementById("indirizzo").value = dati.indirizzo || "";
-    document.getElementById("data").value = dati.dataNascita || "";
-    document.getElementById("cf").value = dati.codiceFiscale || "";
-
-    document.getElementById("veicolo").value = dati.veicolo || "";
-    document.getElementById("motore").value = dati.motore || "";
-    document.getElementById("targa").value = dati.targa || "";
-    document.getElementById("immatricolazione").value =
-      dati.immatricolazione || "";
+    popolaFormOCR(res.datiOCR);
 
     statoEl.textContent = "OCR completato";
 
@@ -168,6 +177,7 @@ async function analizza() {
 
   }
 }
+
 /********************
  * SALVATAGGIO
  ********************/
@@ -500,24 +510,27 @@ function gestisciUploadTarga(inputId) {
     const file = e.target.files[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    try {
 
-    reader.onload = async ev => {
-
-      const base64 = ev.target.result.split(",")[1];
+      const base64 = await fileToBase64(file);
 
       BASE64_TARGA = base64;
 
-      const upload = await uploadBase64JSONP(
+      TEMP_TARGA_ID = await uploadTempFileSafe(
         base64,
         "targa.jpg",
-        "image/jpeg"
+        file.type || "image/jpeg"
       );
 
-      TEMP_TARGA_ID = upload.fileId;
-    };
+      console.log("Targa caricata");
 
-    reader.readAsDataURL(file);
+    } catch (err) {
+
+      console.error(err);
+      alert("Errore upload targa");
+
+    }
+
   });
 }
 
@@ -2161,6 +2174,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
