@@ -374,8 +374,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-
-
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
 
@@ -477,44 +475,43 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const statoEl = document.getElementById("stato");
-
   try {
 
-    // ===== PREVIEW =====
-    const url = URL.createObjectURL(file);
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const btnView = document.getElementById("librettoLink");
-    btnView.classList.remove("hidden");
-    btnView.onclick = () => window.open(url);
+    console.log("FILE selezionato:", file.name);
 
-    statoEl.textContent = "Caricamento libretto su Drive...";
+    const base64 = await new Promise((resolve, reject) => {
 
-    // ===== CONVERSIONE BASE64 =====
-    const base64 = await fileToBase64(file);
+      const reader = new FileReader();
 
-    // ===== UPLOAD DRIVE =====
-    const res = await callBackend(
+      reader.onload = ev => {
+        resolve(ev.target.result.split(",")[1]);
+      };
+
+      reader.onerror = reject;
+
+      reader.readAsDataURL(file);
+
+    });
+
+    const upload = await callBackend(
       "uploadTempFile",
       [base64, file.name, file.type]
     );
 
-    if (!res?.ok)
-      throw new Error(res?.error || "Upload fallito");
+    if (!upload?.fileId)
+      throw new Error("Upload fallito");
 
-    TEMP_LIBRETTO_ID = res.fileId;
+    TEMP_LIBRETTO_ID = upload.fileId;
 
-    console.log("Libretto caricato:", TEMP_LIBRETTO_ID);
-
-    statoEl.textContent = "Libretto caricato ✔";
+    console.log("Libretto salvato su Drive:", TEMP_LIBRETTO_ID);
 
   } catch (err) {
 
-    console.error(err);
-    statoEl.textContent = "Errore upload libretto";
+    console.error("Upload libretto errore:", err);
+    alert("Errore caricamento libretto");
 
   }
 }
@@ -2164,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
