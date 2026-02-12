@@ -156,6 +156,7 @@ async function analizza() {
   }
 
   const stato = document.getElementById("stato");
+  console.log("File trovato:", file);
 
   try {
 
@@ -536,6 +537,8 @@ async function gestisciUploadTarga(inputId){
 }
 
 async function uploadLibretto(file) {
+
+  console.log("FILE:", file);
 
   const formData = new FormData();
   formData.append("file", file);
@@ -1973,12 +1976,16 @@ function scegliTarga() {
 }
 
 function getFileFromInputs(...ids) {
+
   for (const id of ids) {
+
     const input = document.getElementById(id);
+
     if (input && input.files && input.files.length > 0) {
       return input.files[0];
     }
   }
+
   return null;
 }
 
@@ -2190,6 +2197,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
