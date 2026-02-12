@@ -39,6 +39,23 @@ function callBackend(action, args = []) {
   });
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      const base64 = e.target.result.split(",")[1];
+      resolve(base64);
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+
+  });
+}
+
 function popolaFormOCR(dati = {}) {
 
   document.getElementById("nome").value = dati.nomeCliente || "";
@@ -2147,6 +2164,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
