@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwkW0hzItD5ZJ4nS3jPqKXxkr26WbnfTS4kdPfyEyK5-9QfrmQ2zt1oC5Z5pJhBTba8/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwvqYjWCMx-_DhDScRYd4cWK_NmFdOgYLPkMXCmjVdH3rmVvdGnxnUGyd9sYL4ATJVC/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -148,30 +148,50 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  if (!TEMP_LIBRETTO_ID) {
-    alert("Carica prima il libretto");
+  const file = getFileFromInputs("librettoGallery","librettoCamera");
+
+  if (!file) {
+    alert("Carica il libretto");
     return;
   }
 
+  const stato = document.getElementById("stato");
+
   try {
 
-    const res = await callBackend(
-      "ocrLibrettoDrive",
-      [TEMP_LIBRETTO_ID]
-    );
+    stato.textContent = "Upload...";
 
-    if (!res.ok)
-      throw new Error(res.error);
+    const upload = await uploadLibretto(file);
 
-    popolaFormOCR(res.datiOCR);
+    if (!upload.ok)
+      throw new Error(upload.error);
 
-  } catch (err) {
+    stato.textContent = "OCR...";
+
+    const res = await fetch(API_URL, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({
+        action:"analizzaLibretto",
+        args:[ upload.fileId ]
+      })
+    });
+
+    const data = await res.json();
+
+    popolaFormOCR(data.datiOCR);
+
+    stato.textContent = "Completato";
+
+  }
+  catch(err) {
 
     console.error(err);
-    alert("Errore OCR");
+    stato.textContent = "Errore OCR";
 
   }
 }
+
 /********************
  * SALVATAGGIO
  ********************/
@@ -515,35 +535,18 @@ async function gestisciUploadTarga(inputId){
   });
 }
 
-async function uploadLibretto(e) {
+async function uploadLibretto(file) {
 
-  const file = e.target.files[0];
-  if (!file) return;
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("action", "uploadLibretto");
 
-  try {
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: formData
+  });
 
-    const base64 = await fileToBase64(file);
-
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
-
-    console.log("RISPOSTA BACKEND UPLOAD:", upload);   // 🔥 AGGIUNGI QUESTO
-
-    if (!upload?.ok)
-      throw new Error(upload?.error || "Upload fallito");
-
-    TEMP_LIBRETTO_ID = upload.fileId;
-
-    console.log("LIBRETTO CARICATO:", TEMP_LIBRETTO_ID);
-
-  } catch (err) {
-
-    console.error(err);
-    alert("Errore upload libretto");
-
-  }
+  return await res.json();
 }
 
 function resetClienti() {
@@ -2187,5 +2190,6 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
