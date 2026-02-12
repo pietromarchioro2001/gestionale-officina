@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz0GKflRbfCGmAE_L1PIt0pFHM7CoDLBqQqAvJQoDDGqrXCNmGP3hmNgQBecHLBctGe/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby-8hs4-5FnBllG60AL8JZUTSWOTBALk4HZXd_KV6Ze6ufzbQQdRD0SJ9RUae4xXhc7/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -127,7 +127,7 @@ async function analizza() {
   try {
 
     const res = await callBackend(
-      "ocrLibrettoDrive",
+      "ocrLibrettoDaFile",
       [TEMP_LIBRETTO_ID]
     );
 
@@ -465,7 +465,7 @@ async function gestisciUploadTarga(inputId){
     const base64 = await fileToBase64(file);
 
     const upload = await callBackend(
-      "uploadTempLibretto",
+      "uploadTempFile",
       [base64, "targa.jpg", file.type]
     );
 
@@ -2161,6 +2161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
