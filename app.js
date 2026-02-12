@@ -476,6 +476,18 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
+  console.log("EVENT:", e);
+  console.log("FILES:", e.target.files);
+
+  const file = e.target.files?.[0];
+
+  console.log("FILE:", file);
+
+  if (!file) {
+    console.log("⚠ Nessun file rilevato");
+    return;
+  }
+
   try {
 
     const file = e.target.files?.[0];
@@ -2152,6 +2164,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
