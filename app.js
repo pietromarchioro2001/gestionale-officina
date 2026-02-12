@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzOjxogKLq4RIB_D_BjL63X_9XtAdJZY-L9GHE9TVTAWba1q1I5-esSLPotnQd8oj5u/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwXjEq0Fxa2_tbLtvuU8Tzkm19LRmlMGFZBNKDaQ6u7veBoQu8gPEOHkSehGpDdb311/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -481,21 +481,25 @@ async function uploadLibretto(e) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const base64 = await fileToBase64(file);
+    const form = new FormData();
+    form.append("action", "uploadLibretto");
+    form.append("file", file);
 
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
+    });
 
-    if (!upload?.fileId)
-      throw new Error("Upload fallito");
+    const json = await res.json();
 
-    TEMP_LIBRETTO_ID = upload.fileId;
+    if (!json.ok)
+      throw new Error(json.error);
 
-    console.log("Libretto caricato:", TEMP_LIBRETTO_ID);
+    TEMP_LIBRETTO_ID = json.fileId;
 
-  } catch (err) {
+    console.log("Upload OK:", TEMP_LIBRETTO_ID);
+
+  } catch(err) {
 
     console.error(err);
     alert("Errore caricamento libretto");
@@ -2148,6 +2152,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
