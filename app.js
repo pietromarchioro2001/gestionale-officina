@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwvqYjWCMx-_DhDScRYd4cWK_NmFdOgYLPkMXCmjVdH3rmVvdGnxnUGyd9sYL4ATJVC/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzGGw4xY0sblljsChD-9BO4KVuhA-AXrBlSZZsDXX7Rgzpy-UFQXuFp01eGLKYDCM5Y/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -36,55 +36,6 @@ function callBackend(action, args = []) {
 
     document.body.appendChild(script);
 
-  });
-}
-async function uploadFileChunked(base64, nomeFile, mimeType) {
-
-  const CHUNK_SIZE = 250000;
-
-  const uploadId = crypto.randomUUID();
-
-  const chunks = base64.match(
-    new RegExp(`.{1,${CHUNK_SIZE}}`, "g")
-  );
-
-  await callBackend("uploadTempStart", [uploadId, nomeFile, mimeType]);
-
-  for (let i = 0; i < chunks.length; i++) {
-    await callBackend("uploadTempChunk", [
-      uploadId,
-      chunks[i],
-      i
-    ]);
-  }
-
-  const res = await callBackend("uploadTempEnd", [uploadId]);
-
-  if (!res?.ok)
-    throw new Error(res?.error || "Upload chunk fallito");
-
-  return res.fileId;
-}
-
-async function uploadTempFileSafe(base64, nomeFile, mimeType) {
-
-  console.log("Upload sempre chunk");
-
-  return uploadFileChunked(base64, nomeFile, mimeType);
-
-}
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-
-    const reader = new FileReader();
-
-    reader.onload = e =>
-      resolve(e.target.result.split(",")[1]);
-
-    reader.onerror = reject;
-
-    reader.readAsDataURL(file);
   });
 }
 
@@ -148,47 +99,35 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  const file = getFileFromInputs("librettoGallery","librettoCamera");
+  const file = getFileFromInputs(
+    "librettoGallery",
+    "librettoCamera"
+  );
 
   if (!file) {
-    alert("Carica il libretto");
+    alert("Seleziona il libretto");
     return;
   }
 
-  const stato = document.getElementById("stato");
   console.log("File trovato:", file);
 
   try {
 
-    stato.textContent = "Upload...";
+    const fileId = await uploadLibretto(file);
 
-    const upload = await uploadLibretto(file);
+    TEMP_LIBRETTO_ID = fileId;
 
-    if (!upload.ok)
-      throw new Error(upload.error);
+    const res = await callBackend("ocrLibrettoDrive", [fileId]);
 
-    stato.textContent = "OCR...";
+    if (!res.ok)
+      throw new Error(res.error);
 
-    const res = await fetch(API_URL, {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({
-        action:"analizzaLibretto",
-        args:[ upload.fileId ]
-      })
-    });
+    popolaFormOCR(res.dati);
 
-    const data = await res.json();
-
-    popolaFormOCR(data.datiOCR);
-
-    stato.textContent = "Completato";
-
-  }
-  catch(err) {
+  } catch (err) {
 
     console.error(err);
-    stato.textContent = "Errore OCR";
+    alert("Errore OCR");
 
   }
 }
@@ -2197,6 +2136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
