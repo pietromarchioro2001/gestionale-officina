@@ -99,35 +99,32 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  const file = getFileFromInputs(
-    "librettoGallery",
-    "librettoCamera"
-  );
-
-  if (!file) {
-    alert("Seleziona il libretto");
+  if (!TEMP_LIBRETTO_ID) {
+    alert("Carica prima il libretto");
     return;
   }
 
-  console.log("File trovato:", file);
+  const statoEl = document.getElementById("stato");
+  statoEl.textContent = "OCR in corso...";
 
   try {
 
-    const fileId = await uploadLibretto(file);
+    const res = await callBackend(
+      "ocrLibrettoDrive",
+      [TEMP_LIBRETTO_ID]
+    );
 
-    TEMP_LIBRETTO_ID = fileId;
+    if (!res?.ok)
+      throw new Error(res?.error);
 
-    const res = await callBackend("ocrLibrettoDrive", [fileId]);
+    popolaFormOCR(res.datiOCR);
 
-    if (!res.ok)
-      throw new Error(res.error);
-
-    popolaFormOCR(res.dati);
+    statoEl.textContent = "OCR completato ✔";
 
   } catch (err) {
 
     console.error(err);
-    alert("Errore OCR");
+    statoEl.textContent = "Errore OCR";
 
   }
 }
@@ -348,20 +345,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetSezioneClienti);
-  
-  librettoGallery.addEventListener("change", e => {
-
-  const file = e.target.files[0];
-  if (!file) return;
-
-  const url = URL.createObjectURL(file);
-
-  const btnView = document.getElementById("librettoLink");
-  btnView.classList.remove("hidden");
-
-  btnView.onclick = () => window.open(url);
-
-});
 
   altriDocumenti.addEventListener("change", e => {
 
@@ -475,20 +458,48 @@ async function gestisciUploadTarga(inputId){
   });
 }
 
-async function uploadLibretto(file) {
+async function uploadLibretto(e) {
 
-  console.log("FILE:", file);
+  const file = e.target.files[0];
+  if (!file) return;
 
-  const formData = new FormData();
-  formData.append("file", file);
-  formData.append("action", "uploadLibretto");
+  const statoEl = document.getElementById("stato");
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: formData
-  });
+  try {
 
-  return await res.json();
+    // ===== PREVIEW =====
+    const url = URL.createObjectURL(file);
+
+    const btnView = document.getElementById("librettoLink");
+    btnView.classList.remove("hidden");
+    btnView.onclick = () => window.open(url);
+
+    statoEl.textContent = "Caricamento libretto su Drive...";
+
+    // ===== CONVERSIONE BASE64 =====
+    const base64 = await fileToBase64(file);
+
+    // ===== UPLOAD DRIVE =====
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
+
+    if (!res?.ok)
+      throw new Error(res?.error || "Upload fallito");
+
+    TEMP_LIBRETTO_ID = res.fileId;
+
+    console.log("Libretto caricato:", TEMP_LIBRETTO_ID);
+
+    statoEl.textContent = "Libretto caricato ✔";
+
+  } catch (err) {
+
+    console.error(err);
+    statoEl.textContent = "Errore upload libretto";
+
+  }
 }
 
 function resetClienti() {
@@ -2136,6 +2147,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
