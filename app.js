@@ -1,59 +1,22 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzmAWSPjpQgAKeLX2pw-Q7TTeSkpCR6wTjGsUIuIX7cI7t8MZYFcPi3raPLfYCsqAQa/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxzi1F0gD9thZt3g_SPGEcgVom4uirqFro3cz-HLoIg8xemLeIC319bEGkqbpPDmdgF/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 
+async function callBackend(action, args = []) {
 
-function callBackend(action, args = []) {
-
-  return new Promise((resolve, reject) => {
-
-    const callbackName = "cb_" + Math.random().toString(36).substring(2);
-
-    const script = document.createElement("script");
-
-    window[callbackName] = function(data) {
-
-      resolve(data);
-
-      delete window[callbackName];
-      script.remove();
-    };
-
-    script.onerror = () => {
-
-      delete window[callbackName];
-      script.remove();
-
-      reject(new Error("Errore rete JSONP: " + action));
-    };
-
-    script.src =
-      API_URL +
-      "?action=" + encodeURIComponent(action) +
-      "&args=" + encodeURIComponent(JSON.stringify(args)) +
-      "&callback=" + callbackName;
-
-    document.body.appendChild(script);
-
+  const res = await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      action,
+      args
+    })
   });
-}
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-
-    const reader = new FileReader();
-
-    reader.onload = e => {
-      const base64 = e.target.result.split(",")[1];
-      resolve(base64);
-    };
-
-    reader.onerror = reject;
-
-    reader.readAsDataURL(file);
-
-  });
+  return await res.json();
 }
 
 function popolaFormOCR(dati = {}) {
@@ -463,14 +426,24 @@ async function gestisciUploadTarga(inputId){
     const file = e.target.files[0];
     if(!file) return;
 
-    const base64 = await fileToBase64(file);
+    const form = new FormData();
+    form.append("action","uploadFile");
+    form.append("file",file);
 
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, "targa.jpg", file.type]
-    );
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body:form
+    });
 
-    TEMP_TARGA_ID = upload.fileId;
+    const json = await res.json();
+
+    if(!json.ok){
+      alert("Errore upload targa");
+      return;
+    }
+
+    TEMP_TARGA_ID = json.fileId;
+
   });
 }
 
@@ -478,38 +451,45 @@ async function uploadLibretto(e) {
 
   try {
 
-    const input = e.target;
+    const file = e.target.files[0];
+    if (!file) return;
 
-    if (!input || !input.files || input.files.length === 0) {
-      console.warn("Nessun file selezionato");
-      return;
-    }
+    const form = new FormData();
+    form.append("action", "uploadFile");
+    form.append("file", file);
 
-    const file = input.files[0];
+    const res = await fetch(API_URL, {
+      method:"POST",
+      body:form
+    });
 
-    console.log("FILE selezionato:", file.name);
+    const json = await res.json();
 
-    const base64 = await fileToBase64(file);
+    if (!json.ok)
+      throw new Error(json.error);
 
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
-
-    if (!upload || !upload.ok || !upload.fileId) {
-      throw new Error(upload?.error || "Upload backend fallito");
-    }
-
-    TEMP_LIBRETTO_ID = upload.fileId;
-
-    console.log("Libretto salvato su Drive:", TEMP_LIBRETTO_ID);
+    TEMP_LIBRETTO_ID = json.fileId;
 
   } catch (err) {
 
-    console.error("Upload libretto errore:", err);
-    alert(err.message || "Errore caricamento libretto");
+    console.error(err);
+    alert("Errore upload libretto");
 
   }
+}
+
+async function uploadFilePOST(file) {
+
+  const form = new FormData();
+  form.append("action", "uploadLibretto");
+  form.append("file", file);
+
+  const res = await fetch(API_URL, {
+    method: "POST",
+    body: form
+  });
+
+  return await res.json();
 }
 
 function resetClienti() {
@@ -2157,6 +2137,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
