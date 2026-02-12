@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycby-8hs4-5FnBllG60AL8JZUTSWOTBALk4HZXd_KV6Ze6ufzbQQdRD0SJ9RUae4xXhc7/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzOjxogKLq4RIB_D_BjL63X_9XtAdJZY-L9GHE9TVTAWba1q1I5-esSLPotnQd8oj5u/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -122,7 +122,7 @@ async function analizza() {
   }
 
   const statoEl = document.getElementById("stato");
-  statoEl.textContent = "OCR in corso...";
+  statoEl.textContent = "Analisi OCR...";
 
   try {
 
@@ -145,6 +145,7 @@ async function analizza() {
 
   }
 }
+
 
 /********************
  * SALVATAGGIO
@@ -480,21 +481,7 @@ async function uploadLibretto(e) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    console.log("FILE selezionato:", file.name);
-
-    const base64 = await new Promise((resolve, reject) => {
-
-      const reader = new FileReader();
-
-      reader.onload = ev => {
-        resolve(ev.target.result.split(",")[1]);
-      };
-
-      reader.onerror = reject;
-
-      reader.readAsDataURL(file);
-
-    });
+    const base64 = await fileToBase64(file);
 
     const upload = await callBackend(
       "uploadTempFile",
@@ -506,11 +493,11 @@ async function uploadLibretto(e) {
 
     TEMP_LIBRETTO_ID = upload.fileId;
 
-    console.log("Libretto salvato su Drive:", TEMP_LIBRETTO_ID);
+    console.log("Libretto caricato:", TEMP_LIBRETTO_ID);
 
   } catch (err) {
 
-    console.error("Upload libretto errore:", err);
+    console.error(err);
     alert("Errore caricamento libretto");
 
   }
@@ -2161,6 +2148,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
