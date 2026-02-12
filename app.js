@@ -529,6 +529,8 @@ async function uploadLibretto(e) {
       [base64, file.name, file.type]
     );
 
+    console.log("RISPOSTA BACKEND UPLOAD:", upload);   // 🔥 AGGIUNGI QUESTO
+
     if (!upload?.ok)
       throw new Error(upload?.error || "Upload fallito");
 
@@ -2185,4 +2187,5 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
