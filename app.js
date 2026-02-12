@@ -476,45 +476,38 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
-  console.log("EVENT:", e);
-  console.log("FILES:", e.target.files);
-
-  const file = e.target.files?.[0];
-
-  console.log("FILE:", file);
-
-  if (!file) {
-    console.log("⚠ Nessun file rilevato");
-    return;
-  }
-
   try {
 
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const input = e.target;
 
-    const form = new FormData();
-    form.append("action", "uploadLibretto");
-    form.append("file", file);
+    if (!input || !input.files || input.files.length === 0) {
+      console.warn("Nessun file selezionato");
+      return;
+    }
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: form
-    });
+    const file = input.files[0];
 
-    const json = await res.json();
+    console.log("FILE selezionato:", file.name);
 
-    if (!json.ok)
-      throw new Error(json.error);
+    const base64 = await fileToBase64(file);
 
-    TEMP_LIBRETTO_ID = json.fileId;
+    const upload = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-    console.log("Upload OK:", TEMP_LIBRETTO_ID);
+    if (!upload || !upload.ok || !upload.fileId) {
+      throw new Error(upload?.error || "Upload backend fallito");
+    }
 
-  } catch(err) {
+    TEMP_LIBRETTO_ID = upload.fileId;
 
-    console.error(err);
-    alert("Errore caricamento libretto");
+    console.log("Libretto salvato su Drive:", TEMP_LIBRETTO_ID);
+
+  } catch (err) {
+
+    console.error("Upload libretto errore:", err);
+    alert(err.message || "Errore caricamento libretto");
 
   }
 }
@@ -2164,6 +2157,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
