@@ -146,56 +146,32 @@ let clienteEsistente = false;
 let assistenteInChiusura = false;
 let rispostaInElaborazione = false;
 
-async function analizza(){
-  console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
+async function analizza() {
 
-  const file = getFileFromInputs(
-    "librettoGallery",
-    "librettoCamera"
-  );
-
-  if(!file){
-    alert("Seleziona il libretto");
+  if (!TEMP_LIBRETTO_ID) {
+    alert("Carica prima il libretto");
     return;
   }
 
-  const stato = document.getElementById("stato");
-  stato.textContent = "Upload libretto...";
-
-  try{
-
-    const base64 = await fileToBase64(file);
-
-    const upload = await callBackend(
-      "uploadTempFile",
-      [base64, "libretto.jpg", fileLibretto.type]
-    );
-    
-    if (!upload?.ok)
-      throw new Error(upload?.error || "Upload fallito");
-    
-    TEMP_LIBRETTO_ID = upload.fileId;
-
-    stato.textContent = "Analisi OCR...";
+  try {
 
     const res = await callBackend(
-      "analizzaLibretto",
-      [upload.fileId]
+      "ocrLibrettoDrive",
+      [TEMP_LIBRETTO_ID]
     );
+
+    if (!res.ok)
+      throw new Error(res.error);
 
     popolaFormOCR(res.datiOCR);
 
-    stato.textContent = "OCR completato";
-
-  }
-  catch(err){
+  } catch (err) {
 
     console.error(err);
-    stato.textContent = "Errore OCR";
+    alert("Errore OCR");
 
   }
 }
-
 /********************
  * SALVATAGGIO
  ********************/
@@ -443,6 +419,9 @@ document.addEventListener("DOMContentLoaded", () => {
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
 
+  librettoGallery.addEventListener("change", uploadLibretto);
+  librettoCamera.addEventListener("change", uploadLibretto);
+
   bindFileCount("targaGallery", "targaCount", "targaLink");
   bindFileCount("targaCamera", "targaCount", "targaLink");
 
@@ -534,6 +513,35 @@ async function gestisciUploadTarga(inputId){
 
     TEMP_TARGA_ID = upload.fileId;
   });
+}
+
+async function uploadLibretto(e) {
+
+  const file = e.target.files[0];
+  if (!file) return;
+
+  try {
+
+    const base64 = await fileToBase64(file);
+
+    const upload = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
+
+    if (!upload?.ok)
+      throw new Error(upload?.error || "Upload fallito");
+
+    TEMP_LIBRETTO_ID = upload.fileId;
+
+    console.log("LIBRETTO CARICATO:", TEMP_LIBRETTO_ID);
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Errore upload libretto");
+
+  }
 }
 
 function resetClienti() {
@@ -2177,60 +2185,4 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
