@@ -459,6 +459,8 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
+  console.log("UPLOAD LIBRETTO PARTITO");
+
   const file = e.target.files[0];
   if (!file) return;
 
@@ -2136,6 +2138,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
