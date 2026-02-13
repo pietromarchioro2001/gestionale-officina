@@ -1,20 +1,32 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxwMyYgU-Se4YCALCtKYp-e_V8vYbb5xD8GwB9BrVwoBfqgDbxvYeXoUpDfTMPuEAYf/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwLAF7_sEUdIR1S5mQjvE7EY__CYSCwN5zng2eJdMsMKdnOmNIETOdqO7CULpuID8N9/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 
-async function callBackend(action, args = []) {
+function callBackend(action, args = []) {
 
-  const form = new URLSearchParams();
-  form.append("action", action);
-  form.append("payload", JSON.stringify(args));
+  return new Promise((resolve, reject) => {
 
-  const res = await fetch(API_URL, {
-    method: "POST",
-    body: form
+    const cb = "cb_" + Date.now();
+
+    window[cb] = res => {
+      resolve(res);
+      delete window[cb];
+      script.remove();
+    };
+
+    const script = document.createElement("script");
+
+    const payload = encodeURIComponent(JSON.stringify(args));
+
+    script.src =
+      `${API_URL}?action=${action}&payload=${payload}&callback=${cb}`;
+
+    script.onerror = reject;
+
+    document.body.appendChild(script);
+
   });
-
-  return await res.json();
 }
 
 function popolaFormOCR(dati = {}) {
@@ -447,34 +459,23 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
-  try {
+  const file = e.target.files[0];
+  if (!file) return;
 
-    const file = e.target.files[0];
-    if (!file) return;
+  const form = new FormData();
+  form.append("action", "uploadFile");
+  form.append("file", file);
 
-    const form = new FormData();
-    form.append("action", "uploadFile");
-    form.append("file", file);
+  const res = await fetch(API_URL, {
+    method:"POST",
+    body:form
+  });
 
-    const res = await fetch(API_URL, {
-      method:"POST",
-      body:form
-    });
+  const json = await res.json();
 
-    const json = await res.json();
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    TEMP_LIBRETTO_ID = json.fileId;
-
-  } catch (err) {
-
-    console.error(err);
-    alert("Errore upload libretto");
-
-  }
+  TEMP_LIBRETTO_ID = json.fileId;
 }
+
 
 async function uploadFilePOST(file) {
 
@@ -2135,6 +2136,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
