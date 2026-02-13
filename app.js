@@ -335,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetClienti);
 
-  altriDocumenti.addEventListener("change", e => {
+  document.getElementById("altriDocumenti")?.addEventListener("change", e => {
 
   const count = e.target.files.length;
 
@@ -2185,6 +2185,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
