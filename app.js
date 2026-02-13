@@ -539,26 +539,16 @@ function collegaFileButtons() {
 
 function resetClienti() {
 
-  // ==============================
-  // RESET VARIABILI GLOBALI
-  // ==============================
-
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
 
-  // ==============================
-  // SVUOTA INPUT TESTO
-  // ==============================
-
+  // svuota input testo
   document
     .querySelectorAll("#clienti input:not([type='file'])")
     .forEach(i => i.value = "");
 
-  // ==============================
-  // RICREA INPUT FILE (IMPORTANTISSIMO)
-  // ==============================
-
+  // ricrea input file
   const fileIds = [
     "librettoGallery",
     "librettoCamera",
@@ -577,43 +567,18 @@ function resetClienti() {
 
   });
 
-  // ==============================
-  // RIAGGANCIA BOTTONI data-target
-  // ==============================
+  // riaggancia bottoni file
+  collegaFileButtons();
 
-  document.querySelectorAll("[data-target]").forEach(btn => {
+  // riaggancia upload libretto
+  document.getElementById("librettoGallery")?.addEventListener("change", uploadLibretto);
+  document.getElementById("librettoCamera")?.addEventListener("change", uploadLibretto);
 
-    btn.onclick = () => {
-      const id = btn.dataset.target;
-      const input = document.getElementById(id);
-      if (input) input.click();
-    };
+  // riaggancia upload targa
+  gestisciUploadTarga("targaGallery");
+  gestisciUploadTarga("targaCamera");
 
-  });
-
-  // ==============================
-  // RIAGGANCIA EVENTI CHANGE
-  // (adatta se hai nomi diversi)
-  // ==============================
-
-  const librettoGallery = document.getElementById("librettoGallery");
-  const librettoCamera  = document.getElementById("librettoCamera");
-  const targaGallery    = document.getElementById("targaGallery");
-  const targaCamera     = document.getElementById("targaCamera");
-  const altriDocumenti  = document.getElementById("altriDocumenti");
-
-  if (librettoGallery) librettoGallery.addEventListener("change", uploadLibretto);
-  if (librettoCamera)  librettoCamera.addEventListener("change", uploadLibretto);
-
-  if (targaGallery) targaGallery.addEventListener("change", uploadTarga);
-  if (targaCamera)  targaCamera.addEventListener("change", uploadTarga);
-
-  if (altriDocumenti) altriDocumenti.addEventListener("change", uploadAltri);
-
-  // ==============================
-  // NASCONDI LINK VISUALIZZA
-  // ==============================
-
+  // reset link
   ["librettoLink", "targaLink"].forEach(id => {
     const link = document.getElementById(id);
     if (link) {
@@ -622,24 +587,12 @@ function resetClienti() {
     }
   });
 
-  // ==============================
-  // NASCONDI CARTELLA CLIENTE
-  // ==============================
-
-  const btnCartella = document.getElementById("btnCartellaCliente");
-  if (btnCartella) btnCartella.style.display = "none";
-
-  // ==============================
-  // RESET MESSAGGI
-  // ==============================
-
-  const esito = document.getElementById("esitoRicerca");
-  if (esito) esito.textContent = "";
-
-  const stato = document.getElementById("stato");
-  if (stato) stato.textContent = "";
+  document.getElementById("btnCartellaCliente")?.classList.add("hidden");
+  document.getElementById("esitoRicerca").textContent = "";
+  document.getElementById("stato").textContent = "";
 
 }
+
 
 function messaggioBot(testo) {
   const chat = document.getElementById("assistenteChat");
