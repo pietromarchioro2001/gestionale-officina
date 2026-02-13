@@ -536,8 +536,13 @@ function resetClienti() {
 
   // 🔹 reset input file
   ["libretto", "fotoTarga", "altriDocumenti"].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.value = "";
+
+    const oldInput = document.getElementById(id);
+    if (!oldInput) return;
+  
+    const newInput = oldInput.cloneNode(true);
+    oldInput.parentNode.replaceChild(newInput, oldInput);
+  
   });
 
   // 🔹 reset contatori file
@@ -2168,6 +2173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
