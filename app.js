@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbye8rW3Wr8IU75dzq2q-OF4bsOPQzSrZjj5pdt5dj17fwvVHbn1n2r0QRkfXUsxlUn6/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz_ZPDkiwbpYix3btYXkxP-bhMCRI3ppq-G5F3BIOrEC2qm_QZ3piT_qu9IBajs98e-/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -457,6 +457,22 @@ async function gestisciUploadTarga(inputId){
   });
 }
 
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+
+    const reader = new FileReader();
+
+    reader.onload = e => {
+      resolve(e.target.result.split(",")[1]);
+    };
+
+    reader.onerror = reject;
+
+    reader.readAsDataURL(file);
+
+  });
+}
+
 async function uploadLibretto(e) {
 
   try {
@@ -467,6 +483,7 @@ async function uploadLibretto(e) {
     const base64 = await fileToBase64(file);
 
     const form = new FormData();
+
     form.append("action", "uploadTempFile");
     form.append("base64", base64);
     form.append("nomeFile", file.name);
@@ -480,11 +497,11 @@ async function uploadLibretto(e) {
     const json = await res.json();
 
     if (!json.ok)
-      throw new Error(json.error || "Upload fallito");
+      throw new Error(json.error);
 
     TEMP_LIBRETTO_ID = json.fileId;
 
-    console.log("Upload ok:", TEMP_LIBRETTO_ID);
+    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
   } catch(err) {
 
@@ -2153,6 +2170,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
