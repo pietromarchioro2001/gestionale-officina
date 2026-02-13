@@ -89,15 +89,10 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  console.log(res);
-
   if (!TEMP_LIBRETTO_ID) {
     alert("Carica prima il libretto");
     return;
   }
-
-  const statoEl = document.getElementById("stato");
-  statoEl.textContent = "Analisi OCR...";
 
   try {
 
@@ -106,21 +101,22 @@ async function analizza() {
       [TEMP_LIBRETTO_ID]
     );
 
-    if (!res?.ok)
-      throw new Error(res?.error);
+    console.log("RISPOSTA OCR:", res);
+
+    if (!res?.ok) {
+      alert(res.error || "OCR fallito");
+      return;
+    }
 
     popolaFormOCR(res.datiOCR);
 
-    statoEl.textContent = "OCR completato ✔";
-
-  } catch (err) {
+  } catch(err) {
 
     console.error(err);
-    statoEl.textContent = "Errore OCR";
+    alert("Errore OCR");
 
   }
 }
-
 
 /********************
  * SALVATAGGIO
@@ -2172,6 +2168,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
