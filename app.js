@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxJ3Wu5hHcq0Xg8pHUZMySrCOhucYx6TcFqP9GljjvsulIjGfbJwrmWa54VTLeHwXDS/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz5_SqlAtd6dSHs6bOPq_psvaozkr9HZvfTsKS78kX_Dr4f61VEGr1cyLFupp1aJiTA/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -459,25 +459,40 @@ async function gestisciUploadTarga(inputId){
 
 async function uploadLibretto(e) {
 
-  console.log("UPLOAD LIBRETTO PARTITO");
+  try {
 
-  const file = e.target.files[0];
-  if (!file) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  const form = new FormData();
-  form.append("action", "uploadFile");
-  form.append("file", file);
+    const base64 = await fileToBase64(file);
 
-  const res = await fetch(API_URL, {
-    method:"POST",
-    body:form
-  });
+    const form = new FormData();
+    form.append("action", "uploadTempFile");
+    form.append("base64", base64);
+    form.append("nomeFile", file.name);
+    form.append("mimeType", file.type);
 
-  const json = await res.json();
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
+    });
 
-  TEMP_LIBRETTO_ID = json.fileId;
+    const json = await res.json();
+
+    if (!json.ok)
+      throw new Error(json.error || "Upload fallito");
+
+    TEMP_LIBRETTO_ID = json.fileId;
+
+    console.log("Upload ok:", TEMP_LIBRETTO_ID);
+
+  } catch(err) {
+
+    console.error(err);
+    alert("Errore upload libretto");
+
+  }
 }
-
 
 async function uploadFilePOST(file) {
 
@@ -2138,6 +2153,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
