@@ -333,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btnCerca")?.addEventListener("click", cercaVeicolo);
   document
   .getElementById("btnRefreshClienti")
-  ?.addEventListener("click", resetSezioneClienti);
+  ?.addEventListener("click", resetClienti);
 
   altriDocumenti.addEventListener("change", e => {
 
@@ -523,35 +523,97 @@ async function uploadFilePOST(file) {
   return await res.json();
 }
 
+function collegaFileButtons() {
+
+  document.querySelectorAll("[data-target]").forEach(btn => {
+
+    btn.onclick = () => {
+      const id = btn.dataset.target;
+      const input = document.getElementById(id);
+      if (input) input.click();
+    };
+
+  });
+
+}
+
 function resetClienti() {
+
+  // ==============================
+  // RESET VARIABILI GLOBALI
+  // ==============================
+
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
 
+  // ==============================
+  // SVUOTA INPUT TESTO
+  // ==============================
 
-  // 🔹 svuota tutti gli input testuali
   document
     .querySelectorAll("#clienti input:not([type='file'])")
-    .forEach(i => (i.value = ""));
+    .forEach(i => i.value = "");
 
-  // 🔹 reset input file
-  ["libretto", "fotoTarga", "altriDocumenti"].forEach(id => {
+  // ==============================
+  // RICREA INPUT FILE (IMPORTANTISSIMO)
+  // ==============================
+
+  const fileIds = [
+    "librettoGallery",
+    "librettoCamera",
+    "targaGallery",
+    "targaCamera",
+    "altriDocumenti"
+  ];
+
+  fileIds.forEach(id => {
 
     const oldInput = document.getElementById(id);
     if (!oldInput) return;
-  
+
     const newInput = oldInput.cloneNode(true);
     oldInput.parentNode.replaceChild(newInput, oldInput);
-  
+
   });
 
-  // 🔹 reset contatori file
-  ["librettoCount", "targaCount", "altriCount"].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = "";
+  // ==============================
+  // RIAGGANCIA BOTTONI data-target
+  // ==============================
+
+  document.querySelectorAll("[data-target]").forEach(btn => {
+
+    btn.onclick = () => {
+      const id = btn.dataset.target;
+      const input = document.getElementById(id);
+      if (input) input.click();
+    };
+
   });
 
-  // 🔹 nascondi link Visualizza
+  // ==============================
+  // RIAGGANCIA EVENTI CHANGE
+  // (adatta se hai nomi diversi)
+  // ==============================
+
+  const librettoGallery = document.getElementById("librettoGallery");
+  const librettoCamera  = document.getElementById("librettoCamera");
+  const targaGallery    = document.getElementById("targaGallery");
+  const targaCamera     = document.getElementById("targaCamera");
+  const altriDocumenti  = document.getElementById("altriDocumenti");
+
+  if (librettoGallery) librettoGallery.addEventListener("change", uploadLibretto);
+  if (librettoCamera)  librettoCamera.addEventListener("change", uploadLibretto);
+
+  if (targaGallery) targaGallery.addEventListener("change", uploadTarga);
+  if (targaCamera)  targaCamera.addEventListener("change", uploadTarga);
+
+  if (altriDocumenti) altriDocumenti.addEventListener("change", uploadAltri);
+
+  // ==============================
+  // NASCONDI LINK VISUALIZZA
+  // ==============================
+
   ["librettoLink", "targaLink"].forEach(id => {
     const link = document.getElementById(id);
     if (link) {
@@ -560,18 +622,22 @@ function resetClienti() {
     }
   });
 
-  // 🔹 nascondi pulsante File cliente
+  // ==============================
+  // NASCONDI CARTELLA CLIENTE
+  // ==============================
+
   const btnCartella = document.getElementById("btnCartellaCliente");
   if (btnCartella) btnCartella.style.display = "none";
 
-  // 🔹 reset messaggi stato
+  // ==============================
+  // RESET MESSAGGI
+  // ==============================
+
   const esito = document.getElementById("esitoRicerca");
   if (esito) esito.textContent = "";
 
   const stato = document.getElementById("stato");
   if (stato) stato.textContent = "";
-
-  clienteEsistente = false;
 
 }
 
@@ -2082,13 +2148,6 @@ function sbloccaAudio() {
   }
 }
 
-function resetSezioneClienti() {
-
-  resetClienti();   // 🔥 usa la vera funzione completa
-
-}
-
-
 document.addEventListener("DOMContentLoaded", () => {
 
   document
@@ -2173,6 +2232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
