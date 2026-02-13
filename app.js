@@ -1,19 +1,17 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyexIKlaZ4VpjcUrVPLV0aLoRi5oqXFo68iWAJYnznWQoHYTt93sTE5kSKa34Y-4uMF/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxwMyYgU-Se4YCALCtKYp-e_V8vYbb5xD8GwB9BrVwoBfqgDbxvYeXoUpDfTMPuEAYf/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 
 async function callBackend(action, args = []) {
 
+  const form = new URLSearchParams();
+  form.append("action", action);
+  form.append("payload", JSON.stringify(args));
+
   const res = await fetch(API_URL, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      action,
-      args
-    })
+    body: form
   });
 
   return await res.json();
@@ -2137,6 +2135,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
