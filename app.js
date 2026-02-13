@@ -89,6 +89,8 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
+  console.log(res);
+
   if (!TEMP_LIBRETTO_ID) {
     alert("Carica prima il libretto");
     return;
@@ -2170,6 +2172,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
