@@ -570,8 +570,8 @@ function resetClienti() {
   gestisciPreview("targaCamera", "targaLink");
 
   // reset link
-  document.getElementById("librettoLink").classList.add("hidden");
-  document.getElementById("targaLink").classList.add("hidden");
+  document.getElementById("librettoLink").style.display = "none";
+  document.getElementById("targaLink").style.display = "none";
 
   document.getElementById("esitoRicerca").textContent = "";
   document.getElementById("stato").textContent = "";
@@ -2113,20 +2113,20 @@ function gestisciPreview(inputId, viewId) {
 
   if (!input || !viewBtn) return;
 
-  viewBtn.classList.add("hidden");
+  viewBtn.style.display = "none";
 
   input.addEventListener("change", e => {
 
     const file = e.target.files?.[0];
 
     if (!file) {
-      viewBtn.classList.add("hidden");
+      viewBtn.style.display = "none";
       return;
     }
 
     const url = URL.createObjectURL(file);
 
-    viewBtn.classList.remove("hidden");
+    viewBtn.style.display = "inline-block";   // 🔥 QUESTA È LA FIX
     viewBtn.onclick = () => window.open(url);
 
   });
@@ -2169,6 +2169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
