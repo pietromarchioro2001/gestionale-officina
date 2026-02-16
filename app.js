@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzvmiCuGaV9KgP5rXli1GxrMPW4MGSrNn9hpGdBVZ5Ves_effxfTGnyeucRvop0zaQP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwry6KRNFAb52KEA5N2_VfQO1jtvgmaw88TC_66Gt3dJc0l1DmKedVbTreTud9TT4Cj/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -178,56 +178,47 @@ function leggiAltriDocumenti(callback) {
 /********************
  * INVIO BACKEND
  ********************/
-async function inviaSalvataggio() {
+function inviaSalvataggio() {
 
-  try {
+  const dati = {
+    nomeCliente: document.getElementById("nome").value,
+    indirizzo: document.getElementById("indirizzo").value,
+    telefono: document.getElementById("telefono").value,
+    dataNascita: document.getElementById("data").value,
+    codiceFiscale: document.getElementById("cf").value,
 
-    const dati = {
+    veicolo: document.getElementById("veicolo").value,
+    motore: document.getElementById("motore").value,
+    targa: document.getElementById("targa").value,
+    immatricolazione: document.getElementById("immatricolazione").value,
 
-      nomeCliente: document.getElementById("nome").value,
-      indirizzo: document.getElementById("indirizzo").value,
-      telefono: document.getElementById("telefono").value,
-      dataNascita: document.getElementById("data").value,
-      codiceFiscale: document.getElementById("cf").value,
+    tempLibrettoId: TEMP_LIBRETTO_ID,
+    tempTargaId: TEMP_TARGA_ID
+  };
 
-      veicolo: document.getElementById("veicolo").value,
-      motore: document.getElementById("motore").value,
-      targa: document.getElementById("targa").value,
-      immatricolazione: document.getElementById("immatricolazione").value,
+  console.log("INVIO AL BACKEND:", dati);
 
-      tempLibrettoId: TEMP_LIBRETTO_ID,
-      tempTargaId: TEMP_TARGA_ID
+  callBackend("salvaClienteEVeicolo", [dati])
+    .then(res => {
 
-    };
+      console.log("RISPOSTA BACKEND:", res);
 
-    console.log("INVIO AL BACKEND:", dati);
+      if (!res?.ok) {
+        alert(res.error || "Errore salvataggio");
+        return;
+      }
 
-    const form = new FormData();
+      alert("Cliente salvato correttamente");
 
-    form.append("action", "salvaClienteEVeicolo");
-    form.append("payload", JSON.stringify(dati));
+      resetClienti();
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: form
+    })
+    .catch(err => {
+
+      console.error(err);
+      alert("Errore connessione backend");
+
     });
-
-    const json = await res.json();
-
-    console.log("RISPOSTA SALVATAGGIO:", json);
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    alert("Cliente salvato correttamente");
-
-  }
-  catch(err) {
-
-    console.error(err);
-    alert("Errore salvataggio");
-
-  }
 
 }
 
@@ -2227,6 +2218,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
