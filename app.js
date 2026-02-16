@@ -448,55 +448,35 @@ let sessioneAssistente = {
   valoriEsistenti: {}
 };
 
-function gestisciUploadTarga(inputId){
+async function uploadTarga(e) {
 
-  const input = document.getElementById(inputId);
+  try {
 
-  if (!input) return;
+    const file = e.target.files[0];
+    if (!file) return;
 
-  // evita doppio listener
-  input.onchange = null;
+    console.log("Upload targa avviato...");
 
-  input.onchange = async e => {
+    const base64 = await fileToBase64(file);
 
-    try {
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-      const file = e.target.files[0];
-      if (!file) return;
+    if (!res || !res.ok)
+      throw new Error(res?.error || "Upload fallito");
 
-      console.log("Upload targa avviato...");
+    TEMP_TARGA_ID = res.fileId;
 
-      const base64 = await fileToBase64(file);
+    console.log("Upload targa OK:", TEMP_TARGA_ID);
 
-      const form = new FormData();
+  } catch(err) {
 
-      form.append("action", "uploadTempFile");
-      form.append("base64", base64);
-      form.append("nomeFile", file.name);
-      form.append("mimeType", file.type);
+    console.error(err);
+    alert("Errore upload targa");
 
-      const res = await fetch(API_URL,{
-        method: "POST",
-        body: form
-      });
-
-      const json = await res.json();
-
-      if (!json.ok)
-        throw new Error(json.error);
-
-      TEMP_TARGA_ID = json.fileId;
-
-      console.log("Upload Targa OK:", TEMP_TARGA_ID);
-
-    } catch(err){
-
-      console.error(err);
-      alert("Errore upload targa");
-
-    }
-
-  };
+  }
 
 }
 
@@ -523,28 +503,21 @@ async function uploadLibretto(e) {
     const file = e.target.files[0];
     if (!file) return;
 
+    console.log("Upload libretto avviato...");
+
     const base64 = await fileToBase64(file);
 
-    const form = new FormData();
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-    form.append("action", "uploadTempFile");
-    form.append("base64", base64);
-    form.append("nomeFile", file.name);
-    form.append("mimeType", file.type);
+    if (!res || !res.ok)
+      throw new Error(res?.error || "Upload fallito");
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: form
-    });
+    TEMP_LIBRETTO_ID = res.fileId;
 
-    const json = await res.json();
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    TEMP_LIBRETTO_ID = json.fileId;
-
-    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
+    console.log("Upload libretto OK:", TEMP_LIBRETTO_ID);
 
   } catch(err) {
 
@@ -552,6 +525,7 @@ async function uploadLibretto(e) {
     alert("Errore upload libretto");
 
   }
+
 }
 
 async function uploadFilePOST(file) {
@@ -2218,6 +2192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
