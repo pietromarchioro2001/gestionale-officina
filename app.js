@@ -428,16 +428,23 @@ let sessioneAssistente = {
   valoriEsistenti: {}
 };
 
-async function gestisciUploadTarga(inputId){
+function gestisciUploadTarga(inputId){
 
   const input = document.getElementById(inputId);
 
-  input.addEventListener("change", async e => {
+  if (!input) return;
+
+  // evita doppio listener
+  input.onchange = null;
+
+  input.onchange = async e => {
 
     try {
 
       const file = e.target.files[0];
       if (!file) return;
+
+      console.log("Upload targa avviato...");
 
       const base64 = await fileToBase64(file);
 
@@ -448,7 +455,7 @@ async function gestisciUploadTarga(inputId){
       form.append("nomeFile", file.name);
       form.append("mimeType", file.type);
 
-      const res = await fetch(API_URL, {
+      const res = await fetch(API_URL,{
         method: "POST",
         body: form
       });
@@ -469,7 +476,7 @@ async function gestisciUploadTarga(inputId){
 
     }
 
-  });
+  };
 
 }
 
@@ -2120,34 +2127,38 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function gestisciPreview(inputId, viewId) {
+function gestisciPreview(inputId, viewId){
 
   const input = document.getElementById(inputId);
-  const viewBtn = document.getElementById(viewId);
+  const btn = document.getElementById(viewId);
 
-  if (!input || !viewBtn) return;
+  if (!input || !btn) return;
 
   input.onchange = e => {
 
     const file = e.target.files?.[0];
 
-    if (!file) {
-      viewBtn.classList.add("hidden");
+    if (!file){
+
+      btn.style.display = "none";
       return;
+
     }
 
     const url = URL.createObjectURL(file);
 
-    // 🔥 QUESTO È IL FIX
-    viewBtn.classList.remove("hidden");
+    btn.style.display = "inline-block";
 
-    viewBtn.style.display = "inline-block";
+    btn.onclick = () => {
 
-    viewBtn.onclick = () => window.open(url);
+      window.open(url, "_blank");
+
+    };
 
     console.log("Preview attivato");
 
   };
+
 }
 
 gestisciPreview("librettoGallery", "librettoLink");
@@ -2187,6 +2198,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
