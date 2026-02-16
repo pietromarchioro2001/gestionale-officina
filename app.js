@@ -2113,23 +2113,27 @@ function gestisciPreview(inputId, viewId) {
 
   if (!input || !viewBtn) return;
 
-  viewBtn.style.display = "none";
-
-  input.addEventListener("change", e => {
+  input.onchange = e => {
 
     const file = e.target.files?.[0];
 
     if (!file) {
-      viewBtn.style.display = "none";
+      viewBtn.classList.add("hidden");
       return;
     }
 
     const url = URL.createObjectURL(file);
 
-    viewBtn.style.display = "inline-block";   // 🔥 QUESTA È LA FIX
+    // 🔥 QUESTO È IL FIX
+    viewBtn.classList.remove("hidden");
+
+    viewBtn.style.display = "inline-block";
+
     viewBtn.onclick = () => window.open(url);
 
-  });
+    console.log("Preview attivato");
+
+  };
 }
 
 gestisciPreview("librettoGallery", "librettoLink");
@@ -2169,6 +2173,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
