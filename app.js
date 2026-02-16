@@ -178,28 +178,57 @@ function leggiAltriDocumenti(callback) {
 /********************
  * INVIO BACKEND
  ********************/
-function inviaSalvataggio() {
+async function inviaSalvataggio() {
 
-  const dati = {
-    nomeCliente: document.getElementById("nome").value,
-    indirizzo: document.getElementById("indirizzo").value,
-    telefono: document.getElementById("telefono").value,
-    dataNascita: document.getElementById("data").value,
-    codiceFiscale: document.getElementById("cf").value,
+  try {
 
-    veicolo: document.getElementById("veicolo").value,
-    motore: document.getElementById("motore").value,
-    targa: document.getElementById("targa").value,
-    immatricolazione: document.getElementById("immatricolazione").value,
+    const dati = {
 
-    tempLibrettoId: TEMP_LIBRETTO_ID,
-    tempTargaId: TEMP_TARGA_ID
-  };
+      nomeCliente: document.getElementById("nome").value,
+      indirizzo: document.getElementById("indirizzo").value,
+      telefono: document.getElementById("telefono").value,
+      dataNascita: document.getElementById("data").value,
+      codiceFiscale: document.getElementById("cf").value,
 
-  callBackend("salvaClienteEVeicolo", [dati])
-    .catch(err => {
-      alert(err?.message || "Errore salvataggio");
+      veicolo: document.getElementById("veicolo").value,
+      motore: document.getElementById("motore").value,
+      targa: document.getElementById("targa").value,
+      immatricolazione: document.getElementById("immatricolazione").value,
+
+      tempLibrettoId: TEMP_LIBRETTO_ID,
+      tempTargaId: TEMP_TARGA_ID
+
+    };
+
+    console.log("INVIO AL BACKEND:", dati);
+
+    const form = new FormData();
+
+    form.append("action", "salvaClienteEVeicolo");
+    form.append("payload", JSON.stringify(dati));
+
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
     });
+
+    const json = await res.json();
+
+    console.log("RISPOSTA SALVATAGGIO:", json);
+
+    if (!json.ok)
+      throw new Error(json.error);
+
+    alert("Cliente salvato correttamente");
+
+  }
+  catch(err) {
+
+    console.error(err);
+    alert("Errore salvataggio");
+
+  }
+
 }
 
 /********************
@@ -2198,6 +2227,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
