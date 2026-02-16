@@ -437,21 +437,26 @@ async function gestisciUploadTarga(inputId){
     try {
 
       const file = e.target.files[0];
-      if(!file) return;
+      if (!file) return;
+
+      const base64 = await fileToBase64(file);
 
       const form = new FormData();
-      form.append("action","uploadFile");
-      form.append("file",file);
 
-      const res = await fetch(API_URL,{
-        method:"POST",
-        body:form
+      form.append("action", "uploadTempFile");
+      form.append("base64", base64);
+      form.append("nomeFile", file.name);
+      form.append("mimeType", file.type);
+
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: form
       });
 
       const json = await res.json();
 
-      if(!json.ok)
-        throw new Error(json.error || "Upload fallito");
+      if (!json.ok)
+        throw new Error(json.error);
 
       TEMP_TARGA_ID = json.fileId;
 
@@ -2182,6 +2187,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
