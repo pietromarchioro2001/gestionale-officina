@@ -431,28 +431,44 @@ async function gestisciUploadTarga(inputId){
 
   input.addEventListener("change", async e => {
 
-    const file = e.target.files[0];
-    if(!file) return;
+    try {
 
-    const form = new FormData();
-    form.append("action","uploadFile");
-    form.append("file",file);
+      const file = e.target.files[0];
+      if (!file) return;
 
-    const res = await fetch(API_URL,{
-      method:"POST",
-      body:form
-    });
+      const base64 = await fileToBase64(file);
 
-    const json = await res.json();
+      const form = new FormData();
 
-    if(!json.ok){
+      form.append("action", "uploadTempFile");
+      form.append("base64", base64);
+      form.append("nomeFile", file.name);
+      form.append("mimeType", file.type);
+
+      const res = await fetch(API_URL,{
+        method:"POST",
+        body:form
+      });
+
+      const json = await res.json();
+
+      if(!json.ok)
+        throw new Error(json.error);
+
+      TEMP_TARGA_ID = json.fileId;
+
+      console.log("Upload targa OK:", TEMP_TARGA_ID);
+
+    }
+    catch(err){
+
+      console.error(err);
       alert("Errore upload targa");
-      return;
+
     }
 
-    TEMP_TARGA_ID = json.fileId;
-
   });
+
 }
 
 function fileToBase64(file) {
@@ -2173,6 +2189,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
