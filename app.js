@@ -541,33 +541,63 @@ async function uploadFilePOST(file) {
 
 function resetClienti() {
 
+  console.log("Reset clienti...");
+
+  // reset variabili
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
 
-  // reset input testo
+  // reset campi testo
   document
-    .querySelectorAll("#clienti input:not([type='file'])")
-    .forEach(i => i.value = "");
+    .querySelectorAll("#clienti input")
+    .forEach(input => {
 
-  // ricrea input file
-  const fileIds = [
-    "librettoGallery",
-    "librettoCamera",
-    "targaGallery",
-    "targaCamera",
-    "altriDocumenti"
-  ];
+      if (input.type === "file") {
 
-  fileIds.forEach(id => {
+        // reset file SENZA distruggere listener
+        input.value = "";
 
-    const oldInput = document.getElementById(id);
-    if (!oldInput) return;
+      } else {
 
-    const newInput = oldInput.cloneNode(true);
-    oldInput.parentNode.replaceChild(newInput, oldInput);
+        input.value = "";
 
-  });
+      }
+
+    });
+
+  // reset preview libretto
+  const librettoLink = document.getElementById("librettoLink");
+  if (librettoLink) {
+    librettoLink.style.display = "none";
+    librettoLink.href = "#";
+  }
+
+  // reset preview targa
+  const targaLink = document.getElementById("targaLink");
+  if (targaLink) {
+    targaLink.style.display = "none";
+    targaLink.href = "#";
+  }
+
+  // reset altri documenti
+  const altriCount = document.getElementById("altriCount");
+  if (altriCount) {
+    altriCount.textContent = "";
+  }
+
+  // reset cartella cliente
+  const btnCartella = document.getElementById("btnCartellaCliente");
+  if (btnCartella) {
+    btnCartella.style.display = "none";
+  }
+
+  // reset messaggi
+  const esito = document.getElementById("esitoRicerca");
+  if (esito) esito.textContent = "";
+
+  const stato = document.getElementById("stato");
+  if (stato) stato.textContent = "";
 
   // 🔥 RIATTACCA SOLO I LISTENER NECESSARI
 
@@ -2189,6 +2219,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
