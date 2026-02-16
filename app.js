@@ -523,27 +523,13 @@ async function uploadFilePOST(file) {
   return await res.json();
 }
 
-function collegaFileButtons() {
-
-  document.querySelectorAll("[data-target]").forEach(btn => {
-
-    btn.onclick = () => {
-      const id = btn.dataset.target;
-      const input = document.getElementById(id);
-      if (input) input.click();
-    };
-
-  });
-
-}
-
 function resetClienti() {
 
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
 
-  // svuota input testo
+  // reset input testo
   document
     .querySelectorAll("#clienti input:not([type='file'])")
     .forEach(i => i.value = "");
@@ -567,32 +553,30 @@ function resetClienti() {
 
   });
 
-  // riaggancia bottoni file
-  collegaFileButtons();
+  // 🔥 RIATTACCA SOLO I LISTENER NECESSARI
 
-  // riaggancia upload libretto
+  // upload
   document.getElementById("librettoGallery")?.addEventListener("change", uploadLibretto);
   document.getElementById("librettoCamera")?.addEventListener("change", uploadLibretto);
 
-  // riaggancia upload targa
   gestisciUploadTarga("targaGallery");
   gestisciUploadTarga("targaCamera");
 
-  // reset link
-  ["librettoLink", "targaLink"].forEach(id => {
-    const link = document.getElementById(id);
-    if (link) {
-      link.style.display = "none";
-      link.href = "#";
-    }
-  });
+  // preview
+  gestisciPreview("librettoGallery", "librettoLink");
+  gestisciPreview("librettoCamera", "librettoLink");
 
-  document.getElementById("btnCartellaCliente")?.classList.add("hidden");
+  gestisciPreview("targaGallery", "targaLink");
+  gestisciPreview("targaCamera", "targaLink");
+
+  // reset link
+  document.getElementById("librettoLink").classList.add("hidden");
+  document.getElementById("targaLink").classList.add("hidden");
+
   document.getElementById("esitoRicerca").textContent = "";
   document.getElementById("stato").textContent = "";
 
 }
-
 
 function messaggioBot(testo) {
   const chat = document.getElementById("assistenteChat");
@@ -2185,6 +2169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
