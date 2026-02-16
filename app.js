@@ -123,6 +123,9 @@ async function analizza() {
  ********************/
 function salva() {
 
+  console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
+  console.log("TEMP_TARGA_ID:", TEMP_TARGA_ID);
+
   if (!TEMP_LIBRETTO_ID && !clienteEsistente) {
     alert("Serve il libretto per nuovo cliente");
     return;
@@ -434,16 +437,11 @@ async function gestisciUploadTarga(inputId){
     try {
 
       const file = e.target.files[0];
-      if (!file) return;
-
-      const base64 = await fileToBase64(file);
+      if(!file) return;
 
       const form = new FormData();
-
-      form.append("action", "uploadTempFile");
-      form.append("base64", base64);
-      form.append("nomeFile", file.name);
-      form.append("mimeType", file.type);
+      form.append("action","uploadFile");
+      form.append("file",file);
 
       const res = await fetch(API_URL,{
         method:"POST",
@@ -453,14 +451,13 @@ async function gestisciUploadTarga(inputId){
       const json = await res.json();
 
       if(!json.ok)
-        throw new Error(json.error);
+        throw new Error(json.error || "Upload fallito");
 
       TEMP_TARGA_ID = json.fileId;
 
-      console.log("Upload targa OK:", TEMP_TARGA_ID);
+      console.log("Upload Targa OK:", TEMP_TARGA_ID);
 
-    }
-    catch(err){
+    } catch(err){
 
       console.error(err);
       alert("Errore upload targa");
@@ -543,50 +540,39 @@ function resetClienti() {
 
   console.log("Reset clienti...");
 
-  // reset variabili
+  // reset variabili globali
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
 
-  // reset campi testo
+  // reset tutti gli input
   document
     .querySelectorAll("#clienti input")
     .forEach(input => {
-
-      if (input.type === "file") {
-
-        // reset file SENZA distruggere listener
-        input.value = "";
-
-      } else {
-
-        input.value = "";
-
-      }
-
+      input.value = "";
     });
 
-  // reset preview libretto
+  // nascondi preview libretto
   const librettoLink = document.getElementById("librettoLink");
   if (librettoLink) {
     librettoLink.style.display = "none";
     librettoLink.href = "#";
   }
 
-  // reset preview targa
+  // nascondi preview targa
   const targaLink = document.getElementById("targaLink");
   if (targaLink) {
     targaLink.style.display = "none";
     targaLink.href = "#";
   }
 
-  // reset altri documenti
+  // reset contatore documenti
   const altriCount = document.getElementById("altriCount");
   if (altriCount) {
     altriCount.textContent = "";
   }
 
-  // reset cartella cliente
+  // nascondi cartella cliente
   const btnCartella = document.getElementById("btnCartellaCliente");
   if (btnCartella) {
     btnCartella.style.display = "none";
@@ -598,29 +584,6 @@ function resetClienti() {
 
   const stato = document.getElementById("stato");
   if (stato) stato.textContent = "";
-
-  // 🔥 RIATTACCA SOLO I LISTENER NECESSARI
-
-  // upload
-  document.getElementById("librettoGallery")?.addEventListener("change", uploadLibretto);
-  document.getElementById("librettoCamera")?.addEventListener("change", uploadLibretto);
-
-  gestisciUploadTarga("targaGallery");
-  gestisciUploadTarga("targaCamera");
-
-  // preview
-  gestisciPreview("librettoGallery", "librettoLink");
-  gestisciPreview("librettoCamera", "librettoLink");
-
-  gestisciPreview("targaGallery", "targaLink");
-  gestisciPreview("targaCamera", "targaLink");
-
-  // reset link
-  document.getElementById("librettoLink").style.display = "none";
-  document.getElementById("targaLink").style.display = "none";
-
-  document.getElementById("esitoRicerca").textContent = "";
-  document.getElementById("stato").textContent = "";
 
 }
 
@@ -2219,6 +2182,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
