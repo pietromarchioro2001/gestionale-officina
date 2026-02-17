@@ -498,26 +498,26 @@ async function uploadTargaFile(file){
 
     const base64 = await fileToBase64(file);
 
-    const form = new FormData();
+    const form = new URLSearchParams();
 
     form.append("action", "uploadTempFile");
     form.append("base64", base64);
     form.append("nomeFile", file.name);
     form.append("mimeType", file.type);
 
-    const res = await fetch(API_URL,{
-      method:"POST",
-      body:form
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
     });
 
     const json = await res.json();
 
-    if(!json.ok)
+    if (!json.ok)
       throw new Error(json.error);
 
     TEMP_TARGA_ID = json.fileId;
 
-    console.log("Upload targa OK:", TEMP_TARGA_ID);
+    console.log("Upload Targa OK:", TEMP_TARGA_ID);
 
   }
   catch(err){
@@ -526,6 +526,7 @@ async function uploadTargaFile(file){
     alert("Errore upload targa");
 
   }
+
 }
 
 function fileToBase64(file){
@@ -563,15 +564,24 @@ async function uploadLibretto(e){
 
     const base64 = await fileToBase64(file);
 
-    const res = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const form = new URLSearchParams();
 
-    if (!res || !res.ok)
-      throw new Error(res?.error || "Upload fallito");
+    form.append("action", "uploadTempFile");
+    form.append("base64", base64);
+    form.append("nomeFile", file.name);
+    form.append("mimeType", file.type);
 
-    TEMP_LIBRETTO_ID = res.fileId;
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
+    });
+
+    const json = await res.json();
+
+    if (!json.ok)
+      throw new Error(json.error);
+
+    TEMP_LIBRETTO_ID = json.fileId;
 
     console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
@@ -2235,6 +2245,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
