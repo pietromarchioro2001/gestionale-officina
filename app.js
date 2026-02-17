@@ -7,46 +7,39 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const callbackName =
+    const cb =
       "cb_" +
       Date.now() +
       "_" +
-      Math.floor(Math.random() * 100000);
+      Math.floor(Math.random()*10000);
+
+    window[cb] = res => {
+
+      resolve(res);
+
+      delete window[cb];
+
+      script.remove();
+
+    };
 
     const script =
       document.createElement("script");
 
-    window[callbackName] = response => {
-
-      try {
-
-        resolve(response);
-
-      } finally {
-
-        delete window[callbackName];
-
-        if (script.parentNode)
-          script.parentNode.removeChild(script);
-
-      }
-
-    };
-
     const payload =
-      encodeURIComponent(
-        JSON.stringify(args)
-      );
+      JSON.stringify(args); // ← FIX: NO encodeURIComponent
 
     script.src =
-      `${API_URL}?action=${action}&payload=${payload}&callback=${callbackName}`;
+      API_URL +
+      "?action=" + action +
+      "&payload=" + payload +
+      "&callback=" + cb;
 
     script.onerror = () => {
 
-      delete window[callbackName];
+      delete window[cb];
 
-      if (script.parentNode)
-        script.parentNode.removeChild(script);
+      script.remove();
 
       reject(
         new Error(
@@ -2250,6 +2243,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
