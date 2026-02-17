@@ -550,24 +550,30 @@ async function uploadLibretto(e){
   try{
 
     const file = e.target.files[0];
-
     if (!file) return;
-
-    console.log("Upload libretto avviato...");
 
     const base64 = await fileToBase64(file);
 
-    const res = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const form = new FormData();
 
-    if (!res?.ok)
-      throw new Error(res.error);
+    form.append("action", "uploadTempFile");
+    form.append("base64", base64);
+    form.append("nomeFile", file.name);
+    form.append("mimeType", file.type);
 
-    TEMP_LIBRETTO_ID = res.fileId;
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
+    });
 
-    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
+    const json = await res.json();
+
+    if (!json.ok)
+      throw new Error(json.error);
+
+    TEMP_LIBRETTO_ID = json.fileId;
+
+    console.log("Upload libretto OK:", TEMP_LIBRETTO_ID);
 
   }
   catch(err){
@@ -576,7 +582,6 @@ async function uploadLibretto(e){
     alert("Errore upload libretto");
 
   }
-
 }
 
 async function uploadFilePOST(file) {
@@ -2243,6 +2248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
