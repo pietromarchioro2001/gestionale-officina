@@ -496,21 +496,28 @@ async function uploadTargaFile(file){
 
   try{
 
-    console.log("Upload targa avviato...");
-
     const base64 = await fileToBase64(file);
 
-    const res = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const form = new FormData();
 
-    if (!res?.ok)
-      throw new Error(res.error);
+    form.append("action", "uploadTempFile");
+    form.append("base64", base64);
+    form.append("nomeFile", file.name);
+    form.append("mimeType", file.type);
 
-    TEMP_TARGA_ID = res.fileId;
+    const res = await fetch(API_URL,{
+      method:"POST",
+      body:form
+    });
 
-    console.log("Upload Targa OK:", TEMP_TARGA_ID);
+    const json = await res.json();
+
+    if(!json.ok)
+      throw new Error(json.error);
+
+    TEMP_TARGA_ID = json.fileId;
+
+    console.log("Upload targa OK:", TEMP_TARGA_ID);
 
   }
   catch(err){
@@ -519,7 +526,6 @@ async function uploadTargaFile(file){
     alert("Errore upload targa");
 
   }
-
 }
 
 function fileToBase64(file){
@@ -2248,6 +2254,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
