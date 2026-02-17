@@ -7,26 +7,59 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const cb = "cb_" + Date.now();
+    const callbackName =
+      "cb_" +
+      Date.now() +
+      "_" +
+      Math.floor(Math.random() * 100000);
 
-    window[cb] = res => {
-      resolve(res);
-      delete window[cb];
-      script.remove();
+    const script =
+      document.createElement("script");
+
+    window[callbackName] = response => {
+
+      try {
+
+        resolve(response);
+
+      } finally {
+
+        delete window[callbackName];
+
+        if (script.parentNode)
+          script.parentNode.removeChild(script);
+
+      }
+
     };
 
-    const script = document.createElement("script");
-
-    const payload = encodeURIComponent(JSON.stringify(args));
+    const payload =
+      encodeURIComponent(
+        JSON.stringify(args)
+      );
 
     script.src =
-      `${API_URL}?action=${action}&payload=${payload}&callback=${cb}`;
+      `${API_URL}?action=${action}&payload=${payload}&callback=${callbackName}`;
 
-    script.onerror = reject;
+    script.onerror = () => {
+
+      delete window[callbackName];
+
+      if (script.parentNode)
+        script.parentNode.removeChild(script);
+
+      reject(
+        new Error(
+          "Errore caricamento script backend"
+        )
+      );
+
+    };
 
     document.body.appendChild(script);
 
   });
+
 }
 
 function popolaFormOCR(dati = {}) {
@@ -383,8 +416,21 @@ document.addEventListener("DOMContentLoaded", () => {
   bindFileCount("targaGallery", "targaCount", "targaLink");
   bindFileCount("targaCamera", "targaCount", "targaLink");
 
-  gestisciUploadTarga("targaGallery");
-  gestisciUploadTarga("targaCamera");
+  document.getElementById("targaGallery")
+  ?.addEventListener("change", e => {
+
+    const file = e.target.files[0];
+    if (file) uploadTargaFile(file);
+
+  });
+
+document.getElementById("targaCamera")
+  ?.addEventListener("change", e => {
+
+    const file = e.target.files[0];
+    if (file) uploadTargaFile(file);
+
+  });
 
   bindFileCount("altriDocumenti", "altriCount");
 
@@ -2204,6 +2250,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
