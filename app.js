@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzoWuUDnD6yp_peg4qTGlwWuiP3apiwfBLbufT0kJ1OknCCM5An0mzQs9uCmwc_Tfve/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxBoracrb0boiboZ47_vrm4hImuP_K7QVYciWrJsBFa_0-io0WDH5SXq9LsaoYjMyct/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -178,55 +178,50 @@ function leggiAltriDocumenti(callback) {
 /********************
  * INVIO BACKEND
  ********************/
-async function inviaSalvataggio() {
+async function inviaSalvataggio(){
 
-  const dati = {
-    nomeCliente: document.getElementById("nome").value,
-    indirizzo: document.getElementById("indirizzo").value,
-    telefono: document.getElementById("telefono").value,
-    dataNascita: document.getElementById("data").value,
-    codiceFiscale: document.getElementById("cf").value,
+  try{
 
-    veicolo: document.getElementById("veicolo").value,
-    motore: document.getElementById("motore").value,
-    targa: document.getElementById("targa").value,
-    immatricolazione: document.getElementById("immatricolazione").value,
+    const dati = {
 
-    tempLibrettoId: TEMP_LIBRETTO_ID,
-    tempTargaId: TEMP_TARGA_ID
-  };
+      nomeCliente: nome.value,
+      indirizzo: indirizzo.value,
+      telefono: telefono.value,
+      dataNascita: data.value,
+      codiceFiscale: cf.value,
 
-  console.log("INVIO AL BACKEND:", dati);
+      veicolo: veicolo.value,
+      motore: motore.value,
+      targa: targa.value,
+      immatricolazione: immatricolazione.value,
 
-  try {
+      tempLibrettoId: TEMP_LIBRETTO_ID,
+      tempTargaId: TEMP_TARGA_ID
 
-    const form = new FormData();
+    };
 
-    form.append("action", "salvaClienteEVeicolo");
-    form.append("payload", JSON.stringify(dati));
+    console.log("INVIO AL BACKEND:", dati);
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: form
-    });
+    const res =
+      await callBackend(
+        "salvaClienteEVeicolo",
+        [dati]
+      );
 
-    const json = await res.json();
+    console.log("RISPOSTA BACKEND:", res);
 
-    console.log("RISPOSTA BACKEND:", json);
-
-    if (!json.ok) {
-      alert(json.error || "Errore salvataggio");
-      return;
-    }
+    if (!res?.ok)
+      throw new Error(res.error);
 
     alert("Cliente salvato correttamente");
 
     resetClienti();
 
-  } catch(err) {
+  }
+  catch(err){
 
     console.error(err);
-    alert("Errore connessione backend");
+    alert("Errore salvataggio");
 
   }
 
@@ -458,61 +453,49 @@ let sessioneAssistente = {
   valoriEsistenti: {}
 };
 
-function gestisciUploadTarga(inputId) {
+async function uploadTargaFile(file){
 
-  const input = document.getElementById(inputId);
-
-  if (!input) return;
-
-  input.addEventListener("change", async e => {
-
-    const file = e.target.files[0];
-    if (!file) return;
+  try{
 
     console.log("Upload targa avviato...");
 
-    try {
+    const base64 = await fileToBase64(file);
 
-      const base64 = await fileToBase64(file);
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-      const form = new FormData();
-      form.append("action", "uploadTempFile");
-      form.append("base64", base64);
-      form.append("nomeFile", file.name);
-      form.append("mimeType", file.type);
+    if (!res?.ok)
+      throw new Error(res.error);
 
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: form
-      });
+    TEMP_TARGA_ID = res.fileId;
 
-      const json = await res.json();
+    console.log("Upload Targa OK:", TEMP_TARGA_ID);
 
-      if (!json.ok)
-        throw new Error(json.error);
+  }
+  catch(err){
 
-      TEMP_TARGA_ID = json.fileId;
+    console.error(err);
+    alert("Errore upload targa");
 
-      console.log("Upload Targa OK:", TEMP_TARGA_ID);
-
-    } catch (err) {
-
-      console.error(err);
-      alert("Errore upload targa");
-
-    }
-
-  });
+  }
 
 }
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
+function fileToBase64(file){
+
+  return new Promise((resolve, reject)=>{
 
     const reader = new FileReader();
 
-    reader.onload = e => {
-      resolve(e.target.result.split(",")[1]);
+    reader.onload = ()=>{
+
+      const base64 =
+        reader.result.split(",")[1];
+
+      resolve(base64);
+
     };
 
     reader.onerror = reject;
@@ -520,42 +503,38 @@ function fileToBase64(file) {
     reader.readAsDataURL(file);
 
   });
+
 }
 
-async function uploadLibretto(e) {
+async function uploadLibretto(e){
 
-  const file = e.target.files[0];
-  if (!file) return;
+  try{
 
-  console.log("Upload libretto avviato...");
+    const file = e.target.files[0];
 
-  try {
+    if (!file) return;
+
+    console.log("Upload libretto avviato...");
 
     const base64 = await fileToBase64(file);
 
-    const form = new FormData();
-    form.append("action", "uploadTempFile");
-    form.append("base64", base64);
-    form.append("nomeFile", file.name);
-    form.append("mimeType", file.type);
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: form
-    });
+    if (!res?.ok)
+      throw new Error(res.error);
 
-    const json = await res.json();
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    TEMP_LIBRETTO_ID = json.fileId;
+    TEMP_LIBRETTO_ID = res.fileId;
 
     console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
-  } catch(err) {
+  }
+  catch(err){
 
-    console.error("Errore upload libretto:", err);
+    console.error(err);
+    alert("Errore upload libretto");
 
   }
 
@@ -2225,6 +2204,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
