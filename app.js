@@ -178,7 +178,7 @@ function leggiAltriDocumenti(callback) {
 /********************
  * INVIO BACKEND
  ********************/
-function inviaSalvataggio() {
+async function inviaSalvataggio() {
 
   const dati = {
     nomeCliente: document.getElementById("nome").value,
@@ -198,27 +198,37 @@ function inviaSalvataggio() {
 
   console.log("INVIO AL BACKEND:", dati);
 
-  callBackend("salvaClienteEVeicolo", [dati])
-    .then(res => {
+  try {
 
-      console.log("RISPOSTA BACKEND:", res);
+    const form = new FormData();
 
-      if (!res?.ok) {
-        alert(res.error || "Errore salvataggio");
-        return;
-      }
+    form.append("action", "salvaClienteEVeicolo");
+    form.append("payload", JSON.stringify(dati));
 
-      alert("Cliente salvato correttamente");
-
-      resetClienti();
-
-    })
-    .catch(err => {
-
-      console.error(err);
-      alert("Errore connessione backend");
-
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
     });
+
+    const json = await res.json();
+
+    console.log("RISPOSTA BACKEND:", json);
+
+    if (!json.ok) {
+      alert(json.error || "Errore salvataggio");
+      return;
+    }
+
+    alert("Cliente salvato correttamente");
+
+    resetClienti();
+
+  } catch(err) {
+
+    console.error(err);
+    alert("Errore connessione backend");
+
+  }
 
 }
 
@@ -514,31 +524,38 @@ function fileToBase64(file) {
 
 async function uploadLibretto(e) {
 
+  const file = e.target.files[0];
+  if (!file) return;
+
+  console.log("Upload libretto avviato...");
+
   try {
-
-    const file = e.target.files[0];
-    if (!file) return;
-
-    console.log("Upload libretto avviato...");
 
     const base64 = await fileToBase64(file);
 
-    const res = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const form = new FormData();
+    form.append("action", "uploadTempFile");
+    form.append("base64", base64);
+    form.append("nomeFile", file.name);
+    form.append("mimeType", file.type);
 
-    if (!res || !res.ok)
-      throw new Error(res?.error || "Upload fallito");
+    const res = await fetch(API_URL, {
+      method: "POST",
+      body: form
+    });
 
-    TEMP_LIBRETTO_ID = res.fileId;
+    const json = await res.json();
 
-    console.log("Upload libretto OK:", TEMP_LIBRETTO_ID);
+    if (!json.ok)
+      throw new Error(json.error);
+
+    TEMP_LIBRETTO_ID = json.fileId;
+
+    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
   } catch(err) {
 
-    console.error(err);
-    alert("Errore upload libretto");
+    console.error("Errore upload libretto:", err);
 
   }
 
@@ -2208,6 +2225,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
