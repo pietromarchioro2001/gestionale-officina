@@ -501,10 +501,13 @@ async function uploadTargaFile(file){
 
     const base64 = await fileToBase64(file);
 
-    const res = await callBackend(
-      "uploadTempFile",
-      [base64, file.name, file.type]
-    );
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: form.toString()
+    });
 
     if (!res?.ok)
       throw new Error(res.error);
@@ -566,7 +569,10 @@ async function uploadLibretto(e){
 
     const res = await fetch(API_URL, {
       method: "POST",
-      body: form
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: form.toString()
     });
 
     const json = await res.json();
@@ -2238,6 +2244,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
