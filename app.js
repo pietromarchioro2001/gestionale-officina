@@ -7,55 +7,51 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
+    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
 
-    let finished = false;
+    let timeoutId;
 
-    const script = document.createElement("script");
+    window[cb] = function(res) {
 
-    window[cb] = res => {
-
-      if (finished) return;
-      finished = true;
+      clearTimeout(timeoutId);
 
       resolve(res);
 
-      delete window[cb];
-
-      if (script.parentNode)
-        script.parentNode.removeChild(script);
-
-    };
-
-    script.onerror = () => {
-
-      if (finished) return;
-
-      console.warn("JSONP onerror ignorato");
+      try {
+        delete window[cb];
+      } catch {}
 
     };
 
     const payload = encodeURIComponent(JSON.stringify(args));
 
+    const script = document.createElement("script");
+
     script.src =
-      `${API_URL}?action=${action}&payload=${payload}&callback=${cb}`;
+      API_URL +
+      "?action=" + action +
+      "&payload=" + payload +
+      "&callback=" + cb;
+
+    script.async = true;
+
+    script.onerror = function() {
+      console.warn("JSONP script error ignorato");
+    };
 
     document.body.appendChild(script);
 
-    setTimeout(() => {
+    timeoutId = setTimeout(function() {
 
-      if (finished) return;
+      if (window[cb]) {
 
-      finished = true;
+        delete window[cb];
 
-      delete window[cb];
+        reject(new Error("Timeout backend"));
 
-      if (script.parentNode)
-        script.parentNode.removeChild(script);
+      }
 
-      reject(new Error("Timeout backend"));
-
-    }, 15000);
+    }, 20000);
 
   });
 
@@ -2232,6 +2228,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
