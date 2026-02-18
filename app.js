@@ -9,46 +9,51 @@ function callBackend(action, args = []) {
 
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*10000);
 
+    let finished = false;
+
+    const script = document.createElement("script");
+
     window[cb] = res => {
+
+      if (finished) return;
+      finished = true;
 
       resolve(res);
 
       delete window[cb];
 
-      script.remove();
+      if (script.parentNode)
+        script.parentNode.removeChild(script);
 
     };
 
-    const script = document.createElement("script");
+    script.onerror = () => {
+
+      if (finished) return;
+
+      console.warn("JSONP onerror ignorato");
+
+    };
 
     const payload = encodeURIComponent(JSON.stringify(args));
 
     script.src =
       `${API_URL}?action=${action}&payload=${payload}&callback=${cb}`;
 
-    script.onerror = () => {
-
-      console.warn("JSONP script.onerror ignorato");
-
-      // NON reject
-      // JSONP può triggerarlo anche se funziona
-
-    };
-
     document.body.appendChild(script);
 
-    // timeout vero di sicurezza
     setTimeout(() => {
 
-      if (window[cb]){
+      if (finished) return;
 
-        delete window[cb];
+      finished = true;
 
-        script.remove();
+      delete window[cb];
 
-        reject(new Error("Timeout backend"));
+      if (script.parentNode)
+        script.parentNode.removeChild(script);
 
-      }
+      reject(new Error("Timeout backend"));
 
     }, 15000);
 
@@ -2227,6 +2232,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
