@@ -14,39 +14,51 @@ function callBackend(action, args = []) {
     window[cb] = function(res) {
 
       clearTimeout(timeoutId);
-
       resolve(res);
 
-      try {
-        delete window[cb];
-      } catch {}
+      try { delete window[cb]; } catch {}
 
     };
 
-    const payload = encodeURIComponent(JSON.stringify(args));
-
     const script = document.createElement("script");
 
-    script.src =
-      API_URL +
-      "?action=" + action +
-      "&payload=" + payload +
-      "&callback=" + cb;
+    // FIX CRITICO
+    if (action === "uploadTempFile") {
+
+      script.src =
+        API_URL +
+        "?action=" + action +
+        "&base64=" + encodeURIComponent(args[0]) +
+        "&nomeFile=" + encodeURIComponent(args[1]) +
+        "&mimeType=" + encodeURIComponent(args[2]) +
+        "&callback=" + cb;
+
+    } else {
+
+      const payload = encodeURIComponent(JSON.stringify(args));
+
+      script.src =
+        API_URL +
+        "?action=" + action +
+        "&payload=" + payload +
+        "&callback=" + cb;
+
+    }
 
     script.async = true;
 
     script.onerror = function() {
-      console.warn("JSONP script error ignorato");
+      console.error("SCRIPT ERROR:", script.src);
+      reject(new Error("Errore caricamento script backend"));
     };
 
     document.body.appendChild(script);
 
-    timeoutId = setTimeout(function() {
+    timeoutId = setTimeout(() => {
 
       if (window[cb]) {
 
         delete window[cb];
-
         reject(new Error("Timeout backend"));
 
       }
@@ -2258,6 +2270,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
