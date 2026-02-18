@@ -497,17 +497,12 @@ async function uploadTargaFile(file){
 
   try{
 
-    console.log("Upload targa avviato...");
-
     const base64 = await fileToBase64(file);
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: form.toString()
-    });
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
     if (!res?.ok)
       throw new Error(res.error);
@@ -560,27 +555,15 @@ async function uploadLibretto(e){
 
     const base64 = await fileToBase64(file);
 
-    const form = new URLSearchParams();
+    const res = await callBackend(
+      "uploadTempFile",
+      [base64, file.name, file.type]
+    );
 
-    form.append("action", "uploadTempFile");
-    form.append("base64", base64);
-    form.append("nomeFile", file.name);
-    form.append("mimeType", file.type);
+    if (!res?.ok)
+      throw new Error(res.error);
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
-      body: form.toString()
-    });
-
-    const json = await res.json();
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    TEMP_LIBRETTO_ID = json.fileId;
+    TEMP_LIBRETTO_ID = res.fileId;
 
     console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
@@ -2244,6 +2227,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
