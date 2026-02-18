@@ -556,28 +556,61 @@ async function uploadLibretto(e){
 
     const base64 = await fileToBase64(file);
 
-    const form = new URLSearchParams();
+    const cb = "cb_" + Date.now();
 
-    form.append("action", "uploadTempFile");
-    form.append("base64", base64);
-    form.append("nomeFile", file.name);
-    form.append("mimeType", file.type);
+    return new Promise((resolve, reject)=>{
 
-    const res = await fetch(API_URL, {
+      window[cb] = res => {
 
-      method: "POST",
-      body: form
+        delete window[cb];
+        resolve(res);
+
+      };
+
+      const iframe = document.createElement("iframe");
+      iframe.name = "upload_iframe";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+
+      const form = document.createElement("form");
+
+      form.method = "POST";
+      form.action = API_URL;
+      form.target = "upload_iframe";
+
+      const add = (name,value)=>{
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = value;
+        form.appendChild(input);
+      };
+
+      add("action","uploadTempFile");
+      add("base64",base64);
+      add("nomeFile",file.name);
+      add("mimeType",file.type);
+      add("callback",cb);
+
+      document.body.appendChild(form);
+
+      form.submit();
+
+      setTimeout(()=>{
+        reject(new Error("Timeout upload"));
+      },20000);
+
+    })
+    .then(res=>{
+
+      if (!res?.ok)
+        throw new Error(res.error);
+
+      TEMP_LIBRETTO_ID = res.fileId;
+
+      console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
     });
-
-    const json = await res.json();
-
-    if (!json.ok)
-      throw new Error(json.error);
-
-    TEMP_LIBRETTO_ID = json.fileId;
-
-    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
   }
   catch(err){
@@ -2239,6 +2272,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
