@@ -526,19 +526,49 @@ function fileToBase64(file){
 
   return new Promise((resolve, reject)=>{
 
+    const img = new Image();
     const reader = new FileReader();
 
-    reader.onload = ()=>{
+    reader.onload = e => {
 
-      const base64 =
-        reader.result.split(",")[1];
+      img.onload = () => {
 
-      resolve(base64);
+        const canvas = document.createElement("canvas");
+
+        const MAX = 1600;
+
+        let w = img.width;
+        let h = img.height;
+
+        if (w > h && w > MAX){
+          h *= MAX / w;
+          w = MAX;
+        }
+        else if (h > MAX){
+          w *= MAX / h;
+          h = MAX;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+
+        const ctx = canvas.getContext("2d");
+
+        ctx.drawImage(img, 0, 0, w, h);
+
+        const base64 = canvas
+          .toDataURL("image/jpeg", 0.7)
+          .split(",")[1];
+
+        resolve(base64);
+
+      };
+
+      img.src = e.target.result;
 
     };
 
     reader.onerror = reject;
-
     reader.readAsDataURL(file);
 
   });
@@ -2228,6 +2258,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
