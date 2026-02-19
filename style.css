@@ -2238,32 +2238,40 @@ button.riprendi:hover {
 /* ================= LOADING LOGO ================= */
 
 .loading-logo {
+
   width: 32px;
   height: 32px;
+
   margin-left: 10px;
-  display: inline-block;
+
+  display: none; /* 🔥 NASCOSTO DI DEFAULT */
+
   vertical-align: middle;
-  animation: spin 1s linear infinite;
+
 }
 
 .loading-logo.active {
+
   display: inline-block;
+
   animation: spinLogo 1s linear infinite;
+
 }
 
 .loading-logo.ok {
+
   display: inline-block;
+
   animation: none;
+
 }
 
 @keyframes spinLogo {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
 
+  from { transform: rotate(0deg); }
+
+  to   { transform: rotate(360deg); }
+
+}
 
 
