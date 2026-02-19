@@ -2034,6 +2034,38 @@ function scegliTarga() {
     document.getElementById("targaGallery").click();
   }
 }
+/* =========================
+   EVENTO SELEZIONE FILE TARGA
+========================= */
+
+document
+  .getElementById("targaGallery")
+  .addEventListener("change", async () => {
+
+    const file = getFileFromInputs(
+      "targaGallery",
+      "targaCamera"
+    );
+
+    if(file)
+      await uploadTargaFile(file);
+
+  });
+
+
+document
+  .getElementById("targaCamera")
+  .addEventListener("change", async () => {
+
+    const file = getFileFromInputs(
+      "targaGallery",
+      "targaCamera"
+    );
+
+    if(file)
+      await uploadTargaFile(file);
+
+  });
 
 function getFileFromInputs(...ids) {
 
@@ -2258,6 +2290,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
