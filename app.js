@@ -481,7 +481,6 @@ document.getElementById("targaCamera")
     ?.addEventListener("click", avviaOrdineVocale);
 
   showSection("home");
-});
 
 let sessioneAssistente = {
   schedaId: null,
@@ -2334,6 +2333,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
