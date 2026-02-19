@@ -9,6 +9,10 @@ function callBackend(action, args = []) {
 
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
 
+    const payload = encodeURIComponent(JSON.stringify(args));
+
+    const script = document.createElement("script");
+
     let timeoutId;
 
     window[cb] = function(res) {
@@ -17,54 +21,42 @@ function callBackend(action, args = []) {
 
       resolve(res);
 
-      try {
-        delete window[cb];
-      } catch {}
+      cleanup();
 
     };
 
-    const script = document.createElement("script");
+    function cleanup() {
 
-    let url =
+      try { delete window[cb]; } catch {}
+
+      if (script.parentNode)
+        script.parentNode.removeChild(script);
+
+    }
+
+    script.src =
       API_URL +
       "?action=" + action +
+      "&payload=" + payload +
       "&callback=" + cb;
-
-    // 🔥 FIX uploadTempFile
-    if (action === "uploadTempFile") {
-
-      url +=
-        "&base64=" + encodeURIComponent(args[0]) +
-        "&nomeFile=" + encodeURIComponent(args[1]) +
-        "&mimeType=" + encodeURIComponent(args[2]);
-
-    }
-    else {
-
-      url +=
-        "&payload=" + encodeURIComponent(JSON.stringify(args));
-
-    }
-
-    script.src = url;
 
     script.async = true;
 
     script.onerror = function() {
-      console.warn("JSONP script error ignorato");
+
+      cleanup();
+
+      reject(new Error("Errore caricamento backend"));
+
     };
 
     document.body.appendChild(script);
 
     timeoutId = setTimeout(function() {
 
-      if (window[cb]) {
+      cleanup();
 
-        delete window[cb];
-
-        reject(new Error("Timeout backend"));
-
-      }
+      reject(new Error("Timeout backend"));
 
     }, 20000);
 
@@ -2273,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
