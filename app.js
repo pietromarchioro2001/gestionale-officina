@@ -2363,13 +2363,14 @@ function abilitaPreview(inputId, linkId){
 
     if (!file){
 
-      link.style.display = "none";
+      link.classList.add("hidden");
       return;
 
     }
 
     const url = URL.createObjectURL(file);
 
+    link.classList.remove("hidden");   // ✅ QUESTO È IL FIX
     link.style.display = "inline-block";
 
     link.onclick = () => {
@@ -2378,8 +2379,12 @@ function abilitaPreview(inputId, linkId){
 
     };
 
+    console.log("Preview pronta:", file.name);
+
   });
 
 }
+
+
 
 
