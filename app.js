@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbybPMlTYqOGimq9xdRm524_higt3xtX6B51LYjjoefynFKThxSO3vlrdbQ6d7uRy5Zv/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbw6TovpGDG6KuAMhQYnDve0eNHgY3o_CyH9YZW-yxwvKzu0NODddUMaIxKqE86Eb4XL/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -219,9 +219,7 @@ async function inviaSalvataggio(){
   try{
 
     // 🔥 legge altri documenti
-    const altriDocumenti = await new Promise(resolve =>
-      leggiAltriDocumenti(resolve)
-    );
+    const altriDocumenti = TEMP_ALTRI_DOCUMENTI;
 
     const dati = {
 
@@ -230,17 +228,16 @@ async function inviaSalvataggio(){
       telefono: telefono.value,
       dataNascita: data.value,
       codiceFiscale: cf.value,
-
+    
       veicolo: veicolo.value,
       motore: motore.value,
       targa: targa.value,
       immatricolazione: immatricolazione.value,
-
+    
       tempLibrettoId: TEMP_LIBRETTO_ID,
       tempTargaId: TEMP_TARGA_ID,
-
-      // 🔥 QUESTO È IL FIX
-      altriDocumenti: altriDocumenti
+    
+      altriDocumenti: TEMP_ALTRI_DOCUMENTI
 
     };
 
@@ -417,12 +414,26 @@ document.addEventListener("DOMContentLoaded", () => {
   
       const base64 = await fileToBase64(file);
   
+      const form = new FormData();
+  
+      form.append("action", "uploadTempFile");
+      form.append("base64", base64);
+      form.append("nomeFile", file.name);
+      form.append("mimeType", file.type || "image/jpeg");
+  
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: form
+      });
+  
+      const json = await res.json();
+  
+      if(!json.ok)
+        throw new Error(json.error);
+  
       TEMP_ALTRI_DOCUMENTI.push({
-  
-        nome: file.name,
-        mimeType: file.type,
-        base64: base64
-  
+        fileId: json.fileId,
+        nome: file.name
       });
   
     }
@@ -2303,6 +2314,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
