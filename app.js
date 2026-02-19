@@ -17,7 +17,9 @@ function callBackend(action, args = []) {
 
       resolve(res);
 
-      try { delete window[cb]; } catch {}
+      try {
+        delete window[cb];
+      } catch {}
 
     };
 
@@ -28,7 +30,7 @@ function callBackend(action, args = []) {
       "?action=" + action +
       "&callback=" + cb;
 
-    // 🔥 CASO SPECIALE uploadTempFile
+    // 🔥 FIX uploadTempFile
     if (action === "uploadTempFile") {
 
       url +=
@@ -36,15 +38,17 @@ function callBackend(action, args = []) {
         "&nomeFile=" + encodeURIComponent(args[1]) +
         "&mimeType=" + encodeURIComponent(args[2]);
 
-    } else {
+    }
+    else {
 
-      const payload = encodeURIComponent(JSON.stringify(args));
-
-      url += "&payload=" + payload;
+      url +=
+        "&payload=" + encodeURIComponent(JSON.stringify(args));
 
     }
 
     script.src = url;
+
+    script.async = true;
 
     script.onerror = function() {
       console.warn("JSONP script error ignorato");
@@ -2269,6 +2273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
