@@ -547,13 +547,30 @@ function fileToBase64(file){
 
   return new Promise((resolve, reject)=>{
 
+    const img = new Image();
     const reader = new FileReader();
 
     reader.onload = e => {
 
-      resolve(
-        e.target.result.split(",")[1]
-      );
+      img.onload = () => {
+
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        ctx.drawImage(img, 0, 0);
+
+        const base64 = canvas
+          .toDataURL("image/jpeg", 0.92)
+          .split(",")[1];
+
+        resolve(base64);
+
+      };
+
+      img.src = e.target.result;
 
     };
 
