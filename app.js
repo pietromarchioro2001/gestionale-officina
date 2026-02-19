@@ -9,7 +9,7 @@ function callBackend(action, args = []) {
 
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
 
-    const payload = encodeURIComponent(JSON.stringify(args));
+    const payload = JSON.stringify(args);
 
     const script = document.createElement("script");
 
@@ -2265,6 +2265,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
