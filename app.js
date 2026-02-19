@@ -547,16 +547,23 @@ async function uploadAltriDocumenti(e){
 
     const files = e.target.files;
 
-    if(!files || files.length === 0)
+    if(!files || files.length === 0){
+      console.log("Nessun file");
       return;
+    }
 
     TEMP_ALTRI_DOCUMENTI = [];
 
     console.log("Upload altri documenti...");
+    console.log("Numero file:", files.length);
 
     for(const file of files){
 
+      console.log("Processing:", file.name);
+
       const base64 = await fileToBase64(file);
+
+      console.log("Base64 OK:", file.name);
 
       const form = new FormData();
 
@@ -565,12 +572,18 @@ async function uploadAltriDocumenti(e){
       form.append("nomeFile", file.name);
       form.append("mimeType", file.type || "image/jpeg");
 
+      console.log("Invio al backend:", file.name);
+
       const res = await fetch(API_URL, {
         method: "POST",
         body: form
       });
 
+      console.log("Risposta ricevuta:", file.name);
+
       const json = await res.json();
+
+      console.log("JSON:", json);
 
       if(!json.ok)
         throw new Error(json.error);
@@ -580,6 +593,8 @@ async function uploadAltriDocumenti(e){
         nome: file.name
       });
 
+      console.log("File salvato temp:", file.name);
+
     }
 
     const label = document.getElementById("altriCount");
@@ -587,14 +602,14 @@ async function uploadAltriDocumenti(e){
     label.textContent =
       files.length > 0 ? `${files.length} file caricati` : "";
 
-    console.log("TEMP_ALTRI_DOCUMENTI:", TEMP_ALTRI_DOCUMENTI);
+    console.log("TEMP_ALTRI_DOCUMENTI finale:", TEMP_ALTRI_DOCUMENTI);
 
   }
   catch(err){
 
     console.error("Errore upload altri documenti:", err);
 
-    alert("Errore upload documenti");
+    alert("Errore upload documenti: " + err.message);
 
   }
 
@@ -604,6 +619,28 @@ function fileToBase64(file){
 
   return new Promise((resolve, reject)=>{
 
+    // ✅ se NON è immagine → conversione diretta
+    if (!file.type.startsWith("image/")) {
+
+      const reader = new FileReader();
+
+      reader.onload = e => {
+
+        const base64 =
+          e.target.result.split(",")[1];
+
+        resolve(base64);
+
+      };
+
+      reader.onerror = reject;
+
+      reader.readAsDataURL(file);
+
+      return;
+    }
+
+    // ✅ se è immagine → usa canvas (compressione)
     const img = new Image();
     const reader = new FileReader();
 
@@ -626,6 +663,8 @@ function fileToBase64(file){
         resolve(base64);
 
       };
+
+      img.onerror = reject;
 
       img.src = e.target.result;
 
@@ -2333,6 +2372,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
