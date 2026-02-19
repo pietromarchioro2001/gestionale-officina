@@ -550,7 +550,7 @@ function fileToBase64(file){
 
         const canvas = document.createElement("canvas");
 
-        const MAX = 1600;
+        const MAX = 900;
 
         let w = img.width;
         let h = img.height;
@@ -572,7 +572,7 @@ function fileToBase64(file){
         ctx.drawImage(img, 0, 0, w, h);
 
         const base64 = canvas
-          .toDataURL("image/jpeg", 0.7)
+          .toDataURL("image/jpeg", 0.5)
           .split(",")[1];
 
         resolve(base64);
@@ -2273,6 +2273,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
