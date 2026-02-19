@@ -2239,21 +2239,33 @@ button.riprendi:hover {
   flex-direction: column;
 }
 
+/* ================= LOADING LOGO ================= */
 
+.loading-logo {
+  width: 18px;
+  height: 18px;
+  margin-left: 8px;
+  vertical-align: middle;
+  display: none;
+}
 
+.loading-logo.active {
+  display: inline-block;
+  animation: spinLogo 1s linear infinite;
+}
 
+.loading-logo.ok {
+  display: inline-block;
+  animation: none;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
+@keyframes spinLogo {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 
