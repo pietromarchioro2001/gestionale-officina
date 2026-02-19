@@ -404,7 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetClienti);
 
-  document.getElementById("altriDocumenti")?.addEventListener("change", async e => {
+  document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
     const files = e.target.files;
   
@@ -576,6 +576,69 @@ async function uploadTargaFile(file){
     console.error("Errore upload targa:", err);
 
     alert("Errore upload targa");
+
+  }
+
+}
+
+async function uploadAltriDocumenti(e){
+
+  try{
+
+    const files = e.target.files;
+
+    if (!files || files.length === 0)
+      return;
+
+    TEMP_ALTRI_DOCUMENTI = [];
+
+    for(const file of files){
+
+      console.log("Upload documento:", file.name);
+
+      const base64 = await fileToBase64(file);
+
+      const form = new FormData();
+
+      form.append("action", "uploadTempFile");
+      form.append("base64", base64);
+      form.append("nomeFile", file.name);
+      form.append("mimeType", file.type || "application/octet-stream");
+
+      const res = await fetch(API_URL, {
+
+        method: "POST",
+        body: form
+
+      });
+
+      const json = await res.json();
+
+      if (!json.ok)
+        throw new Error(json.error);
+
+      TEMP_ALTRI_DOCUMENTI.push({
+
+        fileId: json.fileId,
+        nome: file.name
+
+      });
+
+      console.log("Documento caricato:", json.fileId);
+
+    }
+
+    document.getElementById("altriCount").textContent =
+      `${TEMP_ALTRI_DOCUMENTI.length} file caricati`;
+
+    console.log("TEMP_ALTRI_DOCUMENTI finale:", TEMP_ALTRI_DOCUMENTI);
+
+  }
+  catch(err){
+
+    console.error("Errore upload altri documenti:", err);
+
+    alert("Errore upload documenti");
 
   }
 
@@ -2314,6 +2377,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
