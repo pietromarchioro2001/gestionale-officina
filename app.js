@@ -125,6 +125,8 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
+  startLoading("loadingOCR");
+
   if (!TEMP_LIBRETTO_ID) {
     alert("Carica prima il libretto");
     return;
@@ -146,10 +148,14 @@ async function analizza() {
 
     popolaFormOCR(res.datiOCR);
 
+    stopLoading("loadingOCR");
+
   } catch(err) {
 
     console.error(err);
     alert("Errore OCR");
+
+    stopLoading("loadingOCR");
 
   }
 }
@@ -518,6 +524,8 @@ let sessioneAssistente = {
 
 async function uploadTargaFile(file){
 
+  startLoading("loadingTarga");
+
   try{
 
     if (!file) return;
@@ -547,6 +555,8 @@ async function uploadTargaFile(file){
 
     console.log("Upload targa OK:", TEMP_TARGA_ID);
 
+    stopLoading("loadingTarga");
+
   }
   catch(err){
 
@@ -554,11 +564,15 @@ async function uploadTargaFile(file){
 
     alert("Errore upload targa");
 
+    stopLoading("loadingTarga");
+
   }
 
 }
 
 async function uploadAltriDocumenti(e){
+
+  startLoading("loadingAltri");
 
   try{
 
@@ -621,12 +635,16 @@ async function uploadAltriDocumenti(e){
 
     console.log("TEMP_ALTRI_DOCUMENTI finale:", TEMP_ALTRI_DOCUMENTI);
 
+    stopLoading("loadingAltri");
+
   }
   catch(err){
 
     console.error("Errore upload altri documenti:", err);
 
     alert("Errore upload documenti: " + err.message);
+
+    stopLoading("loadingAltri");
 
   }
 
@@ -697,6 +715,8 @@ function fileToBase64(file){
 
 async function uploadLibretto(e){
 
+  startLoading("loadingLibretto");
+
   try{
 
     const file = e.target.files[0];
@@ -729,11 +749,15 @@ async function uploadLibretto(e){
 
     console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
 
+    stopLoading("loadingLibretto");
+
   }
   catch(err){
 
     console.error(err);
     alert("Errore upload libretto");
+
+    stopLoading("loadingLibretto");
 
   }
 
@@ -2384,6 +2408,23 @@ function abilitaPreview(inputId, linkId){
   });
 
 }
+
+function startLoading(id){
+  document.getElementById(id)?.classList.add("active");
+}
+
+function stopLoading(id){
+  const el = document.getElementById(id);
+  if(!el) return;
+
+  el.classList.remove("active");
+  el.classList.add("ok");
+
+  setTimeout(()=>{
+    el.classList.remove("ok");
+  }, 1500);
+}
+
 
 
 
