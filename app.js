@@ -407,42 +407,42 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
     const files = e.target.files;
-  
+
     TEMP_ALTRI_DOCUMENTI = [];
-  
+    
     for(const file of files){
-  
+    
       const base64 = await fileToBase64(file);
-  
+    
       const form = new FormData();
-  
+    
       form.append("action", "uploadTempFile");
       form.append("base64", base64);
       form.append("nomeFile", file.name);
       form.append("mimeType", file.type || "image/jpeg");
-  
+    
       const res = await fetch(API_URL, {
         method: "POST",
         body: form
       });
-  
+    
       const json = await res.json();
-  
+    
       if(!json.ok)
         throw new Error(json.error);
-  
+    
       TEMP_ALTRI_DOCUMENTI.push({
         fileId: json.fileId,
         nome: file.name
       });
-  
+    
     }
-  
+    
     const label = document.getElementById("altriCount");
-  
+    
     label.textContent =
       files.length > 0 ? `${files.length} file caricati` : "";
-  
+    
     console.log("TEMP_ALTRI_DOCUMENTI:", TEMP_ALTRI_DOCUMENTI);
   
   });
@@ -587,14 +587,14 @@ async function uploadAltriDocumenti(e){
 
     const files = e.target.files;
 
-    if (!files || files.length === 0)
+    if(!files || files.length === 0)
       return;
 
     TEMP_ALTRI_DOCUMENTI = [];
 
-    for(const file of files){
+    console.log("Upload altri documenti...");
 
-      console.log("Upload documento:", file.name);
+    for(const file of files){
 
       const base64 = await fileToBase64(file);
 
@@ -603,35 +603,31 @@ async function uploadAltriDocumenti(e){
       form.append("action", "uploadTempFile");
       form.append("base64", base64);
       form.append("nomeFile", file.name);
-      form.append("mimeType", file.type || "application/octet-stream");
+      form.append("mimeType", file.type || "image/jpeg");
 
       const res = await fetch(API_URL, {
-
         method: "POST",
         body: form
-
       });
 
       const json = await res.json();
 
-      if (!json.ok)
+      if(!json.ok)
         throw new Error(json.error);
 
       TEMP_ALTRI_DOCUMENTI.push({
-
         fileId: json.fileId,
         nome: file.name
-
       });
-
-      console.log("Documento caricato:", json.fileId);
 
     }
 
-    document.getElementById("altriCount").textContent =
-      `${TEMP_ALTRI_DOCUMENTI.length} file caricati`;
+    const label = document.getElementById("altriCount");
 
-    console.log("TEMP_ALTRI_DOCUMENTI finale:", TEMP_ALTRI_DOCUMENTI);
+    label.textContent =
+      files.length > 0 ? `${files.length} file caricati` : "";
+
+    console.log("TEMP_ALTRI_DOCUMENTI:", TEMP_ALTRI_DOCUMENTI);
 
   }
   catch(err){
@@ -2377,6 +2373,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
