@@ -218,6 +218,11 @@ async function inviaSalvataggio(){
 
   try{
 
+    // 🔥 legge altri documenti
+    const altriDocumenti = await new Promise(resolve =>
+      leggiAltriDocumenti(resolve)
+    );
+
     const dati = {
 
       nomeCliente: nome.value,
@@ -225,17 +230,18 @@ async function inviaSalvataggio(){
       telefono: telefono.value,
       dataNascita: data.value,
       codiceFiscale: cf.value,
-    
+
       veicolo: veicolo.value,
       motore: motore.value,
       targa: targa.value,
       immatricolazione: immatricolazione.value,
-    
+
       tempLibrettoId: TEMP_LIBRETTO_ID,
       tempTargaId: TEMP_TARGA_ID,
-    
-      altriDocumenti: TEMP_ALTRI_DOCUMENTI   // ← QUESTO È IL FIX
-    
+
+      // 🔥 QUESTO È IL FIX
+      altriDocumenti: altriDocumenti
+
     };
 
     console.log("INVIO AL BACKEND:", dati);
@@ -2297,6 +2303,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
