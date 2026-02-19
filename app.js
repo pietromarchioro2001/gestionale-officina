@@ -419,6 +419,12 @@ document.addEventListener("DOMContentLoaded", () => {
   
   });
 
+  abilitaPreview("librettoGallery", "librettoLink");
+  abilitaPreview("librettoCamera", "librettoLink");
+  
+  abilitaPreview("targaGallery", "targaLink");
+  abilitaPreview("targaCamera", "targaLink");
+
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
 
@@ -2343,3 +2349,37 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
+function abilitaPreview(inputId, linkId){
+
+  const input = document.getElementById(inputId);
+  const link = document.getElementById(linkId);
+
+  if (!input || !link) return;
+
+  input.addEventListener("change", () => {
+
+    const file = input.files?.[0];
+
+    if (!file){
+
+      link.style.display = "none";
+      return;
+
+    }
+
+    const url = URL.createObjectURL(file);
+
+    link.style.display = "inline-block";
+
+    link.onclick = () => {
+
+      window.open(url, "_blank");
+
+    };
+
+  });
+
+}
+
+
