@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzvpGicdKs1ZRRmPm2ykYh-53xWkNYj0X5Ev11kJXSVUurIybbBV7_JJ4VDTOJYSPzv/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwCnn6rSsGFqAJpy_mtr7b_JKdK5F9-9YZ3BQam17SMF2sOQgkg0aXHWxkQEJZtDCk7/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -2276,6 +2276,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
