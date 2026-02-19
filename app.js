@@ -505,10 +505,9 @@ async function uploadTargaFile(file){
 
   try{
 
-    if(!file)
-      throw new Error("File mancante");
+    if (!file) return;
 
-    console.log("Upload targa avviato:", file.name, file.size);
+    console.log("Upload targa avviato...");
 
     const base64 = await fileToBase64(file);
 
@@ -520,15 +519,13 @@ async function uploadTargaFile(file){
     form.append("mimeType", file.type || "image/jpeg");
 
     const res = await fetch(API_URL, {
-
       method: "POST",
       body: form
-
     });
 
     const json = await res.json();
 
-    if(!json.ok)
+    if (!json.ok)
       throw new Error(json.error);
 
     TEMP_TARGA_ID = json.fileId;
@@ -2262,6 +2259,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
