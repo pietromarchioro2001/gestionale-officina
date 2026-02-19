@@ -405,45 +405,6 @@ document.addEventListener("DOMContentLoaded", () => {
   ?.addEventListener("click", resetClienti);
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
-
-    const files = e.target.files;
-
-    TEMP_ALTRI_DOCUMENTI = [];
-    
-    for(const file of files){
-    
-      const base64 = await fileToBase64(file);
-    
-      const form = new FormData();
-    
-      form.append("action", "uploadTempFile");
-      form.append("base64", base64);
-      form.append("nomeFile", file.name);
-      form.append("mimeType", file.type || "image/jpeg");
-    
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: form
-      });
-    
-      const json = await res.json();
-    
-      if(!json.ok)
-        throw new Error(json.error);
-    
-      TEMP_ALTRI_DOCUMENTI.push({
-        fileId: json.fileId,
-        nome: file.name
-      });
-    
-    }
-    
-    const label = document.getElementById("altriCount");
-    
-    label.textContent =
-      files.length > 0 ? `${files.length} file caricati` : "";
-    
-    console.log("TEMP_ALTRI_DOCUMENTI:", TEMP_ALTRI_DOCUMENTI);
   
   });
 
@@ -2373,6 +2334,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
