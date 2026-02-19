@@ -2160,14 +2160,10 @@ button.riprendi:hover {
   padding-left: 8px;
 }
 
-.file-upload {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-  margin-top: 12px;
-}
-
 .file-btn-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: #ececec;
   border: none;
   border-radius: 12px;
@@ -2223,8 +2219,8 @@ button.riprendi:hover {
 
 .file-upload {
   display: flex;
-  align-items: stretch;
   gap: 10px;
+  align-items: center;
 }
 
 #schedeContent,
@@ -2242,11 +2238,12 @@ button.riprendi:hover {
 /* ================= LOADING LOGO ================= */
 
 .loading-logo {
-  width: 18px;
-  height: 18px;
-  margin-left: 8px;
+  width: 32px;
+  height: 32px;
+  margin-left: 10px;
+  display: inline-block;
   vertical-align: middle;
-  display: none;
+  animation: spin 1s linear infinite;
 }
 
 .loading-logo.active {
@@ -2267,5 +2264,6 @@ button.riprendi:hover {
     transform: rotate(360deg);
   }
 }
+
 
 
