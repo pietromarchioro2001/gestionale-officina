@@ -353,7 +353,8 @@ function cercaVeicolo() {
 /********************
  * CONTATORE FILE (X file)
  ********************/
-function bindFileCount(inputId, countId, linkId) {
+function bindFileCount(inputId, countId, linkId){
+
   const input = document.getElementById(inputId);
   const label = document.getElementById(countId);
   const link = document.getElementById(linkId);
@@ -361,28 +362,38 @@ function bindFileCount(inputId, countId, linkId) {
   if (!input) return;
 
   input.addEventListener("change", () => {
-    const n = input.files ? input.files.length : 0;
 
-    // 🔹 SOLO "Altri documenti" mostra il numero file
-    if (countId === "altriCount") {
-      label.textContent = n > 0 ? n + " file" : "";
-      label.classList.toggle("ok", n > 0);
-    } else if (label) {
-      // ❌ libretto e targa: niente contatore
-      label.textContent = "";
+    const file = input.files?.[0];
+
+    // contatore solo altri documenti
+    if (label && countId === "altriCount"){
+
+      const n = input.files.length;
+
+      label.textContent =
+        n > 0 ? `${n} file caricati` : "";
+
     }
 
-    // 🔹 libretto / targa: mostra solo "Visualizza"
-    if (link && n > 0) {
-      const file = input.files[0];
-      link.href = URL.createObjectURL(file);
-      link.textContent = "Visualizza";
+    // preview libretto / targa
+    if (link && file){
+
+      const url = URL.createObjectURL(file);
+
       link.style.display = "inline-block";
-    } else if (link) {
-      link.style.display = "none";
-      link.href = "#";
+
+      link.onclick = () =>
+        window.open(url, "_blank");
+
     }
+    else if (link){
+
+      link.style.display = "none";
+
+    }
+
   });
+
 }
 
 /********************
@@ -2301,46 +2312,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function gestisciPreview(inputId, viewId){
-
-  const input = document.getElementById(inputId);
-  const btn = document.getElementById(viewId);
-
-  if (!input || !btn) return;
-
-  input.onchange = e => {
-
-    const file = e.target.files?.[0];
-
-    if (!file){
-
-      btn.style.display = "none";
-      return;
-
-    }
-
-    const url = URL.createObjectURL(file);
-
-    btn.style.display = "inline-block";
-
-    btn.onclick = () => {
-
-      window.open(url, "_blank");
-
-    };
-
-    console.log("Preview attivato");
-
-  };
-
-}
-
-gestisciPreview("librettoGallery", "librettoLink");
-gestisciPreview("librettoCamera", "librettoLink");
-
-gestisciPreview("targaGallery", "targaLink");
-gestisciPreview("targaCamera", "targaLink");
-
 function resetFileInput(inputId, viewId) {
 
   const input = document.getElementById(inputId);
@@ -2372,113 +2343,3 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
