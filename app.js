@@ -2,6 +2,7 @@ const API_URL = "https://script.google.com/macros/s/AKfycbybPMlTYqOGimq9xdRm524_
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
+let TEMP_ALTRI_DOCUMENTI = [];
 
 function callBackend(action, args = []) {
 
@@ -224,15 +225,17 @@ async function inviaSalvataggio(){
       telefono: telefono.value,
       dataNascita: data.value,
       codiceFiscale: cf.value,
-
+    
       veicolo: veicolo.value,
       motore: motore.value,
       targa: targa.value,
       immatricolazione: immatricolazione.value,
-
+    
       tempLibrettoId: TEMP_LIBRETTO_ID,
-      tempTargaId: TEMP_TARGA_ID
-
+      tempTargaId: TEMP_TARGA_ID,
+    
+      altriDocumenti: TEMP_ALTRI_DOCUMENTI   // ← QUESTO È IL FIX
+    
     };
 
     console.log("INVIO AL BACKEND:", dati);
@@ -398,16 +401,34 @@ document.addEventListener("DOMContentLoaded", () => {
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetClienti);
 
-  document.getElementById("altriDocumenti")?.addEventListener("change", e => {
+  document.getElementById("altriDocumenti")?.addEventListener("change", async e => {
 
-  const count = e.target.files.length;
-
-  const label = document.getElementById("altriCount");
-
-  label.textContent =
-    count > 0 ? `${count} file caricati` : "";
-
-});
+    const files = e.target.files;
+  
+    TEMP_ALTRI_DOCUMENTI = [];
+  
+    for(const file of files){
+  
+      const base64 = await fileToBase64(file);
+  
+      TEMP_ALTRI_DOCUMENTI.push({
+  
+        nome: file.name,
+        mimeType: file.type,
+        base64: base64
+  
+      });
+  
+    }
+  
+    const label = document.getElementById("altriCount");
+  
+    label.textContent =
+      files.length > 0 ? `${files.length} file caricati` : "";
+  
+    console.log("TEMP_ALTRI_DOCUMENTI:", TEMP_ALTRI_DOCUMENTI);
+  
+  });
 
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
@@ -2276,6 +2297,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("altriDocumenti", "altriLink");
 
 });
+
 
 
 
