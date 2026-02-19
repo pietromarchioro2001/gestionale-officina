@@ -2195,10 +2195,10 @@ button.riprendi:hover {
 }
 
 .file-btn-camera {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 44px;
+  height: 44px;       /* IDENTICO a Carica libretto */
   width: 44px;
   border-radius: 12px;
   border: none;
@@ -2206,11 +2206,13 @@ button.riprendi:hover {
   cursor: pointer;
 }
 
+/* icona fotocamera */
 .file-btn-camera::before {
   content: "📷";
-  font-size: 18px;
-}
+  font-size: 20px;
+  line-height: 1;
 
+}
 
 .file-btn-camera:hover {
   background: #ddd;
@@ -2272,6 +2274,7 @@ button.riprendi:hover {
   to   { transform: rotate(360deg); }
 
 }
+
 
 
 
