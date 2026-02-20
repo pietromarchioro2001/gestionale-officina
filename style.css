@@ -42,7 +42,7 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px;            /* usa la tua altezza reale */
+  height: 50px;            /* usa la tua altezza reale */
   z-index: 1000;
 
   background-color: #1e1e1e;  /* 🔥 BARRA NERA */
@@ -2340,6 +2340,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
