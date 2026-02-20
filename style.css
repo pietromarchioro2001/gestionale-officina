@@ -2278,13 +2278,13 @@ button.riprendi:hover {
 .doc-row {
   display: flex;
   align-items: center;
-  gap: 14px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 
 .doc-label {
   font-weight: 600;
-  min-width: 120px;
+  min-width: 15px;
 }
 
 .icon-btn {
@@ -2313,8 +2313,13 @@ button.riprendi:hover {
 /* Camera icon */
 .camera-btn::before {
   content: "📷";
-  font-size: 20px;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 
 
 
