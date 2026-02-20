@@ -294,17 +294,22 @@
 </section>
 
   <!-- ASSISTENTE -->
-  <section id="assistente" class="page assistente">
-    <header class="assistente-top">
-      <span>ASSISTENTE</span>
-      <button onclick="esciAssistente()">✕</button>
-    </header>
+  <!-- ASSISTENTE -->
+<section id="assistente" class="page assistente">
 
-    <div id="assistenteChat"></div>
+  <div class="assistente-header">
+    <span class="assistente-title">ASSISTENTE</span>
+    <button class="assistente-close" onclick="esciAssistente()">✕</button>
+  </div>
 
-    <input id="assistenteInput" placeholder="Scrivi o parla">
+  <div id="assistenteChat" class="assistente-chat"></div>
+
+  <div class="assistente-input-row">
+    <input id="assistenteInput" placeholder="Scrivi un messaggio..." />
     <button id="btnMic">🎤</button>
-  </section>
+  </div>
+
+</section>
 
 </main>
 
@@ -313,6 +318,7 @@
 
 </body>
 </html>
+
 
 
 
