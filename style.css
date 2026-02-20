@@ -2301,10 +2301,10 @@ button.riprendi:hover {
 }
 
 .icon-svg {
-  width: 24px;          /* icona più piena */
-  height: 24px;
+  width: 22px;          /* icona più piena */
+  height: 22px;
   stroke: #333;
-  stroke-width: 2.6;
+  stroke-width: 2.4;
   fill: none;
 }
 
@@ -2334,4 +2334,5 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
