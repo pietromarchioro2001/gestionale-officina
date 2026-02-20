@@ -42,8 +42,12 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 70px; /* metti l’altezza reale della tua toolbar */
+  height: 70px;            /* usa la tua altezza reale */
   z-index: 1000;
+
+  background-color: #1e1e1e;  /* 🔥 BARRA NERA */
+  display: flex;
+  align-items: center;
 }
 
 .topbar-inner {
@@ -2336,6 +2340,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
