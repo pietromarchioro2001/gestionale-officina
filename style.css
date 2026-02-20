@@ -310,6 +310,10 @@ div[aria-label*="Apps Script"] {
   margin-bottom: 28px;
 }
 
+#schede .page-content > button {
+  margin-bottom: 30px; /* 🔧 aumenta o diminuisci questo valore */
+}
+
 .schede-left,
 .schede-right {
   display: flex;
@@ -2340,6 +2344,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
