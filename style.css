@@ -2272,47 +2272,44 @@ button.riprendi:hover {
 .doc-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px; /* più vicini */
   margin-bottom: 18px;
 }
 
 .doc-label {
   font-weight: 600;
-  margin-right: 10px;
+  margin-right: 6px; /* meno spazio */
+  min-width: 90px;   /* allineamento ordinato */
 }
 
 .icon-btn {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border: none;
-  background: transparent;
-  border-radius: 8px;
+  background: #f1f1f1;
+  border-radius: 12px;
   cursor: pointer;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-  background: rgba(0,0,0,0.06);
+  background: #e2e2e2;
+  transform: scale(1.05);
 }
 
 .icon-svg {
-  width: 20px;
-  height: 20px;
-  stroke: #2e7d32;   /* verde gestionale */
-  stroke-width: 2;
+  width: 26px;
+  height: 26px;
+  stroke: #2e7d32;
+  stroke-width: 2.5;
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
-}
-
-.refresh-btn {
-  width: 40px;
-  height: 40px;
 }
 
 
