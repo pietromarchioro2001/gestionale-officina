@@ -2308,4 +2308,30 @@ button.riprendi:hover {
   stroke-width: 2.8;    /* 🔥 PIÙ SPESSO */
   fill: none;
 }
+.doc-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.doc-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #444;
+  stroke-width: 2;
+  fill: none;
+}
+
+.doc-icon:hover {
+  background: #e5e5e5;
+}
+
+.doc-icon:hover svg {
+  stroke: #000;
+}
 
