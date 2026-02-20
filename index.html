@@ -113,17 +113,9 @@
   <section class="section">
     <h3>Ricerca veicolo (TARGA)</h3>
 
-    <div class="row">
-      <input id="ricercaTarga" class="targa">
-      <button class="secondary" id="btnCerca">Cerca</button>
-    </div>
-
-    <p id="esitoRicerca" class="esito"></p>
-
-    <!-- LIBRETTO -->
     <div class="doc-row">
       <span class="doc-label">Libretto</span>
-
+    
       <!-- UPLOAD -->
       <button class="icon-btn"
         onclick="document.getElementById('librettoGallery').click()">
@@ -133,7 +125,7 @@
           <path d="M4 20h16"/>
         </svg>
       </button>
-
+    
       <!-- CAMERA -->
       <button class="icon-btn"
         onclick="document.getElementById('librettoCamera').click()">
@@ -142,9 +134,23 @@
           <circle cx="12" cy="13" r="4"/>
         </svg>
       </button>
+    
+      <!-- VISUALIZZA -->
+      <button id="librettoLink" class="secondary hidden" type="button">
+        Visualizza
+      </button>
+    
+      <!-- ANALIZZA OCR -->
+      <button id="btnAnalizza" class="secondary">
+        Analizza OCR
+      </button>
+    
+      <!-- LOADING -->
+      <img src="logo.png" id="loadingLibretto" class="loading-logo">
+      <img src="logo.png" id="loadingOCR" class="loading-logo">
+    
     </div>
-
-    <!-- INPUT NASCOSTI -->
+    
     <input type="file" id="librettoGallery" accept="image/*" hidden>
     <input type="file" id="librettoCamera" accept="image/*" capture="environment" hidden>
 
@@ -184,7 +190,7 @@
       <!-- TARGA -->
       <div class="doc-row">
         <span class="doc-label">Targa</span>
-
+      
         <button class="icon-btn"
           onclick="document.getElementById('targaGallery').click()">
           <svg viewBox="0 0 24 24" class="icon-svg">
@@ -193,7 +199,7 @@
             <path d="M4 20h16"/>
           </svg>
         </button>
-
+      
         <button class="icon-btn"
           onclick="document.getElementById('targaCamera').click()">
           <svg viewBox="0 0 24 24" class="icon-svg">
@@ -201,26 +207,35 @@
             <circle cx="12" cy="13" r="4"/>
           </svg>
         </button>
+      
+        <button id="targaLink" class="secondary hidden" type="button">
+          Visualizza
+        </button>
+      
+        <img src="logo.png" id="loadingTarga" class="loading-logo">
       </div>
-
-      <!-- INPUT TARGA -->
+      
       <input type="file" id="targaGallery" accept="image/*" hidden>
       <input type="file" id="targaCamera" accept="image/*" capture="environment" hidden>
 
       <!-- ALTRI DOCUMENTI -->
       <div class="doc-row">
         <span class="doc-label">Documenti</span>
-
+      
         <button class="icon-btn"
           onclick="document.getElementById('altriDocumenti').click()">
-          <svg viewBox="0 0 24 24" class="icon-svg">
+           <svg viewBox="0 0 24 24" class="icon-svg">
             <path d="M12 16V4"/>
             <path d="M8 8l4-4 4 4"/>
             <path d="M4 20h16"/>
           </svg>
         </button>
+      
+        <span id="altriCount" class="file-count"></span>
+      
+        <img src="logo.png" id="loadingAltri" class="loading-logo">
       </div>
-
+      
       <input type="file" id="altriDocumenti" multiple hidden>
 
     </div>
@@ -275,6 +290,7 @@
 
 </body>
 </html>
+
 
 
 
