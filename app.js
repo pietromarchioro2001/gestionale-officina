@@ -2326,20 +2326,26 @@ function sbloccaAudio() {
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  document.addEventListener("click", function(e){
+  document.addEventListener("DOMContentLoaded", () => {
 
-    const btn = e.target.closest("[data-target]");
-    if(!btn) return;
-  
-    e.preventDefault();
-    e.stopPropagation();
-  
-    const input = document.getElementById(btn.dataset.target);
-    if(input) input.click();
-  
+  document.querySelectorAll("[data-target]").forEach(btn => {
+
+    btn.addEventListener("click", function(e){
+
+      e.preventDefault();
+
+      const targetId = this.getAttribute("data-target");
+      const input = document.getElementById(targetId);
+
+      if(input){
+        input.click();
+      }
+
+    });
+
   });
 
- }); 
+});
 
 function resetFileInput(inputId, viewId) {
 
@@ -2423,6 +2429,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
