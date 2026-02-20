@@ -1059,12 +1059,6 @@ div[aria-label*="Apps Script"] {
   align-items: center;
 }
 
-.refresh-btn {
-  background: #3a3a3a; /* stesso di Cerca */
-  color: #fff;
-  font-weight: 600;
-}
-
 .refresh-btn:hover {
   background: #2f2f2f;
   opacity: 1;
@@ -2278,25 +2272,27 @@ button.riprendi:hover {
 .doc-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 10px;
+  margin-bottom: 18px;
 }
 
 .doc-label {
   font-weight: 600;
-  min-width: 15px;
+  margin-right: 10px;
 }
 
 .icon-btn {
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border: none;
   background: transparent;
+  border-radius: 8px;
   cursor: pointer;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 10px;
+
   transition: background 0.2s ease;
 }
 
@@ -2304,21 +2300,21 @@ button.riprendi:hover {
   background: rgba(0,0,0,0.06);
 }
 
-/* Upload icon */
-.upload-btn::before {
-  content: "⬆️";
-  font-size: 20px;
+.icon-svg {
+  width: 20px;
+  height: 20px;
+  stroke: #2e7d32;   /* verde gestionale */
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* Camera icon */
-.camera-btn::before {
-  content: "📷";
-  font-size: 18px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.refresh-btn {
+  width: 40px;
+  height: 40px;
 }
+
 
 
 
