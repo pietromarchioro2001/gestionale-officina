@@ -2272,13 +2272,13 @@ button.riprendi:hover {
 .doc-row {
   display: flex;
   align-items: center;
-  gap: 8px; /* più vicini */
+  gap: 6px; /* più vicini */
   margin-bottom: 18px;
 }
 
 .doc-label {
   font-weight: 600;
-  min-width: 85px;
+  min-width: 65px;
 }
 
 .icon-btn {
@@ -2305,7 +2305,7 @@ button.riprendi:hover {
   width: 30px;
   height: 30px;
   stroke: #333;         /* 🔥 GRIGIO SCURO */
-  stroke-width: 2.8;    /* 🔥 PIÙ SPESSO */
+  stroke-width: 2.5;    /* 🔥 PIÙ SPESSO */
   fill: none;
 }
 .doc-icon {
@@ -2334,5 +2334,6 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
