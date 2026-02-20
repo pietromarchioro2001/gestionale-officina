@@ -2324,7 +2324,7 @@ function sbloccaAudio() {
 document.addEventListener("DOMContentLoaded", () => {
 
   document
-    .querySelectorAll(".file-btn-main, .file-btn-camera")
+    .querySelectorAll("[data-target]")
     .forEach(btn => {
 
       btn.addEventListener("click", e => {
@@ -2332,7 +2332,8 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
         e.stopPropagation();
 
-        const input = document.getElementById(btn.dataset.target);
+        const target = btn.dataset.target;
+        const input = document.getElementById(target);
 
         if (input) input.click();
 
@@ -2424,6 +2425,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
