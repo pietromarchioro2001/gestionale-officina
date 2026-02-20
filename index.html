@@ -100,8 +100,11 @@
   <div class="page-header">
     <h2 class="page-title">CLIENTI</h2>
 
-    <button class="secondary refresh-btn" id="btnRefreshClienti">
-      🔄
+    <button class="icon-btn refresh-btn" id="btnRefreshClienti">
+      <svg viewBox="0 0 24 24" class="icon-svg">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66" />
+        <path d="M20 4v6h-6" />
+      </svg>
     </button>
   </div>
 
@@ -120,31 +123,24 @@
 
   <!-- LIBRETTO + OCR -->
   <div class="doc-row">
-
   <span class="doc-label">Libretto</span>
 
-  <!-- file nascosti -->
-  <input type="file" id="librettoGallery" accept="image/*" hidden>
-  <input type="file" id="librettoCamera" accept="image/*" capture="environment" hidden>
-
-  <!-- Upload -->
-  <button class="icon-btn upload-btn" data-target="librettoGallery" title="Carica da dispositivo"></button>
-
-  <!-- Camera -->
-  <button class="icon-btn camera-btn" data-target="librettoCamera" title="Scatta foto"></button>
-
-  <img src="logo.png" id="loadingLibretto" class="loading-logo">
-
-  <button id="librettoLink" type="button" class="icon-text-btn hidden">
-    Visualizza
+  <!-- UPLOAD -->
+  <button class="icon-btn" data-target="librettoGallery">
+    <svg viewBox="0 0 24 24" class="icon-svg">
+      <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+      <path d="M4 20h16" />
+    </svg>
   </button>
 
-  <button id="btnAnalizza" class="icon-text-btn">
-    Analizza OCR
+  <!-- CAMERA -->
+  <button class="icon-btn" data-target="librettoCamera">
+    <svg viewBox="0 0 24 24" class="icon-svg">
+      <path d="M4 8h16v10H4z" />
+      <circle cx="12" cy="13" r="3" />
+      <path d="M9 8l1.5-2h3L15 8" />
+    </svg>
   </button>
-
-  <img src="logo.png" id="loadingOCR" class="loading-logo">
-
 </div>
 </section>
   
@@ -183,37 +179,34 @@
 
     <!-- FOTO TARGA -->
     <div class="doc-row">
-
       <span class="doc-label">Targa</span>
     
-      <input type="file" id="targaGallery" accept="image/*" hidden>
-      <input type="file" id="targaCamera" accept="image/*" capture="environment" hidden>
-    
-      <button class="icon-btn upload-btn" data-target="targaGallery"></button>
-    
-      <button class="icon-btn camera-btn" data-target="targaCamera"></button>
-    
-      <img src="logo.png" id="loadingTarga" class="loading-logo">
-    
-      <button id="targaLink" type="button" class="icon-text-btn hidden">
-        Visualizza
+      <button class="icon-btn" data-target="targaGallery">
+        <svg viewBox="0 0 24 24" class="icon-svg">
+          <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+          <path d="M4 20h16" />
+        </svg>
       </button>
     
+      <button class="icon-btn" data-target="targaCamera">
+        <svg viewBox="0 0 24 24" class="icon-svg">
+          <path d="M4 8h16v10H4z" />
+          <circle cx="12" cy="13" r="3" />
+          <path d="M9 8l1.5-2h3L15 8" />
+        </svg>
+      </button>
     </div>
 
     <!-- ALTRI DOCUMENTI -->
     <div class="doc-row">
-
       <span class="doc-label">Documenti</span>
     
-      <input type="file" id="altriDocumenti" multiple hidden>
-    
-      <button class="icon-btn upload-btn" data-target="altriDocumenti" id="btnUploadAltri"></button>
-    
-      <img src="logo.png" id="loadingAltri" class="loading-logo">
-    
-      <span id="altriCount" class="file-count"></span>
-    
+      <button class="icon-btn" data-target="altriDocumenti">
+        <svg viewBox="0 0 24 24" class="icon-svg">
+          <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+          <path d="M4 20h16" />
+        </svg>
+      </button>
     </div>
   </div>
 </section>
@@ -270,6 +263,7 @@
 
 </body>
 </html>
+
 
 
 
