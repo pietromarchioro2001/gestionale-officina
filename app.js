@@ -2338,8 +2338,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
  }); 
 
-});
-
 function resetFileInput(inputId, viewId) {
 
   const input = document.getElementById(inputId);
@@ -2422,6 +2420,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
