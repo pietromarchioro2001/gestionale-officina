@@ -121,7 +121,7 @@ main {
 
 .page-title {
   margin: 10px 0 20px;
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -2281,32 +2281,33 @@ button.riprendi:hover {
 }
 
 .icon-btn {
-  width: 38px;
+  width: 38px;          /* box più compatto */
   height: 38px;
+  padding: 4px;         /* 🔥 riduce spazio interno */
   border: none;
   background: transparent;
-  border-radius: 14px;
+  border-radius: 8px;
   cursor: pointer;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  transition: all 0.2s ease;
+  transition: background 0.15s ease;
 }
 
 .icon-btn:hover {
-  background: #e6e6e6;
-  transform: scale(1.06);
+  background: #ececec;
 }
 
 .icon-svg {
-  width: 22px;
-  height: 22px;
-  stroke: #333;         /* 🔥 GRIGIO SCURO */
-  stroke-width: 2.5;    /* 🔥 PIÙ SPESSO */
+  width: 24px;          /* icona più piena */
+  height: 24px;
+  stroke: #333;
+  stroke-width: 2.6;
   fill: none;
 }
+
 .doc-icon {
   display: inline-flex;
   align-items: center;
@@ -2333,11 +2334,4 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
-
-
-
-
-
-
-
 
