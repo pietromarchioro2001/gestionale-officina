@@ -2272,22 +2272,21 @@ button.riprendi:hover {
 .doc-row {
   display: flex;
   align-items: center;
-  gap: 6px; /* più vicini */
+  gap: 8px; /* più vicini */
   margin-bottom: 18px;
 }
 
 .doc-label {
   font-weight: 600;
-  margin-right: 6px; /* meno spazio */
-  min-width: 90px;   /* allineamento ordinato */
+  min-width: 95px;
 }
 
 .icon-btn {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border: none;
-  background: #f1f1f1;
-  border-radius: 12px;
+  background: #e6e6e6;
+  border-radius: 14px;
   cursor: pointer;
 
   display: flex;
@@ -2298,21 +2297,15 @@ button.riprendi:hover {
 }
 
 .icon-btn:hover {
-  background: #e2e2e2;
-  transform: scale(1.05);
+  background: #dcdcdc;
+  transform: scale(1.06);
 }
 
 .icon-svg {
-  width: 26px;
-  height: 26px;
-  stroke: #2e7d32;
-  stroke-width: 2.5;
+  width: 30px;
+  height: 30px;
+  stroke: #333;         /* 🔥 GRIGIO SCURO */
+  stroke-width: 2.8;    /* 🔥 PIÙ SPESSO */
   fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
 }
-
-
-
-
 
