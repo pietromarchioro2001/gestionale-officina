@@ -146,7 +146,31 @@ async function analizza() {
       return;
     }
 
-    popolaFormOCR(res.datiOCR);
+    const dati = res.datiOCR;
+
+    // 🔥 CONTROLLO TARGA ESISTENTE
+    if (dati?.targa) {
+
+      const check = await callBackend(
+        "checkTargaEsistente",
+        [dati.targa]
+      );
+
+      if (check === true) {
+
+        stopLoading("loadingOCR");
+
+        alert("⚠️ Veicolo già esistente nel sistema.");
+
+        // opzionale: carica dati esistenti invece di quelli OCR
+        cercaVeicoloConTarga(dati.targa);
+
+        return; // ❌ blocca popolamento nuovo
+      }
+    }
+
+    // ✔️ solo se NON esiste
+    popolaFormOCR(dati);
 
     stopLoading("loadingOCR");
 
@@ -154,9 +178,7 @@ async function analizza() {
 
     console.error(err);
     alert("Errore OCR");
-
     stopLoading("loadingOCR");
-
   }
 }
 
@@ -2424,6 +2446,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
