@@ -434,8 +434,11 @@ document.addEventListener("DOMContentLoaded", () => {
   bindFileCount("librettoGallery", "librettoCount", "librettoLink");
   bindFileCount("librettoCamera", "librettoCount", "librettoLink");
 
-  librettoGallery.addEventListener("change", uploadLibretto);
-  librettoCamera.addEventListener("change", uploadLibretto);
+  document.getElementById("librettoGallery")
+    ?.addEventListener("change", uploadLibretto);
+  
+  document.getElementById("librettoCamera")
+    ?.addEventListener("change", uploadLibretto);
 
   bindFileCount("targaGallery", "targaCount", "targaLink");
   bindFileCount("targaCamera", "targaCount", "targaLink");
@@ -2420,6 +2423,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
