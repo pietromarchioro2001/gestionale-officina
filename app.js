@@ -582,70 +582,71 @@ async function uploadAltriDocumenti(e){
     const files = e.target.files;
 
     if(!files || files.length === 0){
-      console.log("Nessun file");
+      stopLoading("loadingAltri");
       return;
     }
-
-    TEMP_ALTRI_DOCUMENTI = [];
 
     console.log("Upload altri documenti...");
     console.log("Numero file:", files.length);
 
-    for(const file of files){
+    // 🔥 Upload parallelo (molto più veloce)
+    const uploadPromises = Array.from(files).map(async file => {
 
       console.log("Processing:", file.name);
 
       const base64 = await fileToBase64(file);
 
-      console.log("Base64 OK:", file.name);
-
       const form = new FormData();
-
       form.append("action", "uploadTempFile");
       form.append("base64", base64);
       form.append("nomeFile", file.name);
       form.append("mimeType", file.type || "image/jpeg");
-
-      console.log("Invio al backend:", file.name);
 
       const res = await fetch(API_URL, {
         method: "POST",
         body: form
       });
 
-      console.log("Risposta ricevuta:", file.name);
+      if (!res.ok)
+        throw new Error("Errore HTTP upload");
 
       const json = await res.json();
 
-      console.log("JSON:", json);
-
       if(!json.ok)
-        throw new Error(json.error);
+        throw new Error(json.error || "Errore backend upload");
 
-      TEMP_ALTRI_DOCUMENTI.push({
+      console.log("Upload OK:", file.name);
+
+      return {
         fileId: json.fileId,
         nome: file.name
-      });
+      };
 
-      console.log("File salvato temp:", file.name);
+    });
 
-    }
+    // 🔥 Attende tutti gli upload
+    TEMP_ALTRI_DOCUMENTI = await Promise.all(uploadPromises);
 
+    // UI aggiornata
     const label = document.getElementById("altriCount");
 
-    label.textContent =
-      files.length > 0 ? `${files.length} file caricati` : "";
+    if (label) {
+      label.textContent =
+        TEMP_ALTRI_DOCUMENTI.length > 0
+          ? `${TEMP_ALTRI_DOCUMENTI.length} file caricati`
+          : "";
+    }
 
     console.log("TEMP_ALTRI_DOCUMENTI finale:", TEMP_ALTRI_DOCUMENTI);
-
-    stopLoading("loadingAltri");
 
   }
   catch(err){
 
     console.error("Errore upload altri documenti:", err);
-
     alert("Errore upload documenti: " + err.message);
+
+  }
+  finally{
 
     stopLoading("loadingAltri");
 
@@ -657,28 +658,15 @@ function fileToBase64(file){
 
   return new Promise((resolve, reject)=>{
 
-    // ✅ se NON è immagine → conversione diretta
     if (!file.type.startsWith("image/")) {
 
       const reader = new FileReader();
-
-      reader.onload = e => {
-
-        const base64 =
-          e.target.result.split(",")[1];
-
-        resolve(base64);
-
-      };
-
+      reader.onload = e => resolve(e.target.result.split(",")[1]);
       reader.onerror = reject;
-
       reader.readAsDataURL(file);
-
       return;
     }
 
-    // ✅ se è immagine → usa canvas (compressione)
     const img = new Image();
     const reader = new FileReader();
 
@@ -686,30 +674,39 @@ function fileToBase64(file){
 
       img.onload = () => {
 
+        const MAX_SIZE = 1600; // 🔥 lato massimo ideale per OCR
+
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > MAX_SIZE) {
+          height *= MAX_SIZE / width;
+          width = MAX_SIZE;
+        } else if (height > MAX_SIZE) {
+          width *= MAX_SIZE / height;
+          height = MAX_SIZE;
+        }
+
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
 
-        canvas.width = img.width;
-        canvas.height = img.height;
+        canvas.width = width;
+        canvas.height = height;
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, width, height);
 
         const base64 = canvas
-          .toDataURL("image/jpeg", 0.92)
+          .toDataURL("image/jpeg", 0.9) // qualità 90% ottimale
           .split(",")[1];
 
         resolve(base64);
-
       };
 
       img.onerror = reject;
-
       img.src = e.target.result;
-
     };
 
     reader.onerror = reject;
-
     reader.readAsDataURL(file);
 
   });
@@ -2427,6 +2424,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
