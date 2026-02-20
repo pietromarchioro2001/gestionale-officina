@@ -119,57 +119,33 @@
   <p id="esitoRicerca" class="esito"></p>
 
   <!-- LIBRETTO + OCR -->
-  <div class="file-upload">
+  <div class="doc-row">
 
-  <!-- FILE NORMALE -->
-  <input
-    type="file"
-    id="librettoGallery"
-    accept="image/*"
-    hidden
-  >
+  <span class="doc-label">Libretto</span>
 
-  <!-- FOTOCAMERA -->
-  <input
-    type="file"
-    id="librettoCamera"
-    accept="image/*"
-    capture="environment"
-    hidden
-  >
+  <!-- file nascosti -->
+  <input type="file" id="librettoGallery" accept="image/*" hidden>
+  <input type="file" id="librettoCamera" accept="image/*" capture="environment" hidden>
 
-  <button
-    class="file-btn-main"
-    data-target="librettoGallery"
-  >
-    Carica libretto
-  </button>
-  
+  <!-- Upload -->
+  <button class="icon-btn upload-btn" data-target="librettoGallery" title="Carica da dispositivo"></button>
+
+  <!-- Camera -->
+  <button class="icon-btn camera-btn" data-target="librettoCamera" title="Scatta foto"></button>
+
   <img src="logo.png" id="loadingLibretto" class="loading-logo">
 
-  <button
-    class="file-btn-camera"
-    data-target="librettoCamera"
-    title="Scatta foto"
-  >
-  </button>
-
-  <button
-    class="file-btn-main"
-    id="librettoLink"
-    type="button"
-  >
+  <button id="librettoLink" type="button" class="icon-text-btn hidden">
     Visualizza
   </button>
-    <button
-      id="btnAnalizza"
-      class="file-btn-main"
-    >
-      Analizza OCR
-    </button>
-    <img src="logo.png" id="loadingOCR" class="loading-logo">
 
-  </div>
+  <button id="btnAnalizza" class="icon-text-btn">
+    Analizza OCR
+  </button>
+
+  <img src="logo.png" id="loadingOCR" class="loading-logo">
+
+</div>
 </section>
   
 <!-- ================= DATI CLIENTE ================= -->
@@ -206,66 +182,38 @@
   <div class="doc-grid">
 
     <!-- FOTO TARGA -->
-    <div class="file-upload">
+    <div class="doc-row">
 
-  <input
-    type="file"
-    id="targaGallery"
-    accept="image/*"
-    hidden
-  >
-
-  <input
-    type="file"
-    id="targaCamera"
-    accept="image/*"
-    capture="environment"
-    hidden
-  >
-
-  <button
-    class="file-btn-main"
-    data-target="targaGallery"
-  >
-    Carica targa
-  </button>
-
-  <img src="logo.png" id="loadingTarga" class="loading-logo">
-
-  <button
-    class="file-btn-camera"
-    data-target="targaCamera"
-  >
-  </button>
-
-  <button
-    class="file-btn-main"
-    id="targaLink"
-    type="button"
-  >
-    Visualizza
-  </button>
-
-</div>
+      <span class="doc-label">Targa</span>
+    
+      <input type="file" id="targaGallery" accept="image/*" hidden>
+      <input type="file" id="targaCamera" accept="image/*" capture="environment" hidden>
+    
+      <button class="icon-btn upload-btn" data-target="targaGallery"></button>
+    
+      <button class="icon-btn camera-btn" data-target="targaCamera"></button>
+    
+      <img src="logo.png" id="loadingTarga" class="loading-logo">
+    
+      <button id="targaLink" type="button" class="icon-text-btn hidden">
+        Visualizza
+      </button>
+    
+    </div>
 
     <!-- ALTRI DOCUMENTI -->
-    <div class="file-upload">
-      <input
-        type="file"
-        id="altriDocumenti"
-        multiple
-        hidden
-      >
-      <button
-        class="file-btn-main"
-        data-target="altriDocumenti"
-        id="btnUploadAltri"
-      >
-        Carica documenti
-      </button>
+    <div class="doc-row">
+
+      <span class="doc-label">Documenti</span>
+    
+      <input type="file" id="altriDocumenti" multiple hidden>
+    
+      <button class="icon-btn upload-btn" data-target="altriDocumenti" id="btnUploadAltri"></button>
+    
       <img src="logo.png" id="loadingAltri" class="loading-logo">
-      
+    
       <span id="altriCount" class="file-count"></span>
+    
     </div>
   </div>
 </section>
@@ -322,6 +270,7 @@
 
 </body>
 </html>
+
 
 
 
