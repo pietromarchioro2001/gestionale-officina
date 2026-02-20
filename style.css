@@ -185,11 +185,12 @@ label {
 
 input {
   width: 100%;
-  padding: 6px 8px;
-  margin-top: 3px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
+  height: 50px;
+  padding: 0 16px;
+  margin-top: 8px;
+  border-radius: 12px;
+  border: 1px solid #d0d0d0;
+  font-size: 16px;
 }
 
 input.targa {
@@ -2135,7 +2136,7 @@ button.riprendi:hover {
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 12px;
+  gap: 16px;
 }
 
 .doc-grid {
@@ -2273,12 +2274,12 @@ button.riprendi:hover {
   display: flex;
   align-items: center;
   gap: 6px; /* più vicini */
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .doc-label {
   font-weight: 600;
-  min-width: 65px;
+  min-width: 45px;
 }
 
 .icon-btn {
@@ -2334,6 +2335,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
