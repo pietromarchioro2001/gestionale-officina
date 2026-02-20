@@ -2278,14 +2278,14 @@ button.riprendi:hover {
 
 .doc-label {
   font-weight: 600;
-  min-width: 95px;
+  min-width: 85px;
 }
 
 .icon-btn {
   width: 48px;
   height: 48px;
   border: none;
-  background: #e6e6e6;
+  background: transparent;
   border-radius: 14px;
   cursor: pointer;
 
@@ -2297,7 +2297,7 @@ button.riprendi:hover {
 }
 
 .icon-btn:hover {
-  background: #dcdcdc;
+  background: #e6e6e6;
   transform: scale(1.06);
 }
 
@@ -2334,4 +2334,5 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
