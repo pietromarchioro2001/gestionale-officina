@@ -95,12 +95,13 @@
  </div>
   </section>
 
-  <!-- CLIENTI -->
-  <section id="clienti" class="page">
+  <!-- ================= CLIENTI ================= -->
+<section id="clienti" class="page">
+
   <div class="page-header">
     <h2 class="page-title">CLIENTI</h2>
 
-    <button class="icon-btn refresh-btn" id="btnRefreshClienti">
+    <button class="icon-btn refresh-btn" onclick="resetClienti()">
       <svg viewBox="0 0 24 24" class="icon-svg">
         <path d="M20 12a8 8 0 1 1-2.34-5.66" />
         <path d="M20 4v6h-6" />
@@ -108,124 +109,135 @@
     </button>
   </div>
 
+  <!-- ================= RICERCA ================= -->
+  <section class="section">
+    <h3>Ricerca veicolo (TARGA)</h3>
 
-<!-- ================= RICERCA ================= -->
-<section class="section">
-  <h3>Ricerca veicolo (TARGA)</h3>
+    <div class="row">
+      <input id="ricercaTarga" class="targa">
+      <button class="secondary" id="btnCerca">Cerca</button>
+    </div>
 
-  <!-- RICERCA -->
-  <div class="row">
-    <input id="ricercaTarga" class="targa">
-    <button class="secondary" id="btnCerca">Cerca</button>
-  </div>
+    <p id="esitoRicerca" class="esito"></p>
 
-  <p id="esitoRicerca" class="esito"></p>
-
-  <!-- LIBRETTO + OCR -->
-  <div class="doc-row">
-  <span class="doc-label">Libretto</span>
-
-  <!-- UPLOAD -->
-  <button class="icon-btn" data-target="librettoGallery">
-    <svg viewBox="0 0 24 24" class="icon-svg">
-      <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
-      <path d="M4 20h16" />
-    </svg>
-  </button>
-
-  <!-- CAMERA -->
-  <button class="icon-btn" data-target="librettoCamera">
-    <svg viewBox="0 0 24 24" class="icon-svg">
-      <path d="M4 8h16v10H4z" />
-      <circle cx="12" cy="13" r="3" />
-      <path d="M9 8l1.5-2h3L15 8" />
-    </svg>
-  </button>
-</div>
-</section>
-  
-<!-- ================= DATI CLIENTE ================= -->
-<section class="section">
-  <h3>Dati cliente</h3>
-
-  <div class="form-grid">
-    <input id="nome" placeholder="Nome cliente">
-    <input id="indirizzo" placeholder="Indirizzo">
-    <input id="telefono" placeholder="Telefono">
-    <input id="data" placeholder="Data di nascita">
-    <input id="cf" placeholder="Codice fiscale">
-  </div>
-</section>
-
-
-<!-- ================= DATI VEICOLO ================= -->
-<section class="section">
-  <h3>Dati veicolo</h3>
-
-  <div class="form-grid">
-    <input id="veicolo" placeholder="Veicolo">
-    <input id="motore" placeholder="Motore">
-    <input id="targa" placeholder="Targa">
-    <input id="immatricolazione" placeholder="Immatricolazione">
-  </div>
-</section>
-
-
-<!-- ================= DOCUMENTI ================= -->
-<section class="section">
-  <h3>Documenti</h3>
-
-  <div class="doc-grid">
-
-    <!-- FOTO TARGA -->
+    <!-- LIBRETTO -->
     <div class="doc-row">
-      <span class="doc-label">Targa</span>
-    
-      <button class="icon-btn" data-target="targaGallery">
+      <span class="doc-label">Libretto</span>
+
+      <!-- UPLOAD -->
+      <button class="icon-btn"
+        onclick="document.getElementById('librettoGallery').click()">
         <svg viewBox="0 0 24 24" class="icon-svg">
-          <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
-          <path d="M4 20h16" />
+          <path d="M12 16V4"/>
+          <path d="M8 8l4-4 4 4"/>
+          <path d="M4 20h16"/>
         </svg>
       </button>
-    
-      <button class="icon-btn" data-target="targaCamera">
+
+      <!-- CAMERA -->
+      <button class="icon-btn"
+        onclick="document.getElementById('librettoCamera').click()">
         <svg viewBox="0 0 24 24" class="icon-svg">
-          <path d="M4 8h16v10H4z" />
-          <circle cx="12" cy="13" r="3" />
-          <path d="M9 8l1.5-2h3L15 8" />
+          <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+          <circle cx="12" cy="13" r="4"/>
         </svg>
       </button>
     </div>
 
-    <!-- ALTRI DOCUMENTI -->
-    <div class="doc-row">
-      <span class="doc-label">Documenti</span>
-    
-      <button class="icon-btn" data-target="altriDocumenti">
-        <svg viewBox="0 0 24 24" class="icon-svg">
-          <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
-          <path d="M4 20h16" />
-        </svg>
-      </button>
+    <!-- INPUT NASCOSTI -->
+    <input type="file" id="librettoGallery" accept="image/*" hidden>
+    <input type="file" id="librettoCamera" accept="image/*" capture="environment" hidden>
+
+  </section>
+
+  <!-- ================= DATI CLIENTE ================= -->
+  <section class="section">
+    <h3>Dati cliente</h3>
+
+    <div class="form-grid">
+      <input id="nome" placeholder="Nome cliente">
+      <input id="indirizzo" placeholder="Indirizzo">
+      <input id="telefono" placeholder="Telefono">
+      <input id="data" placeholder="Data di nascita">
+      <input id="cf" placeholder="Codice fiscale">
     </div>
-  </div>
-</section>
+  </section>
 
+  <!-- ================= DATI VEICOLO ================= -->
+  <section class="section">
+    <h3>Dati veicolo</h3>
 
-<!-- ================= BOTTONI ================= -->
-<section class="section actions">
+    <div class="form-grid">
+      <input id="veicolo" placeholder="Veicolo">
+      <input id="motore" placeholder="Motore">
+      <input id="targa" placeholder="Targa">
+      <input id="immatricolazione" placeholder="Immatricolazione">
+    </div>
+  </section>
 
-  <button id="btnSalva" class="secondary">
-    Salva cliente
-  </button>
+  <!-- ================= DOCUMENTI ================= -->
+  <section class="section">
+    <h3>Documenti</h3>
 
-  <button id="btnCartellaCliente" class="hidden">
-    Apri cartella cliente
-  </button>
+    <div class="doc-grid">
 
-  <p id="stato"></p>
+      <!-- TARGA -->
+      <div class="doc-row">
+        <span class="doc-label">Targa</span>
 
-</section>
+        <button class="icon-btn"
+          onclick="document.getElementById('targaGallery').click()">
+          <svg viewBox="0 0 24 24" class="icon-svg">
+            <path d="M12 16V4"/>
+            <path d="M8 8l4-4 4 4"/>
+            <path d="M4 20h16"/>
+          </svg>
+        </button>
+
+        <button class="icon-btn"
+          onclick="document.getElementById('targaCamera').click()">
+          <svg viewBox="0 0 24 24" class="icon-svg">
+            <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- INPUT TARGA -->
+      <input type="file" id="targaGallery" accept="image/*" hidden>
+      <input type="file" id="targaCamera" accept="image/*" capture="environment" hidden>
+
+      <!-- ALTRI DOCUMENTI -->
+      <div class="doc-row">
+        <span class="doc-label">Documenti</span>
+
+        <button class="icon-btn"
+          onclick="document.getElementById('altriDocumenti').click()">
+          <svg viewBox="0 0 24 24" class="icon-svg">
+            <path d="M12 16V4"/>
+            <path d="M8 8l4-4 4 4"/>
+            <path d="M4 20h16"/>
+          </svg>
+        </button>
+      </div>
+
+      <input type="file" id="altriDocumenti" multiple hidden>
+
+    </div>
+  </section>
+
+  <!-- ================= BOTTONI ================= -->
+  <section class="section actions">
+    <button id="btnSalva" class="secondary">
+      Salva cliente
+    </button>
+
+    <button id="btnCartellaCliente" class="hidden">
+      Apri cartella cliente
+    </button>
+
+    <p id="stato"></p>
+  </section>
 
 </section>
 
@@ -263,6 +275,7 @@
 
 </body>
 </html>
+
 
 
 
