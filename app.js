@@ -2324,8 +2324,6 @@ function sbloccaAudio() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-
   document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll("[data-target]").forEach(btn => {
@@ -2429,6 +2427,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
