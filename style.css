@@ -2275,6 +2275,46 @@ button.riprendi:hover {
 
 }
 
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.doc-label {
+  font-weight: 600;
+  min-width: 120px;
+}
+
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: rgba(0,0,0,0.06);
+}
+
+/* Upload icon */
+.upload-btn::before {
+  content: "⬆️";
+  font-size: 20px;
+}
+
+/* Camera icon */
+.camera-btn::before {
+  content: "📷";
+  font-size: 20px;
+}
 
 
 
