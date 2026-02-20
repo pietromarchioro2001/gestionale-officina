@@ -2304,7 +2304,7 @@ button.riprendi:hover {
   width: 22px;          /* icona più piena */
   height: 22px;
   stroke: #333;
-  stroke-width: 2.4;
+  stroke-width: 2.2;
   fill: none;
 }
 
@@ -2334,5 +2334,6 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
