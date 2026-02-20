@@ -121,7 +121,7 @@ main {
 
 .page-title {
   margin: 10px 0 20px;
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0.5px;
 }
@@ -2334,6 +2334,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
