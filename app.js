@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzZEeeMz520bBefN_G5v_MV0isia-kelnT--dsXOOsi-vr-Rinm3ot3jVkxyyEqO7Rb/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby6gV9S62Px0pD5Qnw6WtT1vG8XXsGR6CTBVuxJ0GVN-W2WzFtJWUiNmata6jZR0O0O/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -142,8 +142,13 @@ async function analizza() {
     console.log("RISPOSTA OCR:", res);
 
     if (!res?.ok) {
-      alert(res.error || "OCR fallito");
-      return;
+
+      if (res.error === "VEICOLO_ESISTENTE") {
+        alert("⚠️ Veicolo già presente nel sistema.");
+        return;
+      }
+    
+      throw new Error(res.error);
     }
 
     const dati = res.datiOCR;
@@ -2446,6 +2451,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
