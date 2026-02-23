@@ -430,6 +430,35 @@ div[aria-label*="Apps Script"] {
   background: #6a6a6a;
 }
 
+.scheda-row {
+  display: grid;
+  grid-template-columns: 1fr 160px 120px;
+  align-items: center;
+  padding: 16px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.scheda-center {
+  text-align: center;
+}
+
+.btn-view {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.scheda-stato.chiusa {
+  color: green;
+  font-weight: bold;
+}
+
+.scheda-stato.aperta {
+  color: #999;
+}
 
 /* ================= ASSISTENTE ================= */
 
@@ -2482,6 +2511,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
