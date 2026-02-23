@@ -1933,6 +1933,7 @@ function onChangeCliente(row, cliente) {
   // 2️⃣ Salva su Google Sheet
   callBackend("aggiornaClienteOrdine", [row, cliente])
     .then(() => {
+      caricaOrdiniUI(true); 
       console.log("Cliente aggiornato su Sheet:", row, cliente);
 
       // 🔄 aggiorna cache locale
@@ -1953,6 +1954,7 @@ function onChangeVeicolo(row, veicolo) {
 
   callBackend("aggiornaVeicoloOrdine", [row, veicolo])
     .then(() => {
+      caricaOrdiniUI(true); 
       console.log("Veicolo aggiornato su Sheet:", row, veicolo);
 
       if (CACHE_ORDINI) {
@@ -2021,8 +2023,18 @@ function inviaWhatsApp(btn) {
 
 function inviaOrdine(row) {
 
-  const btn = event.target;
-  btn.disabled = true;
+  if (!CACHE_ORDINI) {
+    alert("Ordini non caricati");
+    return;
+  }
+
+  const ordine = CACHE_ORDINI.ordini
+    .find(o => Number(o.row) === Number(row));
+
+  if (!ordine) {
+    alert("Ordine non trovato");
+    return;
+  }
 
   const select = document.querySelector(
     `select[onchange="onChangeFornitore(${row}, this.value)"]`
@@ -2030,31 +2042,17 @@ function inviaOrdine(row) {
 
   if (!select || !select.value) {
     alert("Seleziona un fornitore");
-    btn.disabled = false;
     return;
   }
 
-  const fornitore = select.value;
+  const link = ordine.fornitori[select.value];
 
-  callBackend("generaLinkWhatsAppSingolo", [row])
-    .then(linkObj => {
+  if (!link) {
+    alert("Link non disponibile");
+    return;
+  }
 
-      btn.disabled = false;
-
-      const link = linkObj?.[fornitore];
-
-      if (!link) {
-        alert("Link WhatsApp non disponibile");
-        return;
-      }
-
-      window.open(link, "_blank");
-
-    })
-    .catch(err => {
-      btn.disabled = false;
-      alert("Errore invio ordine");
-    });
+  window.open(link, "_blank");
 }
 
 function onToggleCheckbox(row, checked) {
@@ -2102,18 +2100,31 @@ function nuovoOrdine() {
   const descrizione = prompt("Inserisci la descrizione del nuovo ordine:");
   if (!descrizione || !descrizione.trim()) return;
 
-  callBackend(
-    "creaNuovoOrdine",
-    [normalizzaDescrizioneOrdine(descrizione)],
-    () => {
-      caricaOrdiniUI(); // ricarica lista
-    },
-    err => {
-      console.error("Errore creazione ordine", err);
-      alert("Errore nella creazione dell'ordine");
-    }
-  );
-}
+  callBackend("creaNuovoOrdine", [descrizione])
+  .then(() => {
+
+    const nuovoOrdine = {
+      row: Date.now(), // temporaneo
+      check: false,
+      descrizione: descrizione,
+      cliente: "",
+      veicolo: "",
+      fornitori: {
+        autoparts: "",
+        teamcar: "",
+        giuliano: ""
+      }
+    };
+
+    CACHE_ORDINI.ordini.unshift(nuovoOrdine);
+
+    renderOrdini(
+      CACHE_ORDINI.ordini,
+      CACHE_ORDINI.clienti,
+      CACHE_ORDINI.veicoli,
+      CACHE_ORDINI.fornitori
+    );
+  });
 
 function editDescrizione(span, row) {
   const testoAttuale = span.textContent.trim();
@@ -2570,6 +2581,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
