@@ -2101,10 +2101,10 @@ function nuovoOrdine() {
   if (!descrizione || !descrizione.trim()) return;
 
   callBackend("creaNuovoOrdine", [descrizione])
-    .then(() => {
+    .then(res => {
 
       const nuovoOrdine = {
-        row: Date.now(), // temporaneo
+        row: res?.row || Date.now(),
         check: false,
         descrizione: descrizione,
         cliente: "",
@@ -2116,7 +2116,7 @@ function nuovoOrdine() {
         }
       };
 
-      CACHE_ORDINI.ordini.unshift(nuovoOrdine);
+      CACHE_ORDINI.ordini.push(nuovoOrdine); // 👈 ora in fondo
 
       renderOrdini(
         CACHE_ORDINI.ordini,
@@ -2125,7 +2125,7 @@ function nuovoOrdine() {
         CACHE_ORDINI.fornitori
       );
     });
-} // 🔥 QUESTA GRAFFA MANCAVA
+}
 
 function editDescrizione(span, row) {
   const testoAttuale = span.textContent.trim();
@@ -2582,5 +2582,6 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
