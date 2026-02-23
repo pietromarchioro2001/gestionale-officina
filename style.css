@@ -688,16 +688,14 @@ div[aria-label*="Apps Script"] {
 .ordine-row {
   display: grid;
   grid-template-columns: 
-    40px         /* checkbox */
-    1fr          /* descrizione */
-    200px        /* cliente */
-    200px        /* veicolo */
-    180px        /* fornitore */
-    120px;       /* bottone */
+    50px        /* checkbox */
+    1.8fr       /* descrizione larga */
+    220px       /* blocco select */
+    160px;      /* bottone */
   align-items: center;
-  gap: 14px;
-  padding: 10px 0;
-  border-bottom: 1px solid #e5e5e5;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid #eee;
 }
 
 .ordine-row:hover {
@@ -2460,6 +2458,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
