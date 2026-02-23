@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz6RlciGLw0PG6WQaxrCvXHOEBZnq-gllVKVE0f_648BUopaJJ8L0oe8Jc0kxvpviWW/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyk6PfM-V_MDxYeonEpyPyqqPpB04vNOjSzCigYP5ev4mg3XDN4-_5rZQ0sseeOQeYi/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1965,6 +1965,24 @@ function onChangeVeicolo(row, veicolo) {
     });
 }
 
+function onChangeFornitore(row, fornitore) {
+  if (!fornitore) return;
+
+  callBackend("aggiornaFornitoreOrdine", [row, fornitore])
+    .then(() => {
+      console.log("Fornitore aggiornato:", row, fornitore);
+
+      if (CACHE_ORDINI) {
+        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        if (ordine) ordine.fornitoreSelezionato = fornitore;
+      }
+    })
+    .catch(err => {
+      console.error("Errore aggiornamento fornitore:", err);
+      alert("Errore salvataggio fornitore");
+    });
+}
+
 function fornitoreHtml(o) {
   return `
     <select class="ordine-select"
@@ -2002,8 +2020,14 @@ function inviaWhatsApp(btn) {
 function inviaOrdine(row) {
 
   callBackend("getSoloOrdini")
-    .then(ordini => {
+    .then(res => {
 
+      const ordini = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+        ? res.data
+        : [];
+    
       const ordine = ordini.find(o => o.row === row);
 
       if (!ordine) {
@@ -2542,6 +2566,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
