@@ -856,6 +856,46 @@ div[aria-label*="Apps Script"] {
   background: var(--accent);
   color: #fff;
 }
+
+.ordini-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-nuovo {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-nuovo:hover {
+  background: #e2e2e2;
+}
+
+.btn-vocale {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.btn-vocale:hover {
+  transform: scale(1.05);
+  background: var(--accent-dark);
+}
 /* ===== APPUNTAMENTI – CALENDARIO FULL ===== */
 
 #appuntamenti {
@@ -2420,6 +2460,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
