@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx_l1coX_zZ6yN3pqTcf2wRBWzCZ85wo1IZ1HhdWuPB05U6GqYsVYOUGa5bjR0kiNK2/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyAWPh0OLnvkeXlMGAUfnJL6FAH9rRPFEy0m3qODw8kp2YgoRkjddECoZ97Zeh85Czx/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1937,7 +1937,8 @@ function onChangeCliente(row, cliente) {
 
       // 🔄 aggiorna cache locale
       if (CACHE_ORDINI) {
-        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        const ordine = CACHE_ORDINI.ordini
+          .find(o => Number(o.row) === Number(row));
         if (ordine) ordine.cliente = cliente;
       }
     })
@@ -1954,9 +1955,9 @@ function onChangeVeicolo(row, veicolo) {
     .then(() => {
       console.log("Veicolo aggiornato su Sheet:", row, veicolo);
 
-      // 🔄 aggiorna cache locale
       if (CACHE_ORDINI) {
-        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        const ordine = CACHE_ORDINI.ordini
+          .find(o => Number(o.row) === Number(row));
         if (ordine) ordine.veicolo = veicolo;
       }
     })
@@ -2020,32 +2021,27 @@ function inviaWhatsApp(btn) {
 
 function inviaOrdine(row) {
 
-  callBackend("getSoloOrdini")
-    .then(res => {
+  const btn = event.target;
+  btn.disabled = true;
 
-      const ordini = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
+  const select = document.querySelector(
+    `select[onchange="onChangeFornitore(${row}, this.value)"]`
+  );
 
-      const ordine = ordini.find(o => Number(o.row) === Number(row));
+  if (!select || !select.value) {
+    alert("Seleziona un fornitore");
+    btn.disabled = false;
+    return;
+  }
 
-      if (!ordine) {
-        alert("Ordine non trovato");
-        return;
-      }
+  const fornitore = select.value;
 
-      const select = document.querySelector(
-        `select[onchange="onChangeFornitore(${row}, this.value)"]`
-      );
+  callBackend("generaLinkWhatsAppSingolo", [row])
+    .then(linkObj => {
 
-      if (!select || !select.value) {
-        alert("Seleziona un fornitore");
-        return;
-      }
+      btn.disabled = false;
 
-      const link = ordine.fornitori[select.value];
+      const link = linkObj?.[fornitore];
 
       if (!link) {
         alert("Link WhatsApp non disponibile");
@@ -2053,10 +2049,11 @@ function inviaOrdine(row) {
       }
 
       window.open(link, "_blank");
+
     })
     .catch(err => {
-      console.error(err);
-      alert("Errore caricamento ordine");
+      btn.disabled = false;
+      alert("Errore invio ordine");
     });
 }
 
@@ -2573,6 +2570,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
