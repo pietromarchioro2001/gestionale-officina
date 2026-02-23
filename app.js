@@ -1489,19 +1489,26 @@ async function gestisciRisposta(testo) {
      * ====================== */
     case "ORE_IMPIEGATE": {
 
+      // ✅ Se l'utente vuole saltare
+      if (isComandoUscita(testo)) {
+        rispostaInElaborazione = false;
+        setTimeout(prossimaDomanda, 300);
+        return;
+      }
+    
       const oreNum = normalizzaOre(testo);
-
+    
       if (!oreNum) {
-        messaggioBot("Non ho capito le ore. Ripeti o dì 'salta'.");
+        messaggioBot("Non ho capito le ore. Ripeti oppure dì 'avanti'.");
         rispostaInElaborazione = false;
         return;
       }
-
+    
       const valore = `${oreNum} h`;
-
+    
       messaggioBot(`Ore registrate: ${valore}`);
       salvaCampoScheda("ORE_IMPIEGATE", valore);
-
+    
       rispostaInElaborazione = false;
       prossimaDomanda();
       return;
@@ -2467,6 +2474,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
