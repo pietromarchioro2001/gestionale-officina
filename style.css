@@ -452,11 +452,17 @@ div[aria-label*="Apps Script"] {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  padding: 18px 24px;
-  background: #1e1e1e;
-  color: #fff;
-  border-bottom-left-radius: 18px;
-  border-bottom-right-radius: 18px;
+  padding: 20px 28px;
+  background: linear-gradient(90deg, #1e1e1e, #242424);
+  color: white;
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+}
+
+.assistente {
+  background: #f4f4f4;
+  border-radius: 22px;
+  overflow: hidden;
 }
 
 .assistente-left {
@@ -2394,6 +2400,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
