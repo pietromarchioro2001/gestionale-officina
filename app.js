@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyAWPh0OLnvkeXlMGAUfnJL6FAH9rRPFEy0m3qODw8kp2YgoRkjddECoZ97Zeh85Czx/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzRibqH_eYHL0081B3_H_9iccYPJuZLTaxLnCMJ7rMFNuWjgJNtX46_PRa5snOtS42L/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1054,69 +1054,44 @@ function normalizzaChilometri(testo) {
 }
 
 function renderSchede(lista) {
+
   const container = document.getElementById("listaSchede");
-  if (!container) return;
   container.innerHTML = "";
 
-  // 🔽 ultima scheda in alto
-  lista.sort((a, b) => b.numero - a.numero);
-
   lista.forEach(s => {
-    const card = document.createElement("div");
-    card.className = `scheda-card scheda-${s.status}`;
 
-    let centerHtml = "";
+    const row = document.createElement("div");
+    row.className = "scheda-row";
 
-    if (s.status !== "CHIUSA") {
-      centerHtml = `
-        <button class="secondary riprendi btn-pill" onclick="riprendiScheda('${s.id}')">
-          ▶ Riprendi
-        </button>
-      `;
-    } else if (s.linkDoc) {
-      centerHtml = `
-        <a href="${s.linkDoc}" target="_blank">
-          <button class="secondary scheda btn-pill">
-            📄 Scheda
-          </button>
-        </a>
-      `;
-    }
-
-    card.innerHTML = `
-      <div class="scheda-left">
-        <div class="scheda-numero">#${s.numero}</div>
-
-        <div class="scheda-info">
-          <div class="scheda-cliente">${s.cliente}</div>
-          <div class="scheda-meta">${s.data}</div>
-        </div>
+    row.innerHTML = `
+      <div class="scheda-info">
+        <strong>${s.cliente}</strong><br>
+        ${s.veicolo}
       </div>
 
       <div class="scheda-center">
-        ${centerHtml}
+        ${
+          s.stato === "CHIUSA" && s.linkDoc
+            ? `<button class="btn-view"
+                 onclick="apriDocumento('${s.linkDoc}')">
+                 👁 Visualizza
+               </button>`
+            : ""
+        }
       </div>
 
-      <div class="scheda-right">
-        <span class="scheda-status">${s.status}</span>
-
-        <div class="scheda-menu">
-          <button class="scheda-menu-btn" onclick="toggleMenu(this)">⋮</button>
-
-          <div class="scheda-menu-popup">
-            <button
-              class="scheda-delete"
-              onclick="eliminaScheda('${s.id}', '${s.status}', '${s.linkDoc || ""}')"
-            >
-              Elimina
-            </button>
-          </div>
-        </div>
+      <div class="scheda-stato ${s.stato === "CHIUSA" ? "chiusa" : "aperta"}">
+        ${s.stato}
       </div>
     `;
 
-    container.appendChild(card);
+    container.appendChild(row);
   });
+}
+
+function apriDocumento(link) {
+  if (!link) return;
+  window.open(link, "_blank");
 }
 
 function apriAssistente() {
@@ -1576,30 +1551,24 @@ async function gestisciRisposta(testo) {
     case "CHIUSURA": {
 
       try { recognition?.stop(); } catch (e) {}
-
+    
       modalitaAssistente = "manuale";
-
-      if (
-        testo === "NO" ||
-        testo === "ANNULLA" ||
-        testo === "LASCIA APERTA"
-      ) {
-        messaggioBot("Scheda lasciata aperta.");
-      } else {
-        messaggioBot("Scheda chiusa.");
-        await callBackend(
-          "chiudiScheda",
-          [sessioneAssistente.schedaId]
-        );
+    
+      const chiudere =
+        !(testo === "NO" ||
+          testo === "ANNULLA" ||
+          testo === "LASCIA APERTA");
+    
+      // 🔥 1. Chiudi UI subito
+      resetModalitaAssistente();
+      esciAssistente();
+    
+      // 🔥 2. Backend in background
+      if (chiudere) {
+        callBackend("chiudiScheda", [sessioneAssistente.schedaId])
+          .catch(err => console.error("Errore chiusura", err));
       }
-
-      rispostaInElaborazione = false;
-
-      setTimeout(() => {
-        resetModalitaAssistente();
-        esciAssistente();
-      }, 900);
-
+    
       return;
     }
   }
@@ -2139,6 +2108,7 @@ function nuovoOrdine() {
 }
 
 function editDescrizione(span, row) {
+
   const testoAttuale = span.textContent.trim();
 
   const input = document.createElement("input");
@@ -2151,31 +2121,44 @@ function editDescrizione(span, row) {
   input.focus();
 
   input.addEventListener("keydown", e => {
+
     if (e.key !== "Enter") return;
 
     const nuovoTesto = input.value.trim();
+    const testoFinale = nuovoTesto || "Scrivi descrizione ordine…";
 
-    callBackend(
-      "aggiornaDescrizioneOrdine",
-      [row, nuovoTesto],
-      () => {
-        // ✅ SUCCESS
-        const nuovoSpan = document.createElement("span");
-        nuovoSpan.className = "ordine-descr";
-        nuovoSpan.textContent =
-          nuovoTesto || "Scrivi descrizione ordine…";
+    // 🔥 1. Aggiorna UI SUBITO
+    const nuovoSpan = document.createElement("span");
+    nuovoSpan.className = "ordine-descr";
+    nuovoSpan.textContent = testoFinale;
+    nuovoSpan.onclick = () => editDescrizione(nuovoSpan, row);
 
-        nuovoSpan.onclick = () =>
-          editDescrizione(nuovoSpan, row);
+    input.replaceWith(nuovoSpan);
 
-        input.replaceWith(nuovoSpan);
-      },
-      () => {
-        // ❌ ERROR
-        alert("Errore nel salvataggio");
-        input.focus();
-      }
-    );
+    // 🔥 2. Aggiorna cache locale subito
+    if (CACHE_ORDINI) {
+      const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+      if (ordine) ordine.descrizione = nuovoTesto;
+    }
+
+    // 🔥 3. Backend in background
+    callBackend("aggiornaDescrizioneOrdine", [row, nuovoTesto])
+      .catch(() => {
+        alert("Errore nel salvataggio su Sheet");
+      });
+
+  });
+
+  // 🔥 ESC per annullare
+  input.addEventListener("keydown", e => {
+    if (e.key === "Escape") {
+      input.replaceWith(span);
+    }
+  });
+
+  // 🔥 Se perdi focus, salva automaticamente
+  input.addEventListener("blur", () => {
+    input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter" }));
   });
 }
 /********************
@@ -2593,6 +2576,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
