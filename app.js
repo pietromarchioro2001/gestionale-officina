@@ -2101,30 +2101,31 @@ function nuovoOrdine() {
   if (!descrizione || !descrizione.trim()) return;
 
   callBackend("creaNuovoOrdine", [descrizione])
-  .then(() => {
+    .then(() => {
 
-    const nuovoOrdine = {
-      row: Date.now(), // temporaneo
-      check: false,
-      descrizione: descrizione,
-      cliente: "",
-      veicolo: "",
-      fornitori: {
-        autoparts: "",
-        teamcar: "",
-        giuliano: ""
-      }
-    };
+      const nuovoOrdine = {
+        row: Date.now(), // temporaneo
+        check: false,
+        descrizione: descrizione,
+        cliente: "",
+        veicolo: "",
+        fornitori: {
+          autoparts: "",
+          teamcar: "",
+          giuliano: ""
+        }
+      };
 
-    CACHE_ORDINI.ordini.unshift(nuovoOrdine);
+      CACHE_ORDINI.ordini.unshift(nuovoOrdine);
 
-    renderOrdini(
-      CACHE_ORDINI.ordini,
-      CACHE_ORDINI.clienti,
-      CACHE_ORDINI.veicoli,
-      CACHE_ORDINI.fornitori
-    );
-  });
+      renderOrdini(
+        CACHE_ORDINI.ordini,
+        CACHE_ORDINI.clienti,
+        CACHE_ORDINI.veicoli,
+        CACHE_ORDINI.fornitori
+      );
+    });
+} // 🔥 QUESTA GRAFFA MANCAVA
 
 function editDescrizione(span, row) {
   const testoAttuale = span.textContent.trim();
@@ -2581,32 +2582,5 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
