@@ -1893,7 +1893,7 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
       <!-- INVIA UNICO (FULL WIDTH) -->
       <button
         class="ordine-invia"
-        onclick="inviaOrdine(${o.row})">
+        onclick="inviaOrdine(${o.row}, this)">
         INVIA
       </button>
     `;
@@ -2021,20 +2021,9 @@ function inviaWhatsApp(btn) {
   window.open(link, "_blank");
 }
 
-function inviaOrdine(row) {
+function inviaOrdine(row, btnElement) {
 
-  if (!CACHE_ORDINI) {
-    alert("Ordini non caricati");
-    return;
-  }
-
-  const ordine = CACHE_ORDINI.ordini
-    .find(o => Number(o.row) === Number(row));
-
-  if (!ordine) {
-    alert("Ordine non trovato");
-    return;
-  }
+  const btn = btnElement || event.target;
 
   const select = document.querySelector(
     `select[onchange="onChangeFornitore(${row}, this.value)"]`
@@ -2045,14 +2034,36 @@ function inviaOrdine(row) {
     return;
   }
 
-  const link = ordine.fornitori[select.value];
+  const fornitore = select.value;
 
-  if (!link) {
-    alert("Link non disponibile");
-    return;
-  }
+  // 🔄 Stato loading
+  btn.classList.remove("ready");
+  btn.classList.add("loading");
+  btn.textContent = "Caricamento...";
 
-  window.open(link, "_blank");
+  callBackend("generaLinkWhatsAppSingolo", [row])
+    .then(linkObj => {
+
+      const link = linkObj?.[fornitore];
+
+      if (!link) {
+        alert("Link non disponibile");
+        return;
+      }
+
+      // ✅ Stato pronto
+      btn.classList.remove("loading");
+      btn.classList.add("ready");
+      btn.textContent = "INVIA";
+
+      window.open(link, "_blank");
+    })
+    .catch(err => {
+      console.error(err);
+      btn.classList.remove("loading");
+      btn.textContent = "INVIA";
+      alert("Errore invio ordine");
+    });
 }
 
 function onToggleCheckbox(row, checked) {
@@ -2582,6 +2593,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
