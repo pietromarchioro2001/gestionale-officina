@@ -1926,36 +1926,43 @@ function renderSelectVeicolo(row, veicoloSelezionato, clienteSelezionato, veicol
 function onChangeCliente(row, cliente) {
   if (!cliente) return;
 
-  // aggiorna UI subito (istantaneo)
+  // 1️⃣ Aggiorna subito la UI (reattività)
   aggiornaSelectVeicoliUI(row, cliente);
 
-  // salva su Sheet in background (JSONP)
-  callBackend(
-    "aggiornaClienteOrdine",
-    [row, cliente],
-    () => {
-      // successo silenzioso (non blocca UI)
-      console.log("Cliente ordine aggiornato:", row, cliente);
-    },
-    err => {
-      console.error("Errore aggiornamento cliente", err);
+  // 2️⃣ Salva su Google Sheet
+  callBackend("aggiornaClienteOrdine", [row, cliente])
+    .then(() => {
+      console.log("Cliente aggiornato su Sheet:", row, cliente);
+
+      // 🔄 aggiorna cache locale
+      if (CACHE_ORDINI) {
+        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        if (ordine) ordine.cliente = cliente;
+      }
+    })
+    .catch(err => {
+      console.error("Errore aggiornamento cliente:", err);
       alert("Errore nel salvataggio del cliente");
-    }
-  );
+    });
 }
 
 function onChangeVeicolo(row, veicolo) {
   if (!veicolo) return;
 
-  callBackend(
-    "aggiornaVeicoloOrdine",
-    [row, veicolo],
-    null, // non serve success handler
-    err => {
-      console.error("Errore aggiornamento veicolo", err);
+  callBackend("aggiornaVeicoloOrdine", [row, veicolo])
+    .then(() => {
+      console.log("Veicolo aggiornato su Sheet:", row, veicolo);
+
+      // 🔄 aggiorna cache locale
+      if (CACHE_ORDINI) {
+        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        if (ordine) ordine.veicolo = veicolo;
+      }
+    })
+    .catch(err => {
+      console.error("Errore aggiornamento veicolo:", err);
       alert("Errore nel salvataggio del veicolo");
-    }
-  );
+    });
 }
 
 function fornitoreHtml(o) {
@@ -1992,19 +1999,51 @@ function inviaWhatsApp(btn) {
   window.open(link, "_blank");
 }
 
+function inviaOrdine(row) {
+
+  callBackend("getSoloOrdini")
+    .then(ordini => {
+
+      const ordine = ordini.find(o => o.row === row);
+
+      if (!ordine) {
+        alert("Ordine non trovato");
+        return;
+      }
+
+      const link =
+        ordine.fornitori.autoparts ||
+        ordine.fornitori.teamcar ||
+        ordine.fornitori.giuliano;
+
+      if (!link) {
+        alert("Nessun fornitore disponibile");
+        return;
+      }
+
+      window.open(link, "_blank");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Errore apertura WhatsApp");
+    });
+}
+
 function onToggleCheckbox(row, checked) {
-  callBackend(
-    "aggiornaCheckboxOrdine",
-    [row, checked],
-    () => {
-      // opzionale: feedback silenzioso
+  callBackend("aggiornaCheckboxOrdine", [row, checked])
+    .then(() => {
       console.log("Checkbox aggiornata:", row, checked);
-    },
-    err => {
-      console.error("Errore aggiornamento checkbox", err);
-      alert("Errore nel salvataggio");
-    }
-  );
+
+      // 🔄 aggiorna cache
+      if (CACHE_ORDINI) {
+        const ordine = CACHE_ORDINI.ordini.find(o => o.row === row);
+        if (ordine) ordine.check = checked;
+      }
+    })
+    .catch(err => {
+      console.error("Errore aggiornamento checkbox:", err);
+      alert("Errore nel salvataggio dello stato ordine");
+    });
 }
 
 function aggiornaSelectVeicoliUI(row, cliente) {
@@ -2503,6 +2542,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
