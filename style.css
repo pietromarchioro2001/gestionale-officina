@@ -836,6 +836,20 @@ div[aria-label*="Apps Script"] {
   margin-top: 30px;
 }
 
+.ordine-invia {
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.ordine-invia.loading {
+  background: #aaa !important;
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.ordine-invia.ready {
+  background: var(--accent);
+  color: #fff;
+}
 /* ===== APPUNTAMENTI – CALENDARIO FULL ===== */
 
 #appuntamenti {
@@ -2400,6 +2414,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
