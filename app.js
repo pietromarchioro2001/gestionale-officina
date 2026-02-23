@@ -1319,7 +1319,8 @@ function domandaCorrente() {
   faiDomanda(testo);
 }
 
-function gestisciRisposta(testo) {
+async function gestisciRisposta(testo) {
+
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
 
@@ -1331,37 +1332,39 @@ function gestisciRisposta(testo) {
      * TARGA
      * ====================== */
     case "TARGA": {
+
       const targaNorm = normalizzaTarga(testo);
 
-      faiDomanda(`Targa rilevata: ${targaNorm}`);
+      messaggioBot(`Targa rilevata: ${targaNorm}`);
 
-      callBackend(
-        "completaSchedaDaTarga",
-        [sessioneAssistente.schedaId, targaNorm],
-        res => {
-          if (!res || !res.ok) {
-            messaggioBot("Veicolo non trovato. Ripeti la targa.");
-            if (modalitaAssistente === "vocale") {
-              parlaEDopoAscolta("Veicolo non trovato. Ripeti la targa.");
-            }
-            rispostaInElaborazione = false;
-            return;
-          }
+      try {
 
-          const msg = `Veicolo trovato. Cliente ${res.nomeCliente}.`;
-          messaggioBot(msg);
-          if (modalitaAssistente === "vocale") parlaEDopoAscolta(msg);
+        const res = await callBackend(
+          "completaSchedaDaTarga",
+          [sessioneAssistente.schedaId, targaNorm]
+        );
 
-          setTimeout(() => {
-            rispostaInElaborazione = false;
-            prossimaDomanda(); // ➜ CHILOMETRI
-          }, 500);
-        },
-        () => {
-          messaggioBot("Errore ricerca veicolo.");
+        if (!res || !res.ok) {
+          messaggioBot("Veicolo non trovato. Ripeti la targa.");
           rispostaInElaborazione = false;
+          return;
         }
-      );
+
+        messaggioBot(
+          `Veicolo trovato.\nCliente: ${res.nomeCliente}`
+        );
+
+        rispostaInElaborazione = false;
+
+        setTimeout(() => {
+          prossimaDomanda(); // ➜ CHILOMETRI
+        }, 500);
+
+      } catch (err) {
+        console.error(err);
+        messaggioBot("Errore ricerca veicolo.");
+        rispostaInElaborazione = false;
+      }
 
       return;
     }
@@ -1370,13 +1373,11 @@ function gestisciRisposta(testo) {
      * CHILOMETRI
      * ====================== */
     case "CHILOMETRI": {
+
       const km = normalizzaChilometri(testo);
 
       if (!km) {
         messaggioBot("Non ho capito i chilometri. Ripeti.");
-        if (modalitaAssistente === "vocale") {
-          parlaEDopoAscolta("Non ho capito i chilometri. Ripeti.");
-        }
         rispostaInElaborazione = false;
         return;
       }
@@ -1385,7 +1386,11 @@ function gestisciRisposta(testo) {
       salvaCampoScheda("CHILOMETRI", km + " km");
 
       rispostaInElaborazione = false;
-      setTimeout(() => prossimaDomanda(), 400);
+
+      setTimeout(() => {
+        prossimaDomanda();
+      }, 400);
+
       return;
     }
 
@@ -1393,28 +1398,25 @@ function gestisciRisposta(testo) {
      * PROBLEMI
      * ====================== */
     case "PROBLEMI": {
-      const risposta = testo.toUpperCase();
 
-      if (risposta.startsWith("PROBLEMI")) {
-        rispostaInElaborazione = false;
-        return;
-      }
+      if (isComandoUscita(testo)) {
 
-      if (isComandoUscita(risposta)) {
         if (sessioneAssistente.listaProblemi.length) {
           salvaCampoScheda(
             "PROBLEMI",
             "• " + sessioneAssistente.listaProblemi.join("\n• ")
           );
         }
+
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 400);
         return;
       }
 
-      sessioneAssistente.listaProblemi.push(risposta);
+      sessioneAssistente.listaProblemi.push(testo);
+
       rispostaInElaborazione = false;
-      faiDomanda("Ok. Altro problema?");
+      messaggioBot("Ok. Altro problema?");
       return;
     }
 
@@ -1422,30 +1424,31 @@ function gestisciRisposta(testo) {
      * LAVORI
      * ====================== */
     case "LAVORI": {
-      const risposta = testo.trim();
 
-      if (!risposta) {
+      if (!testo) {
         messaggioBot("Non ho capito. Ripeti il lavoro.");
-        if (modalitaAssistente === "vocale") parlaEDopoAscolta("Non ho capito. Ripeti il lavoro.");
         rispostaInElaborazione = false;
         return;
       }
 
-      if (isComandoUscita(risposta)) {
+      if (isComandoUscita(testo)) {
+
         if (sessioneAssistente.listaLavori.length) {
           salvaCampoScheda(
             "LAVORI",
             "• " + sessioneAssistente.listaLavori.join("\n• ")
           );
         }
+
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 400);
         return;
       }
 
-      sessioneAssistente.listaLavori.push(risposta);
+      sessioneAssistente.listaLavori.push(testo);
+
       rispostaInElaborazione = false;
-      faiDomanda("Ok. Altro lavoro?");
+      messaggioBot("Ok. Altro lavoro?");
       return;
     }
 
@@ -1453,36 +1456,39 @@ function gestisciRisposta(testo) {
      * PRODOTTI
      * ====================== */
     case "PRODOTTI": {
-      const risposta = testo.trim();
 
-      if (!risposta) {
+      if (!testo) {
+        messaggioBot("Non ho capito. Ripeti il prodotto.");
         rispostaInElaborazione = false;
-        faiDomanda("Non ho capito. Ripeti il prodotto.");
         return;
       }
 
-      if (isComandoUscita(risposta)) {
+      if (isComandoUscita(testo)) {
+
         if (sessioneAssistente.listaProdotti.length) {
           salvaCampoScheda(
             "PRODOTTI",
             "• " + sessioneAssistente.listaProdotti.join("\n• ")
           );
         }
+
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 300);
         return;
       }
 
-      sessioneAssistente.listaProdotti.push(risposta);
+      sessioneAssistente.listaProdotti.push(testo);
+
       rispostaInElaborazione = false;
-      setTimeout(() => faiDomanda("Ok. Altro prodotto?"), 200);
+      messaggioBot("Ok. Altro prodotto?");
       return;
     }
 
     /* ======================
-     * ORE
+     * ORE_IMPIEGATE
      * ====================== */
     case "ORE_IMPIEGATE": {
+
       const oreNum = normalizzaOre(testo);
 
       if (!oreNum) {
@@ -1492,6 +1498,7 @@ function gestisciRisposta(testo) {
       }
 
       const valore = `${oreNum} h`;
+
       messaggioBot(`Ore registrate: ${valore}`);
       salvaCampoScheda("ORE_IMPIEGATE", valore);
 
@@ -1504,6 +1511,7 @@ function gestisciRisposta(testo) {
      * NOTE
      * ====================== */
     case "NOTE": {
+
       if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 300);
@@ -1511,9 +1519,15 @@ function gestisciRisposta(testo) {
       }
 
       salvaCampoScheda("NOTE", testo);
+
+      messaggioBot("Nota salvata.");
+
       rispostaInElaborazione = false;
-      faiDomanda("Nota salvata.");
-      setTimeout(prossimaDomanda, 600);
+
+      setTimeout(() => {
+        prossimaDomanda();
+      }, 500);
+
       return;
     }
 
@@ -1521,6 +1535,7 @@ function gestisciRisposta(testo) {
      * CHIUSURA
      * ====================== */
     case "CHIUSURA": {
+
       try { recognition?.stop(); } catch (e) {}
 
       modalitaAssistente = "manuale";
@@ -1533,13 +1548,14 @@ function gestisciRisposta(testo) {
         messaggioBot("Scheda lasciata aperta.");
       } else {
         messaggioBot("Scheda chiusa.");
-        callBackend(
+        await callBackend(
           "chiudiScheda",
           [sessioneAssistente.schedaId]
         );
       }
 
       rispostaInElaborazione = false;
+
       setTimeout(() => {
         resetModalitaAssistente();
         esciAssistente();
@@ -2451,6 +2467,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
