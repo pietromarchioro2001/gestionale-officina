@@ -893,29 +893,33 @@ function avviaAscolto() {
 }
 
 function faiDomanda(testo) {
-  messaggioBot(testo); // chat
+
+  messaggioBot(testo);
 
   if (modalitaAssistente !== "vocale") return;
 
-  sbloccaAudio();          // 🔓 fondamentale su desktop
   speechSynthesis.cancel();
-  botStaParlando = true;
 
   const utter = new SpeechSynthesisUtterance(testo);
   utter.lang = "it-IT";
 
+  if (voceBot) utter.voice = voceBot;
+
+  utter.rate = 1.05;
+  utter.pitch = 1;
+
   utter.onend = () => {
-    botStaParlando = false;
 
     setTimeout(() => {
-      bipMicrofono();
+
       try {
-        recognition.start();   // 🎤 QUI, NON ALTROVE
-        console.log("🎤 ascolto per:", sessioneAssistente.step);
+        recognition.start();
       } catch (e) {
         console.warn("Mic già attivo");
       }
-    }, 500); // tempo umano
+
+    }, 500); // 🎯 mezzo secondo dopo
+
   };
 
   speechSynthesis.speak(utter);
@@ -1582,17 +1586,15 @@ function ascoltaSubito() {
 let modalitaAssistente = "manuale";
 
 document.getElementById("modeSwitch")?.addEventListener("change", e => {
+
   if (e.target.checked) {
-    modalitaAssistente = "vocale";
-
-    // 🔓 sblocco microfono con gesto utente
+    modalitaAssistente = "vocale"
     if (!recognition) initVoce();
-
-    micSbloccato = true;
-
-    messaggioBot("Modalità vocale attiva, iniziamo.");
+    sbloccaAudio();
+    messaggioBot("Modalità vocale attiva.");
   } else {
     modalitaAssistente = "manuale";
+    try { recognition?.stop(); } catch (e) {}
   }
 });
 
@@ -2471,6 +2473,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
