@@ -1,8 +1,9 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyk6PfM-V_MDxYeonEpyPyqqPpB04vNOjSzCigYP5ev4mg3XDN4-_5rZQ0sseeOQeYi/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx_l1coX_zZ6yN3pqTcf2wRBWzCZ85wo1IZ1HhdWuPB05U6GqYsVYOUGa5bjR0kiNK2/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 let TEMP_ALTRI_DOCUMENTI = [];
+let VEICOLI_ALL = [];
 
 function callBackend(action, args = []) {
 
@@ -1840,7 +1841,7 @@ function caricaOrdiniUI(force = false) {
     CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
     CACHE_TS = Date.now();
 
-    window.VEICOLI_ALL = veicoli;
+    VEICOLI_ALL = veicoli;
 
     renderOrdini(ordini, clienti, veicoli, fornitori);
   })
@@ -2564,6 +2565,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
