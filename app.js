@@ -450,6 +450,9 @@ document.addEventListener("DOMContentLoaded", () => {
   ?.addEventListener("click", resetClienti);
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
+
+  caricaSchede();
+  preloadOrdini();
   
   });
 
@@ -489,8 +492,7 @@ document.getElementById("targaCamera")
 
   bindFileCount("altriDocumenti", "altriCount");
 
-  caricaSchede();
-  preloadOrdini();
+  
 
   // ==========================
   // ASSISTENTE (TESTO)
@@ -1056,6 +1058,11 @@ function normalizzaChilometri(testo) {
 function renderSchede(lista) {
 
   const container = document.getElementById("listaSchede");
+
+  if (!container) {
+    console.warn("listaSchede non trovato");
+    return;
+  }
   container.innerHTML = "";
 
   lista.forEach(s => {
@@ -2576,6 +2583,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
