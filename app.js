@@ -992,24 +992,29 @@ function isComandoUscita(testo) {
 }
 
 function normalizzaOre(testo) {
-  const t = testo.toUpperCase();
+  const t = testo.toUpperCase().trim();
 
-  // 1️⃣ minuti espliciti → conversione in ore
+  // 🔒 Se è comando uscita → non interpretare come numero
+  if (isComandoUscita(t)) return "";
+
+  // 1️⃣ minuti espliciti
   if (t.includes("MINUTO")) {
     const num = t.replace(/[^\d]/g, "");
     if (!num) return "";
     return (parseInt(num, 10) / 60).toFixed(2);
   }
 
-  // 2️⃣ numeri con virgola o punto → ore dirette
+  // 2️⃣ numeri con cifre
   const cifre = t.replace(/[^\d.,]/g, "");
   if (cifre) {
     return cifre.replace(",", ".");
   }
 
-  // 3️⃣ numeri in lettere
+  // 3️⃣ numeri in lettere (MATCH PAROLA INTERA)
   const oreMap = {
-    "UNA": 1, "UN": 1, "UNO": 1,
+    "UNA": 1,
+    "UN": 1,
+    "UNO": 1,
     "DUE": 2,
     "TRE": 3,
     "QUATTRO": 4,
@@ -1021,22 +1026,14 @@ function normalizzaOre(testo) {
     "DIECI": 10
   };
 
-  let ore = null;
   for (const k in oreMap) {
-    if (t.includes(k)) {
-      ore = oreMap[k];
-      break;
+    const regex = new RegExp(`\\b${k}\\b`);
+    if (regex.test(t)) {
+      return String(oreMap[k]);
     }
   }
 
-  if (ore === null) return "";
-
-  let frazione = 0;
-  if (t.includes("MEZZA")) frazione = 0.5;
-  else if (t.includes("UN QUARTO")) frazione = 0.25;
-  else if (t.includes("TRE QUARTI")) frazione = 0.75;
-
-  return String(ore + frazione);
+  return "";
 }
 
 function normalizzaChilometri(testo) {
@@ -2474,6 +2471,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
