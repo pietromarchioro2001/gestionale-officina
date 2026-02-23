@@ -1320,12 +1320,42 @@ function domandaCorrente() {
   faiDomanda(testo);
 }
 
+function isComandoFine(testo) {
+  const t = testo.toUpperCase().trim();
+
+  const comandi = [
+    "VAI ALLA FINE",
+    "SALTA TUTTO",
+    "CONCLUDI",
+    "CHIUDI",
+    "FINE"
+  ];
+
+  return comandi.some(cmd => t === cmd);
+}
+
 async function gestisciRisposta(testo) {
 
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
 
   testo = testo.toUpperCase().trim();
+
+  // 🔴 COMANDO SALTO DIRETTO ALLA FINE
+  if (isComandoFine(testo)) {
+  
+    messaggioBot("Ok. Salto alla chiusura della scheda.");
+  
+    sessioneAssistente.step = "CHIUSURA";
+  
+    rispostaInElaborazione = false;
+  
+    setTimeout(() => {
+      faiDomanda("Vuoi chiudere definitivamente la scheda?");
+    }, 400);
+  
+    return;
+  }
 
   switch (sessioneAssistente.step) {
 
@@ -2473,6 +2503,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
