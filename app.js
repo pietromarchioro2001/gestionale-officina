@@ -2020,36 +2020,44 @@ function inviaWhatsApp(btn) {
 
 function inviaOrdine(row) {
 
-  if (!CACHE_ORDINI || !CACHE_ORDINI.ordini) {
-    alert("Ordini non caricati");
-    return;
-  }
+  callBackend("getSoloOrdini")
+    .then(res => {
 
-  const ordine = CACHE_ORDINI.ordini
-    .find(o => Number(o.row) === Number(row));
+      const ordini = Array.isArray(res)
+        ? res
+        : Array.isArray(res?.data)
+        ? res.data
+        : [];
 
-  if (!ordine) {
-    alert("Ordine non trovato");
-    return;
-  }
+      const ordine = ordini.find(o => Number(o.row) === Number(row));
 
-  const select = document.querySelector(
-    `select[onchange="onChangeFornitore(${row}, this.value)"]`
-  );
+      if (!ordine) {
+        alert("Ordine non trovato");
+        return;
+      }
 
-  if (!select || !select.value) {
-    alert("Seleziona un fornitore");
-    return;
-  }
+      const select = document.querySelector(
+        `select[onchange="onChangeFornitore(${row}, this.value)"]`
+      );
 
-  const link = ordine.fornitori[select.value];
+      if (!select || !select.value) {
+        alert("Seleziona un fornitore");
+        return;
+      }
 
-  if (!link) {
-    alert("Link WhatsApp non disponibile");
-    return;
-  }
+      const link = ordine.fornitori[select.value];
 
-  window.open(link, "_blank");
+      if (!link) {
+        alert("Link WhatsApp non disponibile");
+        return;
+      }
+
+      window.open(link, "_blank");
+    })
+    .catch(err => {
+      console.error(err);
+      alert("Errore caricamento ordine");
+    });
 }
 
 function onToggleCheckbox(row, checked) {
@@ -2565,6 +2573,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
