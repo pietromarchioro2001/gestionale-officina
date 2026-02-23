@@ -610,14 +610,10 @@ div[aria-label*="Apps Script"] {
 }
 
 /* ================= SWITCH MANUALE / VOCALE ================= */
-
-.assistente-switch {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+.assistente-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 14px;
 }
 
 .mode-label {
@@ -2386,6 +2382,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
