@@ -279,16 +279,27 @@
 
 </section>
 
-  <!-- ORDINI -->
-  <section id="ordini" class="page">
+ <!-- ORDINI -->
+<section id="ordini" class="page">
 
   <div class="page-header">
     <h2 class="page-title">ORDINI</h2>
   </div>
 
   <div class="page-content">
-    <button onclick="nuovoOrdine()">➕ Nuovo ordine</button>
+
+    <div class="ordini-actions">
+      <button class="btn-nuovo" onclick="nuovoOrdine()">
+        ➕ Nuovo ordine
+      </button>
+
+      <button class="btn-vocale" onclick="avviaOrdineVocale()">
+        🎤
+      </button>
+    </div>
+
     <div id="listaOrdini"></div>
+
   </div>
 
 </section>
@@ -334,6 +345,7 @@
 
 </body>
 </html>
+
 
 
 
