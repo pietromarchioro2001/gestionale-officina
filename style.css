@@ -689,7 +689,7 @@ div[aria-label*="Apps Script"] {
   display: grid;
   grid-template-columns: 
     50px        /* checkbox */
-    1.8fr       /* descrizione larga */
+    2fr       /* descrizione larga */
     220px       /* blocco select */
     160px;      /* bottone */
   align-items: center;
@@ -2458,6 +2458,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
