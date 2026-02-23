@@ -693,7 +693,7 @@ div[aria-label*="Apps Script"] {
     220px       /* blocco select */
     160px;      /* bottone */
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 18px 0;
   border-bottom: 1px solid #eee;
 }
@@ -2482,6 +2482,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
