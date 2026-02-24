@@ -75,8 +75,6 @@ function callBackend(action, args = []) {
 
     }, 20000);
 
-  });
-
 function popolaFormOCR(dati = {}) {
 
   document.getElementById("nome").value = dati.nomeCliente || "";
@@ -2666,6 +2664,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
