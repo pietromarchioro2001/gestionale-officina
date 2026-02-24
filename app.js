@@ -1250,43 +1250,38 @@ let botStaParlando = false;
 
 function renderStatoScheda(info){
 
-  const box = document.getElementById("statoSchedaBox");
-  if(!box) return;
-
   const v = info.valori || {};
 
-  box.innerHTML = `
-    <div class="scheda-header">
-      📄 Scheda #${info.numero} - ${info.status}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Chilometri:</strong> ${v.CHILOMETRI || "-"}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Problemi:</strong><br>
-      ${formatLista(v.PROBLEMI)}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Lavori:</strong><br>
-      ${formatLista(v.LAVORI)}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Prodotti:</strong><br>
-      ${formatLista(v.PRODOTTI)}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Ore:</strong> ${v.ORE_IMPIEGATE || "-"}
-    </div>
-
-    <div class="scheda-riga">
-      <strong>Note:</strong> ${v.NOTE || "-"}
-    </div>
+  // CLIENTE
+  document.getElementById("clienteBox").innerHTML = `
+    ${v.NOME_CLIENTE || "-"}<br>
+    ${v.INDIRIZZO || ""}<br>
+    ${v.TELEFONO || ""}<br>
+    ${v.CODICE_FISCALE || ""}
   `;
+
+  // VEICOLO
+  document.getElementById("veicoloBox").innerHTML = `
+    ${v.VEICOLO || "-"}<br>
+    ${v.TARGA || ""}<br>
+    ${v.CHILOMETRI || ""}
+  `;
+
+  // LISTE
+  document.getElementById("problemiBox").innerHTML =
+    formatLista(v.PROBLEMI);
+
+  document.getElementById("lavoriBox").innerHTML =
+    formatLista(v.LAVORI);
+
+  document.getElementById("prodottiBox").innerHTML =
+    formatLista(v.PRODOTTI);
+
+  document.getElementById("noteBox").innerHTML =
+    v.NOTE || "-";
+
+  document.getElementById("oreBox").innerHTML =
+    v.ORE_IMPIEGATE || "-";
 }
 
 function formatLista(testo){
@@ -2687,6 +2682,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
