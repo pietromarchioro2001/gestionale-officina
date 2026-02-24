@@ -1067,7 +1067,10 @@ function renderSchede(lista) {
 
     card.innerHTML = `
       <div class="scheda-left">
-        <div class="scheda-cliente">${s.cliente}</div>
+        <div class="scheda-cliente">
+          <span class="scheda-numero">#${s.numero}</span>
+          ${s.cliente}
+        </div>
         <div class="scheda-data">${formattaData(s.data)}</div>
       </div>
 
@@ -1353,17 +1356,16 @@ async function gestisciRisposta(testo) {
 
   // 🔴 COMANDO SALTO DIRETTO ALLA FINE
   if (isComandoFine(testo)) {
-  
+
     messaggioBot("Ok. Salto alla chiusura della scheda.");
-  
     sessioneAssistente.step = "CHIUSURA";
-  
+
     rispostaInElaborazione = false;
-  
+
     setTimeout(() => {
       faiDomanda("Vuoi chiudere definitivamente la scheda?");
     }, 400);
-  
+
     return;
   }
 
@@ -1375,7 +1377,6 @@ async function gestisciRisposta(testo) {
     case "TARGA": {
 
       const targaNorm = normalizzaTarga(testo);
-
       messaggioBot(`Targa rilevata: ${targaNorm}`);
 
       try {
@@ -1391,15 +1392,10 @@ async function gestisciRisposta(testo) {
           return;
         }
 
-        messaggioBot(
-          `Veicolo trovato.\nCliente: ${res.nomeCliente}`
-        );
+        messaggioBot(`Veicolo trovato.\nCliente: ${res.nomeCliente}`);
 
         rispostaInElaborazione = false;
-
-        setTimeout(() => {
-          prossimaDomanda(); // ➜ CHILOMETRI
-        }, 500);
+        setTimeout(prossimaDomanda, 500);
 
       } catch (err) {
         console.error(err);
@@ -1424,14 +1420,11 @@ async function gestisciRisposta(testo) {
       }
 
       messaggioBot(`Chilometri registrati: ${km}`);
-      salvaCampoScheda("CHILOMETRI", km + " km");
+
+      await salvaCampoScheda("CHILOMETRI", km + " km");
 
       rispostaInElaborazione = false;
-
-      setTimeout(() => {
-        prossimaDomanda();
-      }, 400);
-
+      setTimeout(prossimaDomanda, 400);
       return;
     }
 
@@ -1443,10 +1436,11 @@ async function gestisciRisposta(testo) {
       if (isComandoUscita(testo)) {
 
         if (sessioneAssistente.listaProblemi.length) {
-          salvaCampoScheda(
-            "PROBLEMI",
-            "• " + sessioneAssistente.listaProblemi.join("\n• ")
-          );
+
+          const valore =
+            "• " + sessioneAssistente.listaProblemi.join("\n• ");
+
+          await salvaCampoScheda("PROBLEMI", valore);
         }
 
         rispostaInElaborazione = false;
@@ -1475,10 +1469,11 @@ async function gestisciRisposta(testo) {
       if (isComandoUscita(testo)) {
 
         if (sessioneAssistente.listaLavori.length) {
-          salvaCampoScheda(
-            "LAVORI",
-            "• " + sessioneAssistente.listaLavori.join("\n• ")
-          );
+
+          const valore =
+            "• " + sessioneAssistente.listaLavori.join("\n• ");
+
+          await salvaCampoScheda("LAVORI", valore);
         }
 
         rispostaInElaborazione = false;
@@ -1507,14 +1502,15 @@ async function gestisciRisposta(testo) {
       if (isComandoUscita(testo)) {
 
         if (sessioneAssistente.listaProdotti.length) {
-          salvaCampoScheda(
-            "PRODOTTI",
-            "• " + sessioneAssistente.listaProdotti.join("\n• ")
-          );
+
+          const valore =
+            "• " + sessioneAssistente.listaProdotti.join("\n• ");
+
+          await salvaCampoScheda("PRODOTTI", valore);
         }
 
         rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 300);
+        setTimeout(prossimaDomanda, 400);
         return;
       }
 
@@ -1530,26 +1526,26 @@ async function gestisciRisposta(testo) {
      * ====================== */
     case "ORE_IMPIEGATE": {
 
-      // ✅ Se l'utente vuole saltare
       if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
         setTimeout(prossimaDomanda, 300);
         return;
       }
-    
+
       const oreNum = normalizzaOre(testo);
-    
+
       if (!oreNum) {
         messaggioBot("Non ho capito le ore. Ripeti oppure dì 'avanti'.");
         rispostaInElaborazione = false;
         return;
       }
-    
+
       const valore = `${oreNum} h`;
-    
+
       messaggioBot(`Ore registrate: ${valore}`);
-      salvaCampoScheda("ORE_IMPIEGATE", valore);
-    
+
+      await salvaCampoScheda("ORE_IMPIEGATE", valore);
+
       rispostaInElaborazione = false;
       prossimaDomanda();
       return;
@@ -1566,16 +1562,12 @@ async function gestisciRisposta(testo) {
         return;
       }
 
-      salvaCampoScheda("NOTE", testo);
+      await salvaCampoScheda("NOTE", testo);
 
       messaggioBot("Nota salvata.");
 
       rispostaInElaborazione = false;
-
-      setTimeout(() => {
-        prossimaDomanda();
-      }, 500);
-
+      setTimeout(prossimaDomanda, 400);
       return;
     }
 
@@ -1585,41 +1577,43 @@ async function gestisciRisposta(testo) {
     case "CHIUSURA": {
 
       try { recognition?.stop(); } catch (e) {}
-    
+
       const chiudere =
         !(testo === "NO" ||
           testo === "ANNULLA" ||
           testo === "LASCIA APERTA");
-    
+
       if (!chiudere) {
         messaggioBot("Scheda lasciata aperta.");
         rispostaInElaborazione = false;
         return;
       }
-    
+
       messaggioBot("Sto chiudendo la scheda...");
-    
+
       try {
-    
+
         const res = await callBackend(
           "chiudiScheda",
           [sessioneAssistente.schedaId]
         );
-    
-        console.log("RISPOSTA BACKEND CHIUSURA:", res);
-    
-        // ❌ NON controlliamo ok per ora
+
+        if (!res || !res.ok) {
+          messaggioBot("Errore durante la chiusura.");
+          rispostaInElaborazione = false;
+          return;
+        }
+
         resetModalitaAssistente();
         esciAssistente();
-        caricaSchede();
-    
+        await caricaSchede();
+
       } catch (err) {
-    
-        console.error("Errore vero backend:", err);
+
+        console.error("Errore backend:", err);
         messaggioBot("Errore durante la chiusura.");
-    
       }
-    
+
       rispostaInElaborazione = false;
       return;
     }
@@ -1650,25 +1644,30 @@ document.getElementById("modeSwitch")?.addEventListener("change", e => {
   }
 });
 
-function salvaCampoScheda(campo, valore) {
+async function salvaCampoScheda(campo, valore) {
+
   console.log("salvaCampoScheda chiamata");
   console.log("schedaId:", sessioneAssistente.schedaId);
   console.log("campo:", campo);
   console.log("valore:", valore);
 
-  // 🔒 BLOCCO DI SICUREZZA
   if (!sessioneAssistente.schedaId) return;
 
-  callBackend(
-    "aggiornaSchedaCampo",
-    [sessioneAssistente.schedaId, campo, valore]
-  )
-  .then(() => {
+  try {
+
+    const res = await callBackend(
+      "aggiornaSchedaCampo",
+      [sessioneAssistente.schedaId, campo, valore]
+    );
+
     console.log("Campo salvato:", campo);
-  })
-  .catch(err => {
+    return res;
+
+  } catch (err) {
+
     console.error("Errore backend:", err);
-  });
+    throw err;
+  }
 }
 
 function normalizzaTarga(testo) {
@@ -2628,6 +2627,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
