@@ -1068,9 +1068,10 @@ function renderSchede(lista) {
     card.innerHTML = `
       <div class="scheda-left">
         <div class="scheda-cliente">
-          <span class="scheda-numero">#${s.numero}</span>
-          ${s.cliente}
+          #${s.numero} ${s.cliente}
         </div>
+        <div class="scheda-data">${formattaData(s.data)}</div>
+      </div>
         <div class="scheda-data">${formattaData(s.data)}</div>
       </div>
 
@@ -2627,6 +2628,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
