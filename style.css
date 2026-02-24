@@ -331,21 +331,24 @@ div[aria-label*="Apps Script"] {
 }
 
 .scheda-card {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
-  gap: 20px;
-  padding: 14px 18px;
-  background: #fff;
-  border-radius: 6px;
-  border-left: 6px solid #ccc;
-  width: 100%;
+  justify-content: space-between;
+  padding: 18px 24px;
+  margin-bottom: 14px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: 0.2s ease;
+}
+
+.scheda-card.chiusa {
+  opacity: 0.65;
 }
 
 .scheda-left {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;;
 }
 
 .scheda-numero {
@@ -370,9 +373,10 @@ div[aria-label*="Apps Script"] {
   color: #666;
 }
 
-.scheda-center {
-  display: flex;
-  justify-content: center;
+.scheda-data {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
 }
 
 .scheda-center button.secondary:hover {
@@ -380,7 +384,6 @@ div[aria-label*="Apps Script"] {
 }
 
 .scheda-right {
-  min-width: 90px;
   text-align: right;
 }
 
@@ -410,20 +413,21 @@ div[aria-label*="Apps Script"] {
   background: #aaa;
 }
 
+.btn-riprendi,
 .btn-scheda {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  background: #7a7a7a;       /* grigio attuale */
-  color: #fff;
-
-  height: 36px;              /* 👈 ALTEZZA FISSA */
-  padding: 0 20px;           /* 👈 SOLO ORIZZONTALE */
-
-  border-radius: 999px;      /* 👈 pillola PERFETTA */
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
   font-weight: 600;
-  text-decoration: none;
+}
+
+.btn-riprendi {
+  background: #f0c000;
+}
+
+.btn-scheda {
+  background: #e0e0e0;
 }
 
 .btn-scheda:hover {
@@ -2511,6 +2515,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
