@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyYwVC2ih2JuVaAb6GQa8WsJrtvDQSc8OcL-o0y5ucBXLCxLwcjTiVnG8SS4rl1ricf/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyfyrFxUxRlsEVVWjV_r2xax-UQhvyoaWgTQuuDIAwxmUQNb3_ZhOnHg5QCDOieuQo/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1063,39 +1063,43 @@ function renderSchede(lista) {
   lista.reverse().forEach(s => {
 
     const card = document.createElement("div");
-    card.className = "scheda-card";
+    card.className = `scheda-card ${s.stato === "CHIUSA" ? "chiusa" : ""}`;
 
     card.innerHTML = `
       <div class="scheda-left">
         <div class="scheda-cliente">${s.cliente}</div>
-        <div class="scheda-veicolo">
-          ${s.veicolo} • ${s.targa}
-        </div>
-        <div class="scheda-km">
-          ${s.chilometri || ""}
-        </div>
+        <div class="scheda-data">${formattaData(s.data)}</div>
+      </div>
+
+      <div class="scheda-center">
+        ${
+          s.stato === "CHIUSA"
+            ? `<button class="btn-scheda"
+                 onclick="apriDocumento('${s.linkDoc}')">
+                 SCHEDA
+               </button>`
+            : `<button class="btn-riprendi"
+                 onclick="riprendiScheda('${s.id}')">
+                 RIPRENDI
+               </button>`
+        }
       </div>
 
       <div class="scheda-right">
         <div class="scheda-stato ${s.stato === "CHIUSA" ? "chiusa" : "aperta"}">
           ${s.stato}
         </div>
-
-        ${
-          s.stato === "CHIUSA" && s.linkDoc
-            ? `<button class="btn-view"
-                 onclick="apriDocumento('${s.linkDoc}')">
-                 👁 Visualizza
-               </button>`
-            : ""
-        }
       </div>
     `;
 
     container.appendChild(card);
   });
 }
-
+function formattaData(data) {
+  if (!data) return "";
+  const d = new Date(data);
+  return d.toLocaleDateString("it-IT");
+}
 function apriDocumento(link) {
   if (!link) return;
   window.open(link, "_blank");
@@ -2583,6 +2587,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
