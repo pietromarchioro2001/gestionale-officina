@@ -464,6 +464,115 @@ div[aria-label*="Apps Script"] {
   color: #999;
 }
 
+.scheda-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  margin-bottom: 14px;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  position: relative;
+  transition: 0.2s ease;
+}
+
+/* BAFFO LATERALE */
+.scheda-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  bottom: 10px;
+  width: 6px;
+  border-radius: 6px;
+}
+
+/* STATUS COLORI */
+
+.stato-parziale::before {
+  background: #ff9800;
+}
+
+.stato-completa::before {
+  background: #4caf50;
+}
+
+.stato-chiusa::before {
+  background: #9e9e9e;
+  opacity: 0.7;
+}
+
+.stato-chiusa {
+  opacity: 0.65;
+}
+
+/* CONTENUTO */
+
+.scheda-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.scheda-cliente {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.scheda-data {
+  font-size: 13px;
+  color: #888;
+  margin-top: 4px;
+}
+
+.scheda-center {
+  text-align: center;
+}
+
+.scheda-right {
+  text-align: right;
+}
+
+.scheda-stato {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* STATUS TESTO COLORI */
+
+.stato-parziale .scheda-stato {
+  color: #ff9800;
+}
+
+.stato-completa .scheda-stato {
+  color: #4caf50;
+}
+
+.stato-chiusa .scheda-stato {
+  color: #9e9e9e;
+}
+
+/* BOTTONI */
+
+.btn-riprendi {
+  background: #1976d2;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.btn-scheda {
+  background: #e0e0e0;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 /* ================= ASSISTENTE ================= */
 
 /* NASCOSTO DI DEFAULT */
@@ -2515,6 +2624,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
