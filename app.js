@@ -1584,20 +1584,16 @@ async function gestisciRisposta(testo) {
           [sessioneAssistente.schedaId]
         );
     
-        if (!res?.ok) {
-          throw new Error("Errore chiusura backend");
-        }
+        console.log("RISPOSTA BACKEND CHIUSURA:", res);
     
-        messaggioBot("Scheda chiusa correttamente.");
-    
-        // 🔥 SOLO ORA chiudi UI
+        // ❌ NON controlliamo ok per ora
         resetModalitaAssistente();
         esciAssistente();
         caricaSchede();
     
       } catch (err) {
     
-        console.error("Errore chiusura:", err);
+        console.error("Errore vero backend:", err);
         messaggioBot("Errore durante la chiusura.");
     
       }
@@ -2610,6 +2606,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
