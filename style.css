@@ -492,7 +492,7 @@ div[aria-label*="Apps Script"] {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 16px;
 }
 
 .scheda-stato {
@@ -1363,11 +1363,12 @@ button.riprendi:hover {
 }
 
 .scheda-menu-btn {
-  background: transparent;
-  border: none;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
   font-size: 18px;
   cursor: pointer;
-  padding: 2px 6px;
   color: #555;
 }
 
@@ -2579,6 +2580,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
