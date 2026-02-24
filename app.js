@@ -10,19 +10,22 @@ function callBackend(action, args = []) {
   return new Promise((resolve, reject) => {
 
     const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+
     const script = document.createElement("script");
 
     const cleanup = () => {
-      delete window[cb];
-      script.remove();
+      try { delete window[cb]; } catch {}
+      if (script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
     };
 
     const timeout = setTimeout(() => {
       cleanup();
       reject(new Error("Timeout backend"));
-    }, 15000); // 15 secondi
+    }, 15000);
 
-    window[cb] = res => {
+    window[cb] = function(res) {
       clearTimeout(timeout);
       cleanup();
       resolve(res);
@@ -31,15 +34,15 @@ function callBackend(action, args = []) {
     script.src =
       `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
 
-    script.onerror = () => {
+    script.onerror = function() {
       cleanup();
       reject(new Error("Errore caricamento backend"));
     };
 
     document.body.appendChild(script);
+
   });
 }
-
     function cleanup() {
 
       try { delete window[cb]; } catch {}
@@ -2664,6 +2667,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
