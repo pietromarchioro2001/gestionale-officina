@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyqTfWePScrDhHAzRCeg0NrLfgJ888ycoxt0Wgb3OFwHonCo2Z2qFkAwUlOpch2ESnr/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyQLBYVADcjYkEOq16WXfmbXYLPTpsrHu8gHUD_4Rw-I-Dz9ynglwoVuCD6DUOKqYn0/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1058,25 +1058,29 @@ function normalizzaChilometri(testo) {
 function renderSchede(lista) {
 
   const container = document.getElementById("listaSchede");
-
-  if (!container) {
-    console.warn("listaSchede non trovato");
-    return;
-  }
   container.innerHTML = "";
 
-  lista.forEach(s => {
+  lista.reverse().forEach(s => {
 
-    const row = document.createElement("div");
-    row.className = "scheda-row";
+    const card = document.createElement("div");
+    card.className = "scheda-card";
 
-    row.innerHTML = `
-      <div class="scheda-info">
-        <strong>${s.cliente}</strong><br>
-        ${s.veicolo}
+    card.innerHTML = `
+      <div class="scheda-left">
+        <div class="scheda-cliente">${s.cliente}</div>
+        <div class="scheda-veicolo">
+          ${s.veicolo} • ${s.targa}
+        </div>
+        <div class="scheda-km">
+          ${s.chilometri || ""}
+        </div>
       </div>
 
-      <div class="scheda-center">
+      <div class="scheda-right">
+        <div class="scheda-stato ${s.stato === "CHIUSA" ? "chiusa" : "aperta"}">
+          ${s.stato}
+        </div>
+
         ${
           s.stato === "CHIUSA" && s.linkDoc
             ? `<button class="btn-view"
@@ -1086,13 +1090,9 @@ function renderSchede(lista) {
             : ""
         }
       </div>
-
-      <div class="scheda-stato ${s.stato === "CHIUSA" ? "chiusa" : "aperta"}">
-        ${s.stato}
-      </div>
     `;
 
-    container.appendChild(row);
+    container.appendChild(card);
   });
 }
 
@@ -2583,6 +2583,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
