@@ -1220,6 +1220,8 @@ function riprendiScheda(id) {
 
       sessioneAssistente.valoriEsistenti = info.valori || {};
 
+      renderStatoScheda(info);
+
       rispostaInElaborazione = false;
       prossimaDomanda();
 
@@ -1240,6 +1242,51 @@ let micTentativi = 0;
 let rispostaGestita = false;
 let botStaParlando = false;
 
+function renderStatoScheda(info){
+
+  const box = document.getElementById("statoSchedaBox");
+  if(!box) return;
+
+  const v = info.valori || {};
+
+  box.innerHTML = `
+    <div class="scheda-header">
+      📄 Scheda #${info.numero} - ${info.status}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Chilometri:</strong> ${v.CHILOMETRI || "-"}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Problemi:</strong><br>
+      ${formatLista(v.PROBLEMI)}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Lavori:</strong><br>
+      ${formatLista(v.LAVORI)}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Prodotti:</strong><br>
+      ${formatLista(v.PRODOTTI)}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Ore:</strong> ${v.ORE_IMPIEGATE || "-"}
+    </div>
+
+    <div class="scheda-riga">
+      <strong>Note:</strong> ${v.NOTE || "-"}
+    </div>
+  `;
+}
+
+function formatLista(testo){
+  if(!testo) return "-";
+  return testo.replace(/\n/g, "<br>");
+}
 function initVoce() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
@@ -2633,6 +2680,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
