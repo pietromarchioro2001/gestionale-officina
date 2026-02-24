@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwl54eowQLA3N4_p6m8NqIxB3BiaUnvfDmpq4cqlMrXj1SkF64WcoIrSe-S1fYkqsQt/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwwCTyFDgn8tFWmgqPopcX2c9K4gO2e5kUG2_LkFxLXsXL00PqKeM0xnfJs8LhCSH9D/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1358,17 +1358,46 @@ async function gestisciRisposta(testo) {
   // 🔴 COMANDO SALTO DIRETTO ALLA FINE
   if (isComandoFine(testo)) {
 
-    messaggioBot("Ok. Salto alla chiusura della scheda.");
-    sessioneAssistente.step = "CHIUSURA";
-
-    rispostaInElaborazione = false;
-
-    setTimeout(() => {
-      faiDomanda("Vuoi chiudere definitivamente la scheda?");
-    }, 400);
-
-    return;
-  }
+      // 🔥 Salva eventuali liste aperte prima di chiudere
+    
+      if (sessioneAssistente.step === "PROBLEMI" &&
+          sessioneAssistente.listaProblemi.length) {
+    
+        await salvaCampoScheda(
+          "PROBLEMI",
+          "• " + sessioneAssistente.listaProblemi.join("\n• ")
+        );
+      }
+    
+      if (sessioneAssistente.step === "LAVORI" &&
+          sessioneAssistente.listaLavori.length) {
+    
+        await salvaCampoScheda(
+          "LAVORI",
+          "• " + sessioneAssistente.listaLavori.join("\n• ")
+        );
+      }
+    
+      if (sessioneAssistente.step === "PRODOTTI" &&
+          sessioneAssistente.listaProdotti.length) {
+    
+        await salvaCampoScheda(
+          "PRODOTTI",
+          "• " + sessioneAssistente.listaProdotti.join("\n• ")
+        );
+      }
+    
+      messaggioBot("Ok. Salto alla chiusura della scheda.");
+      sessioneAssistente.step = "CHIUSURA";
+    
+      rispostaInElaborazione = false;
+    
+      setTimeout(() => {
+        faiDomanda("Vuoi chiudere definitivamente la scheda?");
+      }, 400);
+    
+      return;
+    }
 
   switch (sessioneAssistente.step) {
 
@@ -2628,6 +2657,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
