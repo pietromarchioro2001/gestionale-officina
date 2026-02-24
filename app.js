@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzPadRHhuVzEehAEMwTD2BDwuF6R9_2EgY_rJluuQRo8LN4tVKGu001J1fDNWJvebgf/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx-AJD6XyJO8vTYGcKNo03ybvPy549PIVB8131w8RTAn8PTRTo_W7GFQhPh4ELyO5HZ/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1086,9 +1086,26 @@ function renderSchede(lista) {
       </div>
 
       <div class="scheda-right">
+
         <div class="scheda-stato">
           ${s.stato}
         </div>
+
+        <div class="scheda-menu">
+          <button class="menu-btn"
+            onclick="toggleMenu(this)">⋮</button>
+
+          <div class="scheda-menu-popup">
+            <button onclick="eliminaScheda(
+              '${s.id}',
+              '${s.stato}',
+              '${s.linkDoc}'
+            )">
+              Elimina
+            </button>
+          </div>
+        </div>
+
       </div>
     `;
 
@@ -2606,6 +2623,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
