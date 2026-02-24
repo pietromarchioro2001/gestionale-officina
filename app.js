@@ -1564,23 +1564,45 @@ async function gestisciRisposta(testo) {
 
       try { recognition?.stop(); } catch (e) {}
     
-      modalitaAssistente = "manuale";
-    
       const chiudere =
         !(testo === "NO" ||
           testo === "ANNULLA" ||
           testo === "LASCIA APERTA");
     
-      // 🔥 1. Chiudi UI subito
-      resetModalitaAssistente();
-      esciAssistente();
-    
-      // 🔥 2. Backend in background
-      if (chiudere) {
-        callBackend("chiudiScheda", [sessioneAssistente.schedaId])
-          .catch(err => console.error("Errore chiusura", err));
+      if (!chiudere) {
+        messaggioBot("Scheda lasciata aperta.");
+        rispostaInElaborazione = false;
+        return;
       }
     
+      messaggioBot("Sto chiudendo la scheda...");
+    
+      try {
+    
+        const res = await callBackend(
+          "chiudiScheda",
+          [sessioneAssistente.schedaId]
+        );
+    
+        if (!res?.ok) {
+          throw new Error("Errore chiusura backend");
+        }
+    
+        messaggioBot("Scheda chiusa correttamente.");
+    
+        // 🔥 SOLO ORA chiudi UI
+        resetModalitaAssistente();
+        esciAssistente();
+        caricaSchede();
+    
+      } catch (err) {
+    
+        console.error("Errore chiusura:", err);
+        messaggioBot("Errore durante la chiusura.");
+    
+      }
+    
+      rispostaInElaborazione = false;
       return;
     }
   }
@@ -2588,6 +2610,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
