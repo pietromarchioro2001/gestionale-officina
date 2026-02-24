@@ -43,40 +43,6 @@ function callBackend(action, args = []) {
 
   });
 }
-    function cleanup() {
-
-      try { delete window[cb]; } catch {}
-
-      if (script.parentNode)
-        script.parentNode.removeChild(script);
-
-    }
-
-    script.src =
-      API_URL +
-      "?action=" + action +
-      "&payload=" + payload +
-      "&callback=" + cb;
-
-    script.async = true;
-
-    script.onerror = function() {
-
-      cleanup();
-
-      reject(new Error("Errore caricamento backend"));
-
-    };
-
-    document.body.appendChild(script);
-
-    timeoutId = setTimeout(function() {
-
-      cleanup();
-
-      reject(new Error("Timeout backend"));
-
-    }, 20000);
 
 function popolaFormOCR(dati = {}) {
 
@@ -2667,6 +2633,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
