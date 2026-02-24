@@ -1189,7 +1189,8 @@ function riprendiScheda(id) {
 
   showSection("assistente");
 
-  document.getElementById("assistenteChat").innerHTML = "";
+  const chat = document.getElementById("assistenteChat");
+  if (chat) chat.innerHTML = "";
 
   Object.assign(sessioneAssistente, {
     schedaId: id,
@@ -1202,40 +1203,44 @@ function riprendiScheda(id) {
     valoriEsistenti: {}
   });
 
-  callBackend("statoScheda", [id])
-    .then(info => {
+  setTimeout(() => {
 
-      messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
+    callBackend("statoScheda", [id])
+      .then(info => {
 
-      if (Array.isArray(info.mancanti) && info.mancanti.includes("CHILOMETRI")) {
-        sessioneAssistente.stepQueue.push("CHILOMETRI");
-      }
+        messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
 
-      sessioneAssistente.stepQueue.push(
-        "PROBLEMI",
-        "LAVORI",
-        "PRODOTTI",
-        "ORE_IMPIEGATE",
-        "NOTE",
-        "CHIUSURA"
-      );
+        if (Array.isArray(info.mancanti) &&
+            info.mancanti.includes("CHILOMETRI")) {
+          sessioneAssistente.stepQueue.push("CHILOMETRI");
+        }
 
-      sessioneAssistente.valoriEsistenti = info.valori || {};
+        sessioneAssistente.stepQueue.push(
+          "PROBLEMI",
+          "LAVORI",
+          "PRODOTTI",
+          "ORE_IMPIEGATE",
+          "NOTE",
+          "CHIUSURA"
+        );
 
-      // 🔥 MOSTRA BOX
-      const box = document.getElementById("statoSchedaBox");
-      if (box) box.classList.remove("hidden");
+        sessioneAssistente.valoriEsistenti = info.valori || {};
 
-      renderStatoScheda(info);
+        const box = document.getElementById("statoSchedaBox");
+        if (box) box.classList.remove("hidden");
 
-      rispostaInElaborazione = false;
-      prossimaDomanda();
+        renderStatoScheda(info);
 
-    })
-    .catch(err => {
-      console.error("Errore ripresa scheda", err);
-      messaggioBot("Errore nel riprendere la scheda.");
-    });
+        rispostaInElaborazione = false;
+        prossimaDomanda();
+
+      })
+      .catch(err => {
+        console.error("Errore ripresa scheda", err);
+        messaggioBot("Errore nel riprendere la scheda.");
+      });
+
+  }, 50); // 👈 lascia respirare il DOM
 }
 
 let voceBot = null;
@@ -2674,6 +2679,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
