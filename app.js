@@ -1173,6 +1173,7 @@ function esciAssistente() {
   resetModalitaAssistente();
   showSection("schede");
   caricaSchede();
+  document.getElementById("statoSchedaBox")?.classList.add("hidden");
 }
 
 function resetModalitaAssistente() {
@@ -1187,6 +1188,7 @@ function resetModalitaAssistente() {
 function riprendiScheda(id) {
 
   showSection("assistente");
+
   document.getElementById("assistenteChat").innerHTML = "";
 
   Object.assign(sessioneAssistente, {
@@ -1219,6 +1221,10 @@ function riprendiScheda(id) {
       );
 
       sessioneAssistente.valoriEsistenti = info.valori || {};
+
+      // 🔥 MOSTRA BOX
+      const box = document.getElementById("statoSchedaBox");
+      if (box) box.classList.remove("hidden");
 
       renderStatoScheda(info);
 
@@ -1287,6 +1293,7 @@ function formatLista(testo){
   if(!testo) return "-";
   return testo.replace(/\n/g, "<br>");
 }
+
 function initVoce() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) return;
@@ -2680,6 +2687,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
