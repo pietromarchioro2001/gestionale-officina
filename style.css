@@ -489,7 +489,10 @@ div[aria-label*="Apps Script"] {
 }
 
 .scheda-right {
-  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .scheda-stato {
@@ -2576,6 +2579,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
