@@ -9,23 +9,36 @@ function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
 
-    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random()*100000);
-
-    const payload = JSON.stringify(args);
-
+    const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
     const script = document.createElement("script");
 
-    let timeoutId;
-
-    window[cb] = function(res) {
-
-      clearTimeout(timeoutId);
-
-      resolve(res);
-
-      cleanup();
-
+    const cleanup = () => {
+      delete window[cb];
+      script.remove();
     };
+
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Timeout backend"));
+    }, 15000); // 15 secondi
+
+    window[cb] = res => {
+      clearTimeout(timeout);
+      cleanup();
+      resolve(res);
+    };
+
+    script.src =
+      `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
+
+    script.onerror = () => {
+      cleanup();
+      reject(new Error("Errore caricamento backend"));
+    };
+
+    document.body.appendChild(script);
+  });
+}
 
     function cleanup() {
 
@@ -116,7 +129,7 @@ const SIGLE_MAIUSCOLE = [
 
 let CACHE_ORDINI = null;
 let CACHE_TS = 0;
-const CACHE_TTL = 60 * 1000; // 60 secondi
+const CACHE_TTL = 3 * 60 * 1000;
 let librettoLink;
 let targaLink;
 let btnCartellaCliente;
@@ -726,7 +739,7 @@ function fileToBase64(file){
         ctx.drawImage(img, 0, 0, width, height);
 
         const base64 = canvas
-          .toDataURL("image/jpeg", 0.9) // qualità 90% ottimale
+          .toDataURL("image/jpeg", 0.85)
           .split(",")[1];
 
         resolve(base64);
@@ -1060,7 +1073,7 @@ function renderSchede(lista) {
   const container = document.getElementById("listaSchede");
   container.innerHTML = "";
 
-  lista.reverse().forEach(s => {
+  [...lista].reverse().forEach(s => {
 
     const card = document.createElement("div");
     card.className = `scheda-card stato-${s.stato?.toLowerCase()}`;
@@ -1070,8 +1083,6 @@ function renderSchede(lista) {
         <div class="scheda-cliente">
           #${s.numero} ${s.cliente}
         </div>
-        <div class="scheda-data">${formattaData(s.data)}</div>
-      </div>
         <div class="scheda-data">${formattaData(s.data)}</div>
       </div>
 
@@ -1266,6 +1277,8 @@ let botStaParlando = false;
 
 function initVoce() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+
   recognition = new SR();
   recognition.lang = "it-IT";
   recognition.interimResults = false;
@@ -1451,10 +1464,10 @@ async function gestisciRisposta(testo) {
 
       messaggioBot(`Chilometri registrati: ${km}`);
 
-      await salvaCampoScheda("CHILOMETRI", km + " km");
+      salvaCampoScheda("CHILOMETRI", km + " km");
 
       rispostaInElaborazione = false;
-      setTimeout(prossimaDomanda, 400);
+      prossimaDomanda();
       return;
     }
 
@@ -1474,7 +1487,7 @@ async function gestisciRisposta(testo) {
         }
 
         rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 400);
+        prossimaDomanda();
         return;
       }
 
@@ -1507,7 +1520,7 @@ async function gestisciRisposta(testo) {
         }
 
         rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 400);
+        prossimaDomanda();
         return;
       }
 
@@ -1540,7 +1553,7 @@ async function gestisciRisposta(testo) {
         }
 
         rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 400);
+        prossimaDomanda();
         return;
       }
 
@@ -1592,12 +1605,12 @@ async function gestisciRisposta(testo) {
         return;
       }
 
-      await salvaCampoScheda("NOTE", testo);
+      salvaCampoScheda("NOTE", testo);
 
       messaggioBot("Nota salvata.");
 
       rispostaInElaborazione = false;
-      setTimeout(prossimaDomanda, 400);
+      prossimaDomanda();
       return;
     }
 
@@ -1983,7 +1996,6 @@ function onChangeCliente(row, cliente) {
   // 2️⃣ Salva su Google Sheet
   callBackend("aggiornaClienteOrdine", [row, cliente])
     .then(() => {
-      caricaOrdiniUI(true); 
       console.log("Cliente aggiornato su Sheet:", row, cliente);
 
       // 🔄 aggiorna cache locale
@@ -2004,7 +2016,6 @@ function onChangeVeicolo(row, veicolo) {
 
   callBackend("aggiornaVeicoloOrdine", [row, veicolo])
     .then(() => {
-      caricaOrdiniUI(true); 
       console.log("Veicolo aggiornato su Sheet:", row, veicolo);
 
       if (CACHE_ORDINI) {
@@ -2657,6 +2668,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
