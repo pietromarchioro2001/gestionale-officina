@@ -1063,7 +1063,7 @@ function renderSchede(lista) {
   lista.reverse().forEach(s => {
 
     const card = document.createElement("div");
-    card.className = `scheda-card ${s.stato === "CHIUSA" ? "chiusa" : ""}`;
+    card.className = `scheda-card stato-${s.stato?.toLowerCase()}`;
 
     card.innerHTML = `
       <div class="scheda-left">
@@ -1086,7 +1086,7 @@ function renderSchede(lista) {
       </div>
 
       <div class="scheda-right">
-        <div class="scheda-stato ${s.stato === "CHIUSA" ? "chiusa" : "aperta"}">
+        <div class="scheda-stato">
           ${s.stato}
         </div>
       </div>
@@ -1095,6 +1095,7 @@ function renderSchede(lista) {
     container.appendChild(card);
   });
 }
+
 function formattaData(data) {
   if (!data) return "";
   const d = new Date(data);
@@ -2587,6 +2588,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
