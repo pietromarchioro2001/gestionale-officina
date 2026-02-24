@@ -1189,21 +1189,27 @@ function riprendiScheda(id) {
 
   showSection("assistente");
 
-  const chat = document.getElementById("assistenteChat");
-  if (chat) chat.innerHTML = "";
+  // aspetta che la sezione sia visibile
+  requestAnimationFrame(() => {
 
-  Object.assign(sessioneAssistente, {
-    schedaId: id,
-    inRipresa: true,
-    step: null,
-    stepQueue: [],
-    listaProblemi: [],
-    listaLavori: [],
-    listaProdotti: [],
-    valoriEsistenti: {}
-  });
+    const chat = document.getElementById("assistenteChat");
+    if (!chat) {
+      console.error("assistenteChat non trovato nel DOM");
+      return;
+    }
 
-  setTimeout(() => {
+    chat.innerHTML = "";
+
+    Object.assign(sessioneAssistente, {
+      schedaId: id,
+      inRipresa: true,
+      step: null,
+      stepQueue: [],
+      listaProblemi: [],
+      listaLavori: [],
+      listaProdotti: [],
+      valoriEsistenti: {}
+    });
 
     callBackend("statoScheda", [id])
       .then(info => {
@@ -1226,8 +1232,9 @@ function riprendiScheda(id) {
 
         sessioneAssistente.valoriEsistenti = info.valori || {};
 
-        const box = document.getElementById("statoSchedaBox");
-        if (box) box.classList.remove("hidden");
+        document
+          .getElementById("statoSchedaBox")
+          ?.classList.remove("hidden");
 
         renderStatoScheda(info);
 
@@ -1237,10 +1244,9 @@ function riprendiScheda(id) {
       })
       .catch(err => {
         console.error("Errore ripresa scheda", err);
-        messaggioBot("Errore nel riprendere la scheda.");
       });
 
-  }, 50); // 👈 lascia respirare il DOM
+  });
 }
 
 let voceBot = null;
@@ -2679,6 +2685,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
