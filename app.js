@@ -1087,25 +1087,28 @@ function renderSchede(lista) {
 
       <div class="scheda-right">
 
-        <div class="scheda-stato">
-          ${s.stato}
-        </div>
-
-        <div class="scheda-menu">
+        <div class="scheda-status-menu">
+      
+          <span class="scheda-stato">
+            ${s.stato}
+          </span>
+      
           <button class="menu-btn"
             onclick="toggleMenu(this)">⋮</button>
-
+      
           <div class="scheda-menu-popup">
-            <button onclick="eliminaScheda(
-              '${s.id}',
-              '${s.stato}',
-              '${s.linkDoc}'
-            )">
+            <button class="delete-btn"
+              onclick="eliminaScheda(
+                '${s.id}',
+                '${s.stato}',
+                '${s.linkDoc}'
+              )">
               Elimina
             </button>
           </div>
+      
         </div>
-
+      
       </div>
     `;
 
@@ -2623,6 +2626,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
