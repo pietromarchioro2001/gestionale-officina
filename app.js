@@ -1252,38 +1252,30 @@ function renderStatoScheda(info){
 
   const v = info.valori || {};
 
-  // CLIENTE
-  document.getElementById("clienteBox").innerHTML = `
+  const set = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
+
+  set("clienteBox", `
     ${v.NOME_CLIENTE || "-"}<br>
     ${v.INDIRIZZO || ""}<br>
     ${v.TELEFONO || ""}<br>
     ${v.CODICE_FISCALE || ""}
-  `;
+  `);
 
-  // VEICOLO
-  document.getElementById("veicoloBox").innerHTML = `
+  set("veicoloBox", `
     ${v.VEICOLO || "-"}<br>
     ${v.TARGA || ""}<br>
     ${v.CHILOMETRI || ""}
-  `;
+  `);
 
-  // LISTE
-  document.getElementById("problemiBox").innerHTML =
-    formatLista(v.PROBLEMI);
-
-  document.getElementById("lavoriBox").innerHTML =
-    formatLista(v.LAVORI);
-
-  document.getElementById("prodottiBox").innerHTML =
-    formatLista(v.PRODOTTI);
-
-  document.getElementById("noteBox").innerHTML =
-    v.NOTE || "-";
-
-  document.getElementById("oreBox").innerHTML =
-    v.ORE_IMPIEGATE || "-";
+  set("problemiBox", formatLista(v.PROBLEMI));
+  set("lavoriBox", formatLista(v.LAVORI));
+  set("prodottiBox", formatLista(v.PRODOTTI));
+  set("noteBox", v.NOTE || "-");
+  set("oreBox", v.ORE_IMPIEGATE || "-");
 }
-
 function formatLista(testo){
   if(!testo) return "-";
   return testo.replace(/\n/g, "<br>");
@@ -2682,6 +2674,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
