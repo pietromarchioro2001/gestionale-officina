@@ -4,6 +4,8 @@ let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 let TEMP_ALTRI_DOCUMENTI = [];
 let VEICOLI_ALL = [];
+let cacheSchede = null;
+let cacheOrdini = null;
 
 function callBackend(action, args = []) {
 
@@ -1827,7 +1829,14 @@ function normalizzaDescrizioneOrdine(testo) {
   return testo;
 }
 
-function caricaSchede() {
+function caricaSchede(force = false) {
+
+  // ✅ Se ho cache e non forzo, uso quella
+  if (!force && cacheSchede) {
+    renderSchede(cacheSchede);
+    return;
+  }
+
   callBackend("listaSchede")
     .then(res => {
 
@@ -1836,6 +1845,8 @@ function caricaSchede() {
         : Array.isArray(res?.data)
         ? res.data
         : [];
+
+      cacheSchede = lista;   // 🔥 salvo in memoria
 
       renderSchede(lista);
     })
@@ -2372,6 +2383,8 @@ function preloadOrdini() {
         fornitori: bundle?.fornitori || []
       };
 
+      VEICOLI_ALL = CACHE_ORDINI.veicoli; // 🔥 AGGIUNGI QUESTO
+
       CACHE_TS = Date.now();
       console.log("Ordini preload completato");
     })
@@ -2715,52 +2728,5 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
