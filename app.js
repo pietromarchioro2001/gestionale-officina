@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxV73IiFdApk-mWGArdj_NilTA2aGv-yrH9U2PyVT8wfKsu1AsAaMwuNDWcTFb8UncO/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwANT_aUyKpnInNjYZPsD6wJIIUnb2yS5Qk2uwgOC-A0WM0cybUmrqjc94aZ6by-hLG/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1467,14 +1467,49 @@ async function gestisciRisposta(testo) {
     case "TARGA": {
 
       const targaNorm = normalizzaTarga(testo);
-      sessioneAssistente.dati.targa = targaNorm;
-
-      rispostaInElaborazione = false;
-
-      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 1200, () => {
-        prossimaDomanda();
-      });
-
+    
+      if (!targaNorm) {
+        rispostaInElaborazione = false;
+        messaggioBot("Non ho capito la targa. Ripeti.");
+        return;
+      }
+    
+      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 800);
+    
+      try {
+    
+        const res = await callBackend(
+          "completaSchedaDaTarga",
+          [sessioneAssistente.schedaId, targaNorm]
+        );
+    
+        if (!res || !res.ok) {
+          rispostaInElaborazione = false;
+          messaggioBot("Veicolo non trovato. Ripeti la targa.");
+          return;
+        }
+    
+        // 🔥 SALVO DATI NELLA SESSIONE
+        sessioneAssistente.dati.targa = targaNorm;
+        sessioneAssistente.dati.nomeCliente = res.nomeCliente || "";
+        sessioneAssistente.dati.veicolo = res.veicolo || "";
+    
+        rispostaInElaborazione = false;
+    
+        rispostaConPausa(
+          `Cliente trovato: ${res.nomeCliente}`,
+          1200,
+          () => prossimaDomanda()
+        );
+    
+      } catch (err) {
+    
+        console.error(err);
+        rispostaInElaborazione = false;
+        messaggioBot("Errore ricerca veicolo.");
+    
+      }
+    
       return;
     }
 
@@ -2705,6 +2740,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
