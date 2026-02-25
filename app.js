@@ -1287,9 +1287,13 @@ function renderStatoScheda(info){
   set("noteBox", v.NOTE || "-");
   set("oreBox", v.ORE_IMPIEGATE || "-");
 }
-function formatLista(testo){
-  if(!testo) return "-";
-  return testo.replace(/\n/g, "<br>");
+function formatListaInline(testo){
+  if (!testo) return "-";
+  return testo
+    .split("\n")
+    .map(v => v.trim())
+    .filter(v => v !== "")
+    .join(", ");
 }
 
 function initVoce() {
@@ -2685,6 +2689,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
