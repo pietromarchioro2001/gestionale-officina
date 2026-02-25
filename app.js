@@ -1450,11 +1450,35 @@ async function gestisciRisposta(testo) {
 
       const targaNorm = normalizzaTarga(testo);
       sessioneAssistente.dati.targa = targaNorm;
-
+    
       messaggioBot(`Targa rilevata: ${targaNorm}`);
-
-      rispostaInElaborazione = false;
-      setTimeout(prossimaDomanda, 400);
+    
+      try {
+    
+        const res = await callBackend(
+          "completaSchedaDaTarga",
+          [sessioneAssistente.schedaId, targaNorm]
+        );
+    
+        if (!res || !res.ok) {
+          messaggioBot("Veicolo non trovato. Ripeti la targa.");
+          rispostaInElaborazione = false;
+          return;
+        }
+    
+        messaggioBot(`Cliente: ${res.nomeCliente}`);
+    
+        rispostaInElaborazione = false;
+    
+        setTimeout(() => {
+          prossimaDomanda();
+        }, 900);
+    
+      } catch (err) {
+        messaggioBot("Errore ricerca veicolo.");
+        rispostaInElaborazione = false;
+      }
+    
       return;
     }
 
@@ -2658,6 +2682,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
