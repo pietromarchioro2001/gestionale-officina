@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
-  caricaSchede();
+  preloadSchede();
   preloadOrdini();
   
   });
@@ -906,6 +906,29 @@ function faiDomanda(testo) {
   };
 
   speechSynthesis.speak(utter);
+}
+
+function preloadSchede() {
+
+  if (cacheSchede && cacheSchede.length) return;
+
+  console.log("Preload schede...");
+
+  callBackend("listaSchede")
+    .then(res => {
+
+      const lista = Array.isArray(res)
+        ? res
+        : res?.data || [];
+
+      cacheSchede = lista;
+
+      console.log("Preload schede completato");
+
+    })
+    .catch(err => {
+      console.warn("Preload schede fallito", err);
+    });
 }
 
 function messaggioUtente(testo) {
@@ -1825,19 +1848,19 @@ function normalizzaDescrizioneOrdine(testo) {
 
 function caricaSchede(force = false) {
 
-  if (!force && cacheSchede && cacheSchede.length) {
+  if (!force && cacheSchede) {
     renderSchede(cacheSchede);
     return;
   }
+
+  console.log("Caricamento schede da backend...");
 
   callBackend("listaSchede")
     .then(res => {
 
       const lista = Array.isArray(res)
         ? res
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
+        : res?.data || [];
 
       cacheSchede = lista;
 
@@ -2740,6 +2763,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
