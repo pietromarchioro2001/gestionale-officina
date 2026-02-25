@@ -2652,7 +2652,7 @@ button.riprendi:hover {
 }
 
 /* ===============================
-   HOME PROFESSIONALE DEFINITIVA
+   HOME STILE GESTIONALE SERIO
    =============================== */
 
 #home {
@@ -2665,53 +2665,47 @@ button.riprendi:hover {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-}
-
-/* OGGI */
-
-.home-today-box {
-  background: transparent;
+  gap: 25px;
 }
 
 .home-today-box h3 {
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
 }
 
-/* GRID MODULI */
+/* GRID */
 
 .home-modules {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 30px;
+  gap: 25px;
 }
 
 /* MODULO */
 
 .home-module {
   background: #ffffff;
-  border-radius: 22px;
-  padding: 30px;
+  border-radius: 14px;
+  padding: 26px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  box-shadow: 0 10px 28px rgba(0,0,0,.08);
-  transition: 0.2s ease;
+  border: 1px solid #e4e4e4;
 }
 
-.home-module:hover {
-  transform: translateY(-4px);
-}
-
-/* HEADER */
+/* TITOLO */
 
 .home-module h3 {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #444;
+  letter-spacing: 0.5px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
 /* AZIONI */
@@ -2719,60 +2713,62 @@ button.riprendi:hover {
 .module-actions {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
+  justify-content: center;
 }
 
-/* PULSANTI GRANDI */
+/* PULSANTI */
 
 .home-module button {
-  height: 70px;
-  border-radius: 18px;
+  height: 56px;
+  border-radius: 10px;
   border: none;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: 0.15s ease;
 }
 
-/* STILE PRIMARIO */
+/* PRIMARIO SOBRIO */
 
 .home-module button:not(.secondary) {
-  background: #f5c400;
-  color: #000;
-}
-
-.home-module button:not(.secondary):hover {
-  background: #e2b300;
-}
-
-/* STILE SECONDARIO */
-
-.home-module button.secondary {
-  background: #2c2c2c;
+  background: #1e1e1e;
   color: #fff;
 }
 
-.home-module button.secondary:hover {
+.home-module button:not(.secondary):hover {
   background: #000;
 }
 
-/* COLORI LATERALI IDENTITÀ */
+/* SECONDARIO LIGHT */
+
+.home-module button.secondary {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.home-module button.secondary:hover {
+  background: #e4e4e4;
+}
+
+/* ACCENTI MOLTO DISCRETI */
 
 .home-module.ordini {
-  border-left: 8px solid #FFD400;
+  border-left: 4px solid #f5c400;
 }
 
 .home-module.clienti {
-  border-left: 8px solid #E53935;
+  border-left: 4px solid #E53935;
 }
 
 .home-module.schede {
-  border-left: 8px solid #2ecc71;
+  border-left: 4px solid #2ecc71;
 }
 
 .home-module.fatture {
-  border-left: 8px solid #999;
+  border-left: 4px solid #9e9e9e;
 }
+
 
 
 
