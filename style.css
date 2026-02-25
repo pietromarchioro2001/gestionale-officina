@@ -2652,142 +2652,72 @@ button.riprendi:hover {
 }
 
 /* ===============================
-   HOME DESKTOP DEFINITIVA CLEAN
+   ICON ACTION STYLE DESKTOP
    =============================== */
 
-#home {
-  height: calc(100vh - 95px);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-/* TITOLO PRINCIPALE PIÙ ALTO */
-.home-main-title {
-  margin-top: 10px;
-  margin-bottom: 20px;
-  font-size: 34px;
-}
-
-/* LAYOUT */
-.home-layout {
+.module-icons {
   flex: 1;
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
 }
 
-/* ===============================
-   OGGI SENZA RIQUADRO
-   =============================== */
-
-.home-appointments-clean h3 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 8px;
+.module-icons.one {
+  justify-content: center;
 }
 
-.appointments-list {
-  height: 200px;   /* più spazio appuntamenti */
-  overflow-y: auto;
-  padding-right: 8px;
-}
-
-.appointments-list::-webkit-scrollbar {
-  width: 6px;
-}
-
-.appointments-list::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 6px;
-}
-
-/* ===============================
-   MODULI OPERATIVI
-   =============================== */
-
-.home-modules {
-  flex: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 20px;
-}
-
-/* MODULO */
-
-.home-module {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  padding: 18px 22px;
+.icon-action {
+  width: 130px;
+  height: 130px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* niente spazio morto */
-}
-
-/* TITOLI PIÙ GRANDI E MAIUSCOLI */
-
-.home-module h3 {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 15px;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 6px;
-}
-
-/* AZIONI VICINE AL TITOLO */
-
-.module-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 10px;
-}
-
-/* PULSANTI PIÙ COMPATTI MA CLICCABILI */
-
-.home-module button {
-  height: 64px;
-  border-radius: 14px;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: 0.15s ease;
+  transition: 0.2s ease;
 }
 
-/* PRIMARIO */
-
-.home-module button:not(.secondary) {
-  background: #1e1e1e;
-  color: #fff;
+.icon-action svg {
+  width: 40px;
+  height: 40px;
+  stroke: #1e1e1e;
+  stroke-width: 2;
+  fill: none;
+  margin-bottom: 14px;
 }
 
-.home-module button:not(.secondary):hover {
-  background: #000;
+.icon-action span {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
 }
 
-/* SECONDARIO */
+/* hover professionale */
 
-.home-module button.secondary {
-  background: #f0f0f0;
-  color: #333;
+.icon-action:hover {
+  background: #f4f4f4;
+  transform: translateY(-4px);
 }
 
-.home-module button.secondary:hover {
-  background: #e4e4e4;
+/* accenti colore leggeri */
+
+.home-module.ordini .icon-action:hover {
+  border: 1px solid #f5c400;
 }
 
-/* ACCENTI DISCRETI */
+.home-module.clienti .icon-action:hover {
+  border: 1px solid #E53935;
+}
 
-.home-module.ordini { border-left: 4px solid #f5c400; }
-.home-module.clienti { border-left: 4px solid #E53935; }
-.home-module.schede { border-left: 4px solid #2ecc71; }
-.home-module.fatture { border-left: 4px solid #9e9e9e; }
+.home-module.schede .icon-action:hover {
+  border: 1px solid #2ecc71;
+}
+
+.home-module.fatture .icon-action:hover {
+  border: 1px solid #9e9e9e;
+}
 
 
 
