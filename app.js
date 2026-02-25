@@ -1569,7 +1569,17 @@ async function gestisciRisposta(testo) {
 
       try { recognition?.stop(); } catch (e) {}
     
-      const chiudere = !(testo === "NO" || testo === "ANNULLA");
+      const risposta = testo.toUpperCase().trim();
+    
+      const vuoleChiudere =
+        risposta.includes("CHIUDI") ||
+        risposta === "SI" ||
+        risposta === "SÌ";
+    
+      const vuoleLasciareAperta =
+        risposta.includes("NO") ||
+        risposta.includes("LASCIA") ||
+        risposta.includes("APERTA");
     
       rispostaInElaborazione = false;
     
@@ -1577,25 +1587,25 @@ async function gestisciRisposta(testo) {
     
       try {
     
-        // 🔥 1️⃣ Salva TUTTI i dati raccolti
         await callBackend(
           "salvaSchedaCompleta",
           [sessioneAssistente.schedaId, sessioneAssistente.dati]
         );
     
-        // 🔥 2️⃣ Se deve chiudere, chiudi
-        if (chiudere) {
+        if (vuoleChiudere) {
+    
           await callBackend(
             "chiudiScheda",
             [sessioneAssistente.schedaId]
           );
-        }
     
-        messaggioBot(
-          chiudere
-            ? "Scheda chiusa correttamente."
-            : "Scheda salvata come parziale."
-        );
+          messaggioBot("Scheda chiusa correttamente.");
+    
+        } else {
+    
+          messaggioBot("Scheda salvata come parziale.");
+    
+        }
     
         setTimeout(() => {
           resetModalitaAssistente();
@@ -2649,6 +2659,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
