@@ -1450,35 +1450,11 @@ async function gestisciRisposta(testo) {
 
       const targaNorm = normalizzaTarga(testo);
       sessioneAssistente.dati.targa = targaNorm;
-    
+
       messaggioBot(`Targa rilevata: ${targaNorm}`);
-    
-      try {
-    
-        const res = await callBackend(
-          "completaSchedaDaTarga",
-          [sessioneAssistente.schedaId, targaNorm]
-        );
-    
-        if (!res || !res.ok) {
-          messaggioBot("Veicolo non trovato. Ripeti la targa.");
-          rispostaInElaborazione = false;
-          return;
-        }
-    
-        messaggioBot(`Cliente: ${res.nomeCliente}`);
-    
-        rispostaInElaborazione = false;
-    
-        setTimeout(() => {
-          prossimaDomanda();
-        }, 900);
-    
-      } catch (err) {
-        messaggioBot("Errore ricerca veicolo.");
-        rispostaInElaborazione = false;
-      }
-    
+
+      rispostaInElaborazione = false;
+      setTimeout(prossimaDomanda, 400);
       return;
     }
 
@@ -1592,57 +1568,48 @@ async function gestisciRisposta(testo) {
     case "CHIUSURA": {
 
       try { recognition?.stop(); } catch (e) {}
-
-      const chiudere =
-        !(testo === "NO" ||
-          testo === "ANNULLA" ||
-          testo === "LASCIA APERTA");
-
+    
+      const chiudere = !(testo === "NO" || testo === "ANNULLA");
+    
       rispostaInElaborazione = false;
-
-      if (!chiudere) {
-
-        messaggioBot("Scheda lasciata aperta.");
-
-        setTimeout(() => {
-          resetModalitaAssistente();
-          showSection("schede");
-          caricaSchede(true);
-        }, 1000);
-
-        return;
-      }
-
+    
       messaggioBot("Salvataggio in corso...");
-
+    
       try {
-
-        await callBackend("salvaSchedaCompleta", [
-          sessioneAssistente.schedaId,
-          sessioneAssistente.dati
-        ]);
-
-        messaggioBot("Documento creato correttamente.");
-
-        setTimeout(() => {
-          resetModalitaAssistente();
-          showSection("schede");
-          caricaSchede(true);
-        }, 1000);
-
-      } catch (err) {
-
-        console.error(err);
-
-        messaggioBot("Errore durante il salvataggio. La scheda resta aperta.");
-
+    
+        // 🔥 1️⃣ Salva TUTTI i dati raccolti
+        await callBackend(
+          "salvaSchedaCompleta",
+          [sessioneAssistente.schedaId, sessioneAssistente.dati]
+        );
+    
+        // 🔥 2️⃣ Se deve chiudere, chiudi
+        if (chiudere) {
+          await callBackend(
+            "chiudiScheda",
+            [sessioneAssistente.schedaId]
+          );
+        }
+    
+        messaggioBot(
+          chiudere
+            ? "Scheda chiusa correttamente."
+            : "Scheda salvata come parziale."
+        );
+    
         setTimeout(() => {
           resetModalitaAssistente();
           showSection("schede");
           caricaSchede(true);
         }, 1200);
+    
+      } catch (err) {
+    
+        console.error(err);
+        messaggioBot("Errore durante il salvataggio.");
+    
       }
-
+    
       return;
     }
   }
