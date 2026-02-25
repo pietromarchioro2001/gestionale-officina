@@ -1269,13 +1269,18 @@ function renderStatoScheda(info){
   };
 
   const inline = (text) => {
-    if (!text) return "-";
-    return String(text)
-      .split("\n")
-      .map(s => s.trim())
-      .filter(Boolean)
-      .join(", ");
-  };
+      if (!text) return "-";
+    
+      return String(text)
+        .split("\n")
+        .map(s => s
+          .replace(/^•\s*/g, "")   // rimuove pallino iniziale
+          .replace(/^-+\s*/g, "")  // rimuove eventuali trattini
+          .trim()
+        )
+        .filter(Boolean)
+        .join(", ");
+    };
 
   // ----- CLIENTE (tabellato verticale) -----
   const clienteHTML = `
@@ -2710,6 +2715,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
