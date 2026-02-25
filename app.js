@@ -1145,6 +1145,16 @@ function apriAssistente() {
   callBackend("creaNuovaScheda")
     .then(res => {
 
+      if (!cacheSchede) cacheSchede = [];
+
+      cacheSchede.push({
+        id: res.docId,
+        numero: res.numeroScheda,
+        cliente: "",
+        data: new Date().toISOString(),
+        stato: "PARZIALE"
+      });
+
       if (!res || !res.docId) {
         messaggioBot("Errore creazione scheda.");
         input.disabled = false;
@@ -1667,41 +1677,52 @@ async function gestisciRisposta(testo) {
  * CHIUSURA
  * ====================== */
   case "CHIUSURA": {
-  
-    try { recognition?.stop(); } catch (e) {}
-  
-    const chiudere =
-      !(testo === "NO" ||
-        testo === "ANNULLA" ||
-        testo === "LASCIA APERTA");
-  
-    // 🔥 aggiorna cache subito
-    if (cacheSchede) {
-      const scheda = cacheSchede.find(
-        s => s.id === sessioneAssistente.schedaId
+
+      try { recognition?.stop(); } catch (e) {}
+    
+      const chiudere =
+        !(testo === "NO" ||
+          testo === "ANNULLA" ||
+          testo === "LASCIA APERTA");
+    
+      // 🔥 Messaggio finale
+      messaggioBot(
+        chiudere
+          ? "Scheda chiusa correttamente."
+          : "Scheda lasciata aperta."
       );
-      if (scheda) {
-        scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
+    
+      rispostaInElaborazione = false;
+    
+      // 🔥 Aggiorna cache subito
+      if (cacheSchede) {
+        const scheda = cacheSchede.find(
+          s => s.id === sessioneAssistente.schedaId
+        );
+        if (scheda) {
+          scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
+        }
       }
+    
+      // 🔥 Backend in background (solo se chiudo)
+      if (chiudere) {
+        callBackend("chiudiScheda", [sessioneAssistente.schedaId])
+          .catch(err => {
+            console.error("Errore chiusura backend:", err);
+          });
+      }
+    
+      // 🔥 Attendi 900ms per far leggere il messaggio
+      setTimeout(() => {
+    
+        resetModalitaAssistente();
+        showSection("schede");
+        renderSchede(cacheSchede);
+    
+      }, 900);
+    
+      return;
     }
-  
-    // 🔥 chiudi assistente subito
-    resetModalitaAssistente();
-    showSection("schede");
-    renderSchede(cacheSchede);
-  
-    rispostaInElaborazione = false;
-  
-    // 🔥 backend in background
-    if (chiudere) {
-      callBackend("chiudiScheda", [sessioneAssistente.schedaId])
-        .catch(err => {
-          console.error("Errore chiusura backend:", err);
-        });
-    }
-  
-    return;
-  }
  }
 } 
       
@@ -1824,8 +1845,7 @@ function normalizzaDescrizioneOrdine(testo) {
 
 function caricaSchede(force = false) {
 
-  // ✅ Se ho cache e non forzo, uso quella
-  if (!force && cacheSchede) {
+  if (!force && cacheSchede && cacheSchede.length) {
     renderSchede(cacheSchede);
     return;
   }
@@ -1839,7 +1859,7 @@ function caricaSchede(force = false) {
         ? res.data
         : [];
 
-      cacheSchede = lista;   // 🔥 salvo in memoria
+      cacheSchede = lista;
 
       renderSchede(lista);
     })
@@ -2740,6 +2760,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
