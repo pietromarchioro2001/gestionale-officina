@@ -63,41 +63,84 @@
     <div class="home-modules">
 
       <section class="home-module ordini">
-        <h3>Ordini</h3>
-        <div class="module-actions">
-          <button onclick="homeNuovoOrdine()">➕ Nuovo ordine</button>
-          <button class="secondary" onclick="avviaOrdineVocale()">🎤 Ordine vocale</button>
+        <h3>ORDINI</h3>
+      
+        <div class="module-icons two">
+          <div class="icon-action" onclick="homeNuovoOrdine()">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 21l3-3 12-12 3 3-12 12-6 0z"/>
+            </svg>
+            <span>MANUALE</span>
+          </div>
+      
+          <div class="icon-action" onclick="avviaOrdineVocale()">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"/>
+              <path d="M19 11a7 7 0 01-14 0"/>
+            </svg>
+            <span>VOCALE</span>
+          </div>
         </div>
       </section>
 
       <section class="home-module clienti">
-        <h3>Clienti</h3>
-        <div class="module-actions">
-          <button onclick="homeCaricaLibrettoGallery()">📁 Carica libretto</button>
-          <button class="secondary" onclick="homeCaricaLibrettoCamera()">📷 Fotocamera</button>
+        <h3>CLIENTI</h3>
+      
+        <div class="module-icons two">
+          <div class="icon-action" onclick="homeCaricaLibrettoGallery()">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 16V4"/>
+              <path d="M8 8l4-4 4 4"/>
+              <path d="M4 20h16"/>
+            </svg>
+            <span>UPLOAD</span>
+          </div>
+      
+          <div class="icon-action" onclick="homeCaricaLibrettoCamera()">
+            <svg viewBox="0 0 24 24">
+              <path d="M4 7h3l2-2h6l2 2h3v12H4z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>FOTOCAMERA</span>
+          </div>
         </div>
       </section>
 
       <section class="home-module schede">
-        <h3>Schede</h3>
-        <div class="module-actions">
-          <button onclick="apriAssistente()">🛠 Nuova scheda</button>
+        <h3>SCHEDE</h3>
+      
+        <div class="module-icons two">
+          <div class="icon-action" onclick="apriAssistente()">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2h9l5 5v15H6z"/>
+            </svg>
+            <span>CREA</span>
+          </div>
+      
+          <div class="icon-action"
+            onclick="window.open('https://drive.google.com/drive/folders/1qFPSHURqe_vAXuJ2A6_Ta2eLloLWRkod','_blank')">
+            <svg viewBox="0 0 24 24">
+              <path d="M3 17l6-10h6l6 10H3z"/>
+            </svg>
+            <span>LISTA</span>
+          </div>
         </div>
       </section>
 
       <section class="home-module fatture">
-        <h3>Fatture</h3>
-        <div class="module-actions">
-          <button onclick="window.open('https://metropolis.seac.it/login','_blank')">
-            📑 Portale fatture
-          </button>
+        <h3>FATTURE</h3>
+      
+        <div class="module-icons one">
+          <div class="icon-action"
+            onclick="window.open('https://metropolis.seac.it/login','_blank')">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 1v22"/>
+              <path d="M17 5H9a4 4 0 000 8h6a4 4 0 010 8H7"/>
+            </svg>
+            <span>PORTALE</span>
+          </div>
         </div>
       </section>
-
-    </div>
-
-  </div>
-</section>
 
   <!-- APPUNTAMENTI -->
   <section id="appuntamenti" class="page">
@@ -413,6 +456,7 @@
 
 </body>
 </html>
+
 
 
 
