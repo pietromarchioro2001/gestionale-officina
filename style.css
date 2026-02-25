@@ -2652,40 +2652,71 @@ button.riprendi:hover {
 }
 
 /* ===============================
-   ICON ACTION STYLE DESKTOP
+   HOME 2x2 GRID DEFINITIVA
    =============================== */
+
+.home-modules {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 25px;
+}
+
+/* CARD SEZIONE */
+
+.home-module {
+  border: 1.5px solid #1e1e1e;   /* cornice nera sottile */
+  border-radius: 8px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+}
+
+/* TITOLO IN ALTO */
+
+.home-module h3 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 15px;
+}
+
+/* AREA CENTRALE */
 
 .module-icons {
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;
+  gap: 60px;
 }
 
-.module-icons.one {
-  justify-content: center;
-}
+/* ICONA */
 
 .icon-action {
-  width: 130px;
-  height: 130px;
-  border-radius: 18px;
+  width: 120px;
+  height: 120px;
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: 0.2s ease;
+  transition: 0.18s ease;
 }
 
+/* SVG */
+
 .icon-action svg {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   stroke: #1e1e1e;
   stroke-width: 2;
   fill: none;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .icon-action span {
@@ -2694,29 +2725,11 @@ button.riprendi:hover {
   letter-spacing: 1px;
 }
 
-/* hover professionale */
+/* HOVER PROFESSIONALE */
 
 .icon-action:hover {
   background: #f4f4f4;
-  transform: translateY(-4px);
-}
-
-/* accenti colore leggeri */
-
-.home-module.ordini .icon-action:hover {
-  border: 1px solid #f5c400;
-}
-
-.home-module.clienti .icon-action:hover {
-  border: 1px solid #E53935;
-}
-
-.home-module.schede .icon-action:hover {
-  border: 1px solid #2ecc71;
-}
-
-.home-module.fatture .icon-action:hover {
-  border: 1px solid #9e9e9e;
+  transform: translateY(-3px);
 }
 
 
