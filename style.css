@@ -553,10 +553,10 @@ div[aria-label*="Apps Script"] {
 
 .scheda-title {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   text-transform: uppercase;
-  margin-bottom: 6px;
-  color: #2e7d32;
+  margin-bottom: 8px;
+  color: #000; /* nero */
 }
 
 .scheda-lista div {
@@ -2650,6 +2650,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
