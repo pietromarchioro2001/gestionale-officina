@@ -1664,44 +1664,45 @@ async function gestisciRisposta(testo) {
     }
 
     /* ======================
-     * CHIUSURA
-     * ====================== */
-    case "CHIUSURA": {
-
-  try { recognition?.stop(); } catch (e) {}
-
-  const chiudere =
-    !(testo === "NO" ||
-      testo === "ANNULLA" ||
-      testo === "LASCIA APERTA");
-
-  // 🔥 1️⃣ Aggiorna cache subito
-  if (cacheSchede) {
-    const scheda = cacheSchede.find(
-      s => s.id === sessioneAssistente.schedaId
-    );
-    if (scheda) {
-      scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
+ * CHIUSURA
+ * ====================== */
+  case "CHIUSURA": {
+  
+    try { recognition?.stop(); } catch (e) {}
+  
+    const chiudere =
+      !(testo === "NO" ||
+        testo === "ANNULLA" ||
+        testo === "LASCIA APERTA");
+  
+    // 🔥 aggiorna cache subito
+    if (cacheSchede) {
+      const scheda = cacheSchede.find(
+        s => s.id === sessioneAssistente.schedaId
+      );
+      if (scheda) {
+        scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
+      }
     }
+  
+    // 🔥 chiudi assistente subito
+    resetModalitaAssistente();
+    showSection("schede");
+    renderSchede(cacheSchede);
+  
+    rispostaInElaborazione = false;
+  
+    // 🔥 backend in background
+    if (chiudere) {
+      callBackend("chiudiScheda", [sessioneAssistente.schedaId])
+        .catch(err => {
+          console.error("Errore chiusura backend:", err);
+        });
+    }
+  
+    return;
   }
-
-  // 🔥 2️⃣ Chiudi assistente IMMEDIATAMENTE
-  resetModalitaAssistente();
-  showSection("schede");
-  renderSchede(cacheSchede);
-
-  rispostaInElaborazione = false;
-
-  // 🔥 3️⃣ Backend in background (solo se chiudo)
-  if (chiudere) {
-    callBackend("chiudiScheda", [sessioneAssistente.schedaId])
-      .catch(err => {
-        console.error("Errore chiusura backend:", err);
-      });
-  }
-
-  return;
-}
+ }    
       
 function ascoltaSubito() {
   if (modalitaAssistente !== "vocale") return;
@@ -2738,6 +2739,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
