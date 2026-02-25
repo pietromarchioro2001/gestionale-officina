@@ -1678,51 +1678,70 @@ async function gestisciRisposta(testo) {
  * ====================== */
   case "CHIUSURA": {
 
-      try { recognition?.stop(); } catch (e) {}
-    
-      const chiudere =
-        !(testo === "NO" ||
-          testo === "ANNULLA" ||
-          testo === "LASCIA APERTA");
-    
-      // 🔥 Messaggio finale
-      messaggioBot(
-        chiudere
-          ? "Scheda chiusa correttamente."
-          : "Scheda lasciata aperta."
-      );
-    
-      rispostaInElaborazione = false;
-    
-      // 🔥 Aggiorna cache subito
-      if (cacheSchede) {
-        const scheda = cacheSchede.find(
-          s => s.id === sessioneAssistente.schedaId
-        );
-        if (scheda) {
-          scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
-        }
+  try { recognition?.stop(); } catch (e) {}
+
+  const chiudere =
+    !(testo === "NO" ||
+      testo === "ANNULLA" ||
+      testo === "LASCIA APERTA");
+
+  rispostaInElaborazione = false;
+
+  if (!chiudere) {
+
+    messaggioBot("Scheda lasciata aperta.");
+
+    setTimeout(() => {
+      resetModalitaAssistente();
+      showSection("schede");
+    }, 800);
+
+    return;
+  }
+
+  // ✅ Mostra messaggio
+  messaggioBot("Sto chiudendo la scheda...");
+
+  // 🔥 Blocca temporaneamente riapertura
+  const scheda = cacheSchede?.find(
+    s => s.id === sessioneAssistente.schedaId
+  );
+
+  if (scheda) {
+    scheda.stato = "CHIUSURA";
+  }
+
+  renderSchede(cacheSchede);
+
+  // 🔥 Aspetta davvero il backend
+  callBackend("chiudiScheda", [sessioneAssistente.schedaId])
+    .then(() => {
+
+      if (scheda) {
+        scheda.stato = "CHIUSA";
       }
-    
-      // 🔥 Backend in background (solo se chiudo)
-      if (chiudere) {
-        callBackend("chiudiScheda", [sessioneAssistente.schedaId])
-          .catch(err => {
-            console.error("Errore chiusura backend:", err);
-          });
+
+      renderSchede(cacheSchede);
+
+      resetModalitaAssistente();
+      showSection("schede");
+
+    })
+    .catch(err => {
+      console.error(err);
+
+      if (scheda) {
+        scheda.stato = "PARZIALE";
       }
-    
-      // 🔥 Attendi 900ms per far leggere il messaggio
-      setTimeout(() => {
-    
-        resetModalitaAssistente();
-        showSection("schede");
-        renderSchede(cacheSchede);
-    
-      }, 900);
-    
-      return;
-    }
+
+      renderSchede(cacheSchede);
+
+      resetModalitaAssistente();
+      showSection("schede");
+    });
+
+  return;
+}
  }
 } 
       
@@ -2760,6 +2779,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
