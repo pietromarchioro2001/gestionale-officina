@@ -1702,7 +1702,8 @@ async function gestisciRisposta(testo) {
   
     return;
   }
- }    
+ }
+} 
       
 function ascoltaSubito() {
   if (modalitaAssistente !== "vocale") return;
@@ -2739,6 +2740,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
