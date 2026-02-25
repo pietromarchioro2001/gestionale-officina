@@ -536,14 +536,32 @@ div[aria-label*="Apps Script"] {
 }
 
 .stato-scheda {
-  background: #f7f7f7;
-  border: 1px solid #ddd;
-  border-radius: 14px;
-  padding: 18px;
-  margin: 12px 16px;
-  font-size: 13px;
+  background: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 16px;
+  font-size: 14px;
 }
 
+.scheda-top {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 20px;
+}
+
+.scheda-title {
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  color: #2e7d32;
+}
+
+.scheda-lista div {
+  margin-bottom: 8px;
+}
 .scheda-grid-top {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2632,6 +2650,7 @@ button.riprendi:hover {
 .doc-icon:hover svg {
   stroke: #000;
 }
+
 
 
 
