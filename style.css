@@ -2652,13 +2652,14 @@ button.riprendi:hover {
 }
 
 /* ===============================
-   HOME STILE GESTIONALE SERIO
+   HOME DESKTOP STRUTTURA FISSA
    =============================== */
 
 #home {
   height: calc(100vh - 95px);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .home-layout {
@@ -2666,15 +2667,46 @@ button.riprendi:hover {
   display: flex;
   flex-direction: column;
   gap: 25px;
+  overflow: hidden;
 }
 
-.home-today-box h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-  font-weight: 600;
+/* ===============================
+   BOX APPUNTAMENTI FISSO
+   =============================== */
+
+.home-appointments {
+  height: 240px; /* spazio per ~10 appuntamenti */
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e5e5e5;
+  display: flex;
+  flex-direction: column;
 }
 
-/* GRID */
+.appointments-header {
+  padding: 12px 18px;
+  border-bottom: 1px solid #eee;
+}
+
+.appointments-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 18px;
+}
+
+/* scrollbar elegante */
+.appointments-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.appointments-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
+}
+
+/* ===============================
+   MODULI OPERATIVI
+   =============================== */
 
 .home-modules {
   flex: 1;
@@ -2682,6 +2714,7 @@ button.riprendi:hover {
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 25px;
+  overflow: hidden;
 }
 
 /* MODULO */
@@ -2689,48 +2722,44 @@ button.riprendi:hover {
 .home-module {
   background: #ffffff;
   border-radius: 14px;
-  padding: 26px;
+  border: 1px solid #e5e5e5;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid #e4e4e4;
 }
-
-/* TITOLO */
 
 .home-module h3 {
   font-size: 15px;
   font-weight: 600;
-  color: #444;
-  letter-spacing: 0.5px;
-  margin-bottom: 18px;
-  border-bottom: 1px solid #eee;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #f0f0f0;
   padding-bottom: 8px;
 }
 
-/* AZIONI */
+/* ===============================
+   PULSANTI PIÙ CLICCABILI
+   =============================== */
 
 .module-actions {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 15px;
   justify-content: center;
 }
 
-/* PULSANTI */
-
+/* più quadrati */
 .home-module button {
-  height: 56px;
-  border-radius: 10px;
-  border: none;
-  font-size: 15px;
+  height: 68px;
+  border-radius: 16px; /* più “blocco” */
+  font-size: 16px;
   font-weight: 600;
+  border: none;
   cursor: pointer;
   transition: 0.15s ease;
 }
 
-/* PRIMARIO SOBRIO */
-
+/* primario */
 .home-module button:not(.secondary) {
   background: #1e1e1e;
   color: #fff;
@@ -2740,8 +2769,7 @@ button.riprendi:hover {
   background: #000;
 }
 
-/* SECONDARIO LIGHT */
-
+/* secondario */
 .home-module button.secondary {
   background: #f0f0f0;
   color: #333;
@@ -2751,23 +2779,12 @@ button.riprendi:hover {
   background: #e4e4e4;
 }
 
-/* ACCENTI MOLTO DISCRETI */
+/* accenti sobri */
+.home-module.ordini { border-left: 4px solid #f5c400; }
+.home-module.clienti { border-left: 4px solid #E53935; }
+.home-module.schede { border-left: 4px solid #2ecc71; }
+.home-module.fatture { border-left: 4px solid #9e9e9e; }
 
-.home-module.ordini {
-  border-left: 4px solid #f5c400;
-}
-
-.home-module.clienti {
-  border-left: 4px solid #E53935;
-}
-
-.home-module.schede {
-  border-left: 4px solid #2ecc71;
-}
-
-.home-module.fatture {
-  border-left: 4px solid #9e9e9e;
-}
 
 
 
