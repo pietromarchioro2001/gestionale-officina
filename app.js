@@ -1696,9 +1696,19 @@ async function gestisciRisposta(testo) {
           return;
         }
 
+        // 🔥 aggiorna cache subito
+        if (cacheSchede) {
+          const scheda = cacheSchede.find(s => s.id === sessioneAssistente.schedaId);
+          if (scheda) {
+            scheda.stato = "CHIUSA";
+          }
+        }
+        
         resetModalitaAssistente();
         esciAssistente();
-        await caricaSchede();
+        
+        // 🔥 aggiorna UI senza fetch
+        renderSchede(cacheSchede);
 
       } catch (err) {
 
@@ -2543,10 +2553,29 @@ function eliminaScheda(idScheda, status, linkDoc) {
 
   if (!conferma) return;
 
+  // 🔥 1️⃣ Rimuovo subito dalla cache
+  const backupCache = [...(cacheSchede || [])];
+
+  cacheSchede = (cacheSchede || [])
+    .filter(s => s.id !== idScheda);
+
+  // 🔥 2️⃣ Aggiorno subito la UI
+  renderSchede(cacheSchede);
+
+  // 🔥 3️⃣ Backend in background
   callBackend("eliminaScheda", [idScheda])
-    .then(() => caricaSchede())
+    .then(() => {
+      console.log("Scheda eliminata definitivamente");
+    })
     .catch(err => {
-      alert(err?.message || "Errore eliminazione scheda");
+
+      console.error("Errore eliminazione:", err);
+
+      // ❌ rollback in caso di errore
+      cacheSchede = backupCache;
+      renderSchede(cacheSchede);
+
+      alert("Errore eliminazione scheda");
     });
 }
 
@@ -2728,5 +2757,6 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
