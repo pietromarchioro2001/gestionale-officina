@@ -2651,39 +2651,83 @@ button.riprendi:hover {
   stroke: #000;
 }
 
+/* ===== HOME GRID PROFESSIONALE ===== */
 
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 24px;
+  height: calc(100vh - 320px); /* regola se serve */
+}
 
+/* MODULI */
 
+.home-module {
+  background: #fff;
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 6px 16px rgba(0,0,0,.08);
+}
 
+.module-header {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+  color: #444;
+}
 
+.module-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
 
+/* PULSANTI */
 
+.module-btn {
+  height: 58px;
+  border-radius: 14px;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f5c400;
+  color: #000;
+  transition: all 0.15s ease;
+}
 
+.module-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.15);
+}
 
+.module-btn.secondary {
+  background: #eaeaea;
+  color: #222;
+}
 
+/* COLORI IDENTITÀ */
 
+.home-module.ordini {
+  border-left: 6px solid #FFD400;
+}
 
+.home-module.clienti {
+  border-left: 6px solid #E53935;
+}
 
+.home-module.schede {
+  border-left: 6px solid #2ecc71;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.home-module.fatture {
+  border-left: 6px solid #999;
+}
 
 
 
