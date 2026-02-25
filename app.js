@@ -46,6 +46,20 @@ function callBackend(action, args = []) {
   });
 }
 
+function homeCaricaLibrettoGallery() {
+  showSection('clienti');
+  setTimeout(() => {
+    document.getElementById('librettoGallery').click();
+  }, 200);
+}
+
+function homeCaricaLibrettoCamera() {
+  showSection('clienti');
+  setTimeout(() => {
+    document.getElementById('librettoCamera').click();
+  }, 200);
+}
+
 function popolaFormOCR(dati = {}) {
 
   document.getElementById("nome").value = dati.nomeCliente || "";
@@ -2763,6 +2777,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
