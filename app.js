@@ -1421,26 +1421,44 @@ function isComandoFine(testo) {
   return comandi.some(cmd => t === cmd);
 }
 
+function rispostaConPausa(testo, pausa = 900, callback = null) {
+
+  if (modalitaAssistente === "vocale") {
+
+    parlaTesto(testo, () => {
+      setTimeout(() => {
+        if (callback) callback();
+      }, pausa);
+    });
+
+  } else {
+
+    messaggioBot(testo);
+
+    setTimeout(() => {
+      if (callback) callback();
+    }, pausa);
+
+  }
+}
+
 async function gestisciRisposta(testo) {
 
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
 
   testo = testo.toUpperCase().trim();
-  
-  // 🔥 COMANDO SALTO DIRETTO ALLA CHIUSURA
+
+  // 🔥 SALTO DIRETTO ALLA CHIUSURA
   if (isComandoFine(testo)) {
-  
-    messaggioBot("Ok, passo alla chiusura.");
-  
-    sessioneAssistente.step = "CHIUSURA";
-  
+
     rispostaInElaborazione = false;
-  
-    setTimeout(() => {
+
+    rispostaConPausa("Ok, passo alla chiusura.", 900, () => {
+      sessioneAssistente.step = "CHIUSURA";
       faiDomanda("Vuoi chiudere definitivamente la scheda?");
-    }, 700);
-  
+    });
+
     return;
   }
 
@@ -1451,10 +1469,12 @@ async function gestisciRisposta(testo) {
       const targaNorm = normalizzaTarga(testo);
       sessioneAssistente.dati.targa = targaNorm;
 
-      messaggioBot(`Targa rilevata: ${targaNorm}`);
-
       rispostaInElaborazione = false;
-      setTimeout(prossimaDomanda, 1200);
+
+      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 1000, () => {
+        prossimaDomanda();
+      });
+
       return;
     }
 
@@ -1463,70 +1483,103 @@ async function gestisciRisposta(testo) {
       const km = normalizzaChilometri(testo);
 
       if (!km) {
-        messaggioBot("Non ho capito i chilometri. Ripeti.");
         rispostaInElaborazione = false;
+        messaggioBot("Non ho capito i chilometri. Ripeti.");
         return;
       }
 
       sessioneAssistente.dati.chilometri = km + " km";
 
-      messaggioBot(`Chilometri registrati: ${km}`);
-
       rispostaInElaborazione = false;
-      setTimeout(() => {
+
+      rispostaConPausa(`Chilometri registrati: ${km}`, 1000, () => {
         prossimaDomanda();
-      }, 1200);
+      });
+
       return;
     }
 
     case "PROBLEMI": {
 
       if (isComandoUscita(testo)) {
+
+        sessioneAssistente.dati.problemi =
+          (sessioneAssistente.dati.problemi || []).join("\n");
+
         rispostaInElaborazione = false;
-        setTimeout(() => {
-        prossimaDomanda();
-      }, 1200);
+
+        rispostaConPausa("Perfetto.", 900, () => {
+          prossimaDomanda();
+        });
+
         return;
       }
 
+      sessioneAssistente.dati.problemi =
+        sessioneAssistente.dati.problemi || [];
+
       sessioneAssistente.dati.problemi.push(testo);
 
-      messaggioBot("Ok. Altro problema?");
       rispostaInElaborazione = false;
+
+      rispostaConPausa("Ok. Altro problema?", 900);
+
       return;
     }
 
     case "LAVORI": {
 
       if (isComandoUscita(testo)) {
+
+        sessioneAssistente.dati.lavori =
+          (sessioneAssistente.dati.lavori || []).join("\n");
+
         rispostaInElaborazione = false;
-        setTimeout(() => {
-        prossimaDomanda();
-      }, 1200);
+
+        rispostaConPausa("Perfetto.", 900, () => {
+          prossimaDomanda();
+        });
+
         return;
       }
 
+      sessioneAssistente.dati.lavori =
+        sessioneAssistente.dati.lavori || [];
+
       sessioneAssistente.dati.lavori.push(testo);
 
-      messaggioBot("Ok. Altro lavoro?");
       rispostaInElaborazione = false;
+
+      rispostaConPausa("Ok. Altro lavoro?", 900);
+
       return;
     }
 
     case "PRODOTTI": {
 
       if (isComandoUscita(testo)) {
+
+        sessioneAssistente.dati.prodotti =
+          (sessioneAssistente.dati.prodotti || []).join("\n");
+
         rispostaInElaborazione = false;
-        setTimeout(() => {
-        prossimaDomanda();
-      }, 1200);
+
+        rispostaConPausa("Perfetto.", 900, () => {
+          prossimaDomanda();
+        });
+
         return;
       }
 
+      sessioneAssistente.dati.prodotti =
+        sessioneAssistente.dati.prodotti || [];
+
       sessioneAssistente.dati.prodotti.push(testo);
 
-      messaggioBot("Ok. Altro prodotto?");
       rispostaInElaborazione = false;
+
+      rispostaConPausa("Ok. Altro prodotto?", 900);
+
       return;
     }
 
@@ -1535,19 +1588,19 @@ async function gestisciRisposta(testo) {
       const oreNum = normalizzaOre(testo);
 
       if (!oreNum) {
-        messaggioBot("Non ho capito le ore.");
         rispostaInElaborazione = false;
+        messaggioBot("Non ho capito le ore.");
         return;
       }
 
       sessioneAssistente.dati.ore = oreNum + " h";
 
-      messaggioBot(`Ore registrate: ${oreNum}`);
-
       rispostaInElaborazione = false;
-      setTimeout(() => {
+
+      rispostaConPausa(`Ore registrate: ${oreNum}`, 1000, () => {
         prossimaDomanda();
-      }, 1200);
+      });
+
       return;
     }
 
@@ -1555,71 +1608,73 @@ async function gestisciRisposta(testo) {
 
       if (!isComandoUscita(testo)) {
         sessioneAssistente.dati.note = testo;
-        messaggioBot("Nota salvata.");
       }
 
       rispostaInElaborazione = false;
-      setTimeout(() => {
+
+      rispostaConPausa("Perfetto.", 900, () => {
         prossimaDomanda();
-      }, 1200);
+      });
+
       return;
     }
 
     case "CHIUSURA": {
 
       try { recognition?.stop(); } catch (e) {}
-    
+
       const risposta = testo.toUpperCase().trim();
-    
-      const vuoleChiudere =
-        risposta.includes("CHIUDI") ||
-        risposta === "SI" ||
-        risposta === "SÌ";
-    
-      const vuoleLasciareAperta =
-        risposta.includes("NO") ||
+
+      const negativo =
+        risposta.startsWith("NO") ||
+        risposta.includes("NON") ||
         risposta.includes("LASCIA") ||
         risposta.includes("APERTA");
-    
+
+      const positivo =
+        risposta.startsWith("SI") ||
+        risposta === "SÌ" ||
+        risposta === "CHIUDI";
+
       rispostaInElaborazione = false;
-    
-      messaggioBot("Salvataggio in corso...");
-    
+
+      rispostaConPausa("Salvataggio in corso...", 800);
+
       try {
-    
+
         await callBackend(
           "salvaSchedaCompleta",
           [sessioneAssistente.schedaId, sessioneAssistente.dati]
         );
-    
-        if (vuoleChiudere) {
-    
+
+        if (positivo && !negativo) {
+
           await callBackend(
             "chiudiScheda",
             [sessioneAssistente.schedaId]
           );
-    
-          messaggioBot("Scheda chiusa correttamente.");
-    
+
+          rispostaConPausa("Scheda chiusa correttamente.", 1000);
+
         } else {
-    
-          messaggioBot("Scheda salvata come parziale.");
-    
+
+          rispostaConPausa("Scheda salvata come parziale.", 1000);
+
         }
-    
+
         setTimeout(() => {
           resetModalitaAssistente();
           showSection("schede");
           caricaSchede(true);
-        }, 1200);
-    
+        }, 1800);
+
       } catch (err) {
-    
+
         console.error(err);
         messaggioBot("Errore durante il salvataggio.");
-    
+
       }
-    
+
       return;
     }
   }
@@ -2659,6 +2714,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
