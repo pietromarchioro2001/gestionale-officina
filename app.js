@@ -1427,6 +1427,22 @@ async function gestisciRisposta(testo) {
   rispostaInElaborazione = true;
 
   testo = testo.toUpperCase().trim();
+  
+  // 🔥 COMANDO SALTO DIRETTO ALLA CHIUSURA
+  if (isComandoFine(testo)) {
+  
+    messaggioBot("Ok, passo alla chiusura.");
+  
+    sessioneAssistente.step = "CHIUSURA";
+  
+    rispostaInElaborazione = false;
+  
+    setTimeout(() => {
+      faiDomanda("Vuoi chiudere definitivamente la scheda?");
+    }, 700);
+  
+    return;
+  }
 
   switch (sessioneAssistente.step) {
 
@@ -1457,7 +1473,9 @@ async function gestisciRisposta(testo) {
       messaggioBot(`Chilometri registrati: ${km}`);
 
       rispostaInElaborazione = false;
-      prossimaDomanda();
+      setTimeout(() => {
+        prossimaDomanda();
+      }, 900);
       return;
     }
 
@@ -1465,7 +1483,9 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
+        setTimeout(() => {
         prossimaDomanda();
+      }, 900);
         return;
       }
 
@@ -1480,7 +1500,9 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
+        setTimeout(() => {
         prossimaDomanda();
+      }, 900);
         return;
       }
 
@@ -1495,7 +1517,9 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
         rispostaInElaborazione = false;
+        setTimeout(() => {
         prossimaDomanda();
+      }, 900);
         return;
       }
 
@@ -1521,7 +1545,9 @@ async function gestisciRisposta(testo) {
       messaggioBot(`Ore registrate: ${oreNum}`);
 
       rispostaInElaborazione = false;
-      prossimaDomanda();
+      setTimeout(() => {
+        prossimaDomanda();
+      }, 900);
       return;
     }
 
@@ -1533,7 +1559,9 @@ async function gestisciRisposta(testo) {
       }
 
       rispostaInElaborazione = false;
-      prossimaDomanda();
+      setTimeout(() => {
+        prossimaDomanda();
+      }, 900);
       return;
     }
 
@@ -1556,7 +1584,7 @@ async function gestisciRisposta(testo) {
           resetModalitaAssistente();
           showSection("schede");
           caricaSchede(true);
-        }, 800);
+        }, 1000);
 
         return;
       }
@@ -1576,7 +1604,7 @@ async function gestisciRisposta(testo) {
           resetModalitaAssistente();
           showSection("schede");
           caricaSchede(true);
-        }, 900);
+        }, 1000);
 
       } catch (err) {
 
@@ -2630,6 +2658,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
