@@ -1668,60 +1668,41 @@ async function gestisciRisposta(testo) {
      * ====================== */
     case "CHIUSURA": {
 
-      try { recognition?.stop(); } catch (e) {}
+  try { recognition?.stop(); } catch (e) {}
 
-      const chiudere =
-        !(testo === "NO" ||
-          testo === "ANNULLA" ||
-          testo === "LASCIA APERTA");
+  const chiudere =
+    !(testo === "NO" ||
+      testo === "ANNULLA" ||
+      testo === "LASCIA APERTA");
 
-      if (!chiudere) {
-        messaggioBot("Scheda lasciata aperta.");
-        rispostaInElaborazione = false;
-        return;
-      }
-
-      messaggioBot("Sto chiudendo la scheda...");
-
-      try {
-
-        const res = await callBackend(
-          "chiudiScheda",
-          [sessioneAssistente.schedaId]
-        );
-
-        if (!res || !res.ok) {
-          messaggioBot("Errore durante la chiusura.");
-          rispostaInElaborazione = false;
-          return;
-        }
-
-        // 🔥 aggiorna cache subito
-        if (cacheSchede) {
-          const scheda = cacheSchede.find(s => s.id === sessioneAssistente.schedaId);
-          if (scheda) {
-            scheda.stato = "CHIUSA";
-          }
-        }
-        
-        resetModalitaAssistente();
-        esciAssistente();
-        
-        // 🔥 aggiorna UI senza fetch
-        renderSchede(cacheSchede);
-
-      } catch (err) {
-
-        console.error("Errore backend:", err);
-        messaggioBot("Errore durante la chiusura.");
-      }
-
-      rispostaInElaborazione = false;
-      return;
+  // 🔥 1️⃣ Aggiorna cache subito
+  if (cacheSchede) {
+    const scheda = cacheSchede.find(
+      s => s.id === sessioneAssistente.schedaId
+    );
+    if (scheda) {
+      scheda.stato = chiudere ? "CHIUSA" : "PARZIALE";
     }
   }
-}
 
+  // 🔥 2️⃣ Chiudi assistente IMMEDIATAMENTE
+  resetModalitaAssistente();
+  showSection("schede");
+  renderSchede(cacheSchede);
+
+  rispostaInElaborazione = false;
+
+  // 🔥 3️⃣ Backend in background (solo se chiudo)
+  if (chiudere) {
+    callBackend("chiudiScheda", [sessioneAssistente.schedaId])
+      .catch(err => {
+        console.error("Errore chiusura backend:", err);
+      });
+  }
+
+  return;
+}
+      
 function ascoltaSubito() {
   if (modalitaAssistente !== "vocale") return;
   if (!recognition || ascoltoAttivo) return;
@@ -2757,6 +2738,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
