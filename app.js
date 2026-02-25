@@ -1145,16 +1145,6 @@ function apriAssistente() {
   callBackend("creaNuovaScheda")
     .then(res => {
 
-      if (!cacheSchede) cacheSchede = [];
-
-      cacheSchede.push({
-        id: res.docId,
-        numero: res.numeroScheda,
-        cliente: "",
-        data: new Date().toISOString(),
-        stato: "PARZIALE"
-      });
-
       if (!res || !res.docId) {
         messaggioBot("Errore creazione scheda.");
         input.disabled = false;
@@ -1692,8 +1682,13 @@ async function gestisciRisposta(testo) {
     messaggioBot("Scheda lasciata aperta.");
 
     setTimeout(() => {
+
       resetModalitaAssistente();
       showSection("schede");
+
+      // 🔥 Ricarica reale dal backend
+      caricaSchede(true);
+
     }, 800);
 
     return;
@@ -1702,42 +1697,24 @@ async function gestisciRisposta(testo) {
   // ✅ Mostra messaggio
   messaggioBot("Sto chiudendo la scheda...");
 
-  // 🔥 Blocca temporaneamente riapertura
-  const scheda = cacheSchede?.find(
-    s => s.id === sessioneAssistente.schedaId
-  );
-
-  if (scheda) {
-    scheda.stato = "CHIUSURA";
-  }
-
-  renderSchede(cacheSchede);
-
-  // 🔥 Aspetta davvero il backend
+  // 🔥 Aspetta davvero che il backend finisca
   callBackend("chiudiScheda", [sessioneAssistente.schedaId])
     .then(() => {
 
-      if (scheda) {
-        scheda.stato = "CHIUSA";
-      }
-
-      renderSchede(cacheSchede);
-
       resetModalitaAssistente();
       showSection("schede");
+
+      // 🔥 Ricarica vera lista aggiornata
+      caricaSchede(true);
 
     })
     .catch(err => {
       console.error(err);
 
-      if (scheda) {
-        scheda.stato = "PARZIALE";
-      }
-
-      renderSchede(cacheSchede);
-
       resetModalitaAssistente();
       showSection("schede");
+
+      caricaSchede(true);
     });
 
   return;
@@ -2779,6 +2756,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
