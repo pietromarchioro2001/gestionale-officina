@@ -1503,15 +1503,12 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
-        sessioneAssistente.dati.problemi =
-          (sessioneAssistente.dati.problemi || []).join("\n");
-
         rispostaInElaborazione = false;
-
+      
         rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
-
+      
         return;
       }
 
@@ -1531,15 +1528,12 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
-        sessioneAssistente.dati.lavori =
-          (sessioneAssistente.dati.lavori || []).join("\n");
-
         rispostaInElaborazione = false;
-
+      
         rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
-
+      
         return;
       }
 
@@ -1559,15 +1553,12 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
-        sessioneAssistente.dati.prodotti =
-          (sessioneAssistente.dati.prodotti || []).join("\n");
-
         rispostaInElaborazione = false;
-
+      
         rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
-
+      
         return;
       }
 
@@ -2714,6 +2705,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
