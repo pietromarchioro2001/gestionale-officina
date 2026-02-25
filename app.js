@@ -1263,9 +1263,9 @@ function renderStatoScheda(info){
 
   const v = info?.valori || {};
 
-  const set = (id, value) => {
+  const setHTML = (id, html) => {
     const el = document.getElementById(id);
-    if (el) el.textContent = value;
+    if (el) el.innerHTML = html;
   };
 
   const inline = (text) => {
@@ -1277,33 +1277,35 @@ function renderStatoScheda(info){
       .join(", ");
   };
 
-  // --- CLIENTE ---
-  const clienteParts = [
-    v.NOME_CLIENTE,
-    v.INDIRIZZO,
-    v.TELEFONO,
-    v.CODICE_FISCALE
-  ].filter(Boolean);
+  // ----- CLIENTE (tabellato verticale) -----
+  const clienteHTML = `
+    ${v.NOME_CLIENTE || "-"}<br>
+    ${v.INDIRIZZO || ""}<br>
+    ${v.TELEFONO || ""}<br>
+    ${v.CODICE_FISCALE || ""}
+  `;
 
-  set("clienteBox", clienteParts.length ? clienteParts.join(" • ") : "-");
+  setHTML("clienteBox", clienteHTML);
 
-  // --- VEICOLO ---
-  const veicoloParts = [
-    v.VEICOLO,
-    v.TARGA,
-    v.CHILOMETRI ? v.CHILOMETRI + " km" : ""
-  ].filter(Boolean);
+  // ----- VEICOLO (tabellato verticale) -----
+  const km = v.CHILOMETRI
+    ? String(v.CHILOMETRI).replace("km", "").trim() + " km"
+    : "";
 
-  set("veicoloBox", veicoloParts.length ? veicoloParts.join(" • ") : "-");
+  const veicoloHTML = `
+    ${v.VEICOLO || "-"}<br>
+    ${v.TARGA || ""}<br>
+    ${km}
+  `;
 
-  // --- LISTE ---
-  set("problemiBox", inline(v.PROBLEMI));
-  set("lavoriBox", inline(v.LAVORI));
-  set("prodottiBox", inline(v.PRODOTTI));
+  setHTML("veicoloBox", veicoloHTML);
 
-  // --- SINGOLI ---
-  set("noteBox", v.NOTE || "-");
-  set("oreBox", v.ORE_IMPIEGATE || "-");
+  // ----- SEZIONI SOTTO (inline con virgola) -----
+  setHTML("problemiBox", inline(v.PROBLEMI));
+  setHTML("lavoriBox", inline(v.LAVORI));
+  setHTML("prodottiBox", inline(v.PRODOTTI));
+  setHTML("noteBox", v.NOTE || "-");
+  setHTML("oreBox", v.ORE_IMPIEGATE || "-");
 }
 
 function formatListaInline(testo){
@@ -2708,6 +2710,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
