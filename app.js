@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyEO9YwFRkrMOuSuc3AzyONBuUh1N6I__5tUzy5OsOEAXXwhIh4M4G-sf8bWRkVqY_0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyReZjPqD32orfiL0FCD4TqJwcP8XAQu2tM1O2uWZOHB0IVxd0JDmXxOumkiXUb4wbw/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1120,24 +1120,35 @@ function apriAssistente() {
   }
 
   Object.assign(sessioneAssistente, {
-    schedaId: null,
-    inRipresa: false,
-    step: null,
-    stepQueue: [
-      "TARGA",
-      "CHILOMETRI",
-      "PROBLEMI",
-      "LAVORI",
-      "PRODOTTI",
-      "ORE_IMPIEGATE",
-      "NOTE",
-      "CHIUSURA"
-    ],
-    listaProblemi: [],
-    listaLavori: [],
-    listaProdotti: [],
-    valoriEsistenti: {}
-  });
+  schedaId: null,
+  inRipresa: false,
+  step: null,
+  stepQueue: [
+    "TARGA",
+    "CHILOMETRI",
+    "PROBLEMI",
+    "LAVORI",
+    "PRODOTTI",
+    "ORE_IMPIEGATE",
+    "NOTE",
+    "CHIUSURA"
+  ],
+  listaProblemi: [],
+  listaLavori: [],
+  listaProdotti: [],
+  valoriEsistenti: {},
+
+  // 🔥 QUESTO È IL NUOVO BLOCCO
+  dati: {
+    targa: "",
+    chilometri: "",
+    problemi: [],
+    lavori: [],
+    prodotti: [],
+    ore: "",
+    note: ""
+  }
+});
 
   const input = document.getElementById("assistenteInput");
   input.disabled = true;
@@ -1417,90 +1428,20 @@ async function gestisciRisposta(testo) {
 
   testo = testo.toUpperCase().trim();
 
-  // 🔴 COMANDO SALTO DIRETTO ALLA FINE
-  if (isComandoFine(testo)) {
-
-      // 🔥 Salva eventuali liste aperte prima di chiudere
-    
-      if (sessioneAssistente.step === "PROBLEMI" &&
-          sessioneAssistente.listaProblemi.length) {
-    
-        await salvaCampoScheda(
-          "PROBLEMI",
-          "• " + sessioneAssistente.listaProblemi.join("\n• ")
-        );
-      }
-    
-      if (sessioneAssistente.step === "LAVORI" &&
-          sessioneAssistente.listaLavori.length) {
-    
-        await salvaCampoScheda(
-          "LAVORI",
-          "• " + sessioneAssistente.listaLavori.join("\n• ")
-        );
-      }
-    
-      if (sessioneAssistente.step === "PRODOTTI" &&
-          sessioneAssistente.listaProdotti.length) {
-    
-        await salvaCampoScheda(
-          "PRODOTTI",
-          "• " + sessioneAssistente.listaProdotti.join("\n• ")
-        );
-      }
-    
-      messaggioBot("Ok. Salto alla chiusura della scheda.");
-      sessioneAssistente.step = "CHIUSURA";
-    
-      rispostaInElaborazione = false;
-    
-      setTimeout(() => {
-        faiDomanda("Vuoi chiudere definitivamente la scheda?");
-      }, 400);
-    
-      return;
-    }
-
   switch (sessioneAssistente.step) {
 
-    /* ======================
-     * TARGA
-     * ====================== */
     case "TARGA": {
 
       const targaNorm = normalizzaTarga(testo);
+      sessioneAssistente.dati.targa = targaNorm;
+
       messaggioBot(`Targa rilevata: ${targaNorm}`);
 
-      try {
-
-        const res = await callBackend(
-          "completaSchedaDaTarga",
-          [sessioneAssistente.schedaId, targaNorm]
-        );
-
-        if (!res || !res.ok) {
-          messaggioBot("Veicolo non trovato. Ripeti la targa.");
-          rispostaInElaborazione = false;
-          return;
-        }
-
-        messaggioBot(`Veicolo trovato.\nCliente: ${res.nomeCliente}`);
-
-        rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 500);
-
-      } catch (err) {
-        console.error(err);
-        messaggioBot("Errore ricerca veicolo.");
-        rispostaInElaborazione = false;
-      }
-
+      rispostaInElaborazione = false;
+      setTimeout(prossimaDomanda, 400);
       return;
     }
 
-    /* ======================
-     * CHILOMETRI
-     * ====================== */
     case "CHILOMETRI": {
 
       const km = normalizzaChilometri(testo);
@@ -1511,216 +1452,149 @@ async function gestisciRisposta(testo) {
         return;
       }
 
-      messaggioBot(`Chilometri registrati: ${km}`);
+      sessioneAssistente.dati.chilometri = km + " km";
 
-      salvaCampoScheda("CHILOMETRI", km + " km");
+      messaggioBot(`Chilometri registrati: ${km}`);
 
       rispostaInElaborazione = false;
       prossimaDomanda();
       return;
     }
 
-    /* ======================
-     * PROBLEMI
-     * ====================== */
     case "PROBLEMI": {
 
       if (isComandoUscita(testo)) {
-
-        if (sessioneAssistente.listaProblemi.length) {
-
-          const valore =
-            "• " + sessioneAssistente.listaProblemi.join("\n• ");
-
-          await salvaCampoScheda("PROBLEMI", valore);
-        }
-
         rispostaInElaborazione = false;
         prossimaDomanda();
         return;
       }
 
-      sessioneAssistente.listaProblemi.push(testo);
+      sessioneAssistente.dati.problemi.push(testo);
 
-      rispostaInElaborazione = false;
       messaggioBot("Ok. Altro problema?");
+      rispostaInElaborazione = false;
       return;
     }
 
-    /* ======================
-     * LAVORI
-     * ====================== */
     case "LAVORI": {
 
-      if (!testo) {
-        messaggioBot("Non ho capito. Ripeti il lavoro.");
-        rispostaInElaborazione = false;
-        return;
-      }
-
       if (isComandoUscita(testo)) {
-
-        if (sessioneAssistente.listaLavori.length) {
-
-          const valore =
-            "• " + sessioneAssistente.listaLavori.join("\n• ");
-
-          await salvaCampoScheda("LAVORI", valore);
-        }
-
         rispostaInElaborazione = false;
         prossimaDomanda();
         return;
       }
 
-      sessioneAssistente.listaLavori.push(testo);
+      sessioneAssistente.dati.lavori.push(testo);
 
-      rispostaInElaborazione = false;
       messaggioBot("Ok. Altro lavoro?");
+      rispostaInElaborazione = false;
       return;
     }
 
-    /* ======================
-     * PRODOTTI
-     * ====================== */
     case "PRODOTTI": {
 
-      if (!testo) {
-        messaggioBot("Non ho capito. Ripeti il prodotto.");
-        rispostaInElaborazione = false;
-        return;
-      }
-
       if (isComandoUscita(testo)) {
-
-        if (sessioneAssistente.listaProdotti.length) {
-
-          const valore =
-            "• " + sessioneAssistente.listaProdotti.join("\n• ");
-
-          await salvaCampoScheda("PRODOTTI", valore);
-        }
-
         rispostaInElaborazione = false;
         prossimaDomanda();
         return;
       }
 
-      sessioneAssistente.listaProdotti.push(testo);
+      sessioneAssistente.dati.prodotti.push(testo);
 
-      rispostaInElaborazione = false;
       messaggioBot("Ok. Altro prodotto?");
+      rispostaInElaborazione = false;
       return;
     }
 
-    /* ======================
-     * ORE_IMPIEGATE
-     * ====================== */
     case "ORE_IMPIEGATE": {
-
-      if (isComandoUscita(testo)) {
-        rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 300);
-        return;
-      }
 
       const oreNum = normalizzaOre(testo);
 
       if (!oreNum) {
-        messaggioBot("Non ho capito le ore. Ripeti oppure dì 'avanti'.");
+        messaggioBot("Non ho capito le ore.");
         rispostaInElaborazione = false;
         return;
       }
 
-      const valore = `${oreNum} h`;
+      sessioneAssistente.dati.ore = oreNum + " h";
 
-      messaggioBot(`Ore registrate: ${valore}`);
-
-      await salvaCampoScheda("ORE_IMPIEGATE", valore);
+      messaggioBot(`Ore registrate: ${oreNum}`);
 
       rispostaInElaborazione = false;
       prossimaDomanda();
       return;
     }
 
-    /* ======================
-     * NOTE
-     * ====================== */
     case "NOTE": {
 
-      if (isComandoUscita(testo)) {
-        rispostaInElaborazione = false;
-        setTimeout(prossimaDomanda, 300);
-        return;
+      if (!isComandoUscita(testo)) {
+        sessioneAssistente.dati.note = testo;
+        messaggioBot("Nota salvata.");
       }
-
-      salvaCampoScheda("NOTE", testo);
-
-      messaggioBot("Nota salvata.");
 
       rispostaInElaborazione = false;
       prossimaDomanda();
       return;
     }
 
-    /* ======================
- * CHIUSURA
- * ====================== */
-  case "CHIUSURA": {
+    case "CHIUSURA": {
 
-  try { recognition?.stop(); } catch (e) {}
+      try { recognition?.stop(); } catch (e) {}
 
-  const chiudere =
-    !(testo === "NO" ||
-      testo === "ANNULLA" ||
-      testo === "LASCIA APERTA");
+      const chiudere =
+        !(testo === "NO" ||
+          testo === "ANNULLA" ||
+          testo === "LASCIA APERTA");
 
-  rispostaInElaborazione = false;
+      rispostaInElaborazione = false;
 
-  if (!chiudere) {
+      if (!chiudere) {
 
-    messaggioBot("Scheda lasciata aperta.");
+        messaggioBot("Scheda lasciata aperta.");
 
-    setTimeout(() => {
+        setTimeout(() => {
+          resetModalitaAssistente();
+          showSection("schede");
+          caricaSchede(true);
+        }, 800);
 
-      resetModalitaAssistente();
-      showSection("schede");
+        return;
+      }
 
-      // 🔥 Ricarica reale dal backend
-      caricaSchede(true);
+      messaggioBot("Salvataggio in corso...");
 
-    }, 800);
+      try {
 
-    return;
+        await callBackend("salvaSchedaCompleta", [
+          sessioneAssistente.schedaId,
+          sessioneAssistente.dati
+        ]);
+
+        messaggioBot("Documento creato correttamente.");
+
+        setTimeout(() => {
+          resetModalitaAssistente();
+          showSection("schede");
+          caricaSchede(true);
+        }, 900);
+
+      } catch (err) {
+
+        console.error(err);
+
+        messaggioBot("Errore durante il salvataggio. La scheda resta aperta.");
+
+        setTimeout(() => {
+          resetModalitaAssistente();
+          showSection("schede");
+          caricaSchede(true);
+        }, 1200);
+      }
+
+      return;
+    }
   }
-
-  // ✅ Mostra messaggio
-  messaggioBot("Sto chiudendo la scheda...");
-
-  // 🔥 Aspetta davvero che il backend finisca
-  callBackend("chiudiScheda", [sessioneAssistente.schedaId])
-    .then(() => {
-
-      resetModalitaAssistente();
-      showSection("schede");
-
-      // 🔥 Ricarica vera lista aggiornata
-      caricaSchede(true);
-
-    })
-    .catch(err => {
-      console.error(err);
-
-      resetModalitaAssistente();
-      showSection("schede");
-
-      caricaSchede(true);
-    });
-
-  return;
 }
- }
-} 
       
 function ascoltaSubito() {
   if (modalitaAssistente !== "vocale") return;
@@ -2756,6 +2630,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
