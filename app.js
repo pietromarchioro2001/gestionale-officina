@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwUoszG95PWI8IdVmAdB1EjH3eOyE7EYBAmpQkyohX25lfaahmL_h5Hcfsxox3lpe9K/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxV73IiFdApk-mWGArdj_NilTA2aGv-yrH9U2PyVT8wfKsu1AsAaMwuNDWcTFb8UncO/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1421,7 +1421,7 @@ function isComandoFine(testo) {
   return comandi.some(cmd => t === cmd);
 }
 
-function rispostaConPausa(testo, pausa = 900, callback = null) {
+function rispostaConPausa(testo, pausa = 1200, callback = null) {
 
   if (modalitaAssistente === "vocale") {
 
@@ -1454,7 +1454,7 @@ async function gestisciRisposta(testo) {
 
     rispostaInElaborazione = false;
 
-    rispostaConPausa("Ok, passo alla chiusura.", 900, () => {
+    rispostaConPausa("Ok, passo alla chiusura.", 1200, () => {
       sessioneAssistente.step = "CHIUSURA";
       faiDomanda("Vuoi chiudere definitivamente la scheda?");
     });
@@ -1471,7 +1471,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 1000, () => {
+      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 1200, () => {
         prossimaDomanda();
       });
 
@@ -1492,7 +1492,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa(`Chilometri registrati: ${km}`, 1000, () => {
+      rispostaConPausa(`Chilometri registrati: ${km}`, 1200, () => {
         prossimaDomanda();
       });
 
@@ -1508,7 +1508,7 @@ async function gestisciRisposta(testo) {
 
         rispostaInElaborazione = false;
 
-        rispostaConPausa("Perfetto.", 900, () => {
+        rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
 
@@ -1522,7 +1522,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro problema?", 900);
+      rispostaConPausa("Ok. Altro problema?", 1200);
 
       return;
     }
@@ -1536,7 +1536,7 @@ async function gestisciRisposta(testo) {
 
         rispostaInElaborazione = false;
 
-        rispostaConPausa("Perfetto.", 900, () => {
+        rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
 
@@ -1550,7 +1550,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro lavoro?", 900);
+      rispostaConPausa("Ok. Altro lavoro?", 1200);
 
       return;
     }
@@ -1564,7 +1564,7 @@ async function gestisciRisposta(testo) {
 
         rispostaInElaborazione = false;
 
-        rispostaConPausa("Perfetto.", 900, () => {
+        rispostaConPausa("Perfetto.", 1200, () => {
           prossimaDomanda();
         });
 
@@ -1578,7 +1578,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro prodotto?", 900);
+      rispostaConPausa("Ok. Altro prodotto?", 1200);
 
       return;
     }
@@ -1597,7 +1597,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa(`Ore registrate: ${oreNum}`, 1000, () => {
+      rispostaConPausa(`Ore registrate: ${oreNum}`, 1200, () => {
         prossimaDomanda();
       });
 
@@ -1612,7 +1612,7 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Perfetto.", 900, () => {
+      rispostaConPausa("Perfetto.", 1200, () => {
         prossimaDomanda();
       });
 
@@ -2714,6 +2714,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
