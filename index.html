@@ -48,64 +48,50 @@
 
   <!-- HOME -->
   <section id="home" class="page active">
+
   <h1 class="home-main-title">GESTIONALE GOLDENCAR</h1>
 
   <div class="home-layout">
 
-    <!-- OGGI -->
-    <section class="home-today-box">
-      <h3>Oggi</h3>
-      <div id="oggiEventi"></div>
+    <!-- APPUNTAMENTI FISSI -->
+    <section class="home-appointments">
+      <div class="appointments-header">
+        <h3>Oggi</h3>
+      </div>
+
+      <div id="oggiEventi" class="appointments-list">
+        <!-- eventi -->
+      </div>
     </section>
 
-    <!-- GRID MODULI -->
+    <!-- MODULI OPERATIVI -->
     <div class="home-modules">
 
-      <!-- ORDINI -->
       <section class="home-module ordini">
         <h3>Ordini</h3>
-
         <div class="module-actions">
-          <button onclick="homeNuovoOrdine()">
-            ➕ Nuovo ordine
-          </button>
-
-          <button class="secondary" onclick="avviaOrdineVocale()">
-            🎤 Ordine vocale
-          </button>
+          <button onclick="homeNuovoOrdine()">➕ Nuovo ordine</button>
+          <button class="secondary" onclick="avviaOrdineVocale()">🎤 Ordine vocale</button>
         </div>
       </section>
 
-      <!-- CLIENTI -->
       <section class="home-module clienti">
         <h3>Clienti</h3>
-
         <div class="module-actions">
-          <button onclick="homeCaricaLibrettoGallery()">
-            📁 Carica libretto
-          </button>
-
-          <button class="secondary" onclick="homeCaricaLibrettoCamera()">
-            📷 Fotocamera
-          </button>
+          <button onclick="homeCaricaLibrettoGallery()">📁 Carica libretto</button>
+          <button class="secondary" onclick="homeCaricaLibrettoCamera()">📷 Fotocamera</button>
         </div>
       </section>
 
-      <!-- SCHEDE -->
       <section class="home-module schede">
         <h3>Schede</h3>
-
         <div class="module-actions">
-          <button onclick="apriAssistente()">
-            🛠 Nuova scheda
-          </button>
+          <button onclick="apriAssistente()">🛠 Nuova scheda</button>
         </div>
       </section>
 
-      <!-- FATTURE -->
       <section class="home-module fatture">
         <h3>Fatture</h3>
-
         <div class="module-actions">
           <button onclick="window.open('https://metropolis.seac.it/login','_blank')">
             📑 Portale fatture
@@ -114,6 +100,7 @@
       </section>
 
     </div>
+
   </div>
 </section>
 
@@ -431,6 +418,7 @@
 
 </body>
 </html>
+
 
 
 
