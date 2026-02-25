@@ -1454,7 +1454,7 @@ async function gestisciRisposta(testo) {
       messaggioBot(`Targa rilevata: ${targaNorm}`);
 
       rispostaInElaborazione = false;
-      setTimeout(prossimaDomanda, 400);
+      setTimeout(prossimaDomanda, 1200);
       return;
     }
 
@@ -1475,7 +1475,7 @@ async function gestisciRisposta(testo) {
       rispostaInElaborazione = false;
       setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
       return;
     }
 
@@ -1485,7 +1485,7 @@ async function gestisciRisposta(testo) {
         rispostaInElaborazione = false;
         setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
         return;
       }
 
@@ -1502,7 +1502,7 @@ async function gestisciRisposta(testo) {
         rispostaInElaborazione = false;
         setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
         return;
       }
 
@@ -1519,7 +1519,7 @@ async function gestisciRisposta(testo) {
         rispostaInElaborazione = false;
         setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
         return;
       }
 
@@ -1547,7 +1547,7 @@ async function gestisciRisposta(testo) {
       rispostaInElaborazione = false;
       setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
       return;
     }
 
@@ -1561,7 +1561,7 @@ async function gestisciRisposta(testo) {
       rispostaInElaborazione = false;
       setTimeout(() => {
         prossimaDomanda();
-      }, 900);
+      }, 1200);
       return;
     }
 
@@ -2659,6 +2659,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
