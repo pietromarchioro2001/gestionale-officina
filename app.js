@@ -1261,32 +1261,51 @@ let botStaParlando = false;
 
 function renderStatoScheda(info){
 
-  const v = info.valori || {};
+  const v = info?.valori || {};
 
-  const set = (id, html) => {
+  const set = (id, value) => {
     const el = document.getElementById(id);
-    if (el) el.innerHTML = html;
+    if (el) el.textContent = value;
   };
 
-  set("clienteBox", `
-    ${v.NOME_CLIENTE || "-"}<br>
-    ${v.INDIRIZZO || ""}<br>
-    ${v.TELEFONO || ""}<br>
-    ${v.CODICE_FISCALE || ""}
-  `);
+  const inline = (text) => {
+    if (!text) return "-";
+    return String(text)
+      .split("\n")
+      .map(s => s.trim())
+      .filter(Boolean)
+      .join(", ");
+  };
 
-  set("veicoloBox", `
-    ${v.VEICOLO || "-"}<br>
-    ${v.TARGA || ""}<br>
-    ${v.CHILOMETRI || ""}
-  `);
+  // --- CLIENTE ---
+  const clienteParts = [
+    v.NOME_CLIENTE,
+    v.INDIRIZZO,
+    v.TELEFONO,
+    v.CODICE_FISCALE
+  ].filter(Boolean);
 
-  set("problemiBox", formatLista(v.PROBLEMI));
-  set("lavoriBox", formatLista(v.LAVORI));
-  set("prodottiBox", formatLista(v.PRODOTTI));
+  set("clienteBox", clienteParts.length ? clienteParts.join(" • ") : "-");
+
+  // --- VEICOLO ---
+  const veicoloParts = [
+    v.VEICOLO,
+    v.TARGA,
+    v.CHILOMETRI ? v.CHILOMETRI + " km" : ""
+  ].filter(Boolean);
+
+  set("veicoloBox", veicoloParts.length ? veicoloParts.join(" • ") : "-");
+
+  // --- LISTE ---
+  set("problemiBox", inline(v.PROBLEMI));
+  set("lavoriBox", inline(v.LAVORI));
+  set("prodottiBox", inline(v.PRODOTTI));
+
+  // --- SINGOLI ---
   set("noteBox", v.NOTE || "-");
   set("oreBox", v.ORE_IMPIEGATE || "-");
 }
+
 function formatListaInline(testo){
   if (!testo) return "-";
   return testo
@@ -2689,6 +2708,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
