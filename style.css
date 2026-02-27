@@ -1885,15 +1885,15 @@ body {
 
 .mobile-drawer {
   position: fixed;
-  top: 45px; /* 👈 FIX */
+  top: 0;                /* 🔥 CAMBIA QUESTO */
   left: -280px;
   width: 280px;
-  height: calc(100% - 45px); /* 👈 FIX */
+  height: 100vh;         /* 🔥 CAMBIA QUESTO */
   background: #1e1e1e;
   color: white;
-  padding: 30px 24px;
+  padding: 80px 24px 30px 24px; /* 🔥 spazio per la topbar */
   transition: left 0.3s ease;
-  z-index: 4000;
+  z-index: 5000;         /* 🔥 ancora più alto */
   display: flex;
   flex-direction: column;
 }
@@ -1955,6 +1955,7 @@ body {
   opacity: 1;
   pointer-events: all;
 }
+
 
 
 
