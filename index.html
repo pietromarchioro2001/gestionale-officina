@@ -18,11 +18,13 @@
 
 <!-- MENU LATERALE MOBILE -->
 <div id="mobileDrawer" class="mobile-drawer">
-  <button data-page="home">Home</button>
-  <button data-page="appuntamenti">Appuntamenti</button>
-  <button data-page="ordini">Ordini</button>
-  <button data-page="clienti">Clienti</button>
-  <button data-page="schede">Schede</button>
+  <div class="drawer-links">
+    <button data-page="home" onclick="showSection('home'); toggleDrawer()">Home</button>
+    <button data-page="appuntamenti" onclick="showSection('appuntamenti'); toggleDrawer()">Appuntamenti</button>
+    <button data-page="ordini" onclick="showSection('ordini'); toggleDrawer()">Ordini</button>
+    <button data-page="clienti" onclick="showSection('clienti'); toggleDrawer()">Clienti</button>
+    <button data-page="schede" onclick="showSection('schede'); toggleDrawer()">Schede</button>
+  </div>
 </div>
 
 <div id="drawerOverlay" class="drawer-overlay"></div>
@@ -460,6 +462,7 @@
 
 </body>
 </html>
+
 
 
 
