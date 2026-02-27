@@ -46,14 +46,14 @@ function callBackend(action, args = []) {
   });
 }
 
-function toggleDrawer(event) {
-  if (event) event.stopPropagation();
+function toggleFullscreenMenu() {
+  document.getElementById("fullscreenMenu")
+    .classList.toggle("active");
+}
 
-  const drawer = document.getElementById("mobileDrawer");
-  const overlay = document.getElementById("drawerOverlay");
-
-  drawer.classList.toggle("open");
-  overlay.classList.toggle("active");
+function goToSection(id) {
+  showSection(id);
+  toggleFullscreenMenu();
 }
 
 function homeCaricaLibrettoGallery() {
@@ -2572,15 +2572,6 @@ document.addEventListener("click", e => {
   }
 });
 
-function toggleDrawer() {
-  console.log("TOGGLE");
-  const drawer = document.getElementById("mobileDrawer");
-  const overlay = document.getElementById("drawerOverlay");
-
-  drawer.classList.toggle("open");
-  overlay.classList.toggle("active");
-}
-
 function eliminaScheda(idScheda, status, linkDoc) {
 
   const conferma = confirm(
@@ -2800,6 +2791,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
