@@ -444,6 +444,14 @@ input.targa {
   width: 100%;
 }
 
+.home-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
+  gap: clamp(12px, 2vh, 24px);
+}
+
 .home-block.today {
   grid-area: today;
 }
@@ -558,7 +566,7 @@ input.targa {
   background: #fff;
   border: none;
   border-radius: 14px;
-  padding: 30px 16px;   /* altezza naturale */
+  padding: clamp(14px, 2vh, 26px) 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -634,9 +642,9 @@ input.targa {
 
 .home-main-title {
   text-align: center;
-  font-size: 34px;
+  font-size: clamp(22px, 2.5vh, 34px);
   font-weight: 700;
-  margin-bottom: 24px;
+  margin: clamp(10px, 2vh, 28px) 0;
   letter-spacing: 1px;
 }
 
@@ -772,8 +780,9 @@ input.targa {
 }
 
 #home.page {
-  height: calc(100vh - 95px);
-  overflow: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 @media (max-width: 1400px) {
@@ -1868,6 +1877,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
