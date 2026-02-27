@@ -2788,7 +2788,7 @@ main {
 
 .home-main-title {
   text-align: center;
-  margin-top: 20px;     /* 👈 abbassa il titolo */
+  margin-top: 28px;     /* 👈 abbassa il titolo */
   margin-bottom: 30px;
 }
 
@@ -2833,6 +2833,31 @@ main {
   margin-top: 24px;
 }
 
+.topbar-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+}
+
+/* BRAND resta normale a sinistra */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+/* MENU centrato ASSOLUTO alla pagina */
+.menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 40px;
+}
 
 
 
