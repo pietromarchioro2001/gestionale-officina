@@ -2619,28 +2619,32 @@ function eliminaScheda(idScheda, status, linkDoc) {
   }
 })();
 
-const drawer = document.getElementById("mobileDrawer");
-const overlay = document.getElementById("drawerOverlay");
-const logo = document.querySelector(".logo");
+document.addEventListener("DOMContentLoaded", () => {
 
-logo?.addEventListener("click", () => {
-  drawer.classList.add("open");
-  overlay.classList.add("show");
-});
+  const drawer = document.getElementById("mobileDrawer");
+  const overlay = document.getElementById("drawerOverlay");
+  const logo = document.querySelector(".logo");
 
-overlay?.addEventListener("click", closeDrawer);
+  function closeDrawer() {
+    drawer?.classList.remove("open");
+    overlay?.classList.remove("show");
+  }
 
-function closeDrawer() {
-  drawer?.classList.remove("open");
-  overlay?.classList.remove("show");
-}
-
-document.querySelectorAll("#mobileDrawer button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const page = btn.dataset.page;
-    showSection(page);   // ✅ FUNZIONE REALE
-    closeDrawer();
+  logo?.addEventListener("click", () => {
+    drawer?.classList.add("open");
+    overlay?.classList.add("show");
   });
+
+  overlay?.addEventListener("click", closeDrawer);
+
+  document.querySelectorAll("#mobileDrawer button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const page = btn.dataset.page;
+      showSection(page);
+      closeDrawer();
+    });
+  });
+
 });
 
 function isMobile() {
@@ -2785,6 +2789,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
