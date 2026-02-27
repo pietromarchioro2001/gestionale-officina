@@ -2828,6 +2828,11 @@ main {
   width: 100%;
 }
 
+#clienti .page-header,
+#appuntamenti .page-header {
+  margin-top: 24px;
+}
+
 
 
 
