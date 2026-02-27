@@ -1,3 +1,7 @@
+/* =========================================================
+   1. VARIABILI
+========================================================= */
+
 :root {
   --dark: #1e1e1e;
   --light: #ffffff;
@@ -6,10 +10,17 @@
   --accent-dark: #1b5e20;
 }
 
-/* ================= RESET ================= */
 
-* {
-  box-sizing: border-box;
+/* =========================================================
+   2. RESET / BASE HTML-BODY
+========================================================= */
+
+html {
+  margin: 0;
+  height: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -22,67 +33,17 @@ body {
   color: #222;
 }
 
-html {
-  margin: 0;
+html, body {
   height: 100%;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
+  max-width: 100%;
   overflow-x: hidden;
 }
 
-/* ================= HEADER ================= */
 
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 45px;            /* usa la tua altezza reale */
-  z-index: 1000;
-
-  background-color: #1e1e1e;  /* 🔥 BARRA NERA */
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  height: 40px;
-  width: auto;
-  object-fit: contain;
-}
-
-.brand-name {
-  color: #f1c40f;
-  font-weight: 700;
-}
-
-/* ================= MENU ================= */
-
-.menu button {
-  background: transparent;
-  color: #fff;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.menu button.active {
-  color: #f5c400;
-  position: relative;
-}
-
-.menu button.active::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: #f5c400;
-  border-radius: 2px;
-}
-
-/* ================= MAIN ================= */
+/* =========================================================
+   3. LAYOUT STRUTTURA GENERALE
+   (main, page, section, header)
+========================================================= */
 
 main {
   padding-top: 95px;
@@ -96,13 +57,28 @@ main {
   flex-direction: column;
 }
 
-/* DESKTOP */
-@media (min-width: 900px) {
-  main {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-  }
+.page {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  padding: 30px 60px;
+  padding-top: 40px;
+  box-sizing: border-box;
+  min-height: 0; /* 🔥 fondamentale */
+}
+
+.page.active {
+  display: flex;
+}
+
+.page-header {
+  max-width: 1200px;
+  margin: 0 auto 20px auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
 }
 
 .page-title {
@@ -113,17 +89,15 @@ main {
   letter-spacing: 1px;
 }
 
-/* contenuto che scrolla */
-#ordiniContent {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 6px;
+.page-content,
+.calendar-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-#schedeContent {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 6px;
+.section {
+  margin-bottom: 40px;
 }
 
 .section-footer {
@@ -136,8 +110,6 @@ main {
 }
 
 
-/* ================= SEZIONI ================= */
-
 .section.actions {
   display: flex;
   justify-content: flex-end; /* tutto a destra */
@@ -145,47 +117,54 @@ main {
   gap: 12px;                 /* spazio tra i pulsanti */
 }
 
+.section h3 {
+  margin-bottom: 14px;
+  border-left: 4px solid var(--accent);
+  padding-left: 10px;
+  font-size: 18px;     /* 🔥 più importante */
+  font-weight: 700;
+}
+
+
 .actions {
   text-align: right;
 }
 
-/* ================= FORM ================= */
 
-label {
-  display: block;
-  margin-top: 10px;
-  font-size: 13px;
+.page#schede,
+.page#ordini {
+  flex-direction: column;
 }
 
-input {
-  width: 100%;
-  height: 40px;
-  padding: 0 16px;
-  margin-top: 4px;
-  border-radius: 12px;
-  border: 1px solid #d0d0d0;
-  font-size: 16px;
+#clienti .section {
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
 }
 
-input.targa {
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+#appuntamenti.page.active {
+  overflow: hidden; /* niente scroll esterno */
 }
 
-/* ================= ROW ================= */
-
-.row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
+#clienti .page-header,
+#appuntamenti .page-header {
+  margin-top: 24px;
 }
 
-.row input {
-  flex: 1;
+@media (min-width: 900px) {
+  main {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
 }
 
-/* ================= BUTTONS ================= */
+
+/* =========================================================
+   4. COMPONENTI GLOBALI
+   (button, input, label, row, hint, hidden)
+========================================================= */
 
 button {
   padding: 9px 16px;
@@ -214,7 +193,652 @@ button.secondary:hover {
   background: #000;
 }
 
-/* ================= FILE INPUT ================= */
+button.riprendi {
+  background: var(--accent);
+  color: #fff;
+}
+
+button.riprendi:hover {
+  background: var(--accent-dark);
+}
+
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 36px;
+  padding: 0 20px;
+
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+label {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+}
+
+input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px;
+  margin-top: 4px;
+  border-radius: 12px;
+  border: 1px solid #d0d0d0;
+  font-size: 16px;
+}
+
+input.targa {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.row input {
+  flex: 1;
+}
+
+.hint {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #555;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.refresh-btn:hover {
+  background: #2f2f2f;
+  opacity: 1;
+}
+
+
+/* =========================================================
+   5. TOOLBAR
+========================================================= */
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;            /* usa la tua altezza reale */
+  z-index: 1000;
+
+  background-color: #1e1e1e;  /* 🔥 BARRA NERA */
+  display: flex;
+  align-items: center;
+}
+
+.topbar-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center; /* centro naturale */
+}
+
+.brand {
+  position: absolute;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 2;
+}
+
+.logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.brand-name {
+  color: #f1c40f;
+  font-weight: 700;
+}
+
+.menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 40px;
+}
+
+.menu button {
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.menu button.active {
+  color: #f5c400;
+  position: relative;
+}
+
+.menu button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: #f5c400;
+  border-radius: 2px;
+}
+
+@media (max-width: 1000px) {
+  .menu {
+    gap: 20px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 850px) {
+  .menu {
+    display: none; /* sparisce prima che si sovrapponga */
+  }
+}
+
+
+/* =========================================================
+   6. FULLSCREEN MENU (overlay logo)
+========================================================= */
+
+.fullscreen-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55); /* 🔥 meno opaco */
+  backdrop-filter: blur(4px);
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
+}
+
+.fullscreen-menu.active {
+  display: flex;
+}
+
+.fullscreen-content {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  text-align: center;
+}
+
+.fullscreen-content button {
+  background: transparent;        /* 🔥 niente riquadro */
+  border: none;
+  color: white;
+  font-size: 34px;                /* 🔥 grande */
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  padding: 8px 0;
+  transition: all 0.25s ease;
+}
+
+.fullscreen-content button:hover {
+  color: #f5c400;                 /* giallo brand */
+  transform: scale(1.08);
+}
+
+
+/* =========================================================
+   7. HOME
+========================================================= */
+
+#home {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 6px 20px 16px;
+}
+
+#home .home-block.ordini .home-actions-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  height: 100%;
+}
+
+#home .home-block.ordini .home-actions-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+#home .home-block.ordini .home-actions-row button {
+  height: 100%;
+}
+
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    "today today today today"
+    "ordini clienti schede fatture";
+  gap: 10px;
+  margin-top: 40px;
+}
+
+.home-container > * {
+  width: 100%;
+}
+
+.home-block.today {
+  grid-area: today;
+}
+
+.home-block.ordini {
+  grid-area: ordini;
+  display: flex;
+  flex-direction: column;
+  gap: 18px; /* ← aumenta o riduci a gusto (14–22) */
+}
+
+.home-block.clienti {
+  grid-area: clienti;
+}
+
+.home-block.schede {
+  grid-area: schede;
+}
+
+.home-block.fatture {
+  grid-area: fatture;
+}
+
+.home-today {
+  background: #fff8e1;
+  border-left: 6px solid #f5c400;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08); 
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  width: 100%;
+}
+
+.home-today::-webkit-scrollbar {
+  width: 6px;
+}
+
+.home-today::-webkit-scrollbar-thumb {
+  background: #e0b200;
+  border-radius: 6px;
+}
+
+.home-today h3 {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.home-today .evento {
+  position: relative;
+  display: flex;
+  justify-content: center;   /* centro VERO */
+  align-items: center;
+}
+
+.home-today .orario {
+  position: absolute;
+  left: 32px;               /* distanza dal bordo giallo */
+  font-weight: 700;
+  color: #f5c400;
+}
+
+.home-today .testo {
+  text-align: center;
+  font-size: 16px;
+}
+.home-today strong {
+  color: #000;
+}
+
+.home-today .orario {
+  color: #f5c400;
+  font-weight: 700;
+  justify-self: start;
+  min-width: 60px;
+}
+
+.home-block {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;     
+}
+
+.home-block h3 {
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.home-actions-row {
+  display: flex;
+  gap: 16px;
+}
+
+.home-actions-row button {
+  flex: 1;
+  border-radius: 12px;
+  border: none;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.home-actions-row button:hover {
+  background: #e6b800;
+}
+
+.home-block button {
+  width: 100%;
+  background: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 30px 16px;   /* altezza naturale */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+}
+
+.home-block button .icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.home-block button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 22px rgba(0,0,0,.12);
+  background: #fffbea; /* giallo molto leggero */
+}
+
+.home-block.clienti button { border-left: 6px solid #f5c400; }
+.home-block.ordini button  { border-left: 6px solid #7b61ff; }
+.home-block.fatture button { border-left: 6px solid #999; }
+
+.home-actions-column {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.home-actions-column button {
+  flex: 1;
+}
+
+.home-block button span.icon {
+  font-size: 18px;
+  opacity: 0.85;
+}
+
+.home-block:not(.today) {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.home-block.today .home-today {
+  border-left-color: #f5c400;
+}
+
+.home-block.schede button {
+  border-left-color: #2ecc71;
+}
+
+.home-block.clienti button {
+  border-left-color: #E53935;
+}
+
+.home-block.ordini button {
+  flex: 1;
+  border-left-color: #FFD400;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.home-block.fatture button {
+  border-left-color: #999;
+}
+
+.home-main-title {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+
+.home-appointments {
+  height: 220px;
+  margin-bottom: 25px;
+}
+
+.home-appointments h3 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+.appointments-list {
+  height: 140px;
+  overflow-y: auto;
+}
+
+.home-modules {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 25px;
+  margin-top: 20px;      /* abbassa tutto */
+}
+
+/* CARD SEZIONE */
+
+.home-module {
+  border: 1.5px solid #1e1e1e;
+  border-radius: 8px;
+  padding: 15px 24px 20px 24px; /* meno spazio sopra */
+  display: flex;
+  flex-direction: column;
+}
+
+.home-module h3 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* AREA CENTRALE */
+
+.module-icons {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;
+}
+
+/* ICONA */
+
+.icon-action {
+  width: 120px;
+  height: 120px;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid transparent;
+}
+
+/* Hover base */
+.icon-action:hover {
+  background: #f4f4f4;
+  transform: translateY(-4px);
+}
+
+/* Hover colori per sezione */
+.home-module.ordini .icon-action:hover {
+  border: 1.5px solid #f5c400;
+}
+
+.home-module.clienti .icon-action:hover {
+  border: 1.5px solid #E53935;
+}
+
+.home-module.schede .icon-action:hover {
+  border: 1.5px solid #2ecc71;
+}
+
+.home-module.fatture .icon-action:hover {
+  border: 1.5px solid #9e9e9e;
+}
+
+/* ===== FIX ICONE HOME ===== */
+
+.icon-action svg {
+  width: 42px;
+  height: 42px;
+  stroke: #1e1e1e;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* ===== HOME FIX ===== */
+
+
+.home-main-title {
+  text-align: center;
+  margin-top: 28px;     /* 👈 abbassa il titolo */
+  margin-bottom: 30px;
+}
+
+#oggiEventi {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-left: 0;
+  padding-left: 0px;
+}
+
+.evento .orario {
+  min-width: 60px;
+  font-weight: 700;
+  color: #000;
+}
+
+.evento .testo {
+  color: #333;
+}
+
+
+/* =========================================================
+   8. APPUNTAMENTI
+========================================================= */
+
+#appuntamenti {
+  padding: 20px;
+}
+
+.calendar-full {
+  width: 100%;
+  height: calc(100vh - 110px); 
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+}
+
+.calendar-full iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.calendar-wrapper {
+  width: 100%;
+  height: calc(100vh - 160px); 
+}
+
+.calendar-wrapper iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+iframe[src*="googleusercontent"],
+div[aria-label*="Apps Script"] {
+  display: none !important;
+}
+
+
+/* =========================================================
+   9. CLIENTI
+========================================================= */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.doc-row {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* più vicini */
+  margin-bottom: 28px;
+}
+
+.doc-label {
+  font-weight: 600;
+  min-width: 45px;
+}
 
 .file-btn {
   padding: 8px 12px;
@@ -235,13 +859,69 @@ button.secondary:hover {
   min-width: 50px;
 }
 
-a#librettoLink:hover,
-a#targaLink:hover {
+.file-link:hover {
   text-decoration: underline;
 }
 
-.file-link:hover {
-  text-decoration: underline;
+.file-btn-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ececec;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file-btn-main:hover {
+  background: #ddd;
+}
+
+.file-btn-view {
+  background: #3a3a3a;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.file-btn-view:hover {
+  background: #222;
+}
+
+
+.file-btn-camera {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;       /* IDENTICO a Carica libretto */
+  width: 44px;
+  border-radius: 12px;
+  border: none;
+  background: #ececec;
+  cursor: pointer;
+}
+
+/* icona fotocamera */
+.file-btn-camera::before {
+  content: "📷";
+  font-size: 20px;
+  line-height: 1;
+
+}
+
+.file-btn-camera:hover {
+  background: #ddd;
+}
+
+.file-upload {
+  display: flex;
+  gap: 10px;
+  align-items: center;
 }
 
 .file-indicator {
@@ -256,22 +936,96 @@ a#targaLink:hover {
   text-decoration: underline;
 }
 
-/* ================= HINT ================= */
+.icon-btn {
+  width: 38px;          /* box più compatto */
+  height: 38px;
+  padding: 4px;         /* 🔥 riduce spazio interno */
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
 
-.hint {
-  margin-top: 6px;
-  font-size: 13px;
-  color: #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: background 0.15s ease;
 }
 
-/* ================= NASCONDI BANNER APPS SCRIPT ================= */
-
-iframe[src*="googleusercontent"],
-div[aria-label*="Apps Script"] {
-  display: none !important;
+.icon-btn:hover {
+  background: #ececec;
 }
 
-/* ================= SCHEDE ================= */
+.icon-svg {
+  width: 22px;          /* icona più piena */
+  height: 22px;
+  stroke: #333;
+  stroke-width: 2.2;
+  fill: none;
+}
+
+.doc-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.doc-icon svg {
+  width: 22px;
+  height: 22px;
+  stroke: #444;
+  stroke-width: 2;
+  fill: none;
+}
+
+.doc-icon:hover {
+  background: #e5e5e5;
+}
+
+.doc-icon:hover svg {
+  stroke: #000;
+}
+
+.loading-logo {
+  width: 32px;
+  height: 32px;
+  margin-left: 10px;
+  display: none; /* 🔥 NASCOSTO DI DEFAULT */
+  vertical-align: middle;
+
+}
+
+.loading-logo.active {
+  display: inline-block;
+  animation: spinLogo 1s linear infinite;
+
+}
+
+.loading-logo.ok {
+  display: inline-block;
+  animation: none;
+}
+
+a#librettoLink:hover,
+a#targaLink:hover {
+  text-decoration: underline;
+}
+
+@keyframes spinLogo {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+
+}
+
+
+/* =========================================================
+   10. SCHEDE
+========================================================= */
 
 .schede-header {
   display: flex;
@@ -330,47 +1084,12 @@ div[aria-label*="Apps Script"] {
   color: #555;
 }
 
-#listaSchede::-webkit-scrollbar {
-  width: 8px;
-}
-
-#listaSchede::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 6px;
-}
-
-#listaSchede::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
-}
-
-.btn-riprendi,
-.btn-scheda {
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.btn-scheda:hover {
-  background: #6a6a6a;
-}
-
 .scheda-row {
   display: grid;
   grid-template-columns: 1fr 160px 120px;
   align-items: center;
   padding: 16px 0;
   border-bottom: 1px solid #eee;
-}
-
-.btn-view {
-  padding: 8px 14px;
-  border-radius: 8px;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  cursor: pointer;
 }
 
 .scheda-stato.chiusa {
@@ -406,27 +1125,6 @@ div[aria-label*="Apps Script"] {
   border-radius: 6px;
 }
 
-/* STATUS COLORI */
-
-.stato-parziale::before {
-  background: #ff9800;
-}
-
-.stato-completa::before {
-  background: #4caf50;
-}
-
-.stato-chiusa::before {
-  background: #9e9e9e;
-  opacity: 0.7;
-}
-
-.stato-chiusa {
-  opacity: 0.65;
-}
-
-/* CONTENUTO */
-
 .scheda-left {
   display: flex;
   flex-direction: column;
@@ -457,57 +1155,6 @@ div[aria-label*="Apps Script"] {
 .scheda-stato {
   font-weight: 700;
   font-size: 14px;
-}
-
-/* STATUS TESTO COLORI */
-
-.stato-parziale .scheda-stato {
-  color: #ff9800;
-}
-
-.stato-completa .scheda-stato {
-  color: #4caf50;
-}
-
-.stato-chiusa .scheda-stato {
-  color: #9e9e9e;
-}
-
-/* BOTTONI */
-
-.btn-riprendi {
-  background: #1976d2;
-  color: white;
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.btn-scheda {
-  background: #e0e0e0;
-  padding: 6px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.stato-scheda {
-  background: #ffffff;
-  border: 1px solid #e3e3e3;
-  border-radius: 12px;
-  padding: 18px 22px;
-  margin: 16px;
-  font-size: 14px;
-}
-
-.scheda-top {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 20px;
 }
 
 .scheda-title {
@@ -560,260 +1207,169 @@ div[aria-label*="Apps Script"] {
   text-transform: uppercase;
 }
 
-/* ================= ASSISTENTE ================= */
-
-/* NASCOSTO DI DEFAULT */
-#assistente {
-  display: none;
-}
-
-/* VISIBILE SOLO SE ACTIVE */
-#assistente.active {
-  position: fixed;
-  inset: 0;
-  background: var(--bg);
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-}
-
-.assistente-header {
+.scheda-top {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: 20px 28px;
-  background: linear-gradient(90deg, #1e1e1e, #242424);
-  color: white;
-  border-top-left-radius: 22px;
-  border-top-right-radius: 22px;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 20px;
 }
 
-.assistente {
-  background: #f4f4f4;
-  border-radius: 22px;
-  overflow: hidden;
+.btn-riprendi,
+.btn-scheda {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
 }
 
-.assistente-left {
-  justify-self: start;
+.btn-scheda:hover {
+  background: #6a6a6a;
 }
 
-.assistente-center {
-  justify-self: center;
-}
-
-.assistente-right {
-  justify-self: end;
-}
-
-.assistente-top {
-  position: relative;
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background: #1e1e1e;
+.btn-view {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
   color: #fff;
-}
-
-.assistente-title {
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: 0.5px;
-}
-
-.assistente-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: #fff;
-  border: none;
-  font-size: 18px;
   cursor: pointer;
-  line-height: 1;
 }
 
-/* CHAT */
-.assistente-chat {
-  flex: 1;
-  overflow-y: auto;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
+.stato-parziale::before {
+  background: #ff9800;
 }
 
-.assistente-exit {
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #fff;
+.stato-completa::before {
+  background: #4caf50;
+}
+
+.stato-chiusa::before {
+  background: #9e9e9e;
+  opacity: 0.7;
+}
+
+.stato-chiusa {
+  opacity: 0.65;
+}
+
+.stato-parziale .scheda-stato {
+  color: #ff9800;
+}
+
+.stato-completa .scheda-stato {
+  color: #4caf50;
+}
+
+.stato-chiusa .scheda-stato {
+  color: #9e9e9e;
+}
+
+.btn-riprendi {
+  background: #1976d2;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 8px;
   border: none;
-  border-radius: 6px;
-  width: 32px;
-  height: 32px;
-  font-size: 16px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  font-weight: 600;
 }
 
-/* INPUT ROW */
-.assistente-input-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 24px;
-  background: #f7f7f7;
-  border-top: 1px solid #e0e0e0;
+.btn-scheda {
+  background: #e0e0e0;
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
 }
 
-
-.msg {
-  max-width: 75%;
-  padding: 10px 14px;
-  border-radius: 14px;
+.stato-scheda {
+  background: #ffffff;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 16px;
   font-size: 14px;
 }
 
-.msg.bot {
-  background: #e0e0e0;
-  align-self: flex-start;
+.scheda-menu {
+  position: relative;
+  display: inline-block;
+  margin-left: 8px;
 }
 
-.msg.user {
-  background: var(--accent);
-  color: #fff;
-  align-self: flex-end;
-}
-
-.assistente-footer {
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-top: 1px solid #ddd;
-}
-
-.assistente-status {
-  font-size: 13px;
+.scheda-menu-btn {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  font-size: 18px;
+  cursor: pointer;
   color: #555;
 }
 
-/* ================= INPUT MANUALE ASSISTENTE ================= */
+.scheda-menu-btn:hover {
+  color: #000;
+}
 
-/* INPUT SOTTILE */
-#assistenteInput {
-  flex: 1;
-  height: 46px;
-  padding: 0 18px;
-  border-radius: 30px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  outline: none;
+.scheda-menu-popup {
+  position: absolute;
+  right: 0;
+  top: 24px;
   background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.15);
+  display: none;
+  z-index: 10;
 }
 
-/* microfono centrato */
-.assistente-mic {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
+.scheda-menu-popup button {
+  background: none;
   border: none;
-  font-size: 22px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
+  padding: 10px 14px;
+  width: 100%;
+  text-align: left;
   cursor: pointer;
+  font-weight: 600;
 }
 
-#btnMic {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-  transition: transform 0.1s ease, background 0.2s ease;
+.scheda-menu-popup button:hover {
+  background: #f5f5f5;
 }
 
-#btnMic:hover {
-  background: var(--accent-dark);
-  transform: scale(1.05);
+.scheda-delete {
+  color: #c0392b;
 }
 
-/* ================= SWITCH MANUALE / VOCALE ================= */
-.assistente-actions {
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.scheda-delete:hover {
+  background: #fdecea;
 }
 
-.mode-label {
-  font-size: 13px;
-  color: #fff;
+#listaSchede::-webkit-scrollbar {
+  width: 8px;
 }
 
-/* switch base */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 46px;
-  height: 24px;
+#listaSchede::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+#listaSchede::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
 }
 
-/* slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  inset: 0;
-  background-color: #ccc;
-  border-radius: 24px;
-  transition: 0.3s;
+#schedeContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
 }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.3s;
-}
 
-/* ON = vocale */
-.switch input:checked + .slider {
-  background-color: var(--accent);
-}
+/* =========================================================
+   11. ORDINI
+========================================================= */
 
-.switch input:checked + .slider:before {
-  transform: translateX(22px);
-}
-
-/* RIGA ORDINE */
 .ordine-row {
   display: grid;
   grid-template-columns: 
@@ -920,26 +1476,7 @@ div[aria-label*="Apps Script"] {
   align-items: center;
 }
 
-#ordiniContainer {
-  max-height: calc(100vh - 260px);
-  overflow-y: auto;
-  padding-right: 6px;
-}
 
-#ordiniContainer::-webkit-scrollbar {
-  width: 8px;
-}
-
-#ordiniContainer::-webkit-scrollbar-thumb {
-  background: #ccc;
-  border-radius: 6px;
-}
-
-#ordiniContainer::-webkit-scrollbar-thumb:hover {
-  background: #aaa;
-}
-
-/* Pulsante vocale CENTRATO nella sezione */
 .ordine-vocale-btn {
   width: 56px;
   height: 56px;
@@ -963,10 +1500,6 @@ div[aria-label*="Apps Script"] {
 /* hover semplice */
 .ordine-vocale-btn:hover {
   background: #e0b200;
-}
-
-#listaOrdini {
-  margin-top: 30px;
 }
 
 .ordine-invia {
@@ -1024,6 +1557,38 @@ div[aria-label*="Apps Script"] {
   background: var(--accent-dark);
 }
 
+#ordiniContent {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+#ordiniContainer {
+  max-height: calc(100vh - 260px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+#ordiniContainer::-webkit-scrollbar {
+  width: 8px;
+}
+
+#ordiniContainer::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 6px;
+}
+
+#ordiniContainer::-webkit-scrollbar-thumb:hover {
+  background: #aaa;
+}
+
+/* Pulsante vocale CENTRATO nella sezione */
+
+#listaOrdini {
+  margin-top: 30px;
+}
+
+
 #btnOrdineVocale {
   position: fixed;
   bottom: 25px;
@@ -1047,849 +1612,234 @@ div[aria-label*="Apps Script"] {
   transform: scale(1.08);
   box-shadow: 0 8px 22px rgba(0,0,0,0.35);
 }
-/* ===== APPUNTAMENTI – CALENDARIO FULL ===== */
 
-#appuntamenti {
-  padding: 20px;
-}
 
-.calendar-full {
-  width: 100%;
-  height: calc(100vh - 110px); 
-  /* 110px ≈ header + margine */
-  background: #fff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-}
+/* =========================================================
+   12. ASSISTENTE
+========================================================= */
 
-.calendar-full iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-/* CONTENITORE CALENDARIO */
-.calendar-wrapper {
-  width: 100%;
-  height: calc(100vh - 160px); 
-  /* 🔧 CAMBIA QUESTO NUMERO per più o meno spazio sotto */
-}
-
-/* IFRAME */
-.calendar-wrapper iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
-
-/* ===== HOME LAYOUT ===== */
-
-.home-container {
+.assistente-header {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  grid-template-areas:
-    "today today today today"
-    "ordini clienti schede fatture";
-  gap: 10px;
-  margin-top: 40px;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 20px 28px;
+  background: linear-gradient(90deg, #1e1e1e, #242424);
+  color: white;
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
 }
 
-.home-container > * {
-  width: 100%;
+.assistente {
+  background: #f4f4f4;
+  border-radius: 22px;
+  overflow: hidden;
 }
 
-.home-block.today {
-  grid-area: today;
+.assistente-left {
+  justify-self: start;
 }
 
-.home-block.ordini {
-  grid-area: ordini;
-  display: flex;
-  flex-direction: column;
-  gap: 18px; /* ← aumenta o riduci a gusto (14–22) */
+.assistente-center {
+  justify-self: center;
 }
 
-.home-block.clienti {
-  grid-area: clienti;
+.assistente-right {
+  justify-self: end;
 }
 
-.home-block.schede {
-  grid-area: schede;
-}
-
-.home-block.fatture {
-  grid-area: fatture;
-}
-
-.home-today {
-  background: #fff8e1;
-  border-left: 6px solid #f5c400;
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.08); 
-  flex: 1;
-  overflow-y: auto;
-  min-height: 0;
-  width: 100%;
-}
-
-.home-today::-webkit-scrollbar {
-  width: 6px;
-}
-
-.home-today::-webkit-scrollbar-thumb {
-  background: #e0b200;
-  border-radius: 6px;
-}
-
-.home-today h3 {
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.home-today .evento {
+.assistente-top {
   position: relative;
   display: flex;
-  justify-content: center;   /* centro VERO */
   align-items: center;
-}
-
-.home-today .orario {
-  position: absolute;
-  left: 32px;               /* distanza dal bordo giallo */
-  font-weight: 700;
-  color: #f5c400;
-}
-
-.home-today .testo {
-  text-align: center;
-  font-size: 16px;
-}
-.home-today strong {
-  color: #000;
-}
-
-.home-today .orario {
-  color: #f5c400;
-  font-weight: 700;
-  justify-self: start;
-  min-width: 60px;
-}
-
-/* SEZIONI */
-
-.home-block {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;     
-}
-
-.home-block h3 {
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
-/* PULSANTI A RIGA */
-
-.home-actions-row {
-  display: flex;
-  gap: 16px;
-}
-
-.home-actions-row button {
-  flex: 1;
-  border-radius: 12px;
-  border: none;
-  color: #000;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.home-actions-row button:hover {
-  background: #e6b800;
-}
-
-/* PULSANTI HOME – stile card */
-
-.home-block button {
-  width: 100%;
-  background: #fff;
-  border: none;
-  border-radius: 14px;
-  padding: 30px 16px;   /* altezza naturale */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 6px 18px rgba(0,0,0,.08);
-}
-
-.home-block button .icon {
-  font-size: 22px;
-  line-height: 1;
-}
-
-.home-block button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0,0,0,.12);
-  background: #fffbea; /* giallo molto leggero */
-}
-
-/* BORDO COLORATO A SINISTRA */
-.home-block.clienti button { border-left: 6px solid #f5c400; }
-.home-block.ordini button  { border-left: 6px solid #7b61ff; }
-.home-block.fatture button { border-left: 6px solid #999; }
-
-.home-actions-column {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-}
-
-.home-actions-column button {
-  flex: 1;
-}
-
-.home-block button span.icon {
-  font-size: 18px;
-  opacity: 0.85;
-}
-
-.home-block:not(.today) {
-  background: transparent;
-  box-shadow: none;
-  padding: 0;
-}
-
-#oggiEventi {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-left: 0;
-  padding-left: 0px;
-}
-
-.evento .orario {
-  min-width: 60px;
-  font-weight: 700;
-  color: #000;
-}
-
-.evento .testo {
-  color: #333;
-}
-
-/* COLORI BORDO SINISTRO HOME */
-
-.home-block.today .home-today {
-  border-left-color: #f5c400;
-}
-
-.home-block.schede button {
-  border-left-color: #2ecc71;
-}
-
-.home-block.clienti button {
-  border-left-color: #E53935;
-}
-
-.home-block.ordini button {
-  flex: 1;
-  border-left-color: #FFD400;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-}
-
-.home-block.fatture button {
-  border-left-color: #999;
-}
-
-.home-main-title {
-  text-align: center;
-  font-size: 34px;
-  font-weight: 700;
-  margin-bottom: 24px;
-  letter-spacing: 1px;
-}
-
-.refresh-btn:hover {
-  background: #2f2f2f;
-  opacity: 1;
-}
-
-.btn-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 36px;
-  padding: 0 20px;
-
-  border-radius: 999px;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* RIPRENDI – verde */
-button.riprendi {
-  background: var(--accent);
+  padding: 12px 16px;
+  background: #1e1e1e;
   color: #fff;
 }
 
-button.riprendi:hover {
-  background: var(--accent-dark);
+.assistente-title {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.5px;
 }
 
-#home .home-block.ordini .home-actions-column {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  height: 100%;
-}
-
-/* ORDINI – due pulsanti, stessa altezza degli altri */
-#home .home-block.ordini .home-actions-row {
+.assistente-close {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  flex: 1;
-}
-
-#home .home-block.ordini .home-actions-row button {
-  height: 100%;
-}
-
-/* ===== MENU SCHEDA ===== */
-
-.scheda-menu {
-  position: relative;
-  display: inline-block;
-  margin-left: 8px;
-}
-
-.scheda-menu-btn {
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  padding: 0 !important;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #fff;
+  border: none;
   font-size: 18px;
   cursor: pointer;
-  color: #555;
-}
-
-.scheda-menu-btn:hover {
-  color: #000;
-}
-
-.scheda-menu-popup {
-  position: absolute;
-  right: 0;
-  top: 24px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.15);
-  display: none;
-  z-index: 10;
-}
-
-.scheda-menu-popup button {
-  background: none;
-  border: none;
-  padding: 10px 14px;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.scheda-menu-popup button:hover {
-  background: #f5f5f5;
-}
-
-/* ROSSO ELIMINA */
-.scheda-delete {
-  color: #c0392b;
-}
-
-.scheda-delete:hover {
-  background: #fdecea;
-}
-
-/* =========================
-   SEZIONE CLIENTI – FIX
-   ========================= */
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.doc-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.section {
-  margin-bottom: 40px;
-}
-
-.section h3 {
-  margin-bottom: 14px;
-  border-left: 4px solid var(--accent);
-  padding-left: 10px;
-  font-size: 18px;     /* 🔥 più importante */
-  font-weight: 700;
-}
-
-.file-btn-main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ececec;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.file-btn-main:hover {
-  background: #ddd;
-}
-
-.file-btn-view {
-  background: #3a3a3a;
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 10px 18px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.file-btn-view:hover {
-  background: #222;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.file-btn-camera {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 44px;       /* IDENTICO a Carica libretto */
-  width: 44px;
-  border-radius: 12px;
-  border: none;
-  background: #ececec;
-  cursor: pointer;
-}
-
-/* icona fotocamera */
-.file-btn-camera::before {
-  content: "📷";
-  font-size: 20px;
   line-height: 1;
-
 }
 
-.file-btn-camera:hover {
-  background: #ddd;
-}
-
-.file-upload {
+.assistente-chat {
+  flex: 1;
+  overflow-y: auto;
+  padding: 30px;
   display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.page#schede,
-.page#ordini {
   flex-direction: column;
+  gap: 18px;
 }
 
-/* ================= LOADING LOGO ================= */
-
-.loading-logo {
-
+.assistente-exit {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #fff;
+  border: none;
+  border-radius: 6px;
   width: 32px;
   height: 32px;
-
-  margin-left: 10px;
-
-  display: none; /* 🔥 NASCOSTO DI DEFAULT */
-
-  vertical-align: middle;
-
-}
-
-.loading-logo.active {
-
-  display: inline-block;
-
-  animation: spinLogo 1s linear infinite;
-
-}
-
-.loading-logo.ok {
-
-  display: inline-block;
-
-  animation: none;
-
-}
-
-@keyframes spinLogo {
-
-  from { transform: rotate(0deg); }
-
-  to   { transform: rotate(360deg); }
-
-}
-
-.doc-row {
-  display: flex;
-  align-items: center;
-  gap: 8px; /* più vicini */
-  margin-bottom: 28px;
-}
-
-.doc-label {
-  font-weight: 600;
-  min-width: 45px;
-}
-
-.icon-btn {
-  width: 38px;          /* box più compatto */
-  height: 38px;
-  padding: 4px;         /* 🔥 riduce spazio interno */
-  border: none;
-  background: transparent;
-  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
-  transition: background 0.15s ease;
 }
 
-.icon-btn:hover {
-  background: #ececec;
-}
-
-.icon-svg {
-  width: 22px;          /* icona più piena */
-  height: 22px;
-  stroke: #333;
-  stroke-width: 2.2;
-  fill: none;
-}
-
-.doc-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.doc-icon svg {
-  width: 22px;
-  height: 22px;
-  stroke: #444;
-  stroke-width: 2;
-  fill: none;
-}
-
-.doc-icon:hover {
-  background: #e5e5e5;
-}
-
-.doc-icon:hover svg {
-  stroke: #000;
-}
-
-/* ===============================
-   HOME 2x2 GRID DEFINITIVA
-   =============================== */
-
-.home-appointments {
-  height: 220px;
-  margin-bottom: 25px;
-}
-
-.home-appointments h3 {
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-}
-
-.appointments-list {
-  height: 140px;
-  overflow-y: auto;
-}
-
-.home-modules {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: auto auto;
-  gap: 25px;
-  margin-top: 20px;      /* abbassa tutto */
-}
-
-/* CARD SEZIONE */
-
-.home-module {
-  border: 1.5px solid #1e1e1e;
-  border-radius: 8px;
-  padding: 15px 24px 20px 24px; /* meno spazio sopra */
+/* INPUT ROW */
+.assistente-input-row {
   display: flex;
-  flex-direction: column;
-}
-
-.home-module h3 {
-  text-align: center;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-
-/* AREA CENTRALE */
-
-.module-icons {
-  flex: 1;
-  display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 60px;
+  gap: 14px;
+  padding: 18px 24px;
+  background: #f7f7f7;
+  border-top: 1px solid #e0e0e0;
 }
 
-/* ICONA */
-
-.icon-action {
-  width: 120px;
-  height: 120px;
+.msg {
+  max-width: 75%;
+  padding: 10px 14px;
   border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.18s ease;
-  border: 1px solid transparent;
+  font-size: 14px;
 }
 
-/* Hover base */
-.icon-action:hover {
-  background: #f4f4f4;
-  transform: translateY(-4px);
+.msg.bot {
+  background: #e0e0e0;
+  align-self: flex-start;
 }
 
-/* Hover colori per sezione */
-.home-module.ordini .icon-action:hover {
-  border: 1.5px solid #f5c400;
+.msg.user {
+  background: var(--accent);
+  color: #fff;
+  align-self: flex-end;
 }
 
-.home-module.clienti .icon-action:hover {
-  border: 1.5px solid #E53935;
-}
-
-.home-module.schede .icon-action:hover {
-  border: 1.5px solid #2ecc71;
-}
-
-.home-module.fatture .icon-action:hover {
-  border: 1.5px solid #9e9e9e;
-}
-
-/* ===== FIX ICONE HOME ===== */
-
-.icon-action svg {
-  width: 42px;
-  height: 42px;
-  stroke: #1e1e1e;
-  stroke-width: 2;
-  fill: none;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-/* ===== STRUTTURA BASE LAYOUT ===== */
-
-html, body {
-  height: 100%;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
-/* ===== HOME FIX ===== */
-
-#home {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  padding: 6px 20px 16px;
-}
-
-.home-main-title {
-  text-align: center;
-  margin-top: 28px;     /* 👈 abbassa il titolo */
-  margin-bottom: 30px;
-}
-/* gestione pagine */
-
-.page {
-  display: none;
-  flex-direction: column;
-  flex: 1;
-  padding: 30px 60px;
-  padding-top: 40px;
-  box-sizing: border-box;
-  min-height: 0; /* 🔥 fondamentale */
-}
-
-.page.active {
-  display: flex;
-}
-
-.page-header {
-  max-width: 1200px;
-  margin: 0 auto 20px auto;
-  width: 100%;
+.assistente-footer {
+  padding: 10px 14px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 35px;
+  background: #fff;
+  border-top: 1px solid #ddd;
 }
 
-.page-content,
-.calendar-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
+.assistente-status {
+  font-size: 13px;
+  color: #555;
 }
 
-#clienti .section {
-  background: transparent;
-  padding: 0;
-  box-shadow: none;
-  border: none;
+.assistente-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-#clienti .page-header,
-#appuntamenti .page-header {
-  margin-top: 24px;
+.mode-label {
+  font-size: 13px;
+  color: #fff;
 }
 
-#appuntamenti.page.active {
-  overflow: hidden; /* niente scroll esterno */
-}
-
-.topbar-inner {
+.switch {
   position: relative;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* centro naturale */
+  display: inline-block;
+  width: 46px;
+  height: 24px;
 }
 
-/* BRAND resta normale a sinistra */
-.brand {
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
   position: absolute;
-  left: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  z-index: 2;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 24px;
+  transition: 0.3s;
 }
 
-/* MENU centrato ASSOLUTO alla pagina */
-.menu {
+.slider:before {
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 40px;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.3s;
 }
 
-@media (max-width: 1000px) {
-  .menu {
-    gap: 20px;
-    font-size: 14px;
-  }
+.switch input:checked + .slider {
+  background-color: var(--accent);
 }
 
-@media (max-width: 850px) {
-  .menu {
-    display: none; /* sparisce prima che si sovrapponga */
-  }
+.switch input:checked + .slider:before {
+  transform: translateX(22px);
 }
 
-/* ===== DRAWER MODERNO ===== */
+#assistente {
+  display: none;
+}
 
-.fullscreen-menu {
+#assistente.active {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55); /* 🔥 meno opaco */
-  backdrop-filter: blur(4px);
-
-  display: none;
-  align-items: center;
-  justify-content: center;
-
-  z-index: 9999;
-}
-
-.fullscreen-menu.active {
-  display: flex;
-}
-
-.fullscreen-content {
+  background: var(--bg);
+  z-index: 2000;
   display: flex;
   flex-direction: column;
-  gap: 35px;
-  text-align: center;
 }
 
-.fullscreen-content button {
-  background: transparent;        /* 🔥 niente riquadro */
+#assistenteInput {
+  flex: 1;
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+#btnMic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
   border: none;
-  color: white;
-  font-size: 34px;                /* 🔥 grande */
-  font-weight: 700;
-  letter-spacing: 1px;
+  font-size: 18px;
   cursor: pointer;
-  padding: 8px 0;
-  transition: all 0.25s ease;
+  transition: transform 0.1s ease, background 0.2s ease;
 }
 
-/* Hover elegante */
-.fullscreen-content button:hover {
-  color: #f5c400;                 /* giallo brand */
-  transform: scale(1.08);
+#btnMic:hover {
+  background: var(--accent-dark);
+  transform: scale(1.05);
 }
+
+
 
