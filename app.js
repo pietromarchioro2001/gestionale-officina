@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwbsBCPzZW_Kj1T9qi2QtrqSAKKLgWNfwLC1y_cYKxUpJkMLz4UZNttYWXHe27M43o0/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbweWRp1vvFs-eLf23BbXkkFLH0RbB1qPmyCre1YdOcT22gdQ8xK2pbO27Nx0XaDzL6S/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -2741,6 +2741,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
