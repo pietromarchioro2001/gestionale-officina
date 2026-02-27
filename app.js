@@ -46,6 +46,16 @@ function callBackend(action, args = []) {
   });
 }
 
+function toggleDrawer(event) {
+  if (event) event.stopPropagation();
+
+  const drawer = document.getElementById("mobileDrawer");
+  const overlay = document.getElementById("drawerOverlay");
+
+  drawer.classList.toggle("open");
+  overlay.classList.toggle("active");
+}
+
 function homeCaricaLibrettoGallery() {
   showSection('clienti');
   setTimeout(() => {
@@ -2790,6 +2800,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
