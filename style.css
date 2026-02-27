@@ -1883,74 +1883,48 @@ body {
 
 /* ===== DRAWER MODERNO ===== */
 
-.drawer-overlay {
+.fullscreen-menu {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 3000; /* più basso */
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+
+  display: none;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9999;
 }
 
-.mobile-drawer {
-  position: fixed;
-  top: 0;
-  left: -280px;
-  width: 280px;
-  height: 100vh;
-  background: #1e1e1e;
-  color: white;
-  padding: 80px 24px 30px 24px;
-  transition: left 0.3s ease;
-  z-index: 6000; /* molto più alto */
+.fullscreen-menu.active {
+  display: flex;
 }
 
-.mobile-drawer.open {
-  left: 0;
-}
-
-.drawer-header {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  letter-spacing: 1px;
-  opacity: 0.8;
-}
-
-.drawer-links {
+.fullscreen-content {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 25px;
+  text-align: center;
 }
 
-.drawer-links button {
-  background: transparent;
+.fullscreen-content button {
+  background: white;
+  color: #1e1e1e;
   border: none;
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  text-align: left;
-  padding: 12px 14px;
-  border-radius: 10px;
+  padding: 18px 40px;
+  font-size: 22px;
+  font-weight: 700;
+  border-radius: 14px;
   cursor: pointer;
+  min-width: 260px;
   transition: all 0.2s ease;
 }
 
-.drawer-links button:hover {
-  background: rgba(255,255,255,0.08);
+.fullscreen-content button:hover {
+  background: #f5c400;
+  transform: scale(1.05);
 }
 
-.drawer-links button.active {
-  background: rgba(245,196,0,0.15);
-  color: #f5c400;
-}
-
-.drawer-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
 
 
 
