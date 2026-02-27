@@ -1881,6 +1881,32 @@ body {
   }
 }
 
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: -260px;
+  width: 260px;
+  height: 100%;
+  background: #1e1e1e;
+  transition: left 0.3s ease;
+  z-index: 3000;
+}
+
+.mobile-drawer.open {
+  left: 0;
+}
+
+.drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: none;
+  z-index: 2500;
+}
+
+.drawer-overlay.active {
+  display: block;
+}
 
 
 
