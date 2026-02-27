@@ -122,7 +122,8 @@ main {
 }
 
 .page.active {
-  display: block;
+  display: flex;
+  flex: 1;
 }
 
 .page-title {
@@ -2758,6 +2759,7 @@ button.riprendi:hover {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+
 
 
 
