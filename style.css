@@ -30,11 +30,6 @@ html {
   overflow-x: hidden;
 }
 
-html, body {
-  max-width: 100%;
-  overflow-x: hidden;
-}
-
 /* ================= HEADER ================= */
 
 .topbar {
@@ -50,20 +45,6 @@ html, body {
   align-items: center;
 }
 
-.topbar-inner {
-  width: 100%;
-  max-width: 900px;
-  display: flex;
-  align-items: center;
-}
-
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
 .logo {
   height: 40px;
   width: auto;
@@ -76,13 +57,6 @@ html, body {
 }
 
 /* ================= MENU ================= */
-
-.menu {
-  display: flex;
-  gap: 40px;
-  flex: 1;
-  justify-content: center;
-}
 
 .menu button {
   background: transparent;
@@ -108,9 +82,10 @@ main {
   width: 100%;
   padding: 20px;
   overflow-y: auto;
-  box-sizing: border-box;   /* 🔥 fix scroll */
   box-sizing: border-box;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* DESKTOP */
@@ -121,21 +96,12 @@ main {
   }
 }
 
-.page.active {
-  display: flex;
-  flex: 1;
-}
-
 .page-title {
   margin-top: 0;
   margin: 0;
   font-size: 28px;
   font-weight: 700;
   letter-spacing: 1px;
-}
-
-.page-with-footer {
-    flex: 1;
 }
 
 /* contenuto che scrolla */
@@ -600,10 +566,6 @@ div[aria-label*="Apps Script"] {
   margin-bottom: 6px;
   color: #111;
   text-transform: uppercase;
-}
-
-.hidden {
-  display: none !important;
 }
 
 /* ================= ASSISTENTE ================= */
@@ -2427,13 +2389,6 @@ button.riprendi:hover {
   height: 100%;
 }
 
-.page {
-  padding: 40px 30px;
-  display: none;
-  width: 100%;
-  min-height: calc(100vh - 70px);
-}
-
 
 /* =========================
    SEZIONE CLIENTI – FIX
@@ -2764,16 +2719,12 @@ button.riprendi:hover {
 
 html, body {
   height: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -2790,10 +2741,6 @@ main {
   text-align: center;
   margin-top: 28px;     /* 👈 abbassa il titolo */
   margin-bottom: 30px;
-}
-
-.home-layout {
-  width: 100%;
 }
 /* gestione pagine */
 
@@ -2858,6 +2805,7 @@ main {
   display: flex;
   gap: 40px;
 }
+
 
 
 
