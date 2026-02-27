@@ -1883,20 +1883,28 @@ body {
 
 /* ===== DRAWER MODERNO ===== */
 
-.mobile-drawer {
-  background: red !important;
+.drawer-overlay {
   position: fixed;
-  top: 0;                /* 🔥 CAMBIA QUESTO */
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 3000; /* più basso */
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
   left: -280px;
   width: 280px;
-  height: 100vh;         /* 🔥 CAMBIA QUESTO */
+  height: 100vh;
   background: #1e1e1e;
   color: white;
-  padding: 80px 24px 30px 24px; /* 🔥 spazio per la topbar */
+  padding: 80px 24px 30px 24px;
   transition: left 0.3s ease;
-  z-index: 5000;         /* 🔥 ancora più alto */
-  display: flex;
-  flex-direction: column;
+  z-index: 6000; /* molto più alto */
 }
 
 .mobile-drawer.open {
@@ -1939,23 +1947,11 @@ body {
   color: #f5c400;
 }
 
-/* Overlay */
-
-.drawer-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.35);
-  backdrop-filter: blur(2px);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 2500;
-}
-
 .drawer-overlay.active {
   opacity: 1;
   pointer-events: all;
 }
+
 
 
 
