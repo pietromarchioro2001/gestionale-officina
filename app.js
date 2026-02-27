@@ -214,42 +214,6 @@ function salva() {
 }
 
 /********************
- * ALTRI DOCUMENTI
- ********************/
-function leggiAltriDocumenti(callback) {
-  const input = document.getElementById("altriDocumenti");
-  if (!input || !input.files || input.files.length === 0) {
-    callback([]);
-    return;
-  }
-
-  const files = [];
-  let i = 0;
-
-  const next = () => {
-    if (i >= input.files.length) {
-      callback(files);
-      return;
-    }
-
-    const f = input.files[i];
-    const r = new FileReader();
-    r.onload = e => {
-      files.push({
-        nome: f.name,
-        base64: e.target.result.split(",")[1],
-        mimeType: f.type
-      });
-      i++;
-      next();
-    };
-    r.readAsDataURL(f);
-  };
-
-  next();
-}
-
-/********************
  * INVIO BACKEND
  ********************/
 async function inviaSalvataggio(){
@@ -2534,20 +2498,6 @@ function scegliTarga() {
   }
 }
 
-function getFileFromInputs(...ids) {
-
-  for (const id of ids) {
-
-    const input = document.getElementById(id);
-
-    if (input && input.files && input.files.length > 0) {
-      return input.files[0];
-    }
-  }
-
-  return null;
-}
-
 function toggleMenu(btn) {
   // chiudi eventuali menu aperti
   document
@@ -2791,6 +2741,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
