@@ -2761,11 +2761,15 @@ body {
 }
 
 .page-content,
-.calendar-wrapper,
-.section {
+.calendar-wrapper {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+}
+
+#clienti .section {
+  max-width: 100%;
+  margin: 0;
 }
 
 #clienti .page-header,
@@ -2802,6 +2806,7 @@ body {
   display: flex;
   gap: 40px;
 }
+
 
 
 
