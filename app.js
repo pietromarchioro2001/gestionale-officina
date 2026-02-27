@@ -2562,6 +2562,10 @@ document.addEventListener("click", e => {
   }
 });
 
+function toggleDrawer() {
+  document.getElementById("mobileDrawer").classList.toggle("open");
+  document.getElementById("drawerOverlay").classList.toggle("active");
+}
 function eliminaScheda(idScheda, status, linkDoc) {
 
   const conferma = confirm(
@@ -2777,6 +2781,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
