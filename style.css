@@ -2400,14 +2400,6 @@ button.riprendi:hover {
   padding: 16px;
 }
 
-#clienti .clienti-form {
-  max-width: 900px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -2751,6 +2743,7 @@ body {
   padding: 30px 60px;
   padding-top: 40px;
   box-sizing: border-box;
+  min-height: 0; /* 🔥 fondamentale */
 }
 
 .page.active {
@@ -2780,6 +2773,10 @@ body {
   margin-top: 24px;
 }
 
+#appuntamenti.page.active {
+  overflow: hidden; /* niente scroll esterno */
+}
+
 .topbar-inner {
   position: relative;
   width: 100%;
@@ -2805,6 +2802,7 @@ body {
   display: flex;
   gap: 40px;
 }
+
 
 
 
