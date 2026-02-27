@@ -17,17 +17,15 @@
 <body>
 
 <!-- MENU LATERALE MOBILE -->
-<div id="mobileDrawer" class="mobile-drawer">
-  <div class="drawer-links">
-    <button data-page="home" onclick="showSection('home'); toggleDrawer()">Home</button>
-    <button data-page="appuntamenti" onclick="showSection('appuntamenti'); toggleDrawer()">Appuntamenti</button>
-    <button data-page="ordini" onclick="showSection('ordini'); toggleDrawer()">Ordini</button>
-    <button data-page="clienti" onclick="showSection('clienti'); toggleDrawer()">Clienti</button>
-    <button data-page="schede" onclick="showSection('schede'); toggleDrawer()">Schede</button>
+<div id="fullscreenMenu" class="fullscreen-menu">
+  <div class="fullscreen-content">
+    <button onclick="goToSection('home')">Home</button>
+    <button onclick="goToSection('appuntamenti')">Appuntamenti</button>
+    <button onclick="goToSection('clienti')">Clienti</button>
+    <button onclick="goToSection('schede')">Schede</button>
+    <button onclick="goToSection('ordini')">Ordini</button>
   </div>
 </div>
-
-<div id="drawerOverlay" class="drawer-overlay"></div>
 
 <!-- HEADER -->
 <header class="topbar">
@@ -462,6 +460,7 @@
 
 </body>
 </html>
+
 
 
 
