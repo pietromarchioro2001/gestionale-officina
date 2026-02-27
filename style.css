@@ -818,7 +818,7 @@ div[aria-label*="Apps Script"] {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 20px;
 }
 
@@ -1014,6 +1014,14 @@ div[aria-label*="Apps Script"] {
 a#librettoLink:hover,
 a#targaLink:hover {
   text-decoration: underline;
+}
+
+#clienti input,
+#clienti select,
+#clienti textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0; /* 🔥 fondamentale nei grid */
 }
 
 @keyframes spinLogo {
@@ -1840,6 +1848,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
