@@ -1454,13 +1454,6 @@ button.riprendi:hover {
   gap: 20px;
 }
 
-#clienti .section {
-  background: #ffffff;
-  padding: 24px 28px;
-  border-radius: 14px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-}
-
 .doc-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -1823,8 +1816,10 @@ body {
 }
 
 #clienti .section {
-  max-width: 100%;
-  margin: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+  border: none;
 }
 
 #clienti .page-header,
@@ -1861,6 +1856,7 @@ body {
   display: flex;
   gap: 40px;
 }
+
 
 
 
