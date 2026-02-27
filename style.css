@@ -128,10 +128,10 @@ main {
 
 .page-title {
   margin-top: 0;
-  margin: 10px 0 20px;
-  font-size: 24px;
+  margin: 0;
+  font-size: 28px;
   font-weight: 700;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
 }
 
 .page-with-footer {
@@ -2788,7 +2788,8 @@ main {
 
 .home-main-title {
   text-align: center;
-  margin-bottom: 25px;
+  margin-top: 20px;     /* 👈 abbassa il titolo */
+  margin-bottom: 30px;
 }
 
 .home-layout {
@@ -2801,6 +2802,7 @@ main {
   flex-direction: column;
   flex: 1;
   padding: 30px 60px;
+  padding-top: 40px;
   box-sizing: border-box;
 }
 
@@ -2812,6 +2814,10 @@ main {
   max-width: 1200px;
   margin: 0 auto 20px auto;
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
 }
 
 .page-content,
@@ -2821,6 +2827,7 @@ main {
   margin: 0 auto;
   width: 100%;
 }
+
 
 
 
