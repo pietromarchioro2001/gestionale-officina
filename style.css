@@ -1884,6 +1884,7 @@ body {
 /* ===== DRAWER MODERNO ===== */
 
 .mobile-drawer {
+  background: red !important;
   position: fixed;
   top: 0;                /* 🔥 CAMBIA QUESTO */
   left: -280px;
@@ -1955,6 +1956,7 @@ body {
   opacity: 1;
   pointer-events: all;
 }
+
 
 
 
