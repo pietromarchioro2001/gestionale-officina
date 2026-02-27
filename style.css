@@ -1886,8 +1886,8 @@ body {
 .fullscreen-menu {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(6px);
+  background: rgba(0,0,0,0.55); /* 🔥 meno opaco */
+  backdrop-filter: blur(4px);
 
   display: none;
   align-items: center;
@@ -1903,27 +1903,28 @@ body {
 .fullscreen-content {
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 35px;
   text-align: center;
 }
 
 .fullscreen-content button {
-  background: white;
-  color: #1e1e1e;
+  background: transparent;        /* 🔥 niente riquadro */
   border: none;
-  padding: 18px 40px;
-  font-size: 22px;
+  color: white;
+  font-size: 34px;                /* 🔥 grande */
   font-weight: 700;
-  border-radius: 14px;
+  letter-spacing: 1px;
   cursor: pointer;
-  min-width: 260px;
-  transition: all 0.2s ease;
+  padding: 8px 0;
+  transition: all 0.25s ease;
 }
 
+/* Hover elegante */
 .fullscreen-content button:hover {
-  background: #f5c400;
-  transform: scale(1.05);
+  color: #f5c400;                 /* giallo brand */
+  transform: scale(1.08);
 }
+
 
 
 
