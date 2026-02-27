@@ -2747,6 +2747,17 @@ button.riprendi:hover {
   border: 1.5px solid #9e9e9e;
 }
 
+/* ===== FIX ICONE HOME ===== */
+
+.icon-action svg {
+  width: 42px;
+  height: 42px;
+  stroke: #1e1e1e;
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 
 
