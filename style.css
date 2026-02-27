@@ -1448,11 +1448,6 @@ button.riprendi:hover {
    SEZIONE CLIENTI – FIX
    ========================= */
 
-.page#clienti {
-  margin: 0 auto;
-  padding: 16px;
-}
-
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1859,6 +1854,7 @@ body {
   display: flex;
   gap: 40px;
 }
+
 
 
 
