@@ -2563,6 +2563,7 @@ document.addEventListener("click", e => {
 });
 
 function toggleDrawer() {
+  console.log("TOGGLE");
   const drawer = document.getElementById("mobileDrawer");
   const overlay = document.getElementById("drawerOverlay");
 
@@ -2789,6 +2790,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
