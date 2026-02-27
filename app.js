@@ -1009,7 +1009,6 @@ function showSection(id) {
       }
       break;
   }
-}
 
 function isComandoUscita(testo) {
   const t = testo.toUpperCase();
@@ -2787,6 +2786,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
