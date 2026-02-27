@@ -968,17 +968,7 @@ function showSection(id) {
   const page = document.getElementById(id);
   if (page) page.classList.add("active");
 
-  // 🔥 Rimuove active da tutti i bottoni menu
-  document.querySelectorAll('.menu button').forEach(btn => {
-    btn.classList.remove('active');
-  });
-
-  // 🔥 Attiva quello cliccato
-  const activeBtn = document.querySelector(`.menu button[data-section="${id}"]`);
-  if (activeBtn) activeBtn.classList.add('active');
-}
-
-  // menu desktop + drawer
+  // rimuove active dai bottoni
   document.querySelectorAll(".menu button, .mobile-drawer button").forEach(b => {
     b.classList.toggle("active", b.dataset.page === id);
   });
@@ -1009,6 +999,7 @@ function showSection(id) {
       }
       break;
   }
+}
 
 function isComandoUscita(testo) {
   const t = testo.toUpperCase();
@@ -2786,6 +2777,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
