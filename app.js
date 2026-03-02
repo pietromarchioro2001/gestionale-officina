@@ -504,6 +504,28 @@ document.getElementById("targaCamera")
     .getElementById("btnOrdineVocale")
     ?.addEventListener("click", avviaOrdineVocale);
 
+// ==========================
+// TOGGLE APPUNTAMENTI HOME
+// ==========================
+const toggleBtn = document.getElementById("toggleOggi");
+const oggiBox = document.getElementById("oggiEventi");
+
+if (toggleBtn && oggiBox) {
+
+  toggleBtn.addEventListener("click", () => {
+
+    const expanded = oggiBox.classList.toggle("expanded");
+
+    if (expanded) {
+      toggleBtn.textContent = "▲";
+    } else {
+      toggleBtn.textContent = "▼";
+    }
+
+  });
+
+}
+
   showSection("home");
 
 let sessioneAssistente = {
@@ -2741,6 +2763,7 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
+
 
 
 
