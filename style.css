@@ -1936,63 +1936,54 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* HOME FULL HEIGHT */
+  /* HOME FULLSCREEN REALE */
   #home.page.active {
     height: calc(100vh - 45px);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
+  /* HOME LAYOUT OCCUPA TUTTO */
   .home-layout {
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  /* 🔥 TITOLONE RIDOTTO */
-  .home-main-title {
-    display: none;
-  }
-
-  /* 🔥 OGGI ULTRA COMPATTO */
+  /* OGGI COMPATTO */
   .home-appointments {
-    padding: 4px 0;
-    margin-bottom: 6px;
+    flex: 0 0 auto;
+    padding: 6px 0;
+    margin-bottom: 4px;
   }
 
   .home-appointments h3 {
-    font-size: 12px;
+    font-size: 13px;
     margin-bottom: 2px;
   }
 
   .appointments-list {
     font-size: 12px;
     line-height: 1.2;
-    min-height: 18px;
   }
 
-  /* 🔥 MODULI PRENDONO TUTTO LO SPAZIO */
-  .home-layout {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
+  /* QUI È LA CHIAVE */
   .home-modules {
-    flex: 1;
+    flex: 1;                    /* prende tutto lo spazio */
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
     gap: 8px;
+    align-content: stretch;     /* evita vuoto sopra */
   }
 
   .home-module {
+    height: 100%;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 10px;
-    height: 100%;
   }
 
   .module-icons {
@@ -2000,25 +1991,11 @@ a#targaLink:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
-  }
-
-  /* 🔥 ICONA PIÙ PICCOLA */
-  .icon-action {
-    width: 60px;
-    height: 60px;
-  }
-
-  .icon-action svg {
-    width: 18px;
-    height: 18px;
-  }
-
-  .icon-action span {
-    font-size: 11px;
+    gap: 28px;
   }
 
 }
+
 
 
 
