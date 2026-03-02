@@ -1952,24 +1952,76 @@ a#targaLink:hover {
     font-size: 20px;
   }
 
-  /* ---------- HOME FULLSCREEN NO SCROLL ---------- */
+  /* ---------- HOME MOBILE OTTIMIZZATA ---------- */
 
-  #home.page.active {
-    height: calc(100vh - 45px);
-    overflow: hidden;
-  }
+#home.page.active {
+  height: calc(100vh - 45px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
 
-  .home-main-title {
-    font-size: 18px;
-    margin: 6px 0 10px 0;
-  }
+.home-main-title {
+  font-size: 17px;
+  margin: 6px 0 8px 0;
+  flex-shrink: 0;
+}
 
-  .home-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
+/* Appuntamenti compatti */
+.home-appointments {
+  height: 100px;
+  margin-bottom: 8px;
+}
+
+.appointments-list {
+  height: 70px;
+  font-size: 13px;
+}
+
+/* Container principale */
+.home-container {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 10px;
+  min-height: 0;
+}
+
+/* Ogni blocco */
+.home-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Pulsanti più compatti ma touch-friendly */
+.home-block button {
+  padding: 12px 8px;
+  font-size: 14px;
+  border-radius: 14px;
+}
+
+/* Icone leggermente più piccole */
+.icon-action {
+  width: 80px;
+  height: 80px;
+}
+
+.icon-action svg {
+  width: 26px;
+  height: 26px;
+}
+
+/* Elimina spazio inutile dei moduli */
+.home-module {
+  padding: 10px;
+}
+
+.module-icons {
+  gap: 20px;
+}
 
   /* ---------- APPUNTAMENTI COMPATTI ---------- */
 
@@ -2101,6 +2153,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
