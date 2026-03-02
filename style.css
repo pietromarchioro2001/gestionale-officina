@@ -727,10 +727,9 @@ input.targa {
   stroke-linejoin: round;
 }
 
-#home {
-  display: flex;
+#home.page {
   flex-direction: column;
-  align-items: center; /* centra tutto orizzontalmente */
+  align-items: center;
 }
 
 /* ===== HOME FIX ===== */
@@ -1845,6 +1844,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
