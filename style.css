@@ -1845,6 +1845,67 @@ a#targaLink:hover {
   transform: scale(1.05);
 }
 
+/* =========================================================
+   RESPONSIVE LIGHT – 15 POLLICI
+   (riduzione proporzionale leggera, nessuna rottura layout)
+========================================================= */
+
+@media (max-width: 1500px) {
+
+  body {
+    font-size: 15px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .home-main-title {
+    font-size: 26px;
+  }
+
+  main {
+    padding: 16px;
+  }
+
+  .section {
+    margin-bottom: 28px;
+  }
+
+  .home-container {
+    gap: 16px;
+  }
+
+  .home-block {
+    gap: 12px;
+  }
+
+  .home-block button {
+    padding: 18px 14px;
+  }
+
+  .scheda-card {
+    padding: 16px 20px;
+  }
+
+  .scheda-row {
+    padding: 12px 0;
+  }
+
+  .ordine-row {
+    padding: 14px 0;
+    gap: 6px;
+  }
+
+  .form-grid {
+    gap: 16px;
+  }
+
+  .doc-grid {
+    gap: 10px;
+  }
+
+}
 
 
 
