@@ -1842,9 +1842,9 @@ a#targaLink:hover {
   }
 
   #home.page.active {
-    height: calc(100vh - 45px);
-    overflow: hidden;
-  }
+  height: 100%;
+  overflow: hidden;
+}
 
   #home.page:not(.active) {
     height: auto;
@@ -1868,6 +1868,7 @@ a#targaLink:hover {
   }
    
   main {
+    height: calc(100vh - 45px);
     padding: 16px;
   }
 
@@ -1930,6 +1931,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
