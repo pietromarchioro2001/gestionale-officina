@@ -1976,11 +1976,23 @@ a#targaLink:hover {
 
   /* MODULI SALGONO SUBITO SOTTO */
   .home-modules {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 6px;
+    gap: 10px;                 /* meno spazio tra card */
+  }
+
+  .home-card {
+    padding: 14px 12px;        /* prima era troppo alto */
+    border-radius: 18px;
+    min-height: 130px;         /* compatte */
+  }
+
+  .home-card h3 {
+    font-size: 15px;
+    margin-bottom: 8px;        /* meno spazio sotto titolo */
+  }
+
+  .home-card .card-actions {
+    margin-top: 4px;           /* avvicina bottoni */
+    gap: 12px;                 /* meno spazio tra i 2 bottoni */
   }
 
   .icon-action {
@@ -1998,6 +2010,7 @@ a#targaLink:hover {
     margin-top: 2px;
   }
 }
+
 
 
 
