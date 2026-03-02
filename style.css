@@ -1936,6 +1936,7 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
+  /* HOME FULL HEIGHT */
   #home.page.active {
     height: calc(100vh - 45px);
     overflow: hidden;
@@ -1949,26 +1950,65 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-  /* OGGI COMPATTO */
-  .home-appointments {
-    flex: 0 0 70px;
+  /* 🔥 TITOLONE RIDOTTO */
+  .home-main-title {
+    font-size: 16px;
+    margin: 4px 0 4px 0;
   }
 
-  /* QUESTO È IL PUNTO CHIAVE */
+  /* 🔥 OGGI ULTRA COMPATTO */
+  .home-appointments {
+    flex: 0 0 auto;
+    margin-bottom: 6px;
+  }
+
+  .home-appointments h3 {
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .appointments-list {
+    font-size: 12px;
+    line-height: 1.2;
+  }
+
+  /* 🔥 MODULI PRENDONO TUTTO LO SPAZIO */
   .home-modules {
     flex: 1;
-    display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-rows: repeat(2, 1fr) !important;
-    gap: 10px !important;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
   }
 
+  /* 🔥 CARD PIÙ BASSE */
   .home-module {
-    height: auto !important;
-    width: auto !important;
+    padding: 8px;
+    border-radius: 12px;
+  }
+
+  .home-module h3 {
+    font-size: 13px;
+    margin-bottom: 4px;
+  }
+
+  /* 🔥 ICONA PIÙ PICCOLA */
+  .icon-action {
+    width: 65px;
+    height: 65px;
+  }
+
+  .icon-action svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon-action span {
+    font-size: 11px;
   }
 
 }
+
 
 
 
