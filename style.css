@@ -49,7 +49,6 @@ main {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 45px);
 }
 
 .page {
@@ -726,6 +725,12 @@ input.targa {
   fill: none;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+#home {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centra tutto orizzontalmente */
 }
 
 /* ===== HOME FIX ===== */
@@ -1840,6 +1845,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
