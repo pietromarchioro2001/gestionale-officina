@@ -1954,7 +1954,7 @@ a#targaLink:hover {
 
   /* ---------- HOME MOBILE OTTIMIZZATA ---------- */
 
-/* BLOCCA HOME FULLSCREEN */
+ /* HOME FULLSCREEN */
   #home.page.active {
     height: calc(100vh - 45px);
     overflow: hidden;
@@ -1962,65 +1962,64 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-  /* COMPATTA TITOLO */
+  /* Titolo compatto */
   .home-main-title {
-    font-size: 16px;
+    font-size: 18px;
     margin: 6px 0 6px 0;
   }
 
-  /* OGGI SUPER COMPATTO */
+  /* OGGI compatto */
   .home-appointments {
-    height: 60px;
-    margin-bottom: 8px;
+    height: 70px;
+    margin-bottom: 10px;
   }
 
-  .appointments-list {
-    height: 35px;
-    font-size: 12px;
-  }
-
-  /* RESET COMPLETO STRUTTURA DESKTOP */
-  .home-container {
-    all: unset;
-  }
-
-  /* NUOVA STRUTTURA 2x2 */
-  .home-container {
-    flex: 1;
-    display: grid !important;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 10px;
-  }
-
-  /* CARD COMPATTE */
-  .home-block {
-    background: #fff;
-    border-radius: 14px;
-    padding: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 6px;
-  }
-
-  .home-block h3 {
+  .home-appointments h3 {
     font-size: 14px;
     margin-bottom: 4px;
   }
 
-  /* BOTTONI PIÙ PICCOLI */
-  .home-block button {
-    padding: 6px 4px;
+  .appointments-list {
     font-size: 12px;
   }
 
-  .home-actions-row {
-    flex-direction: column;
-    gap: 6px;
+  /* TRASFORMIAMO LE SEZIONI IN 2x2 */
+  .home-modules {
+    flex: 1;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
   }
 
+  /* CARD PIÙ COMPATTE */
+  .home-module {
+    padding: 10px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .home-module h3 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  /* Icone più piccole */
+  .icon-action {
+    width: 70px;
+    height: 70px;
+  }
+
+  .icon-action svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .icon-action span {
+    font-size: 12px;
+  }
   /* ---------- APPUNTAMENTI COMPATTI ---------- */
 
   .home-appointments {
@@ -2151,6 +2150,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
