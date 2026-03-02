@@ -1952,27 +1952,33 @@ a#targaLink:hover {
 
   /* 🔥 TITOLONE RIDOTTO */
   .home-main-title {
-    font-size: 16px;
-    margin: 4px 0 4px 0;
+    display: none;
   }
 
   /* 🔥 OGGI ULTRA COMPATTO */
   .home-appointments {
-    flex: 0 0 auto;
+    padding: 4px 0;
     margin-bottom: 6px;
   }
 
   .home-appointments h3 {
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 2px;
   }
 
   .appointments-list {
     font-size: 12px;
     line-height: 1.2;
+    min-height: 18px;
   }
 
   /* 🔥 MODULI PRENDONO TUTTO LO SPAZIO */
+  .home-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
   .home-modules {
     flex: 1;
     display: grid;
@@ -1981,26 +1987,31 @@ a#targaLink:hover {
     gap: 8px;
   }
 
-  /* 🔥 CARD PIÙ BASSE */
   .home-module {
-    padding: 8px;
-    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10px;
+    height: 100%;
   }
 
-  .home-module h3 {
-    font-size: 13px;
-    margin-bottom: 4px;
+  .module-icons {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
   }
 
   /* 🔥 ICONA PIÙ PICCOLA */
   .icon-action {
-    width: 65px;
-    height: 65px;
+    width: 60px;
+    height: 60px;
   }
 
   .icon-action svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
   }
 
   .icon-action span {
@@ -2008,6 +2019,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
