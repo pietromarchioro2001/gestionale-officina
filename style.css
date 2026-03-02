@@ -1841,10 +1841,32 @@ a#targaLink:hover {
     font-size: 24px;
   }
 
-  .home-main-title {
-    font-size: 26px;
+  #home.page.active {
+    height: calc(100vh - 45px);
+    overflow: hidden;
   }
 
+  #home.page:not(.active) {
+    height: auto;
+    overflow: visible;
+  }
+
+  .home-main-title {
+    font-size: 20px;
+    margin: 6px 0 12px 0;
+    flex-shrink: 0;
+  }
+
+  .home-container {
+    flex: 1;
+    display: grid;
+    overflow: hidden;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-rows: auto 1fr 1fr;
+    gap: 10px;
+    min-height: 0;
+  }
+   
   main {
     padding: 16px;
   }
@@ -1853,16 +1875,18 @@ a#targaLink:hover {
     margin-bottom: 28px;
   }
 
-  .home-container {
-    gap: 16px;
-  }
-
   .home-block {
-    gap: 12px;
+    gap: 6px;
   }
 
   .home-block button {
-    padding: 18px 14px;
+    padding: 10px 8px;
+    font-size: 13px;
+  }
+
+  .home-today {
+    padding: 10px;
+    min-height: 0;
   }
 
   .scheda-card {
@@ -1886,7 +1910,27 @@ a#targaLink:hover {
     gap: 10px;
   }
 
+ .icon-action {
+    width: 95px;
+    height: 95px;
+  }
+
+  .icon-action svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  /* Più spazio per appuntamenti */
+  .home-appointments {
+    flex: 1.4;
+  }
+
+  .appointments-list {
+    max-height: 160px;
+  }
+
 }
+
 
 
 
