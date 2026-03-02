@@ -1840,8 +1840,7 @@ a#targaLink:hover {
   }
 
   #home.page.active {
-  height: 100%;
-  overflow: hidden;
+  min-height: calc(100vh - 45px);
 }
 
   #home.page:not(.active) {
@@ -1866,10 +1865,8 @@ a#targaLink:hover {
   }
    
   main {
-    padding: 0 16px;
-    height: calc(100vh - 45px);
-    overflow: hidden;
-  }
+  padding: 0 16px;
+}
 
   .section {
     margin-bottom: 28px;
@@ -1931,6 +1928,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
