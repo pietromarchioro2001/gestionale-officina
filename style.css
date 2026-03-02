@@ -1936,7 +1936,7 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* HOME FULLSCREEN REALE */
+  /* HOME FULL */
   #home.page.active {
     height: calc(100vh - 45px);
     display: flex;
@@ -1944,62 +1944,79 @@ a#targaLink:hover {
     overflow: hidden;
   }
 
-  /* HOME LAYOUT OCCUPA TUTTO */
   .home-layout {
     flex: 1;
     display: flex;
     flex-direction: column;
   }
 
-  /* OGGI COMPATTO */
+  /* TITOLONE VIA */
+  .home-main-title {
+    display: none;
+  }
+
+  /* OGGI SUPER COMPATTO */
   .home-appointments {
-    flex: 0 0 auto;
-    padding: 6px 0;
+    padding: 2px 0;
     margin-bottom: 4px;
   }
 
   .home-appointments h3 {
-    font-size: 13px;
+    font-size: 12px;
     margin-bottom: 2px;
   }
 
   .appointments-list {
     font-size: 12px;
-    line-height: 1.2;
+    line-height: 1.1;
   }
 
-  /* QUI È LA CHIAVE */
+  /* GRID 2x2 STRETCH */
   .home-modules {
-    flex: 1;                    /* prende tutto lo spazio */
+    flex: 1;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
-    gap: 8px;
-    align-content: stretch;     /* evita vuoto sopra */
+    gap: 6px;
   }
 
+  /* CARD MOLTO PIÙ COMPATTE */
   .home-module {
-    height: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    padding: 6px;
+    border-radius: 12px;
   }
 
+  /* TITOLO CARD */
+  .home-module h3 {
+    font-size: 12px;
+    margin: 0 0 4px 0;
+  }
+
+  /* AREA ICONE */
   .module-icons {
     flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 28px;
+    gap: 16px; /* prima era enorme */
+  }
+
+  /* ICONE PIÙ PICCOLE */
+  .icon-action {
+    width: 55px;
+    height: 55px;
+  }
+
+  .icon-action svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .icon-action span {
+    font-size: 10px;
   }
 
 }
-
-
-
-
-
 
 
 
