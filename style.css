@@ -749,6 +749,19 @@ input.targa {
   color: #333;
 }
 
+.oggi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#toggleOggi {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 @media (max-width: 1400px) {
 
   .home-main-title {
@@ -1936,7 +1949,6 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* HOME FULL */
   #home.page.active {
     height: calc(100vh - 45px);
     display: flex;
@@ -1950,28 +1962,19 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-  /* TITOLONE VIA */
-  .home-main-title {
-    display: none;
-  }
-
-  /* OGGI SUPER COMPATTO */
+  /* OGGI OCCUPA SOLO LO SPAZIO NECESSARIO */
   .home-appointments {
-    padding: 2px 0;
-    margin-bottom: 4px;
-  }
-
-  .home-appointments h3 {
-    font-size: 12px;
-    margin-bottom: 2px;
+    flex: 0 0 auto;
+    padding: 4px 0;
+    margin-bottom: 6px;
   }
 
   .appointments-list {
-    font-size: 12px;
-    line-height: 1.1;
+    max-height: 110px;   /* spazio per circa 5 appuntamenti */
+    overflow: hidden;
   }
 
-  /* GRID 2x2 STRETCH */
+  /* MODULI SALGONO SUBITO SOTTO */
   .home-modules {
     flex: 1;
     display: grid;
@@ -1980,43 +1983,22 @@ a#targaLink:hover {
     gap: 6px;
   }
 
-  /* CARD MOLTO PIÙ COMPATTE */
-  .home-module {
-    padding: 6px;
-    border-radius: 12px;
-  }
-
-  /* TITOLO CARD */
-  .home-module h3 {
-    font-size: 12px;
-    margin: 0 0 4px 0;
-  }
-
-  /* AREA ICONE */
-  .module-icons {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 16px; /* prima era enorme */
-  }
-
-  /* ICONE PIÙ PICCOLE */
   .icon-action {
-    width: 55px;
-    height: 55px;
+    width: 65px;
+    height: 65px;
   }
 
   .icon-action svg {
-    width: 18px;
-    height: 18px;
+    width: 22px;
+    height: 22px;
   }
 
   .icon-action span {
-    font-size: 10px;
+    font-size: 11px;
   }
 
 }
+
 
 
 
