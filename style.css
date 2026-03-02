@@ -457,7 +457,6 @@ input.targa {
   padding: 16px;
   box-shadow: 0 6px 18px rgba(0,0,0,.08); 
   flex: 1;
-  overflow-y: auto;
   min-height: 0;
   width: 100%;
 }
@@ -1363,12 +1362,6 @@ a#targaLink:hover {
   background: #aaa;
 }
 
-#schedeContent {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
 
 /* =========================================================
    11. ORDINI
@@ -1559,18 +1552,6 @@ a#targaLink:hover {
 .btn-vocale:hover {
   transform: scale(1.05);
   background: var(--accent-dark);
-}
-
-#ordiniContent {
-  flex: 1;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-#ordiniContainer {
-  max-height: calc(100vh - 260px);
-  overflow-y: auto;
-  padding-right: 6px;
 }
 
 #ordiniContainer::-webkit-scrollbar {
@@ -1906,6 +1887,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
