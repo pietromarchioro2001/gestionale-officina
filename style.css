@@ -53,8 +53,6 @@ main {
 
 .page {
   display: none;
-  flex: 1;
-  min-height: 0;
   flex-direction: column;
   width: 100%;
 }
@@ -1933,6 +1931,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
