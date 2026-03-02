@@ -1961,66 +1961,71 @@ a#targaLink:hover {
   flex-direction: column;
 }
 
+/* Titolo più compatto */
 .home-main-title {
-  font-size: 17px;
-  margin: 6px 0 8px 0;
-  flex-shrink: 0;
+  font-size: 16px;
+  margin: 4px 0 6px 0;
 }
 
-/* Appuntamenti compatti */
+/* Sezione OGGI molto compatta */
 .home-appointments {
-  height: 100px;
-  margin-bottom: 8px;
+  height: 70px;
+  margin-bottom: 6px;
+}
+
+.home-appointments h3 {
+  font-size: 13px;
+  margin-bottom: 4px;
 }
 
 .appointments-list {
-  height: 70px;
-  font-size: 13px;
+  height: 40px;
+  font-size: 12px;
 }
 
-/* Container principale */
+/* Container principale 2x2 */
 .home-container {
   flex: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 10px;
-  min-height: 0;
 }
 
-/* Ogni blocco */
+/* Blocchi senza spazio inutile */
 .home-block {
+  padding: 10px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 6px;
 }
 
-/* Pulsanti più compatti ma touch-friendly */
-.home-block button {
-  padding: 12px 8px;
+/* Titolo sezione */
+.home-block h3 {
   font-size: 14px;
-  border-radius: 14px;
+  margin-bottom: 4px;
 }
 
-/* Icone leggermente più piccole */
+/* Pulsanti compatti */
+.home-block button {
+  padding: 8px 6px;
+  font-size: 13px;
+  border-radius: 12px;
+}
+
+/* Icone più piccole */
 .icon-action {
-  width: 80px;
-  height: 80px;
+  width: 70px;
+  height: 70px;
 }
 
 .icon-action svg {
-  width: 26px;
-  height: 26px;
-}
-
-/* Elimina spazio inutile dei moduli */
-.home-module {
-  padding: 10px;
-}
-
-.module-icons {
-  gap: 20px;
+  width: 22px;
+  height: 22px;
 }
 
   /* ---------- APPUNTAMENTI COMPATTI ---------- */
@@ -2153,6 +2158,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
