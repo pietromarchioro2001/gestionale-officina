@@ -45,7 +45,7 @@ html, body {
 ========================================================= */
 
 main {
-  margin-top: 45px; /* spazio sotto topbar */
+  margin-top: 45px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -1931,6 +1931,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
