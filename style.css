@@ -1888,6 +1888,43 @@ a#targaLink:hover {
 
 }
 
+/* =========================================================
+   HOME – COMPATTA PER 15 POLLICI
+========================================================= */
+
+@media (max-width: 1500px) {
+
+  #home {
+    height: calc(100vh - 45px);
+    overflow: hidden; /* niente scroll home */
+  }
+
+  .home-main-title {
+    margin: 12px 0 18px 0;
+    font-size: 24px;
+  }
+
+  .home-container {
+    gap: 14px;
+  }
+
+  .home-block {
+    gap: 10px;
+  }
+
+  .home-block button {
+    padding: 14px 12px;
+  }
+
+  .home-today {
+    padding: 10px;
+  }
+
+  .home-today h3 {
+    margin-bottom: 10px;
+  }
+
+}
 
 
 
