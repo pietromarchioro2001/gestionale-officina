@@ -402,13 +402,6 @@ input.targa {
    7. HOME
 ========================================================= */
 
-#home {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-
 #home .home-block.ordini .home-actions-column {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -773,12 +766,6 @@ input.targa {
 
 .evento .testo {
   color: #333;
-}
-
-#home.page {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
 }
 
 @media (max-width: 1400px) {
@@ -1873,6 +1860,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
