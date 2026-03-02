@@ -93,6 +93,13 @@ main {
   margin: 0 auto;
 }
 
+.page > * {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .section {
   margin-bottom: 40px;
 }
@@ -1853,6 +1860,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
