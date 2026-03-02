@@ -57,12 +57,11 @@ main {
 }
 
 .page {
+  display: none;
   flex: 1;
   min-height: 0;
-  display: none;
+  flex-direction: column;
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 .page.active {
@@ -89,9 +88,9 @@ main {
 
 .page-content,
 .calendar-wrapper {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  width: 100%;
 }
 
 .section {
@@ -1854,6 +1853,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
