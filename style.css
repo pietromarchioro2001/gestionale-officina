@@ -47,8 +47,6 @@ html, body {
 main {
   margin-top: 45px; /* spazio sotto topbar */
   padding: 16px;
-  height: calc(100vh - 45px);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1935,6 +1933,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
