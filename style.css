@@ -46,7 +46,9 @@ html, body {
 
 main {
   margin-top: 45px; /* spazio sotto topbar */
-  padding: 20px;
+  padding: 0 16px;
+  height: calc(100vh - 45px);
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1853,7 +1855,7 @@ a#targaLink:hover {
 
   .home-main-title {
     font-size: 20px;
-    margin: 6px 0 12px 0;
+    margin: 4px 0 6px 0;
     flex-shrink: 0;
   }
 
@@ -1931,6 +1933,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
