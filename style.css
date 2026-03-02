@@ -1930,6 +1930,177 @@ a#targaLink:hover {
 }
 
 
+/* =========================================================
+   MOBILE – TELEFONO
+========================================================= */
+
+@media (max-width: 768px) {
+
+  /* ---------- STRUTTURA BASE ---------- */
+
+  main {
+    padding: 12px;
+  }
+
+  .page > *,
+  .page-header,
+  .page-content {
+    max-width: 100%;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
+
+  /* ---------- HOME FULLSCREEN NO SCROLL ---------- */
+
+  #home.page.active {
+    height: calc(100vh - 45px);
+    overflow: hidden;
+  }
+
+  .home-main-title {
+    font-size: 18px;
+    margin: 6px 0 10px 0;
+  }
+
+  .home-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ---------- APPUNTAMENTI COMPATTI ---------- */
+
+  .home-appointments {
+    height: 120px;
+    margin-bottom: 8px;
+  }
+
+  .appointments-list {
+    height: 80px;
+    font-size: 13px;
+  }
+
+  .home-today {
+    padding: 10px;
+  }
+
+  .home-today h3 {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- PULSANTI HOME GRANDI ---------- */
+
+  .home-block {
+    gap: 10px;
+  }
+
+  .home-block button {
+    padding: 16px 12px;
+    font-size: 15px;
+    border-radius: 16px;
+  }
+
+  .home-actions-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .home-actions-column {
+    width: 100%;
+  }
+
+  /* ---------- GRID DIVENTA COLONNA ---------- */
+
+  .home-modules {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .home-module {
+    padding: 14px;
+  }
+
+  .module-icons {
+    gap: 30px;
+  }
+
+  .icon-action {
+    width: 90px;
+    height: 90px;
+  }
+
+  .icon-action svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  /* ---------- CLIENTI MOBILE ---------- */
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doc-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* ---------- SCHEDE MOBILE ---------- */
+
+  .scheda-grid-top,
+  .scheda-sezioni-row,
+  .scheda-grid-bottom,
+  .scheda-top {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .scheda-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .scheda-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* ---------- ORDINI MOBILE ---------- */
+
+  .ordine-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 14px 0;
+  }
+
+  .ordine-check {
+    justify-content: flex-start;
+  }
+
+  .ordine-row select,
+  .ordine-row button {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  #btnOrdineVocale {
+    width: 60px;
+    height: 60px;
+    bottom: 18px;
+    right: 18px;
+  }
+
+}
 
 
 
