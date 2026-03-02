@@ -1888,60 +1888,6 @@ a#targaLink:hover {
 
 }
 
-/* =========================================================
-   HOME – FIT PERFETTO 15 POLLICI
-========================================================= */
-
-@media (max-width: 1500px) {
-
-  #home {
-    height: calc(100vh - 45px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .home-main-title {
-    margin: 10px 0 16px 0;
-    font-size: 22px;
-    flex-shrink: 0;
-  }
-
-  .home-container {
-    flex: 1;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    grid-template-rows: auto 1fr 1fr;
-    gap: 12px;
-    min-height: 0;
-  }
-
-  .home-block {
-    gap: 8px;
-  }
-
-  .home-block button {
-    padding: 12px 10px;
-    font-size: 14px;
-  }
-
-  .home-today {
-    padding: 10px;
-    min-height: 0;
-  }
-
-   .home-appointments {
-    height: auto;
-    flex: 1;
-    min-height: 0;
-  }
-
-  .appointments-list {
-    height: auto;
-    max-height: 120px;
-  }
-
-}
 
 
 
