@@ -47,7 +47,7 @@ html, body {
 
 main {
   position: fixed;
-  top: 45px;   /* altezza reale topbar */
+  top: 45px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -57,10 +57,12 @@ main {
 }
 
 .page {
-  display: none;
   flex: 1;
   min-height: 0;
-  flex-direction: column;
+  display: none;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .page.active {
@@ -146,14 +148,6 @@ main {
 #clienti .page-header,
 #appuntamenti .page-header {
   margin-top: 24px;
-}
-
-@media (min-width: 900px) {
-  main {
-    max-width: 1200px;
-    width: 100%;
-    margin: 0 auto;
-  }
 }
 
 
@@ -436,7 +430,7 @@ input.targa {
 .home-container {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   grid-template-rows: auto 1fr 1fr;
   gap: 20px;
 }
@@ -1860,6 +1854,7 @@ a#targaLink:hover {
   background: var(--accent-dark);
   transform: scale(1.05);
 }
+
 
 
 
