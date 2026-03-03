@@ -1949,23 +1949,22 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* Rimuoviamo padding laterali globali */
   #home {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
     overflow-x: hidden;
+    padding: 0;            /* niente padding globale */
   }
 
   .home-layout {
-    padding: 0 12px;   /* unico margine laterale controllato */
+    padding: 0;            /* niente padding qui */
   }
 
-  /* GRID PERFETTA 2x2 */
+  /* GRID */
   .home-modules {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    width: 100%;
+    padding: 0 12px;       /* margine laterale controllato QUI */
+    box-sizing: border-box;
   }
 
   /* CARD */
@@ -1973,26 +1972,25 @@ a#targaLink:hover {
     box-sizing: border-box;
     width: 100%;
     padding: 8px;
+    margin: 0;
   }
 
-  /* TITOLO CARD */
+  /* Titolo */
   .home-module h3 {
     font-size: 14px;
-    margin: 0 0 6px 0;             /* elimina spazio sopra */
-    letter-spacing: 1px;
+    margin: 0 0 6px 0;
   }
 
-  /* CONTENITORE ICONE */
+  /* Icone */
   .module-icons {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;                     /* meno spazio tra le 2 icone */
+    gap: 10px;
   }
 
-  /* PULSANTI */
   .icon-action {
-    padding: 2px;                  /* mangia spazio interno */
+    padding: 2px;
     gap: 2px;
   }
 
@@ -2003,10 +2001,10 @@ a#targaLink:hover {
 
   .icon-action span {
     font-size: 10px;
-    margin-top: 2px;
   }
 
 }
+
 
 
 
