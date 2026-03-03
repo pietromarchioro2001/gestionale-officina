@@ -2713,32 +2713,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-document.addEventListener("DOMContentLoaded", function () {
-
-  const toggleBtn = document.getElementById("toggleOggi");
-  const lista = document.getElementById("oggiEventi");
-
-  if (!toggleBtn || !lista) return;
-
-  // stato iniziale chiuso
-  lista.classList.add("collapsed");
-
-  toggleBtn.addEventListener("click", function () {
-
-    lista.classList.toggle("expanded");
-    lista.classList.toggle("collapsed");
-
-    // cambia freccia
-    if (lista.classList.contains("expanded")) {
-      toggleBtn.textContent = "▲";
-    } else {
-      toggleBtn.textContent = "▼";
-    }
-
-  });
-
-});
-
 function abilitaPreview(inputId, linkId){
 
   const input = document.getElementById(inputId);
@@ -2790,6 +2764,31 @@ function stopLoading(id){
   }, 1500);
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+
+  const toggleBtn = document.getElementById("toggleOggi");
+  const lista = document.getElementById("oggiEventi");
+
+  if (!toggleBtn || !lista) return;
+
+  // stato iniziale chiuso
+  lista.classList.add("collapsed");
+
+  toggleBtn.addEventListener("click", function () {
+
+    lista.classList.toggle("expanded");
+    lista.classList.toggle("collapsed");
+
+    // cambia freccia
+    if (lista.classList.contains("expanded")) {
+      toggleBtn.textContent = "▲";
+    } else {
+      toggleBtn.textContent = "▼";
+    }
+
+  });
+
+});
 
 
 
