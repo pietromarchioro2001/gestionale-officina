@@ -2116,7 +2116,68 @@ a#targaLink:hover {
   .scheda-menu-btn {
     font-size: 16px;
   }
+
+ /* ASSISTENTE */
+  #assistente.active {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+   
+  .assistente-header {
+    padding: 14px 18px;
+    border-radius: 0;
+  }
+
+  .assistente-title {
+    font-size: 15px;
+  }
+
+  .assistente-chat {
+    flex: 1;
+    padding: 18px 14px;
+    overflow-y: auto;
+    background: #e5ddd5; /* stile WhatsApp soft */
+  }
+
+  .msg {
+    max-width: 78%;
+    padding: 10px 14px;
+    font-size: 14px;
+    border-radius: 18px;
+    line-height: 1.4;
+  }
+
+  .msg.bot {
+    background: #ffffff;
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+  }
+
+  .msg.user {
+    background: #dcf8c6;
+    color: #000;
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+  }
+
+  .assistente-input-row {
+    padding: 10px 12px;
+    background: #f0f0f0;
+    border-top: 1px solid #ddd;
+  }
+
+  #assistenteInput {
+    height: 42px;
+    font-size: 14px;
+  }
+
+  #btnMic {
+    width: 42px;
+    height: 42px;
+  }
 }
+
 
 
 
