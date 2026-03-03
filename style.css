@@ -2097,20 +2097,13 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-   .scheda-cliente::before {
-    content: attr(data-numero);
-    display: block;
-    font-size: 0.75rem;
-    font-weight: 600;
-  }
-
   .scheda-cliente .numero-scheda {
-    font-size: 0.75rem;
+    font-size: 0.65rem;
     font-weight: 600;
   }
 
   .scheda-cliente .nome-cliente {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 600;
   }
 
@@ -2120,7 +2113,7 @@ a#targaLink:hover {
   }
 
   .scheda-data {
-    font-size: 0.75rem;
+    font-size: 0.70rem;
   }
 
   .scheda-stato {
@@ -2201,17 +2194,6 @@ a#targaLink:hover {
     height: 42px;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 
