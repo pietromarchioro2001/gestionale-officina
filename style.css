@@ -1949,58 +1949,32 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* HOME full height */
-  #home.page.active {
-    height: calc(100vh - 60px);
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-
-  .home-layout {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* APPUNTAMENTI compatti */
-  .home-appointments {
-    flex: 0 0 auto;
-    margin-bottom: 6px;
-  }
-
-  /* GRID 2x2 */
-  .home-modules {
-    flex: 1;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    gap: 8px;
-  }
-
-  /* CARD (che nel tuo caso sono home-module) */
+  /* CARD */
   .home-module {
-    padding: 12px;
-    border-radius: 18px;
+    padding: 8px 10px;             /* prima troppo alto */
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;       /* centra verticalmente */
   }
 
+  /* TITOLO CARD */
   .home-module h3 {
     font-size: 14px;
-    margin-bottom: 6px;
+    margin: 0 0 6px 0;             /* elimina spazio sopra */
+    letter-spacing: 1px;
   }
 
-  /* icone */
+  /* CONTENITORE ICONE */
   .module-icons {
     display: flex;
     justify-content: center;
-    gap: 12px;
+    align-items: center;
+    gap: 10px;                     /* meno spazio tra le 2 icone */
   }
 
+  /* PULSANTI */
   .icon-action {
-    padding: 4px;
+    padding: 2px;                  /* mangia spazio interno */
     gap: 2px;
   }
 
@@ -2011,27 +1985,10 @@ a#targaLink:hover {
 
   .icon-action span {
     font-size: 10px;
+    margin-top: 2px;
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
