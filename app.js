@@ -1285,6 +1285,27 @@ function riprendiScheda(id) {
 
         sessioneAssistente.valoriEsistenti = info.valori || {};
 
+        // 🔥 POPOLA DATI CON VALORI GIÀ ESISTENTI
+            const v = info.valori || {};
+            
+            sessioneAssistente.dati = {
+              targa: v.TARGA || "",
+              chilometri: v.CHILOMETRI || "",
+              nomeCliente: v.NOME_CLIENTE || "",
+              veicolo: v.VEICOLO || "",
+              problemi: v.PROBLEMI
+                ? String(v.PROBLEMI).split("\n").filter(Boolean)
+                : [],
+              lavori: v.LAVORI
+                ? String(v.LAVORI).split("\n").filter(Boolean)
+                : [],
+              prodotti: v.PRODOTTI
+                ? String(v.PRODOTTI).split("\n").filter(Boolean)
+                : [],
+              ore: v.ORE_IMPIEGATE || "",
+              note: v.NOTE || ""
+            };
+
         document
           .getElementById("statoSchedaBox")
           ?.classList.remove("hidden");
@@ -2921,6 +2942,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
