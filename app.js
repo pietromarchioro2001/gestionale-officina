@@ -996,7 +996,9 @@ function showSection(id) {
       break;
 
     case "appuntamenti":
-      aggiornaVistaCalendario();
+      if (window.innerWidth <= 768) {
+        caricaAgendaSettimanale();
+      }
       break;
   }
 }
@@ -2865,33 +2867,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-function aggiornaVistaCalendario() {
+async function caricaAgendaSettimanale() {
 
-  const iframe = document.getElementById("calendarIframe");
-  if (!iframe) return;
+  const container = document.getElementById("agendaSettimanale");
+  if (!container) return;
 
-  const baseUrl = "https://calendar.google.com/calendar/embed?src=b7e97d29852b251d0a5dd505edceeade0e1228e0d71bfd2542ef0d11ac0cdb18%40group.calendar.google.com&ctz=Europe%2FRome&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&wkst=2";
+  container.innerHTML = "Caricamento...";
 
-  const isMobile = window.innerWidth <= 768;
+  try {
 
-  const mode = isMobile ? "AGENDA" : "MONTH";
+    const data = await chiamaBackend("getAppuntamentiSettimana");
 
-  iframe.src = baseUrl + "&mode=" + mode;
+    if (!data || !data.length) {
+      container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
+      return;
+    }
+
+    // Raggruppa per giorno
+    const grouped = {};
+
+    data.forEach(ev => {
+
+      const today = new Date();
+      const date = new Date(today);
+      date.setHours(0,0,0,0);
+
+      const dayName = date.toLocaleDateString("it-IT", { weekday: "long" });
+
+      if (!grouped[dayName]) grouped[dayName] = [];
+
+      grouped[dayName].push(ev);
+
+    });
+
+    container.innerHTML = "";
+
+    Object.keys(grouped).forEach(day => {
+
+      const dayDiv = document.createElement("div");
+      dayDiv.className = "agenda-day";
+
+      dayDiv.innerHTML = `<h3>${day}</h3>`;
+
+      grouped[day].forEach(ev => {
+
+        const eventDiv = document.createElement("div");
+        eventDiv.className = "agenda-event";
+
+        eventDiv.innerHTML =
+          `<span class="agenda-ora">${ev.ora}</span>${ev.titolo}`;
+
+        dayDiv.appendChild(eventDiv);
+
+      });
+
+      container.appendChild(dayDiv);
+
+    });
+
+  } catch (err) {
+
+    container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
+
+  }
+
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-
-  const iframe = document.getElementById("calendarIframe");
-  if (!iframe) return;
-
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-
-  const baseUrl =
-    "https://calendar.google.com/calendar/embed?src=b7e97d29852b251d0a5dd505edceeade0e1228e0d71bfd2542ef0d11ac0cdb18%40group.calendar.google.com&ctz=Europe%2FRome&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&wkst=2";
-
-  iframe.src = baseUrl + (isMobile ? "&mode=AGENDA" : "&mode=MONTH");
-
-});
 
 
 
