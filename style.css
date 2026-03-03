@@ -637,6 +637,19 @@ input.targa {
   overflow-y: auto;
 }
 
+/* Stato chiuso */
+.appointments-list.collapsed {
+  max-height: 120px;   /* spazio per circa 4-5 appuntamenti */
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+/* Stato aperto */
+.appointments-list.expanded {
+  max-height: 500px;   /* abbastanza grande per mostrarli tutti */
+  transition: max-height 0.3s ease;
+}
+
 .home-modules {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2037,6 +2050,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
