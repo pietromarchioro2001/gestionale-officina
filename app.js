@@ -2931,12 +2931,12 @@ container.innerHTML = "Caricamento...";
     });
 
   } catch (err) {
-
+    console.error("Errore settimana:", err);
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
-
   }
 
 }
+
 
 
 
