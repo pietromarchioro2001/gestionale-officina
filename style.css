@@ -1949,24 +1949,29 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* Evita overflow globale */
+  /* Rimuoviamo padding laterali globali */
   #home {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
     overflow-x: hidden;
   }
 
-  /* GRID precisa */
+  .home-layout {
+    padding: 0 12px;   /* unico margine laterale controllato */
+  }
+
+  /* GRID PERFETTA 2x2 */
   .home-modules {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 8px;
-    padding: 0 10px;          /* piccolo margine laterale */
-    box-sizing: border-box;
+    width: 100%;
   }
 
   /* CARD */
   .home-module {
+    box-sizing: border-box;
     width: 100%;
-    box-sizing: border-box;   /* fondamentale */
     padding: 8px;
   }
 
@@ -2002,6 +2007,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
