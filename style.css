@@ -2151,25 +2151,30 @@ a#targaLink:hover {
   }
 
   #assistente.active {
-    display: flex;
-    flex-direction: column;
-
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    width: 100vw;
-    height: 100dvh;
-
-    background: #e5ddd5;
-    z-index: 9999;
-
-    margin: 0 !important;
-    border-radius: 0 !important;
-    overflow-x: hidden;
-  }
+     position: fixed !important;
+     inset: 0 !important;
+   
+     width: 100vw !important;
+     height: 100dvh !important;
+   
+     margin: 0 !important;
+     padding: 0 !important;
+   
+     border-radius: 0 !important;
+   }
+   
+   /* 🔥 annulla padding del contenitore padre */
+   #assistente.active,
+   #assistente.active * {
+     max-width: 100% !important;
+   }
+   
+   /* se hai wrapper tipo .page o .container */
+   .page,
+   .container,
+   .main-wrapper {
+     padding: 0 !important;
+   }
    
   .assistente-header {
     display: flex;
@@ -2320,6 +2325,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
