@@ -1949,12 +1949,25 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
+  /* Evita overflow globale */
+  #home {
+    overflow-x: hidden;
+  }
+
+  /* GRID precisa */
+  .home-modules {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 0 10px;          /* piccolo margine laterale */
+    box-sizing: border-box;
+  }
+
   /* CARD */
   .home-module {
-    padding: 8px 10px;             /* prima troppo alto */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;       /* centra verticalmente */
+    width: 100%;
+    box-sizing: border-box;   /* fondamentale */
+    padding: 8px;
   }
 
   /* TITOLO CARD */
@@ -1989,6 +2002,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
