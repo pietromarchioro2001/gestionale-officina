@@ -632,11 +632,6 @@ input.targa {
   margin-bottom: 10px;
 }
 
-.appointments-list {
-  height: 140px;
-  overflow-y: auto;
-}
-
 /* Stato chiuso */
 .appointments-list.collapsed {
   max-height: 120px;   /* spazio per circa 4-5 appuntamenti */
@@ -750,6 +745,14 @@ input.targa {
   gap: 8px;
   margin-left: 0;
   padding-left: 0px;
+
+  max-height: 120px;      /* mostra circa 4-5 appuntamenti */
+  overflow: hidden;       /* nasconde il resto */
+  transition: max-height 0.3s ease;
+}
+
+#oggiEventi.expanded {
+  max-height: 1000px;     /* si apre completamente */
 }
 
 .evento .orario {
@@ -2050,6 +2053,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
