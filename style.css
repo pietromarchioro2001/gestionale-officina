@@ -2158,7 +2158,7 @@ a#targaLink:hover {
 
   .assistente-header button,
   .assistente-header .close-btn {
-    margin-right: 12px;
+    margin-right: 14px;
   }
 
   .assistente-title {
@@ -2166,11 +2166,13 @@ a#targaLink:hover {
   }
 
   .stato-scheda-box {
+    width: calc(100% - 16px);
     margin: 6px 8px;
     padding: 6px 8px;
     border-radius: 10px;
     font-size: 10.5px;
     line-height: 1.2;
+    box-sizing: border-box;
   }
 
   .stato-scheda-box h3 {
@@ -2206,13 +2208,16 @@ a#targaLink:hover {
   }
 
   .msg.user {
-    background: #fff;
+    background: #dfeeff;   /* stesso azzurrino desktop */
+    color: #000;
     align-self: flex-end;
-    margin-right: 12px;
+    margin-right: 14px;
     border-bottom-right-radius: 6px;
   }
 
   .msg.bot {
+    background: #e9e9e9;   /* stesso grigio desktop */
+    color: #000;
     margin-left: 6px;
   }
 
@@ -2238,6 +2243,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
