@@ -2091,12 +2091,28 @@ a#targaLink:hover {
   }
 
   .scheda-cliente {
-    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .scheda-cliente .numero-scheda {
+    font-size: 0.9rem;
     font-weight: 600;
   }
 
+  .scheda-cliente .nome-cliente {
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .scheda-cliente .cognome-cliente {
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
   .scheda-data {
-    font-size: 11px;
+    font-size: 0.75rem;
   }
 
   .scheda-stato {
@@ -2177,6 +2193,7 @@ a#targaLink:hover {
     height: 42px;
   }
 }
+
 
 
 
