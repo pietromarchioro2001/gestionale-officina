@@ -2433,12 +2433,24 @@ function caricaAppuntamentiOggi() {
         ? res
         : res?.data || [];
 
+      // 🔴 NESSUN APPUNTAMENTO
       if (!eventi.length) {
-        box.innerHTML = "<p>Nessun appuntamento oggi</p>";
-        toggleBtn.style.display = "none";
+
+        box.innerHTML = `
+          <div class="no-eventi">
+            Nessun appuntamento oggi
+          </div>
+        `;
+
+        box.style.maxHeight = "none";
+        box.style.overflow = "visible";
+
+        if (toggleBtn) toggleBtn.style.display = "none";
+
         return;
       }
 
+      // 🟢 CI SONO EVENTI
       box.innerHTML = eventi.map(e => `
         <div class="evento-oggi">
           <strong>${e.ora}</strong> – ${e.titolo}
@@ -2447,13 +2459,18 @@ function caricaAppuntamentiOggi() {
 
       const eventElements = box.querySelectorAll(".evento-oggi");
 
+      // Se <= 5 → mostra tutto
       if (eventElements.length <= 5) {
-        toggleBtn.style.display = "none";
+
         box.style.maxHeight = "none";
+        box.style.overflow = "visible";
+
+        if (toggleBtn) toggleBtn.style.display = "none";
+
         return;
       }
 
-      // 🔥 Mostra solo 5 inizialmente
+      // 🔵 Se > 5 → mostra solo 5 inizialmente
       const firstFiveHeight =
         Array.from(eventElements)
           .slice(0, 5)
@@ -2463,30 +2480,41 @@ function caricaAppuntamentiOggi() {
       box.style.transition = "max-height 0.3s ease";
       box.style.maxHeight = firstFiveHeight + "px";
 
-      toggleBtn.style.display = "inline-block";
-      toggleBtn.textContent = "▼";
+      if (toggleBtn) {
+        toggleBtn.style.display = "inline-block";
+        toggleBtn.textContent = "▼";
 
-      toggleBtn.onclick = function () {
+        toggleBtn.onclick = function () {
 
-        const expanded =
-          box.style.maxHeight !== firstFiveHeight + "px";
+          const expanded =
+            box.style.maxHeight !== firstFiveHeight + "px";
 
-        if (expanded) {
-          box.style.maxHeight = firstFiveHeight + "px";
-          toggleBtn.textContent = "▼";
-        } else {
-          box.style.maxHeight = box.scrollHeight + "px";
-          toggleBtn.textContent = "▲";
-        }
+          if (expanded) {
+            box.style.maxHeight = firstFiveHeight + "px";
+            toggleBtn.textContent = "▼";
+          } else {
+            box.style.maxHeight = box.scrollHeight + "px";
+            toggleBtn.textContent = "▲";
+          }
 
-      };
+        };
+      }
 
     })
     .catch(err => {
+
       console.error("Errore appuntamenti", err);
-      box.innerHTML = "<p>Errore caricamento appuntamenti</p>";
+
+      box.innerHTML = `
+        <div class="no-eventi">
+          Nessun appuntamento oggi
+        </div>
+      `;
+
+      if (toggleBtn) toggleBtn.style.display = "none";
     });
 }
+
 /* ======================
  * PONTI HOME → SEZIONI
  * ====================== */
@@ -2832,6 +2860,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 
 
 
