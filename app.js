@@ -1487,6 +1487,16 @@ async function gestisciRisposta(testo) {
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
 
+  // 🔒 GARANTISCE STRUTTURA DATI SEMPRE PRESENTE
+if (!sessioneAssistente.dati) {
+  sessioneAssistente.dati = {
+    problemi: [],
+    lavori: [],
+    prodotti: [],
+    note: ""
+  };
+}
+
   testo = testo.toUpperCase().trim();
 
   // 🔥 SALTO DIRETTO ALLA CHIUSURA
@@ -2911,6 +2921,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
