@@ -953,6 +953,7 @@ function messaggioUtente(testo) {
 }
 
 function showSection(id) {
+  console.log("Sezione aperta:", id);
   console.log("➡️ showSection:", id);
 
   // nascondi tutte le pagine
@@ -2932,6 +2933,7 @@ async function caricaAgendaSettimanale() {
   }
 
 }
+
 
 
 
