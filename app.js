@@ -2881,7 +2881,7 @@ container.innerHTML = "Caricamento...";
 
   try {
 
-    const data = await chiamaBackend("getAppuntamentiSettimana");
+    const data = await callBackend("getAppuntamentiSettimana");
 
     if (!data || !data.length) {
       container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
@@ -2936,6 +2936,7 @@ container.innerHTML = "Caricamento...";
   }
 
 }
+
 
 
 
