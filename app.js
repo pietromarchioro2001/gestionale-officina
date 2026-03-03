@@ -2420,7 +2420,10 @@ function preloadOrdini() {
 }
 
 function caricaAppuntamentiOggi() {
+
   const box = document.getElementById("oggiEventi");
+  const toggleBtn = document.getElementById("toggleOggi");
+
   if (!box) return;
 
   callBackend("getAppuntamentiOggi")
@@ -2432,6 +2435,7 @@ function caricaAppuntamentiOggi() {
 
       if (!eventi.length) {
         box.innerHTML = "<p>Nessun appuntamento oggi</p>";
+        toggleBtn.style.display = "none";
         return;
       }
 
@@ -2440,6 +2444,43 @@ function caricaAppuntamentiOggi() {
           <strong>${e.ora}</strong> – ${e.titolo}
         </div>
       `).join("");
+
+      const eventElements = box.querySelectorAll(".evento-oggi");
+
+      if (eventElements.length <= 5) {
+        toggleBtn.style.display = "none";
+        box.style.maxHeight = "none";
+        return;
+      }
+
+      // 🔥 Mostra solo 5 inizialmente
+      const firstFiveHeight =
+        Array.from(eventElements)
+          .slice(0, 5)
+          .reduce((acc, el) => acc + el.offsetHeight, 0);
+
+      box.style.overflow = "hidden";
+      box.style.transition = "max-height 0.3s ease";
+      box.style.maxHeight = firstFiveHeight + "px";
+
+      toggleBtn.style.display = "inline-block";
+      toggleBtn.textContent = "▼";
+
+      toggleBtn.onclick = function () {
+
+        const expanded =
+          box.style.maxHeight !== firstFiveHeight + "px";
+
+        if (expanded) {
+          box.style.maxHeight = firstFiveHeight + "px";
+          toggleBtn.textContent = "▼";
+        } else {
+          box.style.maxHeight = box.scrollHeight + "px";
+          toggleBtn.textContent = "▲";
+        }
+
+      };
+
     })
     .catch(err => {
       console.error("Errore appuntamenti", err);
@@ -2791,6 +2832,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 
 
 
