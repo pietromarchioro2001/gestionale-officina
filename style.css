@@ -2193,32 +2193,33 @@ a#targaLink:hover {
   }
 
   .stato-scheda-box {
-    margin: 6px 8px 6px 12px; /* leggermente più a sinistra */
+    margin: 6px 0 6px 12px;   /* solo margine sinistro */
     padding: 6px 8px;
 
-    border-radius: 10px;
+    width: calc(100% - 12px); /* resta dentro lo schermo */
+    max-width: calc(100% - 12px);
+
+    border-radius: 8px;
     background: #f2f2f2;
 
-    font-size: 10px;
-    line-height: 1.15;
+    font-size: 9.5px;
+    line-height: 1.1;
 
-    max-width: 92%;
+    box-sizing: border-box;
   }
 
-  /* Titoli CLIENTE / VEICOLO */
   .stato-scheda-box h3,
   .stato-scheda-box strong {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 600;
   }
 
-  /* Riduce spazio tra righe */
   .stato-scheda-box p,
   .stato-scheda-box div {
-    margin: 2px 0;
+    margin: 1px 0;
   }
 
-  /* Forza layout verticale su mobile */
+  /* Forza layout verticale */
   .stato-scheda-box {
     display: block !important;
   }
@@ -2230,7 +2231,6 @@ a#targaLink:hover {
     display: block !important;
   }
 
-  /* Evita qualsiasi sforamento */
   .stato-scheda-box * {
     word-break: break-word;
   }
@@ -2308,20 +2308,6 @@ a#targaLink:hover {
   }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
