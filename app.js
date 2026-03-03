@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycby7oAhCXw7ThmcTGMe_Dj_nkpQGDguuwmEPyfNFcJrMk-aEiUyYdjD4ayduuX0KuisZ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzvKvhTt4yy4x7PfW3mefEfSUYRu6CJ67nwJmgCO8c1_ARWmXzikU4nQqXj5wVe-5k/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -2871,71 +2871,47 @@ document.addEventListener("DOMContentLoaded", () => {
 async function caricaAgendaSettimanale() {
  const container = document.getElementById("agendaSettimanale");
  if (!container) return;
-
 container.classList.remove("hidden");
 container.innerHTML = "Caricamento...";
-
   if (!container) return;
-
   container.innerHTML = "Caricamento...";
-
   try {
-
     const data = await callBackend("getAppuntamentiSettimana");
-
     if (!data || !data.length) {
       container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
       return;
     }
-
     // Raggruppa per giorno
     const grouped = {};
-
     data.forEach(ev => {
-
-      const today = new Date();
-      const date = new Date(today);
-      date.setHours(0,0,0,0);
-
-      const dayName = date.toLocaleDateString("it-IT", { weekday: "long" });
-
-      if (!grouped[dayName]) grouped[dayName] = [];
-
-      grouped[dayName].push(ev);
-
+      const giorno = ev.giorno;
+      if (!grouped[giorno]) {
+        grouped[giorno] = [];
+      }
+      grouped[giorno].push(ev);
     });
-
+        
     container.innerHTML = "";
-
-    Object.keys(grouped).forEach(day => {
-
+    Object.keys(grouped).forEach(giorno => {
       const dayDiv = document.createElement("div");
       dayDiv.className = "agenda-day";
-
-      dayDiv.innerHTML = `<h3>${day}</h3>`;
-
-      grouped[day].forEach(ev => {
-
+      dayDiv.innerHTML = `<h3>${giorno}</h3>`;
+      grouped[giorno].forEach(ev => {
         const eventDiv = document.createElement("div");
         eventDiv.className = "agenda-event";
-
         eventDiv.innerHTML =
-          `<span class="agenda-ora">${ev.ora}</span>${ev.titolo}`;
-
+          `<span class="agenda-ora">${ev.ora}</span> ${ev.titolo}`;
         dayDiv.appendChild(eventDiv);
-
       });
-
       container.appendChild(dayDiv);
-
     });
 
   } catch (err) {
     console.error("Errore settimana:", err);
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
-
 }
+
 
 
 
