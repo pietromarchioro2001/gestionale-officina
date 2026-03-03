@@ -1949,7 +1949,7 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
-  /* La HOME deve occupare tutta l'altezza */
+  /* HOME full height */
   #home.page.active {
     height: calc(100vh - 60px);
     display: flex;
@@ -1963,13 +1963,13 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-  /* Sezione appuntamenti compatta */
+  /* APPUNTAMENTI compatti */
   .home-appointments {
     flex: 0 0 auto;
     margin-bottom: 6px;
   }
 
-  /* GRID 2x2 FISSA */
+  /* GRID 2x2 */
   .home-modules {
     flex: 1;
     display: grid;
@@ -1978,8 +1978,8 @@ a#targaLink:hover {
     gap: 8px;
   }
 
-  /* CARD COMPATTE */
-  .home-card {
+  /* CARD (che nel tuo caso sono home-module) */
+  .home-module {
     padding: 12px;
     border-radius: 18px;
     display: flex;
@@ -1987,18 +1987,18 @@ a#targaLink:hover {
     justify-content: space-between;
   }
 
-  .home-card h3 {
+  .home-module h3 {
     font-size: 14px;
     margin-bottom: 6px;
   }
 
-  .card-actions {
+  /* icone */
+  .module-icons {
     display: flex;
     justify-content: center;
-    gap: 14px;
+    gap: 12px;
   }
 
-  /* Bottoni più compatti */
   .icon-action {
     padding: 4px;
     gap: 2px;
@@ -2014,6 +2014,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
