@@ -1954,6 +1954,12 @@ a#targaLink:hover {
     padding: 0;            /* niente padding globale */
   }
 
+  .home-main-title {
+    font-size: 20px;     /* leggermente più piccolo */
+    margin-top: 8px;     /* meno aria sopra */
+    margin-bottom: 12px; /* meno aria sotto */
+  }
+
   .home-layout {
     padding: 0;            /* niente padding qui */
   }
@@ -1963,7 +1969,7 @@ a#targaLink:hover {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    padding: 0 12px;       /* margine laterale controllato QUI */
+    padding: 0 8px;       /* margine laterale controllato QUI */
     box-sizing: border-box;
   }
 
@@ -2004,6 +2010,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
