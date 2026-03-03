@@ -1949,8 +1949,9 @@ a#targaLink:hover {
 
 @media (max-width: 768px) {
 
+  /* La HOME deve occupare tutta l'altezza */
   #home.page.active {
-    height: calc(100vh - 45px);
+    height: calc(100vh - 60px);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -1962,54 +1963,58 @@ a#targaLink:hover {
     flex-direction: column;
   }
 
-  /* OGGI OCCUPA SOLO LO SPAZIO NECESSARIO */
+  /* Sezione appuntamenti compatta */
   .home-appointments {
     flex: 0 0 auto;
-    padding: 4px 0;
     margin-bottom: 6px;
   }
 
-  .appointments-list {
-    max-height: 110px;   /* spazio per circa 5 appuntamenti */
-    overflow: hidden;
-  }
-
-  /* MODULI SALGONO SUBITO SOTTO */
+  /* GRID 2x2 FISSA */
   .home-modules {
-    gap: 10px;                 /* meno spazio tra card */
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 8px;
   }
 
+  /* CARD COMPATTE */
   .home-card {
-    padding: 14px 12px;        /* prima era troppo alto */
+    padding: 12px;
     border-radius: 18px;
-    min-height: 130px;         /* compatte */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .home-card h3 {
-    font-size: 15px;
-    margin-bottom: 8px;        /* meno spazio sotto titolo */
+    font-size: 14px;
+    margin-bottom: 6px;
   }
 
-  .home-card .card-actions {
-    margin-top: 4px;           /* avvicina bottoni */
-    gap: 12px;                 /* meno spazio tra i 2 bottoni */
+  .card-actions {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
   }
 
+  /* Bottoni più compatti */
   .icon-action {
-    padding: 4px;           /* prima era più grande */
-    gap: 2px;               /* meno spazio tra icona e testo */
+    padding: 4px;
+    gap: 2px;
   }
 
   .icon-action svg {
-    width: 26px;            /* icona più grande */
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
 
   .icon-action span {
-    font-size: 10px;        /* leggermente più compatto */
-    margin-top: 2px;
+    font-size: 10px;
   }
+
 }
+
 
 
 
