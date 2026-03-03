@@ -12,14 +12,11 @@ function callBackend(action, args = []) {
   return new Promise((resolve, reject) => {
 
     const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-
     const script = document.createElement("script");
 
     const cleanup = () => {
       try { delete window[cb]; } catch {}
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
+      script.remove();
     };
 
     const timeout = setTimeout(() => {
@@ -33,8 +30,14 @@ function callBackend(action, args = []) {
       resolve(res);
     };
 
-    script.src =
-      `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
+    // 🔥 FIX QUI
+    let url = `${API_URL}?action=${encodeURIComponent(action)}&callback=${cb}`;
+
+    if (args && args.length) {
+      url += `&payload=${encodeURIComponent(JSON.stringify(args))}`;
+    }
+
+    script.src = url;
 
     script.onerror = function() {
       cleanup();
@@ -2791,6 +2794,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
 
 
 
