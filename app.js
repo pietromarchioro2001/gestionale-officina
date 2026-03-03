@@ -2764,36 +2764,34 @@ function stopLoading(id){
   }, 1500);
 }
 
-const listaOggi = document.getElementById("oggiEventi");
+document.addEventListener("DOMContentLoaded", () => {
 
-if (toggleBtn && listaOggi) {
+  const toggleBtn = document.getElementById("toggleOggi");
+  const listaOggi = document.getElementById("oggiEventi");
 
-  listaOggi.classList.add("collapsed");
+  if (!toggleBtn || !listaOggi) return;
 
-  toggleBtn.onclick = function () {
+  // stato iniziale chiuso
+  listaOggi.style.maxHeight = "0px";
+  listaOggi.style.overflow = "hidden";
+  listaOggi.style.transition = "max-height 0.3s ease";
 
-    const isExpanded = listaOggi.classList.toggle("expanded");
-    listaOggi.classList.toggle("collapsed", !isExpanded);
+  toggleBtn.addEventListener("click", () => {
 
-    toggleBtn.textContent = isExpanded ? "▲" : "▼";
+    const isOpen = listaOggi.style.maxHeight !== "0px";
 
-  };
+    if (isOpen) {
+      listaOggi.style.maxHeight = "0px";
+      toggleBtn.textContent = "▼";
+    } else {
+      listaOggi.style.maxHeight = listaOggi.scrollHeight + "px";
+      toggleBtn.textContent = "▲";
+    }
 
-}
-document.addEventListener("click", function (e) {
-
-  if (e.target.id === "toggleOggi") {
-
-    const lista = document.getElementById("oggiEventi");
-    if (!lista) return;
-
-    const isExpanded = lista.classList.toggle("expanded");
-
-    e.target.textContent = isExpanded ? "▲" : "▼";
-
-  }
+  });
 
 });
+
 
 
 
