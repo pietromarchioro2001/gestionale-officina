@@ -2764,31 +2764,25 @@ function stopLoading(id){
   }, 1500);
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+const toggleBtn = document.getElementById("toggleOggi");
+const lista = document.getElementById("oggiEventi");
 
-  const toggleBtn = document.getElementById("toggleOggi");
-  const lista = document.getElementById("oggiEventi");
-
-  if (!toggleBtn || !lista) return;
+if (toggleBtn && lista) {
 
   // stato iniziale chiuso
   lista.classList.add("collapsed");
 
-  toggleBtn.addEventListener("click", function () {
+  toggleBtn.onclick = function () {
 
-    lista.classList.toggle("expanded");
-    lista.classList.toggle("collapsed");
+    const isExpanded = lista.classList.toggle("expanded");
+    lista.classList.toggle("collapsed", !isExpanded);
 
-    // cambia freccia
-    if (lista.classList.contains("expanded")) {
-      toggleBtn.textContent = "▲";
-    } else {
-      toggleBtn.textContent = "▼";
-    }
+    toggleBtn.textContent = isExpanded ? "▲" : "▼";
 
-  });
+  };
 
-});
+}
+
 
 
 
