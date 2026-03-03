@@ -2879,6 +2879,19 @@ function aggiornaVistaCalendario() {
   iframe.src = baseUrl + "&mode=" + mode;
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+
+  const iframe = document.getElementById("calendarIframe");
+  if (!iframe) return;
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  const baseUrl =
+    "https://calendar.google.com/calendar/embed?src=b7e97d29852b251d0a5dd505edceeade0e1228e0d71bfd2542ef0d11ac0cdb18%40group.calendar.google.com&ctz=Europe%2FRome&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&wkst=2";
+
+  iframe.src = baseUrl + (isMobile ? "&mode=AGENDA" : "&mode=MONTH");
+
+});
 
 
 
