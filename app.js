@@ -2780,6 +2780,20 @@ if (toggleBtn && listaOggi) {
   };
 
 }
+document.addEventListener("click", function (e) {
+
+  if (e.target.id === "toggleOggi") {
+
+    const lista = document.getElementById("oggiEventi");
+    if (!lista) return;
+
+    const isExpanded = lista.classList.toggle("expanded");
+
+    e.target.textContent = isExpanded ? "▲" : "▼";
+
+  }
+
+});
 
 
 
