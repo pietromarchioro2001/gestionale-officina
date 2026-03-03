@@ -2861,6 +2861,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function aggiornaVistaCalendario() {
+
+  const iframe = document.getElementById("calendarIframe");
+  if (!iframe) return;
+
+  const isMobile = window.innerWidth <= 768;
+  const isLandscape = window.innerWidth > window.innerHeight;
+
+  let url = iframe.src;
+
+  // rimuove eventuale mode esistente
+  url = url.replace(/&mode=[^&]*/g, "");
+
+  if (isMobile) {
+
+    if (isLandscape) {
+      // 📱 telefono orizzontale
+      iframe.src = url + "&mode=MONTH";
+    } else {
+      // 📱 telefono verticale
+      iframe.src = url + "&mode=AGENDA";
+    }
+
+  } else {
+    // 💻 desktop
+    iframe.src = url + "&mode=MONTH";
+  }
+
+}
+
+// Avvio iniziale
+document.addEventListener("DOMContentLoaded", aggiornaVistaCalendario);
+
+// Cambio su rotazione
+window.addEventListener("resize", aggiornaVistaCalendario);
 
 
 
