@@ -2036,20 +2036,45 @@ a#targaLink:hover {
    
  /* APPUNTAMENTI */
    
-  #appuntamenti {
-     padding: 0;
-   }
-   
-   .calendar-wrapper {
-     height: calc(100dvh - 90px);
-     padding: 0 6px 12px 6px;
-   }
-   
-   .calendar-full,
-   .calendar-wrapper iframe {
-     border-radius: 12px;
-   }
+  /* Nascondiamo iframe su mobile */
+.calendar-wrapper {
+  display: none;
 }
+
+/* Mostriamo agenda custom */
+.agenda-settimanale {
+  display: block;
+  padding: 10px 4px;
+}
+
+/* Giorno */
+.agenda-day {
+  margin-bottom: 18px;
+}
+
+.agenda-day h3 {
+  font-size: 15px;
+  margin-bottom: 6px;
+  border-left: 4px solid #f5c400;
+  padding-left: 8px;
+}
+
+/* Evento */
+.agenda-event {
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 14px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.agenda-ora {
+  font-weight: 700;
+  margin-right: 6px;
+}
+}
+
 
 
 
