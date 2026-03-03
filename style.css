@@ -1969,7 +1969,7 @@ a#targaLink:hover {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 8px;
-    padding: 0 8px;       /* margine laterale controllato QUI */
+    padding: 0 6px;       /* margine laterale controllato QUI */
     box-sizing: border-box;
   }
 
@@ -2010,6 +2010,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
