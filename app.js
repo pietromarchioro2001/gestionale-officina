@@ -2875,7 +2875,6 @@ async function caricaAgendaSettimanale() {
 container.classList.remove("hidden");
 container.innerHTML = "Caricamento...";
 
-  const container = document.getElementById("agendaSettimanale");
   if (!container) return;
 
   container.innerHTML = "Caricamento...";
@@ -2938,6 +2937,7 @@ container.innerHTML = "Caricamento...";
   }
 
 }
+
 
 
 
