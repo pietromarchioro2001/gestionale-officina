@@ -2037,28 +2037,20 @@ a#targaLink:hover {
  /* APPUNTAMENTI */
    
   #appuntamenti {
-    padding: 0;
-  }
-
-  #appuntamenti .page-header {
-    padding: 12px 16px;
-    margin-bottom: 10px;
-  }
-
-  .calendar-wrapper {
-    height: calc(100dvh - 110px);
-    padding: 0 8px 12px 8px;
-  }
-
-  .calendar-full {
-    border-radius: 12px;
-  }
-
-  .calendar-full iframe {
-    border-radius: 12px;
-  }
-
+     padding: 0;
+   }
+   
+   .calendar-wrapper {
+     height: calc(100dvh - 90px);
+     padding: 0 6px 12px 6px;
+   }
+   
+   .calendar-full,
+   .calendar-wrapper iframe {
+     border-radius: 12px;
+   }
 }
+
 
 
 
