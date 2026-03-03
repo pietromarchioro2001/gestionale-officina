@@ -994,6 +994,10 @@ function showSection(id) {
         resetClienti();
       }
       break;
+
+    case "appuntamenti":
+      aggiornaVistaCalendario();
+      break;
   }
 }
 
@@ -2869,49 +2873,11 @@ function aggiornaVistaCalendario() {
   const baseUrl = "https://calendar.google.com/calendar/embed?src=b7e97d29852b251d0a5dd505edceeade0e1228e0d71bfd2542ef0d11ac0cdb18%40group.calendar.google.com&ctz=Europe%2FRome&showTitle=0&showNav=0&showDate=1&showPrint=0&showTabs=0&showCalendars=0&showTz=0&wkst=2";
 
   const isMobile = window.innerWidth <= 768;
-  const isLandscape = window.innerWidth > window.innerHeight;
 
-  let mode;
+  const mode = isMobile ? "AGENDA" : "MONTH";
 
-  if (isMobile) {
-    mode = isLandscape ? "MONTH" : "AGENDA";
-  } else {
-    mode = "MONTH";
-  }
-
-  const nuovaUrl = baseUrl + "&mode=" + mode;
-
-  // aggiorna solo se cambia davvero
-  if (iframe.src !== nuovaUrl) {
-    iframe.src = nuovaUrl;
-  }
+  iframe.src = baseUrl + "&mode=" + mode;
 }
-
-// Avvio quando apro la sezione appuntamenti
-document.addEventListener("DOMContentLoaded", aggiornaVistaCalendario);
-
-// Cambio quando ruoto
-window.addEventListener("resize", aggiornaVistaCalendario);;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
