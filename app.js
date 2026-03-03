@@ -2764,24 +2764,23 @@ function stopLoading(id){
   }, 1500);
 }
 
-const toggleBtn = document.getElementById("toggleOggi");
-const lista = document.getElementById("oggiEventi");
+const listaOggi = document.getElementById("oggiEventi");
 
-if (toggleBtn && lista) {
+if (toggleBtn && listaOggi) {
 
-  // stato iniziale chiuso
-  lista.classList.add("collapsed");
+  listaOggi.classList.add("collapsed");
 
   toggleBtn.onclick = function () {
 
-    const isExpanded = lista.classList.toggle("expanded");
-    lista.classList.toggle("collapsed", !isExpanded);
+    const isExpanded = listaOggi.classList.toggle("expanded");
+    listaOggi.classList.toggle("collapsed", !isExpanded);
 
     toggleBtn.textContent = isExpanded ? "▲" : "▼";
 
   };
 
 }
+
 
 
 
