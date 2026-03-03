@@ -2139,6 +2139,9 @@ a#targaLink:hover {
  /* ================= ASSISTENTE ================= */
 
   #assistente.active {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -2205,12 +2208,17 @@ a#targaLink:hover {
   .assistente-input-row,
   .assistente-input-box {
     padding: 6px 8px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   #assistenteInput {
     font-size: 13px;
-    padding: 8px 12px;
-    border-radius: 20px;
+    padding: 7px 12px;
+    border-radius: 18px;
+    width: 100%;
+    box-sizing: border-box;
+     
   }
 
   .btn-mic {
@@ -2219,6 +2227,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
