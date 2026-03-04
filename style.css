@@ -2137,164 +2137,196 @@ a#targaLink:hover {
   }
 
  /* ================= ASSISTENTE ================= */
-
-  html, body {
-    overflow-x: hidden;
-  }
-
-  * {
-    box-sizing: border-box;
-  }
-
-  #assistente {
-    display: none;
-  }
-
-  #assistente.active {
-     position: fixed !important;
-     inset: 0 !important;
    
-     width: 100vw !important;
-     height: 100dvh !important;
+html, body {
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Assistente nascosto */
+#assistente {
+  display: none;
+}
+
+/* Assistente aperto */
+#assistente.active {
+  position: fixed;
+  inset: 0;
+
+  width: 100vw;
+  height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+
+  margin: 0;
+  padding: 0;
+
+  background: #e5ddd5;
+
+  border-radius: 0;
+  z-index: 9999;
+}
+
+/* eventuali wrapper del sito */
+.page,
+.container,
+.main-wrapper {
+  padding: 0 !important;
+}
    
-     margin: 0 !important;
-     padding: 0 !important;
-   
-     border-radius: 0 !important;
-   }
-   
-   /* se hai wrapper tipo .page o .container */
-   .page,
-   .container,
-   .main-wrapper {
-     padding: 0 !important;
-   }
+.assistente-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  /* STRISCIA RIEPILOGO SCHEDA MOBILE */
+  padding: 8px 16px;
+  min-height: 48px;
 
-   #assistente.active .stato-scheda-box {
-   
-     width: 100%;
-     max-width: 100%;
-   
-     margin: 0;
-     padding: 8px 10px;
-   
-     border-radius: 0;
-   
-     background: #f2f2f2;
-   
-     font-size: 10px;
-     line-height: 1.15;
-   
-     box-sizing: border-box;
-   }
-   
-   /* riduce leggermente titoli */
-   #assistente.active .stato-scheda-box strong,
-   #assistente.active .stato-scheda-box h3 {
-     font-size: 10px;
-   }
-   
-   /* evita che il testo allarghi il layout */
-   #assistente.active .stato-scheda-box * {
-     word-break: break-word;
-   }
-   
-  .assistente-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  background: #1f1f1f;
+  color: #fff;
+}
 
-    padding: 8px 16px;
-    min-height: 48px;
+.assistente-title {
+  font-size: 14px;
+  font-weight: 600;
+}
 
-    background: #1f1f1f;
-    color: #fff;
-  }
+.assistente-header button {
+  margin-left: auto;
+}
 
-  .assistente-title {
-    font-size: 14px;
-    font-weight: 600;
-  }
+#assistente.active .stato-scheda-box {
 
-  .assistente-header button {
-    margin-left: auto;
-  }
-   
-  .assistente-chat,
-  #assistenteChat {
-    flex: 1;
-    overflow-y: auto;
+  width: 100%;
+  max-width: 100%;
 
-    padding: 8px 10px;
+  margin: 0;
+  padding: 8px 10px;
 
-    display: flex;
-    flex-direction: column;
-  }
+  background: #f2f2f2;
 
-  .msg {
-    max-width: 78%;
+  border-radius: 0;
 
-    padding: 7px 10px;
-    font-size: 13px;
+  font-size: 10px;
+  line-height: 1.15;
 
-    border-radius: 14px;
-    margin-bottom: 6px;
+  box-sizing: border-box;
+}
 
-    line-height: 1.3;
-  }
+#assistente.active .stato-scheda-box strong,
+#assistente.active .stato-scheda-box h3 {
+  font-size: 10px;
+}
 
-  /* BOT */
-  .msg.bot {
-    background: #e9e9e9;
-    color: #000;
+#assistente.active .stato-scheda-box * {
+  word-break: break-word;
+}
 
-    align-self: flex-start;
-    margin-left: 6px;
-  }
+.assistente-chat,
+#assistenteChat {
 
-  /* USER – stesso verde del mic */
-  .msg.user {
-    background: #2e7d32; /* verde coerente */
-    color: #fff;
+  flex: 1;
 
-    align-self: flex-end;
-    margin-right: 6px;
-  }
+  display: flex;
+  flex-direction: column;
 
-  .assistente-input-row,
-  .assistente-input-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  overflow-y: auto;
 
-    padding: 6px 8px;
+  padding: 8px 10px;
+}
 
-    background: #f0f0f0;
-    border-top: 1px solid #ddd;
-  }
 
-  #assistenteInput {
-    flex: 1;
+/* messaggi */
 
-    font-size: 13px;
-    padding: 7px 12px;
+.msg {
 
-    border-radius: 18px;
-    border: 1px solid #ccc;
+  max-width: 78%;
 
-    width: 100%;
-  }
+  padding: 7px 10px;
 
-  .btn-mic {
-    width: 38px;
-    height: 38px;
+  font-size: 13px;
+  line-height: 1.3;
 
-    border-radius: 50%;
-  }
+  border-radius: 14px;
+
+  margin-bottom: 6px;
+}
+
+
+/* BOT */
+
+.msg.bot {
+
+  background: #e9e9e9;
+  color: #000;
+
+  align-self: flex-start;
+
+  margin-left: 6px;
+}
+
+
+/* USER */
+
+.msg.user {
+
+  background: #2e7d32;
+
+  color: #fff;
+
+  align-self: flex-end;
+
+  margin-right: 6px;
+}
+
+.assistente-input-row,
+.assistente-input-box {
+
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 6px 8px;
+
+  background: #f0f0f0;
+
+  border-top: 1px solid #ddd;
+}
+
+
+#assistenteInput {
+
+  flex: 1;
+
+  width: 100%;
+
+  font-size: 13px;
+
+  padding: 7px 12px;
+
+  border-radius: 18px;
+
+  border: 1px solid #ccc;
+}
+
+
+/* pulsante microfono */
+
+.btn-mic {
+
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+}
 
 }
+
 
 
 
