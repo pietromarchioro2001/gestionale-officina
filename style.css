@@ -2226,30 +2226,40 @@ html, body {
 
 #assistente.active .stato-scheda-box {
 
-  width: 100%;
+  width: calc(100% - 16px);
   max-width: 100%;
 
-  margin: 0;
+  margin: 8px;
+
   padding: 10px 12px;
 
-  background: transparent;     /* niente box */
-  border-radius: 0;
-  box-shadow: none;
+  background: #ffffff;
+
+  border-radius: 10px;
+  border: 1px solid #e3e3e3;
 
   font-size: 12px;
   line-height: 1.25;
 
-  border-bottom: 1px solid #cfcfcf;   /* linea separazione chat */
-
   box-sizing: border-box;
 }
 
-#assistente.active .stato-scheda-box strong {
-  font-weight: 600;
+/* layout verticale su telefono */
+
+#assistente.active .stato-scheda-box .scheda-top {
+
+  display: grid;
+  grid-template-columns: 1fr;
+
+  gap: 8px;
 }
 
-#assistente.active .stato-scheda-box * {
-  word-break: break-word;
+#assistente.active .stato-scheda-box .scheda-sezioni-row {
+
+  display: grid;
+  grid-template-columns: 1fr;
+
+  gap: 6px;
 }
 
 .assistente-chat,
@@ -2352,6 +2362,7 @@ html, body {
 }
 
 }
+
 
 
 
