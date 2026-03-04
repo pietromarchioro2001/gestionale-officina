@@ -2188,12 +2188,21 @@ a#targaLink:hover {
   gap: 3px;
 
   width: calc(100% - 12px);   /* resta sempre nello schermo */
+  grid-template-columns: 48% 48% !important;
 }
 
-/* riduce TUTTO il testo dentro */
-#assistente.active .stato-scheda-box * {
-  font-size: 9px;
-  margin: 1px 0;
+ /* riduce TUTTO il testo dentro */
+ #assistente.active .stato-scheda-box * {
+   font-size: 9px;
+   margin: 1px 0;
+}
+
+   /* riduce la larghezza delle colonne interne */
+#assistente.active .stato-scheda-box .left,
+#assistente.active .stato-scheda-box .right,
+#assistente.active .stato-scheda-box .col {
+
+  width: 48% !important;
 }
    
   .assistente-header {
@@ -2290,6 +2299,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
