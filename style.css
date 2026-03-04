@@ -2226,28 +2226,32 @@ html, body {
 
 #assistente.active .stato-scheda-box {
 
-  width: calc(100% - 32px);   /* 🔥 più margine laterale */
+  width: 100%;
   max-width: 100%;
 
-  margin: 10px 16px;          /* 🔥 spazio ai lati */
-
-  padding: 10px 12px;
+  margin: 6px 8px;
+  padding: 8px 10px;
 
   background: #ffffff;
-
   border-radius: 12px;
   border: 1px solid #e3e3e3;
 
-  font-size: 11px;            /* 🔥 testo leggermente più piccolo */
-  line-height: 1.2;
+  font-size: 10px;        /* 🔥 ancora più compatto */
+  line-height: 1.15;
 
   box-sizing: border-box;
+}
+
+#assistente.active .stato-scheda-box p,
+#assistente.active .stato-scheda-box div {
+
+  margin: 2px 0;          /* 🔥 quasi zero spazio verticale */
 }
 
 #assistente.active .stato-scheda-box strong,
 #assistente.active .stato-scheda-box h3 {
 
-  font-size: 11px;
+  font-size: 10px;
 }
 
 /* layout verticale su telefono */
@@ -2368,6 +2372,7 @@ html, body {
 }
 
 }
+
 
 
 
