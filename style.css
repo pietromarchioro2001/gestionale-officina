@@ -2190,6 +2190,7 @@ a#targaLink:hover {
  #assistente.active .stato-scheda-box * {
    font-size: 9px;
    margin: 1px 0;
+   word-break: break-word;
 }
 
    /* riduce la larghezza delle colonne interne */
@@ -2296,6 +2297,7 @@ a#targaLink:hover {
   }
 
 }
+
 
 
 
