@@ -2205,21 +2205,22 @@ html, body {
   max-width: 100%;
 
   margin: 0;
-  padding: 8px 10px;
+  padding: 10px 12px;
 
-  background: #f2f2f2;
-
+  background: transparent;     /* niente box */
   border-radius: 0;
+  box-shadow: none;
 
-  font-size: 10px;
-  line-height: 1.15;
+  font-size: 12px;
+  line-height: 1.25;
+
+  border-bottom: 1px solid #cfcfcf;   /* linea separazione chat */
 
   box-sizing: border-box;
 }
 
-#assistente.active .stato-scheda-box strong,
-#assistente.active .stato-scheda-box h3 {
-  font-size: 10px;
+#assistente.active .stato-scheda-box strong {
+  font-weight: 600;
 }
 
 #assistente.active .stato-scheda-box * {
@@ -2326,6 +2327,7 @@ html, body {
 }
 
 }
+
 
 
 
