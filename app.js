@@ -470,6 +470,8 @@ function bindFileCount(inputId, countId, linkId){
  * INIT
  ********************/
 document.addEventListener("DOMContentLoaded", () => {
+  preloadSchede();
+  preloadOrdini();
   librettoLink = document.getElementById("librettoLink");
   targaLink = document.getElementById("targaLink");
   btnCartellaCliente = document.getElementById("btnCartellaCliente");
@@ -487,9 +489,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
-  preloadSchede();
-  preloadOrdini();
-  
   });
 
   abilitaPreview("librettoGallery", "librettoLink");
@@ -2026,9 +2025,9 @@ function normalizzaDescrizioneOrdine(testo) {
 function caricaSchede(force = false) {
 
   if (!force && cacheSchede) {
-    renderSchede(cacheSchede);
-    return;
-  }
+  renderSchede(cacheSchede);
+  return;
+}
 
   console.log("Caricamento schede da backend...");
 
@@ -2157,14 +2156,14 @@ function caricaOrdiniUI(force = false) {
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
   const container = document.getElementById("listaOrdini");
-  container.innerHTML = "";
+  const fragment = document.createDocumentFragment();
 
-  ordini.forEach(o => {
-    const row = document.createElement("div");
-    row.className = "ordine-row";
+ordini.forEach(o => {
 
-    row.innerHTML = `
-      <!-- CHECKBOX -->
+  const row = document.createElement("div");
+  row.className = "ordine-row";
+
+  row.innerHTML = `<!-- CHECKBOX -->
       <div class="ordine-check">
         <input type="checkbox"
           ${o.check ? "checked" : ""}
@@ -2201,9 +2200,14 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
         INVIA
       </button>
     `;
+;
 
-    container.appendChild(row);
-  });
+  fragment.appendChild(row);
+
+});
+
+container.innerHTML = "";
+container.appendChild(fragment);
 }
 
 function renderSelectVeicolo(row, veicoloSelezionato, clienteSelezionato, veicoli) {
@@ -3059,6 +3063,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
