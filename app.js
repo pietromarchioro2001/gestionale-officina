@@ -939,10 +939,6 @@ function faiDomanda(testo) {
     utter.voice = voceBot;
   }
 
-  utter.rate = 1.18;   // 🔥 leggermente più veloce
-  utter.pitch = 1;
-  utter.volume = 1;
-
   utter.onend = () => {
 
     setTimeout(() => {
@@ -2072,19 +2068,21 @@ function parlaTesto(testo, callback) {
 }
 
 function bipMicrofono() {
+
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
   osc.type = "sine";
-  osc.frequency.value = 900;
-  gain.gain.value = 0.08;
+  osc.frequency.value = 1000;   // frequenza chiara
+  gain.gain.value = 0.12;       // volume uniforme
 
   osc.connect(gain);
   gain.connect(ctx.destination);
 
   osc.start();
-  osc.stop(ctx.currentTime + 0.12);
+  osc.stop(ctx.currentTime + 0.15); // durata identica ovunque
 }
 
 function caricaOrdiniUI(force = false) {
@@ -3029,6 +3027,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
