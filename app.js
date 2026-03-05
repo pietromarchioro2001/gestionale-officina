@@ -2018,15 +2018,28 @@ function prossimaDomanda() {
 function inizializzaVoceBot() {
 
   const voci = speechSynthesis.getVoices();
-
   if (!voci.length) return;
 
-  // priorità voci italiane
-  voceBot =
-    voci.find(v => v.lang === "it-IT" && v.name.includes("Google")) ||
-    voci.find(v => v.lang === "it-IT" && v.name.includes("Chrome")) ||
-    voci.find(v => v.lang === "it-IT") ||
-    null;
+  // ordine di qualità
+  const priorita = [
+    "Google italiano",
+    "Microsoft Elsa",
+    "Microsoft Cosimo",
+    "Apple Alice",
+    "Apple Luca"
+  ];
+
+  voceBot = null;
+
+  for (const nome of priorita) {
+    voceBot = voci.find(v => v.name.includes(nome));
+    if (voceBot) break;
+  }
+
+  // fallback: prima voce italiana
+  if (!voceBot) {
+    voceBot = voci.find(v => v.lang.startsWith("it"));
+  }
 
   if (voceBot) {
     console.log("🎙️ Voce selezionata:", voceBot.name);
@@ -2051,13 +2064,28 @@ function parlaTesto(testo, callback) {
 
   utter.lang = "it-IT";
 
+  // seleziona la migliore voce italiana disponibile
+  const voci = speechSynthesis.getVoices();
+
+  const voceItaliana =
+    voci.find(v => v.name.includes("Google") && v.lang === "it-IT") ||
+    voci.find(v => v.name.includes("Microsoft") && v.lang === "it-IT") ||
+    voci.find(v => v.lang === "it-IT");
+
+  if (voceItaliana) {
+    utter.voice = voceItaliana;
+  }
+
+  // velocità naturale
+  utter.rate = 1.08;
+  utter.pitch = 1;
+
   utter.onend = () => {
     botStaParlando = false;
     if (callback) callback();
   };
 
   speechSynthesis.speak(utter);
-
 }
 
 function bipMicrofono() {
@@ -3024,6 +3052,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
