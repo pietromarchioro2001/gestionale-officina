@@ -133,28 +133,26 @@ main {
   flex-direction: column;
 }
 
-.refresh-btn {
+.refresh-btn{
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 6px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
 }
 
-.refresh-icon {
-  width: 22px;
-  height: 22px;
-  stroke: #333;
-  stroke-width: 2;
-  fill: none;
+.refresh-btn:hover{
+  background: rgba(255,255,255,0.08);
 }
 
-.refresh-btn.loading .refresh-icon {
-  animation: spinRefresh 1s linear infinite;
+.refresh-btn.loading svg{
+  animation: spin 0.8s linear infinite;
 }
 
-@keyframes spinRefresh {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+@keyframes spin{
+  from{ transform: rotate(0deg); }
+  to{ transform: rotate(360deg); }
 }
 
 #clienti .section {
@@ -2460,6 +2458,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
