@@ -935,10 +935,6 @@ function faiDomanda(testo) {
 
   utter.lang = "it-IT";
 
-  if (voceBot) {
-    utter.voice = voceBot;
-  }
-
   utter.onend = () => {
 
     setTimeout(() => {
@@ -1261,9 +1257,21 @@ function apriAssistente() {
 }
 
 function esciAssistente() {
+
+  try {
+    recognition?.abort();   // spegne subito
+  } catch {}
+
+  ascoltoAttivo = false;
+  botStaParlando = false;
+
+  speechSynthesis.cancel(); // ferma eventuale voce
+
   resetModalitaAssistente();
+
   showSection("schede");
   caricaSchede();
+
   document.getElementById("statoSchedaBox")?.classList.add("hidden");
 }
 
@@ -3027,6 +3035,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
