@@ -105,11 +105,14 @@ function refreshSchede(btn){
 
   btn.classList.add("loading");
 
+  const lista = document.getElementById("listaSchede");
+  if (lista) lista.innerHTML = "";
+
   caricaSchede(true);
 
   setTimeout(() => {
     btn.classList.remove("loading");
-  }, 600);
+  }, 800);
 
 }
 
@@ -117,11 +120,14 @@ function refreshOrdini(btn){
 
   btn.classList.add("loading");
 
-  caricaOrdiniUI(true); // forza reload ignorando cache
+  const lista = document.getElementById("listaOrdini");
+  if (lista) lista.innerHTML = "";
+
+  caricaOrdiniUI(true);
 
   setTimeout(() => {
     btn.classList.remove("loading");
-  }, 600);
+  }, 800);
 
 }
 
@@ -3053,6 +3059,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
