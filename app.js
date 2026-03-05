@@ -9,6 +9,11 @@ let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let voceAssistente = null;
 
+function listaVoci() {
+  const voci = speechSynthesis.getVoices();
+  voci.forEach(v => console.log(v.name, v.lang));
+}
+
 function callBackend(action, args = []) {
 
   return new Promise((resolve, reject) => {
@@ -3016,6 +3021,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
