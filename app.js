@@ -2006,32 +2006,34 @@ function prossimaDomanda() {
 }
 
 function inizializzaVoceBot() {
+
   const voci = speechSynthesis.getVoices();
   if (!voci.length) return;
 
-  // 🔍 priorità assoluta
-  const preferite = [
+  // priorità voci italiane di qualità
+  const priorita = [
     v => v.lang === "it-IT" && /google/i.test(v.name),
-    v => v.lang === "it-IT" && /natural|neural|chrome/i.test(v.name),
-    v => v.lang === "it-IT" && !/cosimo/i.test(v.name), // escludi Cosimo
+    v => v.lang === "it-IT" && /neural|natural/i.test(v.name),
+    v => v.lang === "it-IT" && /female|female/i.test(v.name),
     v => v.lang === "it-IT"
   ];
 
-  for (const test of preferite) {
+  for (const test of priorita) {
     const trovata = voci.find(test);
     if (trovata) {
       voceBot = trovata;
-      console.log("🎙️ Voce selezionata:", trovata.name);
+      console.log("🎙️ Voce italiana:", trovata.name);
       return;
     }
   }
 
-  voceBot = null;
-  console.warn("⚠️ Nessuna voce italiana valida trovata");
+  console.warn("⚠️ Nessuna voce italiana trovata");
 }
 speechSynthesis.onvoiceschanged = inizializzaVoceBot;
+setTimeout(inizializzaVoceBot, 500);
 
 function parlaTesto(testo, callback) {
+
   if (!("speechSynthesis" in window)) {
     if (callback) callback();
     return;
@@ -2039,19 +2041,27 @@ function parlaTesto(testo, callback) {
 
   speechSynthesis.cancel();
 
-  botStaParlando = true;   // 🔒 BLOCCO
+  // 🔧 se la voce non è pronta la inizializza
+  if (!voceBot) {
+    inizializzaVoceBot();
+  }
+
+  botStaParlando = true;
 
   const utter = new SpeechSynthesisUtterance(testo);
+
   utter.lang = "it-IT";
 
-  if (voceBot) utter.voice = voceBot;
+  if (voceBot) {
+    utter.voice = voceBot;
+  }
 
-  utter.rate = 1.1;
-  utter.pitch = 0.9;
+  utter.rate = 1.25;     // 🔥 velocità migliorata
+  utter.pitch = 1;
   utter.volume = 1;
 
   utter.onend = () => {
-    botStaParlando = false;   // 🔓 SBLOCCO
+    botStaParlando = false;
     if (callback) callback();
   };
 
@@ -3016,6 +3026,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
