@@ -105,9 +105,11 @@ function refreshSchede(btn){
 
   btn.classList.add("loading");
 
-  caricaSchede().finally(() => {
+  caricaSchede(true);
+
+  setTimeout(() => {
     btn.classList.remove("loading");
-  });
+  }, 600);
 
 }
 
@@ -115,9 +117,11 @@ function refreshOrdini(btn){
 
   btn.classList.add("loading");
 
-  caricaOrdini().finally(() => {
+  caricaOrdiniUI(true); // forza reload ignorando cache
+
+  setTimeout(() => {
     btn.classList.remove("loading");
-  });
+  }, 600);
 
 }
 
@@ -3049,6 +3053,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
