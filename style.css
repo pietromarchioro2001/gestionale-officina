@@ -1984,6 +1984,16 @@ a#targaLink:hover {
 ========================================================= */
 
 @media (max-width: 768px) {
+
+   .page-title {
+  font-size: 21px;
+  letter-spacing: 0.5px;
+}
+
+   #ordini .page-header,
+#schede .page-header {
+  margin-top: 30px;
+}
    
  /* ================= HOME ================= */
    
@@ -1993,8 +2003,8 @@ a#targaLink:hover {
   }
 
   .home-main-title {
-    font-size: 20px;     /* leggermente più piccolo */
-    margin-top: 8px;     /* meno aria sopra */
+    font-size: 24px;     /* leggermente più piccolo */
+    margin-top: 16px;     /* meno aria sopra */
     margin-bottom: 12px; /* meno aria sotto */
   }
 
@@ -2426,6 +2436,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
