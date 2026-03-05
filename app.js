@@ -101,6 +101,26 @@ function homeCaricaLibrettoGallery() {
   }, 200);
 }
 
+function refreshSchede(btn){
+
+  btn.classList.add("loading");
+
+  caricaSchede().finally(() => {
+    btn.classList.remove("loading");
+  });
+
+}
+
+function refreshOrdini(btn){
+
+  btn.classList.add("loading");
+
+  caricaOrdini().finally(() => {
+    btn.classList.remove("loading");
+  });
+
+}
+
 function homeCaricaLibrettoCamera() {
   showSection('clienti');
   setTimeout(() => {
@@ -3029,6 +3049,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
