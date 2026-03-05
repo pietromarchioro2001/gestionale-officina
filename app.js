@@ -6,6 +6,7 @@ let TEMP_ALTRI_DOCUMENTI = [];
 let VEICOLI_ALL = [];
 let cacheSchede = null;
 let cacheOrdini = null;
+let voceBot = null;
 
 function callBackend(action, args = []) {
 
@@ -45,6 +46,21 @@ function callBackend(action, args = []) {
 
   });
 }
+
+function inizializzaVoceBot() {
+
+  const voci = speechSynthesis.getVoices();
+
+  voceBot =
+    voci.find(v => v.lang === "it-IT") ||
+    voci.find(v => v.lang.startsWith("it")) ||
+    voci[0];
+
+  console.log("Voce bot:", voceBot);
+
+}
+
+speechSynthesis.onvoiceschanged = inizializzaVoceBot;
 
 function toggleFullscreenMenu() {
   document.getElementById("fullscreenMenu")
@@ -887,6 +903,13 @@ function avviaAscolto() {
 
 function faiDomanda(testo) {
 
+  const utter = new SpeechSynthesisUtterance(testo);
+
+  utter.lang = "it-IT";
+  utter.voice = voceBot;
+  utter.rate = 1.05;
+  utter.pitch = 1;
+
   // 1️⃣ SEMPRE scrivere in chat
   messaggioBot(testo);
 
@@ -894,9 +917,6 @@ function faiDomanda(testo) {
   if (modalitaAssistente !== "vocale") return;
 
   speechSynthesis.cancel();
-
-  const utter = new SpeechSynthesisUtterance(testo);
-  utter.lang = "it-IT";
 
   if (voceBot) utter.voice = voceBot;
 
@@ -1417,23 +1437,11 @@ function initVoce() {
 
   recognition.onend = () => {
 
-    ascoltoAttivo = false;
-    console.log("🎤 ascolto OFF");
-  
-    if (modalitaAssistente === "vocale" && !botStaParlando) {
-  
-      setTimeout(() => {
-  
-        try {
-          bipMicrofono();
-          recognition.start();
-        } catch (e) {}
-  
-      }, 400);
-  
-    }
-  
-  };
+  ascoltoAttivo = false;
+
+  console.log("🎤 microfono spento");
+
+};
 
   recognition.onresult = e => {
     if (!e.results[0][0].transcript) return;
@@ -2960,6 +2968,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
