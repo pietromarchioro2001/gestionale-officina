@@ -6,7 +6,6 @@ let TEMP_ALTRI_DOCUMENTI = [];
 let VEICOLI_ALL = [];
 let cacheSchede = null;
 let cacheOrdini = null;
-let voceBot = null;
 
 function callBackend(action, args = []) {
 
@@ -2968,6 +2967,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
