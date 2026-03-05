@@ -2992,6 +2992,14 @@ function stopLoading(id){
   }, 1500);
 }
 
+// 🔄 aggiorna cache in background ogni minuto
+setInterval(() => {
+
+  preloadOrdini();
+  preloadSchede();
+
+}, 60000);
+
 document.addEventListener("DOMContentLoaded", () => {
 
   const toggleBtn = document.getElementById("toggleOggi");
@@ -3063,6 +3071,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
