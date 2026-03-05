@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyyJUO_wy5neA-lWc9P4oa2bDm0t30rs0I6LcXIDDPiTgpJUK8-OjXKkiAIchvnfIMe/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwdO1QMM_sYDMgZR9mNREFIOMaJ4gTR8A8eRotdFeFAtfaWRBJLp1CiWoPrgI107jB6/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -2300,7 +2300,7 @@ function nuovoOrdine() {
       const nuovoOrdine = {
         row: res?.row || Date.now(),
         check: false,
-        descrizione: descrizione,
+        const descrizioneNorm = normalizzaDescrizioneOrdine(descrizione);
         cliente: "",
         veicolo: "",
         fornitori: {
@@ -2411,26 +2411,24 @@ function avviaOrdineVocale() {
 
     const descrizione = normalizzaDescrizioneOrdine(testo);
 
-    callBackend(
-      "inserisciNuovoOrdineVocale",
-      [descrizione],
-      () => {
-        caricaOrdiniUI(); // aggiorna lista
-      },
-      err => {
+    callBackend("inserisciNuovoOrdineVocale", [descrizione])
+      .then(() => {
+        console.log("✅ Ordine vocale salvato");
+        caricaOrdiniUI(true); // ricarica lista
+      })
+      .catch(err => {
         console.error("Errore inserimento ordine vocale", err);
         alert("Errore inserimento ordine vocale");
-      }
-    );
+      });
   };
 
   recognitionOrdine.onerror = e => {
     console.error("Errore microfono ordine", e);
+    alert("Errore microfono");
   };
 
   recognitionOrdine.start();
 }
-
 
 function preloadOrdini() {
 
@@ -2942,6 +2940,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
