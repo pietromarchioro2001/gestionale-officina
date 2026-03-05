@@ -7,6 +7,7 @@ let VEICOLI_ALL = [];
 let cacheSchede = null;
 let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let voceNaturale = null;
 
 function callBackend(action, args = []) {
 
@@ -77,6 +78,25 @@ function leggiTargaItaliana(targa) {
   return risultato.trim();
 
 }
+
+function preparaVoce() {
+
+  const voci = speechSynthesis.getVoices();
+
+  if (!voci.length) return;
+
+  voceNaturale =
+    voci.find(v => v.name.includes("Google") && v.lang.startsWith("it")) ||
+    voci.find(v => v.name.includes("Microsoft") && v.lang.startsWith("it")) ||
+    voci.find(v => v.lang.startsWith("it")) ||
+    null;
+
+  console.log("Voce scelta:", voceNaturale?.name);
+
+}
+
+speechSynthesis.onvoiceschanged = preparaVoce;
+setTimeout(preparaVoce, 500);
 
 function toggleFullscreenMenu() {
   document.getElementById("fullscreenMenu")
@@ -2064,20 +2084,11 @@ function parlaTesto(testo, callback) {
 
   utter.lang = "it-IT";
 
-  // seleziona la migliore voce italiana disponibile
-  const voci = speechSynthesis.getVoices();
-
-  const voceItaliana =
-    voci.find(v => v.name.includes("Google") && v.lang === "it-IT") ||
-    voci.find(v => v.name.includes("Microsoft") && v.lang === "it-IT") ||
-    voci.find(v => v.lang === "it-IT");
-
-  if (voceItaliana) {
-    utter.voice = voceItaliana;
+  if (voceNaturale) {
+    utter.voice = voceNaturale;
   }
 
-  // velocità naturale
-  utter.rate = 1.08;
+  utter.rate = 1.05;
   utter.pitch = 1;
 
   utter.onend = () => {
@@ -2086,6 +2097,7 @@ function parlaTesto(testo, callback) {
   };
 
   speechSynthesis.speak(utter);
+
 }
 
 function bipMicrofono() {
@@ -3052,6 +3064,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
