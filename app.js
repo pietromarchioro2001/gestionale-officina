@@ -2300,7 +2300,7 @@ function nuovoOrdine() {
       const nuovoOrdine = {
         row: res?.row || Date.now(),
         check: false,
-        const descrizioneNorm = normalizzaDescrizioneOrdine(descrizione);
+        descrizione: descrizione,
         cliente: "",
         veicolo: "",
         fornitori: {
@@ -2940,6 +2940,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
