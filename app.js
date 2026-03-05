@@ -944,20 +944,7 @@ function faiDomanda(testo) {
 
   if (modalitaAssistente !== "vocale") return;
 
-  speechSynthesis.cancel();
-
-  const utter = new SpeechSynthesisUtterance(testo);
-
-  utter.lang = "it-IT";
-
-  if (voceNaturale) {
-    utter.voice = voceNaturale;
-  }
-
-  utter.rate = 1.05;
-  utter.pitch = 1;
-
-  utter.onend = () => {
+  parlaTesto(testo, () => {
 
     setTimeout(() => {
 
@@ -969,9 +956,8 @@ function faiDomanda(testo) {
 
     }, 400);
 
-  };
+  });
 
-  speechSynthesis.speak(utter);
 }
 
 function preloadSchede() {
@@ -3030,6 +3016,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
