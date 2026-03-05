@@ -46,16 +46,34 @@ function callBackend(action, args = []) {
   });
 }
 
-function inizializzaVoceBot() {
+function leggiTargaItaliana(targa) {
 
-  const voci = speechSynthesis.getVoices();
+  const numeri = {
+    "0": "zero",
+    "1": "uno",
+    "2": "due",
+    "3": "tre",
+    "4": "quattro",
+    "5": "cinque",
+    "6": "sei",
+    "7": "sette",
+    "8": "otto",
+    "9": "nove"
+  };
 
-  voceBot =
-    voci.find(v => v.lang === "it-IT") ||
-    voci.find(v => v.lang.startsWith("it")) ||
-    voci[0];
+  let risultato = "";
 
-  console.log("Voce bot:", voceBot);
+  for (let c of targa) {
+
+    if (numeri[c]) {
+      risultato += numeri[c] + " ";
+    } else {
+      risultato += c + " ";
+    }
+
+  }
+
+  return risultato.trim();
 
 }
 
@@ -902,44 +920,54 @@ function avviaAscolto() {
 
 function faiDomanda(testo) {
 
+  messaggioBot(testo);
+
+  if (modalitaAssistente !== "vocale") return;
+
+  const deveLeggere = true; // oppure tua logica
+
+  if (!deveLeggere) {
+
+    setTimeout(() => {
+
+      bipMicrofono();
+
+      try {
+        recognition.start();
+      } catch {}
+
+    }, 400);
+
+    return;
+
+  }
+
+  speechSynthesis.cancel();
+
   const utter = new SpeechSynthesisUtterance(testo);
 
   utter.lang = "it-IT";
-  utter.voice = voceBot;
-  utter.rate = 1.05;
-  utter.pitch = 1;
-
-  // 1️⃣ SEMPRE scrivere in chat
-  messaggioBot(testo);
-
-  // 2️⃣ Se non siamo in modalità vocale finisce qui
-  if (modalitaAssistente !== "vocale") return;
-
-  speechSynthesis.cancel();
 
   if (voceBot) utter.voice = voceBot;
 
   utter.rate = 1.05;
-  utter.pitch = 1;
 
   utter.onend = () => {
 
     setTimeout(() => {
 
+      bipMicrofono();
+
       try {
-
-        bipMicrofono();          // 🔊 bip
-        recognition.start();     // 🎤 microfono
-
-      } catch (e) {
-        console.warn("Mic già attivo");
-      }
+        recognition.start();
+      } catch {}
 
     }, 400);
 
   };
 
   speechSynthesis.speak(utter);
+
 }
 
 function preloadSchede() {
@@ -1572,8 +1600,14 @@ if (!sessioneAssistente.dati) {
         return;
       }
     
-      rispostaConPausa(`Targa rilevata: ${targaNorm}`, 800);
-    
+      const targaLetta = leggiTargaItaliana(targaNorm);
+
+      if (modalitaAssistente === "vocale") {
+        parlaTesto(`Targa ${targaLetta}`);
+      }
+      
+      messaggioBot(`Targa rilevata: ${targaNorm}`);
+          
       try {
     
         const res = await callBackend(
@@ -1652,7 +1686,12 @@ if (!sessioneAssistente.dati) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro problema?", 1200);
+      rispostaConPausa("Ok. Altro problema?", 1200, () => {
+        if (modalitaAssistente === "vocale") {
+          bipMicrofono();
+          recognition.start();
+        }
+      });
 
       return;
     }
@@ -1677,7 +1716,12 @@ if (!sessioneAssistente.dati) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro lavoro?", 1200);
+      rispostaConPausa("Ok. Altro lavoro?", 1200, () => {
+        if (modalitaAssistente === "vocale") {
+          bipMicrofono();
+          recognition.start();
+        }
+      });
 
       return;
     }
@@ -1702,7 +1746,12 @@ if (!sessioneAssistente.dati) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro prodotto?", 1200);
+      rispostaConPausa("Ok. Altro prodotto?", 1200, () => {
+        if (modalitaAssistente === "vocale") {
+          bipMicrofono();
+          recognition.start();
+        }
+      });
 
       return;
     }
@@ -2967,6 +3016,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
