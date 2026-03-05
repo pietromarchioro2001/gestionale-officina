@@ -7,7 +7,7 @@ let VEICOLI_ALL = [];
 let cacheSchede = null;
 let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-let voceNaturale = null;
+let voceAssistente = null;
 
 function callBackend(action, args = []) {
 
@@ -78,25 +78,6 @@ function leggiTargaItaliana(targa) {
   return risultato.trim();
 
 }
-
-function preparaVoce() {
-
-  const voci = speechSynthesis.getVoices();
-
-  if (!voci.length) return;
-
-  voceNaturale =
-    voci.find(v => v.name.includes("Google") && v.lang.startsWith("it")) ||
-    voci.find(v => v.name.includes("Microsoft") && v.lang.startsWith("it")) ||
-    voci.find(v => v.lang.startsWith("it")) ||
-    null;
-
-  console.log("Voce scelta:", voceNaturale?.name);
-
-}
-
-speechSynthesis.onvoiceschanged = preparaVoce;
-setTimeout(preparaVoce, 500);
 
 function toggleFullscreenMenu() {
   document.getElementById("fullscreenMenu")
@@ -645,6 +626,26 @@ async function uploadTargaFile(file){
 
 }
 
+function preparaVoceAssistente() {
+
+  const voci = speechSynthesis.getVoices();
+
+  if (!voci.length) return;
+
+  voceAssistente =
+    voci.find(v => v.name.includes("Google") && v.lang.startsWith("it")) ||
+    voci.find(v => v.name.includes("Microsoft") && v.lang.startsWith("it")) ||
+    voci.find(v => v.name.includes("Apple") && v.lang.startsWith("it")) ||
+    voci.find(v => v.lang.startsWith("it")) ||
+    null;
+
+  console.log("Voce assistente:", voceAssistente?.name);
+
+}
+
+speechSynthesis.onvoiceschanged = preparaVoceAssistente;
+setTimeout(preparaVoceAssistente, 500);
+
 async function uploadAltriDocumenti(e){
 
   startLoading("loadingAltri");
@@ -945,14 +946,16 @@ function faiDomanda(testo) {
 
   speechSynthesis.cancel();
 
-  // 🔧 forza sempre la voce italiana
-  if (!voceBot) {
-    inizializzaVoceBot();
-  }
-
   const utter = new SpeechSynthesisUtterance(testo);
 
   utter.lang = "it-IT";
+
+  if (voceNaturale) {
+    utter.voice = voceNaturale;
+  }
+
+  utter.rate = 1.05;
+  utter.pitch = 1;
 
   utter.onend = () => {
 
@@ -1388,7 +1391,6 @@ function riprendiScheda(id) {
   });
 }
 
-let voceBot = null;
 let recognition = null;
 let ascoltoAttivo = false;
 let micTimeout = null;
@@ -2035,42 +2037,6 @@ function prossimaDomanda() {
   domandaCorrente();
 }
 
-function inizializzaVoceBot() {
-
-  const voci = speechSynthesis.getVoices();
-  if (!voci.length) return;
-
-  // ordine di qualità
-  const priorita = [
-    "Google italiano",
-    "Microsoft Elsa",
-    "Microsoft Cosimo",
-    "Apple Alice",
-    "Apple Luca"
-  ];
-
-  voceBot = null;
-
-  for (const nome of priorita) {
-    voceBot = voci.find(v => v.name.includes(nome));
-    if (voceBot) break;
-  }
-
-  // fallback: prima voce italiana
-  if (!voceBot) {
-    voceBot = voci.find(v => v.lang.startsWith("it"));
-  }
-
-  if (voceBot) {
-    console.log("🎙️ Voce selezionata:", voceBot.name);
-  } else {
-    console.warn("⚠️ Nessuna voce italiana trovata");
-  }
-}
-
-speechSynthesis.onvoiceschanged = inizializzaVoceBot;
-setTimeout(inizializzaVoceBot, 500);
-
 function parlaTesto(testo, callback) {
 
   if (!("speechSynthesis" in window)) {
@@ -2084,8 +2050,8 @@ function parlaTesto(testo, callback) {
 
   utter.lang = "it-IT";
 
-  if (voceNaturale) {
-    utter.voice = voceNaturale;
+  if (voceAssistente) {
+    utter.voice = voceAssistente;
   }
 
   utter.rate = 1.05;
@@ -3064,6 +3030,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
