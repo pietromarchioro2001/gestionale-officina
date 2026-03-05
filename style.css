@@ -134,21 +134,27 @@ main {
 }
 
 .refresh-btn {
-
   background: transparent;
   border: none;
-
-  font-size: 20px;
   cursor: pointer;
-
-  opacity: 0.7;
-  transition: 0.2s;
-
+  padding: 6px;
 }
 
-.refresh-btn:hover {
-  opacity: 1;
-  transform: rotate(90deg);
+.refresh-icon {
+  width: 22px;
+  height: 22px;
+  stroke: #333;
+  stroke-width: 2;
+  fill: none;
+}
+
+.refresh-btn.loading .refresh-icon {
+  animation: spinRefresh 1s linear infinite;
+}
+
+@keyframes spinRefresh {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 #clienti .section {
@@ -2454,6 +2460,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
