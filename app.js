@@ -2038,22 +2038,23 @@ function parlaTesto(testo, callback) {
   speechSynthesis.cancel();
 
   const utter = new SpeechSynthesisUtterance(testo);
+  utter.lang = "it-IT";
 
   const voci = speechSynthesis.getVoices();
 
   const voceNaturale =
-    voci.find(v => v.name.includes("GiuseppeMultilingual")) ||
-    voci.find(v => v.name.includes("Diego Online")) ||
-    voci.find(v => v.name.includes("Isabella Online")) ||
-    voci.find(v => v.name.includes("Elsa Online")) ||
-    voci.find(v => v.lang === "it-IT");
+    voci.find(v => v.name.includes("Diego Online") && v.lang === "it-IT") ||
+  voci.find(v => v.name.includes("Isabella Online") && v.lang === "it-IT") ||
+  voci.find(v => v.name.includes("Elsa Online") && v.lang === "it-IT") ||
+  voci.find(v => v.name.includes("GiuseppeMultilingual") && v.lang === "it-IT") ||
+  voci.find(v => v.lang === "it-IT");
 
   if (voceNaturale) {
     utter.voice = voceNaturale;
   }
 
   utter.lang = "it-IT";
-  utter.rate = 1.05;
+  utter.rate = 1.15;
   utter.pitch = 1;
 
   utter.onend = () => {
@@ -3028,6 +3029,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
