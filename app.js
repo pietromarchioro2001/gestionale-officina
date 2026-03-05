@@ -6,6 +6,7 @@ let TEMP_ALTRI_DOCUMENTI = [];
 let VEICOLI_ALL = [];
 let cacheSchede = null;
 let cacheOrdini = null;
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function callBackend(action, args = []) {
 
@@ -76,8 +77,6 @@ function leggiTargaItaliana(targa) {
   return risultato.trim();
 
 }
-
-speechSynthesis.onvoiceschanged = inizializzaVoceBot;
 
 function toggleFullscreenMenu() {
   document.getElementById("fullscreenMenu")
@@ -945,7 +944,7 @@ function faiDomanda(testo) {
         recognition.start();
       } catch {}
 
-    }, 250);
+    }, 400);
 
   };
 
@@ -2048,24 +2047,9 @@ function parlaTesto(testo, callback) {
 
   speechSynthesis.cancel();
 
-  // 🔧 se la voce non è pronta la inizializza
-  if (!voceBot) {
-    inizializzaVoceBot();
-  }
-
-  botStaParlando = true;
-
   const utter = new SpeechSynthesisUtterance(testo);
 
   utter.lang = "it-IT";
-
-  if (voceBot) {
-    utter.voice = voceBot;
-  }
-
-  utter.rate = 1.3;     // 🔥 velocità migliorata
-  utter.pitch = 1;
-  utter.volume = 1;
 
   utter.onend = () => {
     botStaParlando = false;
@@ -2073,24 +2057,29 @@ function parlaTesto(testo, callback) {
   };
 
   speechSynthesis.speak(utter);
+
 }
 
 function bipMicrofono() {
 
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === "suspended") {
+    audioCtx.resume();
+  }
 
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
 
   osc.type = "sine";
-  osc.frequency.value = 1000;   // frequenza chiara
-  gain.gain.value = 0.12;       // volume uniforme
+  osc.frequency.value = 900;
+
+  gain.gain.value = 0.2;
 
   osc.connect(gain);
-  gain.connect(ctx.destination);
+  gain.connect(audioCtx.destination);
 
   osc.start();
-  osc.stop(ctx.currentTime + 0.15); // durata identica ovunque
+  osc.stop(audioCtx.currentTime + 0.25);
+
 }
 
 function caricaOrdiniUI(force = false) {
@@ -3035,6 +3024,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
