@@ -924,33 +924,24 @@ function faiDomanda(testo) {
 
   if (modalitaAssistente !== "vocale") return;
 
-  const deveLeggere = true; // oppure tua logica
-
-  if (!deveLeggere) {
-
-    setTimeout(() => {
-
-      bipMicrofono();
-
-      try {
-        recognition.start();
-      } catch {}
-
-    }, 400);
-
-    return;
-
-  }
-
   speechSynthesis.cancel();
+
+  // 🔧 forza sempre la voce italiana
+  if (!voceBot) {
+    inizializzaVoceBot();
+  }
 
   const utter = new SpeechSynthesisUtterance(testo);
 
   utter.lang = "it-IT";
 
-  if (voceBot) utter.voice = voceBot;
+  if (voceBot) {
+    utter.voice = voceBot;
+  }
 
-  utter.rate = 1.05;
+  utter.rate = 1.18;   // 🔥 leggermente più veloce
+  utter.pitch = 1;
+  utter.volume = 1;
 
   utter.onend = () => {
 
@@ -962,12 +953,11 @@ function faiDomanda(testo) {
         recognition.start();
       } catch {}
 
-    }, 400);
+    }, 250);
 
   };
 
   speechSynthesis.speak(utter);
-
 }
 
 function preloadSchede() {
@@ -1482,10 +1472,27 @@ function initVoce() {
 }
 
 function pulisciTesto(testo) {
-  return testo
-    .toLowerCase()
-    .replace(/ehm|allora|cioè|dunque/g, "")
-    .trim();
+
+  if (!testo) return "";
+
+  let t = testo.toLowerCase();
+
+  const correzioni = {
+    "a blu": "adblue",
+    "ad blu": "adblue",
+    "a blue": "adblue",
+    "fap": "FAP",
+    "dpf": "DPF",
+    "egr": "EGR",
+    "dsg": "DSG"
+  };
+
+  for (const k in correzioni) {
+    const regex = new RegExp("\\b" + k + "\\b", "gi");
+    t = t.replace(regex, correzioni[k]);
+  }
+
+  return t.trim();
 }
 
 function domandaCorrente() {
@@ -2008,27 +2015,23 @@ function prossimaDomanda() {
 function inizializzaVoceBot() {
 
   const voci = speechSynthesis.getVoices();
+
   if (!voci.length) return;
 
-  // priorità voci italiane di qualità
-  const priorita = [
-    v => v.lang === "it-IT" && /google/i.test(v.name),
-    v => v.lang === "it-IT" && /neural|natural/i.test(v.name),
-    v => v.lang === "it-IT" && /female|female/i.test(v.name),
-    v => v.lang === "it-IT"
-  ];
+  // priorità voci italiane
+  voceBot =
+    voci.find(v => v.lang === "it-IT" && v.name.includes("Google")) ||
+    voci.find(v => v.lang === "it-IT" && v.name.includes("Chrome")) ||
+    voci.find(v => v.lang === "it-IT") ||
+    null;
 
-  for (const test of priorita) {
-    const trovata = voci.find(test);
-    if (trovata) {
-      voceBot = trovata;
-      console.log("🎙️ Voce italiana:", trovata.name);
-      return;
-    }
+  if (voceBot) {
+    console.log("🎙️ Voce selezionata:", voceBot.name);
+  } else {
+    console.warn("⚠️ Nessuna voce italiana trovata");
   }
-
-  console.warn("⚠️ Nessuna voce italiana trovata");
 }
+
 speechSynthesis.onvoiceschanged = inizializzaVoceBot;
 setTimeout(inizializzaVoceBot, 500);
 
@@ -2056,7 +2059,7 @@ function parlaTesto(testo, callback) {
     utter.voice = voceBot;
   }
 
-  utter.rate = 1.25;     // 🔥 velocità migliorata
+  utter.rate = 1.3;     // 🔥 velocità migliorata
   utter.pitch = 1;
   utter.volume = 1;
 
@@ -3026,6 +3029,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
