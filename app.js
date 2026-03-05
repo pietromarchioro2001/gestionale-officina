@@ -2039,12 +2039,20 @@ function parlaTesto(testo, callback) {
 
   const utter = new SpeechSynthesisUtterance(testo);
 
-  utter.lang = "it-IT";
+  const voci = speechSynthesis.getVoices();
 
-  if (voceAssistente) {
-    utter.voice = voceAssistente;
+  const voceNaturale =
+    voci.find(v => v.name.includes("GiuseppeMultilingual")) ||
+    voci.find(v => v.name.includes("Diego Online")) ||
+    voci.find(v => v.name.includes("Isabella Online")) ||
+    voci.find(v => v.name.includes("Elsa Online")) ||
+    voci.find(v => v.lang === "it-IT");
+
+  if (voceNaturale) {
+    utter.voice = voceNaturale;
   }
 
+  utter.lang = "it-IT";
   utter.rate = 1.05;
   utter.pitch = 1;
 
@@ -2054,7 +2062,6 @@ function parlaTesto(testo, callback) {
   };
 
   speechSynthesis.speak(utter);
-
 }
 
 function bipMicrofono() {
@@ -3021,6 +3028,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
