@@ -887,8 +887,10 @@ function avviaAscolto() {
 
 function faiDomanda(testo) {
 
+  // 1️⃣ SEMPRE scrivere in chat
   messaggioBot(testo);
 
+  // 2️⃣ Se non siamo in modalità vocale finisce qui
   if (modalitaAssistente !== "vocale") return;
 
   speechSynthesis.cancel();
@@ -906,12 +908,15 @@ function faiDomanda(testo) {
     setTimeout(() => {
 
       try {
-        recognition.start();
+
+        bipMicrofono();          // 🔊 bip
+        recognition.start();     // 🎤 microfono
+
       } catch (e) {
         console.warn("Mic già attivo");
       }
 
-    }, 500); // 🎯 mezzo secondo dopo
+    }, 400);
 
   };
 
@@ -1411,8 +1416,23 @@ function initVoce() {
   };
 
   recognition.onend = () => {
+
     ascoltoAttivo = false;
     console.log("🎤 ascolto OFF");
+  
+    if (modalitaAssistente === "vocale" && !botStaParlando) {
+  
+      setTimeout(() => {
+  
+        try {
+          bipMicrofono();
+          recognition.start();
+        } catch (e) {}
+  
+      }, 400);
+  
+    }
+  
   };
 
   recognition.onresult = e => {
@@ -2940,6 +2960,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
