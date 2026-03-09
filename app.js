@@ -268,17 +268,21 @@ function salva() {
   console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
   console.log("TEMP_TARGA_ID:", TEMP_TARGA_ID);
 
-  if (!TEMP_LIBRETTO_ID && !clienteEsistente) {
-    alert("Serve il libretto per nuovo cliente");
-    return;
-  }
+  // se è un cliente nuovo e mancano documenti → avviso
+  if (!clienteEsistente && (!TEMP_LIBRETTO_ID || !TEMP_TARGA_ID)) {
 
-  if (!TEMP_TARGA_ID && !clienteEsistente) {
-    alert("Serve foto targa per nuovo cliente");
-    return;
+    const continua = confirm(
+      "⚠️ Non hai caricato libretto o targa.\n\n" +
+      "È consigliato inserirli per completezza del profilo.\n\n" +
+      "Vuoi continuare comunque?"
+    );
+
+    if (!continua) return;
+
   }
 
   inviaSalvataggio();
+
 }
 
 /********************
@@ -3171,6 +3175,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
