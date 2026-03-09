@@ -1459,7 +1459,7 @@ a#targaLink:hover {
   box-shadow: 0 0 0 2px rgba(241, 196, 15, 0.25);
 }
 
-.ordine-row button {
+.ordine-row button:not(.ordine-menu-btn):not(.ordine-delete) {
   height: 38px;
   padding: 0 14px;
   border-radius: 8px;
@@ -1470,7 +1470,7 @@ a#targaLink:hover {
   margin-left: 6px;
 }
 
-.ordine-row button:hover {
+.ordine-row button:not(.ordine-menu-btn):not(.ordine-delete):hover {
   background: #e0b90d;
 }
 
@@ -1616,13 +1616,11 @@ border:none;
 font-size: 20px;
 cursor: pointer;
 color: #777;
-opacity:0.6;
 }
 
 .ordine-menu-btn:hover {
   background: #f3f3f3;
   color: #333;
-  opacity:1;
 }
 
 .ordine-menu-popup{
@@ -2500,6 +2498,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
