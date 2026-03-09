@@ -2083,6 +2083,10 @@ button:active {
    
  /* ================= HOME MOBILE ================= */
 
+#home .home-main-title{
+display:none;
+}
+
 #home{
   overflow-x:hidden;
   padding:6px 10px 8px;
@@ -2127,6 +2131,7 @@ button:active {
   display:grid;
 
   grid-template-columns:90px 1fr 1fr;
+  grid-template-rows:auto auto;
 
   align-items:center;
 
@@ -2146,9 +2151,13 @@ button:active {
 
 .home-module h3{
 
+  grid-column:1 / 4;
+
   font-size:14px;
 
   margin:0;
+  margin-bottom:6px;
+  letter-spacing:1px;
 
   text-align:left;
 
@@ -2190,6 +2199,26 @@ button:active {
 .icon-action span{
   font-size:10px;
   font-weight:600;
+}
+
+/* toolbar mobile home */
+
+.topbar{
+
+height:60px;
+
+}
+
+.brand{
+left:10px;
+}
+
+.logo{
+height:46px;
+}
+
+.brand-name{
+font-size:18px;
 }
    
  /* ================= APPUNTAMENTI ================= */
@@ -2562,6 +2591,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
