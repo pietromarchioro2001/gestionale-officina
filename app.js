@@ -680,6 +680,24 @@ function preparaVoceAssistente() {
 speechSynthesis.onvoiceschanged = preparaVoceAssistente;
 setTimeout(preparaVoceAssistente, 500);
 
+function scrollAssistenteBottom() {
+
+  const chat = document.getElementById("assistenteChat");
+
+  if (!chat) return;
+
+  setTimeout(() => {
+    chat.scrollTop = chat.scrollHeight;
+  }, 300);
+
+}
+
+const assistenteInput = document.getElementById("assistenteInput");
+
+if (assistenteInput) {
+  assistenteInput.addEventListener("focus", scrollAssistenteBottom);
+}
+
 async function uploadAltriDocumenti(e){
 
   startLoading("loadingAltri");
@@ -929,7 +947,7 @@ function messaggioBot(testo) {
   chat.appendChild(div);
   chat.scrollTop = chat.scrollHeight;
 
-  // ⛔️ TOGLI COMPLETAMENTE LA VOCE DA QUI
+  scrollAssistenteBottom(); 
 }
 
 function avviaMicrofono() {
@@ -1230,6 +1248,8 @@ function apriAssistente() {
 
   showSection("assistente");
   document.getElementById("assistenteChat").innerHTML = "";
+
+  setTimeout(scrollAssistenteBottom, 200);
 
   if (modalitaAssistente === "vocale" && !recognition) {
     initVoce();
@@ -3151,6 +3171,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
