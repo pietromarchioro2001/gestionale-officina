@@ -1506,13 +1506,18 @@ function initVoce() {
 };
 
   recognition.onresult = e => {
+
     if (!e.results[0][0].transcript) return;
-
+  
     const testo = e.results[0][0].transcript.trim();
+  
     console.log("🗣️ UTENTE:", testo);
-
+  
+    rispostaInElaborazione = false;   // 🔥 FIX
+  
     messaggioUtente(testo);
     gestisciRisposta(testo);
+  
   };
 }
 
@@ -3146,6 +3151,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
