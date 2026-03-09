@@ -944,7 +944,7 @@ function messaggioBot(testo) {
   const div = document.createElement("div");
   div.className = "msg bot";
   div.textContent = testo;
-  chat.appendChild(div);
+  chat.prepend(div);
   chat.scrollTop = chat.scrollHeight;
 
   scrollAssistenteBottom(); 
@@ -1042,7 +1042,7 @@ function messaggioUtente(testo) {
   const div = document.createElement("div");
   div.className = "msg user";
   div.textContent = testo;
-  chat.appendChild(div);
+  chat.prepend(div);
   chat.scrollTop = chat.scrollHeight;
 }
 
@@ -3171,6 +3171,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
