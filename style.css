@@ -2081,11 +2081,11 @@ button:active {
   transform: scale(0.97);
 }
    
- /* ================= HOME MOBILE OTTIMIZZATA ================= */
+ /* ================= HOME MOBILE ================= */
 
 #home{
   overflow-x:hidden;
-  padding:6px 10px 10px;
+  padding:6px 10px 8px;
 }
 
 /* titolo */
@@ -2124,6 +2124,12 @@ button:active {
 
 .home-module{
 
+  display:grid;
+
+  grid-template-columns:90px 1fr 1fr;
+
+  align-items:center;
+
   background:#fff;
 
   border-radius:12px;
@@ -2140,29 +2146,23 @@ button:active {
 
 .home-module h3{
 
-  text-align:center;
-
   font-size:14px;
 
-  margin-bottom:6px;
+  margin:0;
 
-  letter-spacing:1px;
+  text-align:left;
+
+}
+
+/* contenitore icone */
+
+.module-icons{
+
+  display:contents;
 
 }
 
 /* pulsanti */
-
-.module-icons{
-
-  display:flex;
-
-  justify-content:space-evenly;
-
-  align-items:center;
-
-}
-
-/* azioni */
 
 .icon-action{
 
@@ -2176,15 +2176,13 @@ button:active {
 
   gap:2px;
 
-  padding:4px 6px;
-
 }
 
 /* icone */
 
 .icon-action svg{
-  width:30px;
-  height:30px;
+  width:28px;
+  height:28px;
 }
 
 /* testo */
@@ -2564,6 +2562,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
