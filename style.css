@@ -1611,34 +1611,38 @@ right:12px;
 }
 
 .ordine-menu-btn{
-background:none;
+background:transparent;
 border:none;
 font-size: 20px;
 cursor: pointer;
-color: #888;
+color: #777;
+opacity:0.6;
 }
 
 .ordine-menu-btn:hover {
+  background: #f3f3f3;
   color: #333;
+  opacity:1;
 }
 
 .ordine-menu-popup{
-display: none;
-position: absolute;
-right: 0;
-top: 24px;
-background: #f4f4f4;
-border-radius: 12px;
-padding: 8px 10px;
-box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+display:none;
+position:absolute;
+right:0;
+top:26px;
+background:#f4f4f4;
+border-radius:12px;
+padding:8px 10px;
+box-shadow:0 6px 14px rgba(0,0,0,0.12);
 }
 
 .ordine-delete{
-background: none;
-border: none;
-color: #d35454;
-font-weight: 500;
-cursor: pointer;
+background:transparent;
+border:none;
+color:#d35454;
+font-weight:500;
+cursor:pointer;
+padding:4px 6px;
 }
 
 #ordiniContainer::-webkit-scrollbar {
@@ -2496,6 +2500,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
