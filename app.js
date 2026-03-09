@@ -2175,69 +2175,59 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
     row.className = "ordine-row";
 
     row.innerHTML = `
-
-      <!-- MENU -->
-      <div class="ordine-menu">
-        <button class="ordine-menu-btn" onclick="toggleMenu(this)">
-          ⋮
-        </button>
-
-        <div class="ordine-menu-popup">
-          <button class="ordine-delete"
-            onclick="eliminaOrdine(${o.row})">
-            Elimina
-          </button>
-        </div>
-      </div>
-
+    
       <!-- CHECKBOX -->
       <div class="ordine-check">
         <input type="checkbox"
           ${o.check ? "checked" : ""}
           onchange="onToggleCheckbox(${o.row}, this.checked)">
       </div>
-
+    
       <!-- DESCRIZIONE -->
-      <div
-        class="ordine-descr"
-        onclick="editDescrizione(this, ${o.row})"
-      >
+      <div class="ordine-descr"
+           onclick="editDescrizione(this, ${o.row})">
         ${o.descrizione || "Scrivi descrizione ordine…"}
       </div>
-
+    
       <!-- SELECT -->
       <div class="ordine-select-group">
-
+    
         <select class="ordine-select"
           onchange="onChangeCliente(${o.row}, this.value)">
-
-          <option value="" disabled ${o.cliente ? "" : "selected"}>
-            Cliente
-          </option>
-
+          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
           ${clienti.map(c => `
-            <option value="${c}" ${c === o.cliente ? "selected" : ""}>
-              ${c}
-            </option>
+            <option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>
           `).join("")}
-
         </select>
-
+    
         ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
-
+    
         ${fornitoreHtml(o, fornitori)}
-
+    
       </div>
-
+    
       <!-- INVIA -->
-      <button
-        class="ordine-invia"
-        onclick="inviaOrdine(${o.row}, this)">
+      <button class="ordine-invia"
+              onclick="inviaOrdine(${o.row}, this)">
         INVIA
       </button>
-
+    
+      <!-- MENU (UGUALE ALLE SCHEDE) -->
+      <div class="ordine-menu">
+        <button class="ordine-menu-btn"
+                onclick="toggleMenu(this)">
+          ⋮
+        </button>
+    
+        <div class="ordine-menu-popup">
+          <button class="ordine-delete"
+                  onclick="eliminaOrdine(${o.row})">
+            Elimina
+          </button>
+        </div>
+      </div>
+    
     `;
-
     fragment.appendChild(row);
 
   });
@@ -3152,6 +3142,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
