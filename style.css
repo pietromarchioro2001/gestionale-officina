@@ -14,7 +14,6 @@
 /* =========================================================
    2. RESET / BASE HTML-BODY
 ========================================================= */
-fv
 html {
   margin: 0;
   height: 100%;
@@ -2067,8 +2066,13 @@ button {
   -webkit-tap-highlight-color: transparent;
 }
 
-button:focus {
+button:focus,
+button:active {
   outline: none;
+  box-shadow: none;
+}
+
+button:focus:not(:active) {
   background: inherit;
   color: inherit;
 }
@@ -2523,6 +2527,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
