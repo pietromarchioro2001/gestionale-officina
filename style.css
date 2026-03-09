@@ -2057,6 +2057,15 @@ font-size:14px;
 #schede .page-header {
   margin-top: 30px;
 }
+
+ .btn-refresh:active {
+  background: transparent;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
    
  /* ================= HOME ================= */
    
@@ -2256,6 +2265,7 @@ html, body {
 
   width: 100vw;
   height: 100dvh;
+   max-height: 100dvh;
 
   display: flex;
   flex-direction: column;
@@ -2416,11 +2426,6 @@ html, body {
    
      border-top: 1px solid #ddd;
    }
-   
-   #assistente.active {
-    height: 100dvh;
-    max-height: 100dvh;
-  }
 
   #assistenteChat {
     overflow-y: auto;
@@ -2508,6 +2513,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
