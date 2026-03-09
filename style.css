@@ -2090,6 +2090,7 @@ display:none;
 #home{
   overflow-x:hidden;
   padding:6px 10px 8px;
+  padding-top:12px;
 }
 
 /* titolo */
@@ -2131,7 +2132,6 @@ display:none;
   display:grid;
 
   grid-template-columns:90px 1fr 1fr;
-  grid-template-rows:auto auto;
 
   align-items:center;
 
@@ -2151,13 +2151,11 @@ display:none;
 
 .home-module h3{
 
-  grid-column:1 / 4;
-
   font-size:14px;
 
   margin:0;
-  margin-bottom:6px;
-  letter-spacing:1px;
+
+  margin-bottom:4px;
 
   text-align:left;
 
@@ -2201,23 +2199,15 @@ display:none;
   font-weight:600;
 }
 
-/* toolbar mobile home */
-
-.topbar{
-
+#home .topbar{
 height:60px;
-
 }
 
-.brand{
-left:10px;
-}
-
-.logo{
+#home .logo{
 height:46px;
 }
 
-.brand-name{
+#home .brand-name{
 font-size:18px;
 }
    
@@ -2591,6 +2581,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
