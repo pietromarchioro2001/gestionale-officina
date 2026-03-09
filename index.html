@@ -23,10 +23,13 @@ OneSignalDeferred.push(async function(OneSignal) {
 
   await OneSignal.init({
     appId: "dfac41d0-34c3-4572-9cb9-26ca7021f851",
-
-    serviceWorkerPath: "/gestionale-officina/service-worker.js",
-    serviceWorkerParam: { scope: "/gestionale-officina/" },
-
+  
+    serviceWorkerPath: "service-worker.js",
+  
+    serviceWorkerParam: {
+      scope: "/gestionale-officina/"
+    },
+  
     notifyButton: {
       enable: true
     }
@@ -512,6 +515,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
