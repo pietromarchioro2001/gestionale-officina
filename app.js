@@ -2776,26 +2776,30 @@ function scegliTarga() {
 }
 
 function toggleMenu(btn) {
-  // chiudi eventuali menu aperti
+
+  // chiude tutti i menu aperti
   document
-    .querySelectorAll(".scheda-menu-popup")
+    .querySelectorAll(".scheda-menu-popup, .ordine-menu-popup")
     .forEach(m => {
       if (m !== btn.nextElementSibling) {
         m.style.display = "none";
       }
     });
-
   const menu = btn.nextElementSibling;
   menu.style.display =
-    menu.style.display === "block" ? "none" : "block";
+    menu.style.display === "block"
+      ? "none"
+      : "block";
 }
 
 // chiudi menu cliccando fuori
 document.addEventListener("click", e => {
-  if (!e.target.closest(".scheda-menu")) {
+  if (!e.target.closest(".scheda-menu, .ordine-menu")) {
     document
-      .querySelectorAll(".scheda-menu-popup")
-      .forEach(m => (m.style.display = "none"));
+      .querySelectorAll(".scheda-menu-popup, .ordine-menu-popup")
+      .forEach(m => {
+        m.style.display = "none";
+      });
   }
 });
 
@@ -3142,6 +3146,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
