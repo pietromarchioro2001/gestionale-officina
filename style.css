@@ -2066,6 +2066,16 @@ font-size:14px;
 button {
   -webkit-tap-highlight-color: transparent;
 }
+
+button:focus {
+  outline: none;
+  background: inherit;
+  color: inherit;
+}
+
+button:active {
+  transform: scale(0.97);
+}
    
  /* ================= HOME ================= */
    
@@ -2513,37 +2523,6 @@ html, body {
   margin-left: 0;
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
