@@ -1638,9 +1638,10 @@ box-shadow:0 6px 14px rgba(0,0,0,0.12);
 background:transparent;
 border:none;
 color:#d35454;
-font-weight:500;
+font-weight:600;
 cursor:pointer;
 padding:4px 6px;
+font-size:14px;
 }
 
 #ordiniContainer::-webkit-scrollbar {
@@ -2498,6 +2499,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
