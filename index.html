@@ -16,10 +16,9 @@
   <!-- OneSignal -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-
 <script>
 window.OneSignalDeferred = window.OneSignalDeferred || [];
+
 OneSignalDeferred.push(async function(OneSignal) {
 
   await OneSignal.init({
@@ -28,7 +27,9 @@ OneSignalDeferred.push(async function(OneSignal) {
     serviceWorkerPath: "service-worker.js",
     serviceWorkerParam: { scope: "/gestionale-officina/" },
 
-    notifyButton: { enable: true }
+    notifyButton: {
+      enable: true
+    }
   });
 
 });
@@ -511,6 +512,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
