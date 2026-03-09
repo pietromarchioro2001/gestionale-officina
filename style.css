@@ -2135,15 +2135,15 @@ display:none;
 
   align-items:center;
 
-  background:#fff;
+  background: var(--bg);
 
-  border-radius:12px;
+  border:1px solid #1e1e1e;
 
-  padding:8px 10px;
+  border-radius:14px;
 
-  border:1px solid #ddd;
+  padding:10px 12px;
 
-  box-shadow:0 3px 8px rgba(0,0,0,0.06);
+  box-shadow:none;
 
 }
 
@@ -2203,8 +2203,12 @@ display:none;
 height:60px;
 }
 
+#home .topbar-inner{
+height:60px;
+}
+
 #home .logo{
-height:46px;
+height:44px;
 }
 
 #home .brand-name{
@@ -2581,6 +2585,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
