@@ -2081,81 +2081,132 @@ button:active {
   transform: scale(0.97);
 }
    
- /* ================= HOME ================= */
-   
-  #home {
-    overflow-x: hidden;
-    padding: 0;            /* niente padding globale */
-  }
+ /* ================= HOME MOBILE ================= */
 
-  .home-main-title {
-    font-size: 24px;     /* leggermente più piccolo */
-    margin-top: 16px;     /* meno aria sopra */
-    margin-bottom: 12px; /* meno aria sotto */
-  }
+#home{
+  overflow-x:hidden;
+  padding:10px 8px 20px;
+}
 
-  .home-layout {
-    padding: 0;            /* niente padding qui */
-  }
+/* titolo principale */
 
-  .home-modules {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    padding: 0 4px;       /* margine laterale controllato QUI */
-    box-sizing: border-box;
-  }
+.home-main-title{
+  font-size:22px;
+  margin:8px 0 14px;
+  text-align:center;
+}
 
-  .home-module {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 8px;
-    margin: 0;
-  }
-   
-  .home-module h3 {
-    font-size: 14px;
-    margin: 0 0 6px 0;
-  }
+/* blocco appuntamenti */
 
-  .home-appointments {
-    margin-bottom: 8px;
-  }
+.home-appointments{
+  margin-bottom:16px;
+}
 
-  .home-appointments h3 {
-    font-size: 14px;
-    margin: 0 0 4px 0;
-    letter-spacing: 1px;
-  }
-   
-  #toggleOggi {
-    font-size: 12px;
-  }
+.home-appointments h3{
+  font-size:15px;
+  margin-bottom:6px;
+}
 
-  .appointments-list p {
-    margin: 4px 0;
-  }
+.appointments-list p{
+  margin:4px 0;
+  font-size:14px;
+}
 
-  .module-icons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-  }
+/* griglia moduli */
 
-  .icon-action {
-    padding: 2px;
-    gap: 2px;
-  }
+.home-modules{
 
-  .icon-action svg {
-    width: 30px;
-    height: 30px;
-  }
+  display:grid;
 
-  .icon-action span {
-    font-size: 10px;
-  }
+  grid-template-columns:1fr 1fr;
+
+  gap:12px;
+
+  padding:0;
+
+}
+
+/* card */
+
+.home-module{
+
+  background:#fff;
+
+  border-radius:14px;
+
+  padding:16px 12px 18px;
+
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+
+  border:1px solid #ddd;
+
+}
+
+/* titolo modulo */
+
+.home-module h3{
+
+  font-size:15px;
+
+  margin-bottom:12px;
+
+  text-align:center;
+
+  letter-spacing:1px;
+
+}
+
+/* icone area */
+
+.module-icons{
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+
+  gap:20px;
+
+}
+
+/* pulsanti */
+
+.icon-action{
+
+  display:flex;
+
+  flex-direction:column;
+
+  align-items:center;
+
+  justify-content:center;
+
+  gap:6px;
+
+  padding:8px;
+
+}
+
+/* icone più grandi */
+
+.icon-action svg{
+
+  width:36px;
+
+  height:36px;
+
+}
+
+/* testo sotto icona */
+
+.icon-action span{
+
+  font-size:11px;
+
+  font-weight:600;
+
+}
    
  /* ================= APPUNTAMENTI ================= */
    
@@ -2527,6 +2578,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
