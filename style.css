@@ -1603,6 +1603,36 @@ a#targaLink:hover {
   background: var(--accent-dark);
 }
 
+.ordine-menu{
+position:absolute;
+top:8px;
+right:8px;
+}
+
+.ordine-menu-btn{
+background:none;
+border:none;
+font-size:18px;
+cursor:pointer;
+}
+
+.ordine-menu-popup{
+display:none;
+position:absolute;
+right:0;
+background:white;
+border-radius:6px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+padding:6px;
+}
+
+.ordine-delete{
+background:none;
+border:none;
+cursor:pointer;
+color:#c0392b;
+}
+
 #ordiniContainer::-webkit-scrollbar {
   width: 8px;
 }
@@ -2458,6 +2488,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
