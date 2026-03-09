@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwdO1QMM_sYDMgZR9mNREFIOMaJ4gTR8A8eRotdFeFAtfaWRBJLp1CiWoPrgI107jB6/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwOp5UByNMAYVJ4Jtqp-DpPDKZfGKy2saUlAn4TD1HBzF7AARFueFG4Pwhrpb_dqTI/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -2155,15 +2155,42 @@ function caricaOrdiniUI(force = false) {
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
+
   const container = document.getElementById("listaOrdini");
   const fragment = document.createDocumentFragment();
 
-ordini.forEach(o => {
+  // 🔥 ordina: non completati sopra, completati sotto
+  const lista = [...ordini].sort((a, b) => {
 
-  const row = document.createElement("div");
-  row.className = "ordine-row";
+    if (a.check && !b.check) return 1;
+    if (!a.check && b.check) return -1;
 
-  row.innerHTML = `<!-- CHECKBOX -->
+    return b.row - a.row; // nuovi sopra
+
+  });
+
+  lista.forEach(o => {
+
+    const row = document.createElement("div");
+    row.className = "ordine-row";
+
+    row.innerHTML = `
+
+      <!-- MENU -->
+      <div class="ordine-menu">
+        <button class="ordine-menu-btn" onclick="toggleMenu(this)">
+          ⋮
+        </button>
+
+        <div class="ordine-menu-popup">
+          <button class="ordine-delete"
+            onclick="eliminaOrdine(${o.row})">
+            Elimina
+          </button>
+        </div>
+      </div>
+
+      <!-- CHECKBOX -->
       <div class="ordine-check">
         <input type="checkbox"
           ${o.check ? "checked" : ""}
@@ -2178,36 +2205,46 @@ ordini.forEach(o => {
         ${o.descrizione || "Scrivi descrizione ordine…"}
       </div>
 
-      <!-- SELECT AFFIANCATI -->
+      <!-- SELECT -->
       <div class="ordine-select-group">
+
         <select class="ordine-select"
           onchange="onChangeCliente(${o.row}, this.value)">
-          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
-          ${clienti.map(c =>
-            `<option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>`
-          ).join("")}
+
+          <option value="" disabled ${o.cliente ? "" : "selected"}>
+            Cliente
+          </option>
+
+          ${clienti.map(c => `
+            <option value="${c}" ${c === o.cliente ? "selected" : ""}>
+              ${c}
+            </option>
+          `).join("")}
+
         </select>
 
         ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
 
         ${fornitoreHtml(o, fornitori)}
+
       </div>
 
-      <!-- INVIA UNICO (FULL WIDTH) -->
+      <!-- INVIA -->
       <button
         class="ordine-invia"
         onclick="inviaOrdine(${o.row}, this)">
         INVIA
       </button>
+
     `;
-;
 
-  fragment.appendChild(row);
+    fragment.appendChild(row);
 
-});
+  });
 
-container.innerHTML = "";
-container.appendChild(fragment);
+  container.innerHTML = "";
+  container.appendChild(fragment);
+
 }
 
 function renderSelectVeicolo(row, veicoloSelezionato, clienteSelezionato, veicoli) {
@@ -2849,6 +2886,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
+function eliminaOrdine(row) {
+
+const conferma = confirm(
+"⚠️ Eliminare questo ordine?"
+);
+
+if (!conferma) return;
+
+// backup cache
+const backup = [...CACHE_ORDINI.ordini];
+
+CACHE_ORDINI.ordini =
+CACHE_ORDINI.ordini.filter(o => o.row !== row);
+
+renderOrdini(
+CACHE_ORDINI.ordini,
+CACHE_ORDINI.clienti,
+CACHE_ORDINI.veicoli,
+CACHE_ORDINI.fornitori
+);
+
+callBackend("eliminaOrdine", [row])
+.then(() => {
+console.log("Ordine eliminato");
+})
+.catch(err => {
+
+console.error(err);
+
+CACHE_ORDINI.ordini = backup;
+
+renderOrdini(
+CACHE_ORDINI.ordini,
+CACHE_ORDINI.clienti,
+CACHE_ORDINI.veicoli,
+CACHE_ORDINI.fornitori
+);
+
+alert("Errore eliminazione ordine");
+
+});
+
+}
+
 function isMobile() {
   return document.body.classList.contains("is-mobile");
 }
@@ -3071,6 +3152,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
