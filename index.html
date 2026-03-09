@@ -16,6 +16,8 @@
   <!-- OneSignal -->
 <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
 
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
 <script>
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function(OneSignal) {
@@ -23,19 +25,11 @@ OneSignalDeferred.push(async function(OneSignal) {
   await OneSignal.init({
     appId: "dfac41d0-34c3-4572-9cb9-26ca7021f851",
 
-    serviceWorkerPath: "OneSignalSDKWorker.js",
-    serviceWorkerUpdaterPath: "OneSignalSDKUpdaterWorker.js",
-
+    serviceWorkerPath: "service-worker.js",
     serviceWorkerParam: { scope: "/gestionale-officina/" },
 
-    notifyButton: {
-      enable: true
-    }
+    notifyButton: { enable: true }
   });
-
-  if (Notification.permission !== "granted") {
-    await OneSignal.Notifications.requestPermission();
-  }
 
 });
 </script>
@@ -517,6 +511,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
