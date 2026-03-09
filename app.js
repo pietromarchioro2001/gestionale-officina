@@ -493,6 +493,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
+  document.addEventListener("input", function(e){
+
+    // solo se siamo nella sezione CLIENTI
+    const clientiSection = document.getElementById("clienti");
+    if (!clientiSection) return;
+  
+    if (clientiSection.contains(e.target) && e.target.tagName === "INPUT") {
+      e.target.value = e.target.value.toUpperCase();
+    }
+  
+  });
+
   });
 
   abilitaPreview("librettoGallery", "librettoLink");
@@ -3175,6 +3187,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
