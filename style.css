@@ -2081,62 +2081,58 @@ button:active {
   transform: scale(0.97);
 }
    
- /* ================= HOME MOBILE ================= */
+ /* ================= HOME MOBILE OTTIMIZZATA ================= */
 
 #home{
   overflow-x:hidden;
-  padding:8px 10px 14px;
+  padding:6px 10px 10px;
 }
 
 /* titolo */
 
 .home-main-title{
-  font-size:22px;
-  margin:6px 0 10px;
+  font-size:20px;
+  margin:4px 0 6px;
   text-align:center;
 }
 
 /* appuntamenti */
 
 .home-appointments{
-  margin-bottom:10px;
+  margin-bottom:6px;
 }
 
 .home-appointments h3{
-  font-size:15px;
-  margin-bottom:4px;
+  font-size:14px;
+  margin-bottom:2px;
 }
 
 .appointments-list p{
-  font-size:14px;
-  margin:2px 0;
+  font-size:13px;
+  margin:1px 0;
 }
 
-/* contenitore sezioni */
+/* container sezioni */
 
 .home-modules{
-
   display:flex;
-
   flex-direction:column;
-
-  gap:12px;
-
+  gap:8px;
 }
 
-/* card sezione */
+/* card */
 
 .home-module{
 
   background:#fff;
 
-  border-radius:14px;
+  border-radius:12px;
 
-  padding:10px 12px 12px;
+  padding:8px 10px;
 
   border:1px solid #ddd;
 
-  box-shadow:0 4px 10px rgba(0,0,0,0.06);
+  box-shadow:0 3px 8px rgba(0,0,0,0.06);
 
 }
 
@@ -2146,27 +2142,27 @@ button:active {
 
   text-align:center;
 
-  font-size:15px;
+  font-size:14px;
 
-  margin-bottom:10px;
+  margin-bottom:6px;
 
   letter-spacing:1px;
 
 }
 
-/* area pulsanti */
+/* pulsanti */
 
 .module-icons{
 
   display:flex;
 
-  justify-content:space-around;
+  justify-content:space-evenly;
 
   align-items:center;
 
 }
 
-/* pulsanti */
+/* azioni */
 
 .icon-action{
 
@@ -2178,30 +2174,24 @@ button:active {
 
   justify-content:center;
 
-  gap:4px;
+  gap:2px;
 
-  padding:6px;
+  padding:4px 6px;
 
 }
 
 /* icone */
 
 .icon-action svg{
-
-  width:34px;
-
-  height:34px;
-
+  width:30px;
+  height:30px;
 }
 
 /* testo */
 
 .icon-action span{
-
-  font-size:11px;
-
+  font-size:10px;
   font-weight:600;
-
 }
    
  /* ================= APPUNTAMENTI ================= */
@@ -2574,6 +2564,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
