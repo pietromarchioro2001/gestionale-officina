@@ -9,6 +9,18 @@ let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let voceAssistente = null;
 
+function showAlert(msg){
+  const box = document.getElementById("customAlert");
+  const text = document.getElementById("customAlertText");
+
+  text.textContent = msg;
+  box.classList.remove("hidden");
+}
+
+function closeAlert(){
+  document.getElementById("customAlert").classList.add("hidden");
+}
+
 function listaVoci() {
   const voci = speechSynthesis.getVoices();
   voci.forEach(v => console.log(v.name, v.lang));
@@ -3199,6 +3211,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
