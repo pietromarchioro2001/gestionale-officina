@@ -300,7 +300,7 @@ function salva() {
   // se è un cliente nuovo e mancano documenti → avviso
   if (!clienteEsistente && (!TEMP_LIBRETTO_ID || !TEMP_TARGA_ID)) {
 
-    const continua = confirm(
+    const continua = showConfirm(
       "⚠️ Non hai caricato libretto o targa.\n\n" +
       "È consigliato inserirli per completezza del profilo.\n\n" +
       "Vuoi continuare comunque?"
@@ -2542,6 +2542,10 @@ function nuovoOrdine() {
         }
       };
 
+      if (!CACHE_ORDINI) {
+        CACHE_ORDINI = { ordini: [], clienti: [], veicoli: [], fornitori: [] };
+      }
+      
       CACHE_ORDINI.ordini.push(nuovoOrdine); // 👈 ora in fondo
 
       renderOrdini(
@@ -2834,7 +2838,7 @@ function apriPortaleFatture() {
 }
 
 function scegliLibretto() {
-  const foto = confirm(
+  const foto = showConfirm(
     "Vuoi scattare una foto del libretto?\n\nOK = Fotocamera\nAnnulla = Galleria"
   );
 
@@ -2846,7 +2850,7 @@ function scegliLibretto() {
 }
 
 function scegliTarga() {
-  const foto = confirm(
+  const foto = showConfirm(
     "Vuoi scattare una foto della targa?\n\nOK = Fotocamera\nAnnulla = Galleria"
   );
 
@@ -2967,6 +2971,8 @@ function eliminaOrdine(row) {
 showConfirm("⚠️ Eliminare questo ordine?", conferma => {
 
 if(!conferma) return;
+
+if (!CACHE_ORDINI || !CACHE_ORDINI.ordini) return;
 
 const backup = [...CACHE_ORDINI.ordini];
 
@@ -3227,6 +3233,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
