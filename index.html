@@ -42,11 +42,7 @@ OneSignalDeferred.push(async function(OneSignal) {
   if(!pushId) return;
 
   // 🔔 INVIA ID AL BACKEND
-  fetch(
-    "https://script.google.com/macros/s/AKfycbzWY024n31HMvkOGa1cA_hlwT6vlGPxFXDDWsVwEuHUw7tZBNycfeYNUVYFBepnbjAY/exec"
-    + "?action=salvaPushId"
-    + "&payload=" + encodeURIComponent(JSON.stringify({id:pushId}))
-  );
+  callBackend("salvaPushId", [{id: pushId}]);
 
 });
 </script>
@@ -527,6 +523,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
