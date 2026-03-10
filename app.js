@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxzrquShq1MP273ZoPDEyql5bR5DgMFlqA4qg3slpoE7Qm0wv33fV1wMZu6BqiMgy7r/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyj7cWM8qCb6VzmBl2NRm5zhT7j4zr3HddTi_a-kFq0YmTLvyBaP4koKWNFRf-JMsUm/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -3274,6 +3274,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
