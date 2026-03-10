@@ -537,8 +537,22 @@ OneSignalDeferred.push(async function(OneSignal) {
   </div>
 </div>
 
+  <div id="promptBox" class="confirm-box hidden">
+  <div class="confirm-content">
+    <p>Inserisci la descrizione del nuovo ordine</p>
+
+    <input id="promptInput" type="text">
+
+    <div class="confirm-actions">
+      <button onclick="promptCancel()">Annulla</button>
+      <button onclick="promptOk()">Conferma</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
+
 
 
 
