@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyjQnOUXrh6cpi41u4OzrFKn3106ZqSc6cduOnz8dN5dJvvNRKy-JcE5ZWqcnZgtl4K/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx60AB0LHkAc0xrATnNl8DbulafD39MV4TIRS6J1FyKTJhS1QRr-sNKFu08gSsvWJvh/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -1916,6 +1916,15 @@ if (!sessioneAssistente.dati) {
           [sessioneAssistente.schedaId, sessioneAssistente.dati]
         );
 
+        // 🔔 NOTIFICA SCHEDE
+        await callBackend(
+          "notificaScheda",
+          [
+            sessioneAssistente.schedaId,
+            sessioneAssistente.dati.nomeCliente
+          ]
+        );
+
         if (positivo && !negativo) {
 
           await callBackend(
@@ -3190,6 +3199,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
