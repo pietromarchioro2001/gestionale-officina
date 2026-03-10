@@ -32,6 +32,8 @@ OneSignalDeferred.push(async function(OneSignal) {
     }
   });
 
+  await OneSignal.Notifications.requestPermission();
+
   // 🔔 OTTIENE ID DISPOSITIVO
   const pushId = await OneSignal.User.PushSubscription.id;
 
@@ -525,6 +527,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
