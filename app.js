@@ -504,8 +504,6 @@ function bindFileCount(inputId, countId, linkId){
   
   });
 
-  });
-
   abilitaPreview("librettoGallery", "librettoLink");
   abilitaPreview("librettoCamera", "librettoLink");
   
@@ -3186,6 +3184,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
