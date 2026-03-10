@@ -213,7 +213,7 @@ async function analizza() {
   startLoading("loadingOCR");
 
   if (!TEMP_LIBRETTO_ID) {
-    alert("Carica prima il libretto");
+    showAlert("Carica prima il libretto");
     return;
   }
 
@@ -229,7 +229,7 @@ async function analizza() {
     if (!res?.ok) {
 
       if (res.error === "VEICOLO_ESISTENTE") {
-        alert("⚠️ Veicolo già presente nel sistema.");
+        showAlert("⚠️ Veicolo già presente nel sistema.");
         return;
       }
     
@@ -250,7 +250,7 @@ async function analizza() {
 
         stopLoading("loadingOCR");
 
-        alert("⚠️ Veicolo già esistente nel sistema.");
+        showAlert("⚠️ Veicolo già esistente nel sistema.");
 
         // opzionale: carica dati esistenti invece di quelli OCR
         cercaVeicoloConTarga(dati.targa);
@@ -267,7 +267,7 @@ async function analizza() {
   } catch(err) {
 
     console.error(err);
-    alert("Errore OCR");
+    showAlert("Errore OCR");
     stopLoading("loadingOCR");
   }
 }
@@ -340,7 +340,7 @@ async function inviaSalvataggio(){
     if (!res?.ok)
       throw new Error(res.error);
 
-    alert("Cliente salvato correttamente");
+    showAlert("Cliente salvato correttamente");
 
     resetClienti();
 
@@ -348,7 +348,7 @@ async function inviaSalvataggio(){
   catch(err){
 
     console.error(err);
-    alert("Errore salvataggio");
+    showAlert("Errore salvataggio");
 
   }
 
@@ -683,7 +683,7 @@ async function uploadTargaFile(file){
 
     console.error("Errore upload targa:", err);
 
-    alert("Errore upload targa");
+    showAlert("Errore upload targa");
 
     stopLoading("loadingTarga");
 
@@ -799,7 +799,7 @@ async function uploadAltriDocumenti(e){
   catch(err){
 
     console.error("Errore upload altri documenti:", err);
-    alert("Errore upload documenti: " + err.message);
+    showAlert("Errore upload documenti: " + err.message);
 
   }
   finally{
@@ -911,7 +911,7 @@ async function uploadLibretto(e){
   catch(err){
 
     console.error(err);
-    alert("Errore upload libretto");
+    showAlert("Errore upload libretto");
 
     stopLoading("loadingLibretto");
 
@@ -2215,7 +2215,7 @@ function caricaOrdiniUI(force = false) {
   })
   .catch(err => {
     console.error("Errore caricamento ordini", err);
-    alert("Errore caricamento ordini");
+    showAlert("Errore caricamento ordini");
   });
 }
 
@@ -2344,7 +2344,7 @@ function onChangeCliente(row, cliente) {
     })
     .catch(err => {
       console.error("Errore aggiornamento cliente:", err);
-      alert("Errore nel salvataggio del cliente");
+      showAlert("Errore nel salvataggio del cliente");
     });
 }
 
@@ -2363,7 +2363,7 @@ function onChangeVeicolo(row, veicolo) {
     })
     .catch(err => {
       console.error("Errore aggiornamento veicolo:", err);
-      alert("Errore nel salvataggio del veicolo");
+      showAlert("Errore nel salvataggio del veicolo");
     });
 }
 
@@ -2381,7 +2381,7 @@ function onChangeFornitore(row, fornitore) {
     })
     .catch(err => {
       console.error("Errore aggiornamento fornitore:", err);
-      alert("Errore salvataggio fornitore");
+      showAlert("Errore salvataggio fornitore");
     });
 }
 
@@ -2413,7 +2413,7 @@ function inviaWhatsApp(btn) {
   const select = btn.previousElementSibling;
   const link = select.value;
   if (!link) {
-    alert("Fornitore");
+    showAlert("Fornitore");
     return;
   }
   window.open(link, "_blank");
@@ -2428,7 +2428,7 @@ function inviaOrdine(row, btnElement) {
   );
 
   if (!select || !select.value) {
-    alert("Seleziona un fornitore");
+    showAlert("Seleziona un fornitore");
     return;
   }
 
@@ -2445,7 +2445,7 @@ function inviaOrdine(row, btnElement) {
       const link = linkObj?.[fornitore];
 
       if (!link) {
-        alert("Link non disponibile");
+        showAlert("Link non disponibile");
         return;
       }
 
@@ -2460,7 +2460,7 @@ function inviaOrdine(row, btnElement) {
       console.error(err);
       btn.classList.remove("loading");
       btn.textContent = "INVIA";
-      alert("Errore invio ordine");
+      showAlert("Errore invio ordine");
     });
 }
 
@@ -2477,7 +2477,7 @@ function onToggleCheckbox(row, checked) {
     })
     .catch(err => {
       console.error("Errore aggiornamento checkbox:", err);
-      alert("Errore nel salvataggio dello stato ordine");
+      showAlert("Errore nel salvataggio dello stato ordine");
     });
 }
 
@@ -2573,7 +2573,7 @@ function editDescrizione(span, row) {
     // 🔥 3. Backend in background
     callBackend("aggiornaDescrizioneOrdine", [row, nuovoTesto])
       .catch(() => {
-        alert("Errore nel salvataggio su Sheet");
+        showAlert("Errore nel salvataggio su Sheet");
       });
 
   });
@@ -2597,7 +2597,7 @@ let recognitionOrdine = null;
 
 function avviaOrdineVocale() {
   if (modalitaAssistente === "vocale") {
-    alert("Chiudi prima l’assistente");
+    showAlert("Chiudi prima l’assistente");
     return;
   }
 
@@ -2605,7 +2605,7 @@ function avviaOrdineVocale() {
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    alert("Il riconoscimento vocale non è supportato da questo browser");
+    showAlert("Il riconoscimento vocale non è supportato da questo browser");
     return;
   }
 
@@ -2633,13 +2633,13 @@ function avviaOrdineVocale() {
       })
       .catch(err => {
         console.error("Errore inserimento ordine vocale", err);
-        alert("Errore inserimento ordine vocale");
+        showAlert("Errore inserimento ordine vocale");
       });
   };
 
   recognitionOrdine.onerror = e => {
     console.error("Errore microfono ordine", e);
-    alert("Errore microfono");
+    showAlert("Errore microfono");
   };
 
   recognitionOrdine.start();
@@ -2790,7 +2790,7 @@ function homeOrdineVocale() {
 function homeCaricaLibretto() {
   const input = document.getElementById("libretto");
   if (!input) {
-    alert("Input libretto non trovato");
+    showAlert("Input libretto non trovato");
     return;
   }
 
@@ -2901,7 +2901,7 @@ function eliminaScheda(idScheda, status, linkDoc) {
       cacheSchede = backupCache;
       renderSchede(cacheSchede);
 
-      alert("Errore eliminazione scheda");
+      showAlert("Errore eliminazione scheda");
     });
 }
 
@@ -2983,7 +2983,7 @@ CACHE_ORDINI.veicoli,
 CACHE_ORDINI.fornitori
 );
 
-alert("Errore eliminazione ordine");
+showAlert("Errore eliminazione ordine");
 
 });
 
@@ -3211,6 +3211,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
