@@ -473,19 +473,6 @@ function bindFileCount(inputId, countId, linkId){
 /********************
  * INIT
  ********************/
-document.addEventListener("DOMContentLoaded", () => {
-  // SERVICE WORKER
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker
-      .register("/gestionale-officina/service-worker.js")
-      .then(reg => {
-        console.log("✅ Service Worker registrato:", reg.scope);
-      })
-      .catch(err => {
-        console.error("❌ Service Worker errore:", err);
-      });
-  }
-  
   preloadSchede();
   preloadOrdini();
   librettoLink = document.getElementById("librettoLink");
@@ -3199,6 +3186,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
