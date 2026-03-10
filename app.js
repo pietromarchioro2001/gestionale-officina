@@ -2888,40 +2888,40 @@ document.addEventListener("click", e => {
 function eliminaScheda(idScheda, status, linkDoc) {
 
   showConfirm(
-"⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
-(status === "CHIUSA"
-  ? "Verrà eliminato anche il documento associato."
-  : "L'operazione è irreversibile."),
-conferma => {
+    "⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
+    (status === "CHIUSA"
+      ? "Verrà eliminato anche il documento associato."
+      : "L'operazione è irreversibile."),
+  conferma => {
 
-if (!conferma) return;
+    if (!conferma) return;
 
-// 🔥 il resto della funzione rimane identico
-const backupCache = [...(cacheSchede || [])];
+    const backupCache = [...(cacheSchede || [])];
 
-cacheSchede = (cacheSchede || [])
-  .filter(s => s.id !== idScheda);
+    cacheSchede = (cacheSchede || [])
+      .filter(s => s.id !== idScheda);
 
-renderSchede(cacheSchede);
+    renderSchede(cacheSchede);
 
-callBackend("eliminaScheda", [idScheda])
-.then(() => {
-  console.log("Scheda eliminata definitivamente");
-})
-.catch(err => {
+    callBackend("eliminaScheda", [idScheda])
+      .then(() => {
+        console.log("Scheda eliminata definitivamente");
+      })
+      .catch(err => {
 
-  console.error("Errore eliminazione:", err);
+        console.error("Errore eliminazione:", err);
 
-  cacheSchede = backupCache;
-  renderSchede(cacheSchede);
+        cacheSchede = backupCache;
+        renderSchede(cacheSchede);
 
-  showAlert("Errore eliminazione scheda");
+        showAlert("Errore eliminazione scheda");
 
-});
+      });
 
-});
+  });
 
-  
+}
+
 (function () {
   const isMobile =
     window.innerWidth <= 768 ||
@@ -3227,6 +3227,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
