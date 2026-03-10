@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx-6yABJBIaedRtH0OeVammunUFKXTWnPa7L-zbomv905ImrgGWCSbUCTe1vqvVA-k4/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyjQnOUXrh6cpi41u4OzrFKn3106ZqSc6cduOnz8dN5dJvvNRKy-JcE5ZWqcnZgtl4K/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -606,7 +606,13 @@ if (toggleBtn && oggiBox) {
 
 }
 
-  showSection("home");
+  const hash = window.location.hash.replace("#","");
+
+  if(hash){
+    showSection(hash);
+  }else{
+    showSection("home");
+  }
 
 let sessioneAssistente = {
   schedaId: null,
@@ -3184,6 +3190,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
