@@ -8,6 +8,23 @@ let cacheSchede = null;
 let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let voceAssistente = null;
+let confirmCallback = null;
+
+function showConfirm(msg, callback){
+  document.getElementById("confirmText").textContent = msg;
+  document.getElementById("confirmBox").classList.remove("hidden");
+  confirmCallback = callback;
+}
+
+function confirmYes(){
+  document.getElementById("confirmBox").classList.add("hidden");
+  if(confirmCallback) confirmCallback(true);
+}
+
+function confirmNo(){
+  document.getElementById("confirmBox").classList.add("hidden");
+  if(confirmCallback) confirmCallback(false);
+}
 
 function showAlert(msg){
   const box = document.getElementById("customAlert");
@@ -3211,6 +3228,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
