@@ -2523,38 +2523,44 @@ function aggiornaSelectVeicoliUI(row, cliente) {
 }
 
 function nuovoOrdine() {
-  const descrizione = prompt("Inserisci la descrizione del nuovo ordine:");
-  if (!descrizione || !descrizione.trim()) return;
 
-  callBackend("creaNuovoOrdine", [descrizione])
-    .then(res => {
+  showPrompt(descrizione => {
 
-      const nuovoOrdine = {
-        row: res?.row || Date.now(),
-        check: false,
-        descrizione: descrizione,
-        cliente: "",
-        veicolo: "",
-        fornitori: {
-          autoparts: "",
-          teamcar: "",
-          giuliano: ""
+    if (!descrizione || !descrizione.trim()) return;
+
+    callBackend("creaNuovoOrdine", [descrizione])
+      .then(res => {
+
+        const nuovoOrdine = {
+          row: res?.row || Date.now(),
+          check: false,
+          descrizione: descrizione,
+          cliente: "",
+          veicolo: "",
+          fornitori: {
+            autoparts: "",
+            teamcar: "",
+            giuliano: ""
+          }
+        };
+
+        if (!CACHE_ORDINI) {
+          CACHE_ORDINI = { ordini: [], clienti: [], veicoli: [], fornitori: [] };
         }
-      };
 
-      if (!CACHE_ORDINI) {
-        CACHE_ORDINI = { ordini: [], clienti: [], veicoli: [], fornitori: [] };
-      }
-      
-      CACHE_ORDINI.ordini.push(nuovoOrdine); // 👈 ora in fondo
+        CACHE_ORDINI.ordini.push(nuovoOrdine);
 
-      renderOrdini(
-        CACHE_ORDINI.ordini,
-        CACHE_ORDINI.clienti,
-        CACHE_ORDINI.veicoli,
-        CACHE_ORDINI.fornitori
-      );
-    });
+        renderOrdini(
+          CACHE_ORDINI.ordini,
+          CACHE_ORDINI.clienti,
+          CACHE_ORDINI.veicoli,
+          CACHE_ORDINI.fornitori
+        );
+
+      });
+
+  });
+
 }
 
 function editDescrizione(span, row) {
@@ -3233,6 +3239,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
