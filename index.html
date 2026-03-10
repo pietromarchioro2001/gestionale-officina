@@ -527,9 +527,19 @@ OneSignalDeferred.push(async function(OneSignal) {
     <button onclick="closeAlert()">OK</button>
   </div>
 </div>
+  <div id="confirmBox" class="confirm-box hidden">
+  <div class="confirm-content">
+    <p id="confirmText"></p>
+    <div class="confirm-actions">
+      <button onclick="confirmNo()">Annulla</button>
+      <button onclick="confirmYes()">Conferma</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
+
 
 
 
