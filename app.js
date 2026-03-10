@@ -9,6 +9,7 @@ let cacheOrdini = null;
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let voceAssistente = null;
 let confirmCallback = null;
+let promptCallback = null;
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -34,6 +35,40 @@ function showAlert(msg){
   box.classList.remove("hidden");
 }
 
+function showPrompt(callback){
+
+  const box = document.getElementById("promptBox");
+  const input = document.getElementById("promptInput");
+
+  if(!box || !input){
+    showAlert("Popup ordine non trovato");
+    return;
+  }
+
+  input.value = "";
+  box.classList.remove("hidden");
+
+  setTimeout(()=>input.focus(),100);
+
+  promptCallback = callback;
+}
+
+function promptOk(){
+
+  const input = document.getElementById("promptInput");
+  const val = input.value.trim();
+
+  document.getElementById("promptBox").classList.add("hidden");
+
+  if(promptCallback) promptCallback(val);
+
+}
+
+function promptCancel(){
+
+  document.getElementById("promptBox").classList.add("hidden");
+
+}
 function closeAlert(){
   document.getElementById("customAlert").classList.add("hidden");
 }
@@ -3239,6 +3274,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
