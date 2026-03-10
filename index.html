@@ -24,8 +24,10 @@ OneSignalDeferred.push(async function(OneSignal) {
   await OneSignal.init({
     appId: "dfac41d0-34c3-4572-9cb9-26ca7021f851",
   
-    serviceWorkerPath: "/gestionale-officina/OneSignalSDKWorker.js",
-    serviceWorkerUpdaterPath: "/gestionale-officina/OneSignalSDKUpdaterWorker.js",
+    serviceWorkerPath: "OneSignalSDKWorker.js",
+    serviceWorkerUpdaterPath: "OneSignalSDKUpdaterWorker.js",
+  
+    path: "/gestionale-officina/",
   
     notifyButton: {
       enable: true
@@ -512,6 +514,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
 </body>
 </html>
+
 
 
 
