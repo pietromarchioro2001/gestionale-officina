@@ -2887,41 +2887,41 @@ document.addEventListener("click", e => {
 
 function eliminaScheda(idScheda, status, linkDoc) {
 
-  const conferma = confirm(
-    "⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
-    (status === "CHIUSA"
-      ? "Verrà eliminato anche il documento associato."
-      : "L'operazione è irreversibile.")
-  );
+  showConfirm(
+"⚠️ Sei sicuro di voler eliminare questa scheda?\n\n" +
+(status === "CHIUSA"
+  ? "Verrà eliminato anche il documento associato."
+  : "L'operazione è irreversibile."),
+conferma => {
 
-  if (!conferma) return;
+if (!conferma) return;
 
-  // 🔥 1️⃣ Rimuovo subito dalla cache
-  const backupCache = [...(cacheSchede || [])];
+// 🔥 il resto della funzione rimane identico
+const backupCache = [...(cacheSchede || [])];
 
-  cacheSchede = (cacheSchede || [])
-    .filter(s => s.id !== idScheda);
+cacheSchede = (cacheSchede || [])
+  .filter(s => s.id !== idScheda);
 
-  // 🔥 2️⃣ Aggiorno subito la UI
+renderSchede(cacheSchede);
+
+callBackend("eliminaScheda", [idScheda])
+.then(() => {
+  console.log("Scheda eliminata definitivamente");
+})
+.catch(err => {
+
+  console.error("Errore eliminazione:", err);
+
+  cacheSchede = backupCache;
   renderSchede(cacheSchede);
 
-  // 🔥 3️⃣ Backend in background
-  callBackend("eliminaScheda", [idScheda])
-    .then(() => {
-      console.log("Scheda eliminata definitivamente");
-    })
-    .catch(err => {
+  showAlert("Errore eliminazione scheda");
 
-      console.error("Errore eliminazione:", err);
+});
 
-      // ❌ rollback in caso di errore
-      cacheSchede = backupCache;
-      renderSchede(cacheSchede);
+});
 
-      showAlert("Errore eliminazione scheda");
-    });
-}
-
+  
 (function () {
   const isMobile =
     window.innerWidth <= 768 ||
@@ -2964,13 +2964,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function eliminaOrdine(row) {
 
-const conferma = confirm(
-"⚠️ Eliminare questo ordine?"
-);
+showConfirm("⚠️ Eliminare questo ordine?", conferma => {
 
-if (!conferma) return;
+if(!conferma) return;
 
-// backup cache
 const backup = [...CACHE_ORDINI.ordini];
 
 CACHE_ORDINI.ordini =
@@ -3001,6 +2998,8 @@ CACHE_ORDINI.fornitori
 );
 
 showAlert("Errore eliminazione ordine");
+
+});
 
 });
 
@@ -3228,6 +3227,7 @@ container.innerHTML = "Caricamento...";
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
 }
+
 
 
 
