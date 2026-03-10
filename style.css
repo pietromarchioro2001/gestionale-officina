@@ -37,6 +37,44 @@ html, body {
   overflow-x: hidden;
 }
 
+/* ================= ALERT ================= */
+
+.custom-alert{
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.custom-alert.hidden{
+  display: none;
+}
+
+.custom-alert-box{
+  background: #2e7d32;
+  color: white;
+  padding: 16px 22px;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 500;
+}
+
+.custom-alert-box button{
+  background: white;
+  color: #2e7d32;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 
 /* =========================================================
    3. LAYOUT STRUTTURA GENERALE
@@ -2610,6 +2648,7 @@ html, body {
   margin-left: 0;
 
 }
+
 
 
 
