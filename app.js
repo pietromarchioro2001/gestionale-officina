@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwW-EWLBgH2YO5DfrjrjQzwVuflBT2U9I157oj5yIwauwYI9H2kutpGjeOJl804xL8z/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyWl3vjZYUap8a4KpumF9EaNPF8jqozkwvD6ByD9E6Wb8POLGxF7gXearuzqoKyQUKU/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -3384,92 +3384,63 @@ container.innerHTML = "Caricamento...";
   }
 }
 
+function caricaRevisioni(){
 
+  callBackend("getRevisioni", []).then(data=>{
+    renderRevisioni(data);
+  });
 
+}
 
+function renderRevisioni(lista){
 
+  const box = document.getElementById("listaRevisioni");
+  box.innerHTML = "";
 
+  lista.forEach(r=>{
 
+    const row = document.createElement("div");
+    row.className = "revisione-row";
 
+    row.innerHTML = `
+      <button onclick="modificaRevisione('${r.idCliente}','${r.veicolo}')">📅</button>
+      <div>${r.cliente}</div>
+      <div>${r.veicolo}</div>
+      <div>${formatData(r.revisione)}</div>
+      <button onclick="ricordaRevisione('${r.telefono}','${r.veicolo}','${r.revisione}')">
+        RICORDA
+      </button>
+    `;
 
+    box.appendChild(row);
 
+  });
 
+}
 
+function ricordaRevisione(tel, veicolo, data){
 
+  const msg = `Buongiorno, ti ricordo la scadenza della revisione del tuo veicolo ${veicolo} in data ${formatData(data)}`;
 
+  const url = `https://wa.me/${tel}?text=${encodeURIComponent(msg)}`;
 
+  window.open(url, "_blank");
 
+}
 
+function modificaRevisione(idCliente, veicolo){
 
+  const nuova = prompt("Inserisci nuova data revisione (gg/mm/aaaa)");
 
+  if(!nuova) return;
 
+  callBackend("updateRevisione", [
+    {idCliente, veicolo, revisione: nuova}
+  ]).then(()=>{
+    caricaRevisioni();
+  });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+}
 
 
 
