@@ -537,6 +537,27 @@ OneSignalDeferred.push(async function(OneSignal) {
   </div>
 </div>
 
+  <div id="popupCliente" class="popup-cliente hidden">
+  <div class="popup-cliente-box">
+
+    <h3>Vuoi abbinare a un cliente già esistente?</h3>
+
+    <input 
+      type="text"
+      id="ricercaClientePopup"
+      placeholder="Nome cliente"
+    >
+
+    <div id="listaClientiPopup" class="lista-clienti-popup"></div>
+
+    <div class="popup-clienti-actions">
+      <button onclick="nuovoClientePopup()">Nuovo cliente</button>
+      <button onclick="chiudiPopupCliente()">Annulla</button>
+    </div>
+
+  </div>
+</div>
+
   <div id="promptBox" class="confirm-box hidden">
   <div class="confirm-content">
     <p>Inserisci la descrizione del nuovo ordine</p>
