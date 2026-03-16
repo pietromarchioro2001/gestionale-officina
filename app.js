@@ -417,62 +417,39 @@ function selezionaClientePopup(cliente){
 /********************
  * INVIO BACKEND
  ********************/
-async function inviaSalvataggio(idClienteScelto = null){
+function inviaSalvataggio(idClienteScelto = null) {
 
-  try{
+  const dati = raccogliDatiCliente();
 
-    // 🔥 legge altri documenti
-    const altriDocumenti = TEMP_ALTRI_DOCUMENTI;
-
-    const dati = {
-
-      nomeCliente: nome.value,
-      indirizzo: indirizzo.value,
-      telefono: telefono.value,
-      dataNascita: data.value,
-      codiceFiscale: cf.value,
-    
-      veicolo: veicolo.value,
-      motore: motore.value,
-      targa: targa.value,
-      immatricolazione: immatricolazione.value,
-    
-      tempLibrettoId: TEMP_LIBRETTO_ID,
-      tempTargaId: TEMP_TARGA_ID,
-    
-      altriDocumenti: TEMP_ALTRI_DOCUMENTI
-
-      idClienteScelto: idClienteScelto
-
-    };
-
-    console.log("INVIO AL BACKEND:", dati);
-
-    const res =
-      await callBackend(
-        "salvaClienteEVeicolo",
-        [dati]
-      );
-
-    console.log("RISPOSTA BACKEND:", res);
-
-    if (!res?.ok)
-      throw new Error(res.error);
-
-    showAlert("Cliente salvato correttamente");
-
-    resetClienti();
-
+  if (idClienteScelto) {
+    dati.idClienteForzato = idClienteScelto;
   }
-  catch(err){
 
-    console.error(err);
-    showAlert("Errore salvataggio");
+  callBackend("salvaClienteEVeicolo", [dati])
+    .then(res => {
 
-  }
+      if (!res.ok) {
+
+        if (res.error === "VEICOLO_ESISTENTE") {
+          showAlert("⚠️ Veicolo già presente nel gestionale");
+          return;
+        }
+
+        showAlert("Errore salvataggio: " + res.error);
+        return;
+      }
+
+      showAlert("✅ Cliente salvato");
+
+      clienteEsistente = true;
+
+      if (res.cartellaVeicoloUrl) {
+        window.open(res.cartellaVeicoloUrl, "_blank");
+      }
+
+    });
 
 }
-
 /********************
  * RICERCA VEICOLO
  ********************/
