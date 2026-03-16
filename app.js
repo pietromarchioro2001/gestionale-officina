@@ -456,6 +456,29 @@ function renderListaClienti(lista){
 
 }
 
+function raccogliDatiCliente(){
+
+  return {
+
+    nomeCliente: document.getElementById("nome").value.trim(),
+    indirizzo: document.getElementById("indirizzo").value.trim(),
+    telefono: document.getElementById("telefono").value.trim(),
+    dataNascita: document.getElementById("data").value.trim(),
+    codiceFiscale: document.getElementById("cf").value.trim(),
+
+    veicolo: document.getElementById("veicolo").value.trim(),
+    motore: document.getElementById("motore").value.trim(),
+    targa: document.getElementById("targa").value.trim(),
+    immatricolazione: document.getElementById("immatricolazione").value.trim(),
+
+    tempLibrettoId: TEMP_LIBRETTO_ID,
+    tempTargaId: TEMP_TARGA_ID,
+    altriDocumenti: TEMP_ALTRI_DOCUMENTI
+
+  };
+
+}
+
 /********************
  * INVIO BACKEND
  ********************/
