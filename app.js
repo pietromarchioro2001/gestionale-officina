@@ -10,6 +10,7 @@ let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 let voceAssistente = null;
 let confirmCallback = null;
 let promptCallback = null;
+let ID_CLIENTE_SCELTO = null;
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
