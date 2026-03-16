@@ -3397,22 +3397,42 @@ function renderRevisioni(lista){
   const box = document.getElementById("listaRevisioni");
   box.innerHTML = "";
 
+  const oggi = new Date();
+
   lista.forEach(r=>{
 
-    const row = document.createElement("div");
-    row.className = "revisione-row";
+    const dataRev = new Date(r.revisione);
+    const diff = (dataRev - oggi) / (1000*60*60*24);
 
-    row.innerHTML = `
-      <button onclick="modificaRevisione('${r.idCliente}','${r.veicolo}')">📅</button>
-      <div>${r.cliente}</div>
-      <div>${r.veicolo}</div>
-      <div>${formatData(r.revisione)}</div>
-      <button onclick="ricordaRevisione('${r.telefono}','${r.veicolo}','${r.revisione}')">
-        RICORDA
-      </button>
+    let classe = "";
+
+    if(diff < 0) classe = "scaduta";
+    else if(diff <= 30) classe = "warning";
+
+    const card = document.createElement("div");
+    card.className = "revisione-card " + classe;
+
+    card.innerHTML = `
+      <div class="revisione-left">
+        <div class="revisione-cliente">${r.cliente}</div>
+        <div class="revisione-veicolo">${r.veicolo}</div>
+        <div class="revisione-data">${formatData(r.revisione)}</div>
+      </div>
+
+      <div class="revisione-actions">
+        <button class="btn-revisione btn-cal"
+          onclick="modificaRevisione('${r.idCliente}','${r.veicolo}')">
+          📅
+        </button>
+
+        <button class="btn-revisione btn-whatsapp"
+          onclick="ricordaRevisione('${r.telefono}','${r.veicolo}','${r.revisione}')">
+          RICORDA
+        </button>
+      </div>
     `;
 
-    box.appendChild(row);
+    box.appendChild(card);
 
   });
 
