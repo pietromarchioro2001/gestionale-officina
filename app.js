@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyj7cWM8qCb6VzmBl2NRm5zhT7j4zr3HddTi_a-kFq0YmTLvyBaP4koKWNFRf-JMsUm/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyJJd4RqZma3lwzCsP0ripyZctgYpIxqou71Zr8D5SZ7I13521wi7TmbOdXNfo-27Nh/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -332,27 +332,91 @@ function salva() {
   console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
   console.log("TEMP_TARGA_ID:", TEMP_TARGA_ID);
 
-  // se è un cliente nuovo e mancano documenti → avviso
+  // ⚠️ controllo documenti come ora
   if (!clienteEsistente && (!TEMP_LIBRETTO_ID || !TEMP_TARGA_ID)) {
 
-    const continua = showConfirm(
+    showConfirm(
       "⚠️ Non hai caricato libretto o targa.\n\n" +
       "È consigliato inserirli per completezza del profilo.\n\n" +
-      "Vuoi continuare comunque?"
+      "Vuoi continuare comunque?",
+      conferma => {
+
+        if (!conferma) return;
+
+        apriPopupCliente();
+
+      }
     );
 
-    if (!continua) return;
-
+    return;
   }
 
-  inviaSalvataggio();
+  // ✅ se documenti ok → popup cliente
+  apriPopupCliente();
+
+}
+
+async function apriPopupCliente(){
+
+  const nomeCliente = document.getElementById("nome").value.trim();
+
+  if(!nomeCliente){
+    inviaSalvataggio();
+    return;
+  }
+
+  const risultati = await callBackend(
+    "cercaClientiPerPopup",
+    [nomeCliente]
+  );
+
+  mostraPopupClienti(risultati);
+
+}
+
+function mostraPopupClienti(lista){
+
+  const box = document.getElementById("popupClienti");
+  const list = document.getElementById("popupClientiLista");
+
+  list.innerHTML = "";
+
+  lista.forEach(c => {
+
+    const div = document.createElement("div");
+    div.className = "cliente-riga";
+
+    div.innerHTML = `
+      <b>${c.nome}</b><br>
+      ${c.indirizzo || ""}<br>
+      ${c.targhe || ""}
+    `;
+
+    div.onclick = () => selezionaClientePopup(c);
+
+    list.appendChild(div);
+
+  });
+
+  box.classList.remove("hidden");
+
+}
+
+function selezionaClientePopup(cliente){
+
+  document.getElementById("nome").value = cliente.nome;
+
+  inviaSalvataggio(cliente.id);
+
+  document.getElementById("popupClienti")
+    .classList.add("hidden");
 
 }
 
 /********************
  * INVIO BACKEND
  ********************/
-async function inviaSalvataggio(){
+async function inviaSalvataggio(idClienteScelto = null){
 
   try{
 
@@ -376,6 +440,8 @@ async function inviaSalvataggio(){
       tempTargaId: TEMP_TARGA_ID,
     
       altriDocumenti: TEMP_ALTRI_DOCUMENTI
+
+      idClienteScelto: idClienteScelto
 
     };
 
