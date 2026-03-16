@@ -2075,6 +2075,74 @@ font-size:14px;
   box-sizing: border-box;   /* ⭐ FIX */
 }
 
+/* ================= REVISIONI ================= */
+
+.revisione-card{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  background:#fff;
+  border-radius:14px;
+  padding:18px 22px;
+  margin-bottom:14px;
+
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+
+  position:relative;
+}
+
+.revisione-card.scaduta{
+  background:rgba(229,57,53,0.08);
+}
+
+.revisione-card.warning{
+  background:rgba(255,193,7,0.12);
+}
+
+.revisione-left{
+  display:flex;
+  flex-direction:column;
+}
+
+.revisione-cliente{
+  font-weight:700;
+  font-size:16px;
+}
+
+.revisione-veicolo{
+  font-size:14px;
+  color:#555;
+  margin-top:4px;
+}
+
+.revisione-data{
+  font-weight:700;
+  margin-top:6px;
+}
+
+.revisione-actions{
+  display:flex;
+  gap:10px;
+}
+
+.btn-revisione{
+  padding:8px 14px;
+  border-radius:8px;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.btn-cal{
+  background:#eee;
+}
+
+.btn-whatsapp{
+  background:#2e7d32;
+  color:#fff;
+}
+
 /* =========================================================
    RESPONSIVE LIGHT – 15 POLLICI
    (riduzione proporzionale leggera, nessuna rottura layout)
