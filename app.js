@@ -364,6 +364,8 @@ function apriPopupCliente(){
 
   document.getElementById("ricercaClientePopup").value = "";
 
+  initFiltroClientiPopup();   // 🔥 QUI
+
   caricaClientiPopup();
 
 }
@@ -391,19 +393,25 @@ function selezionaClientePopup(idCliente){
 
 }
 
-document
-.getElementById("ricercaClientePopup")
-.addEventListener("input", function(){
+function initFiltroClientiPopup(){
 
-  const q = this.value.toLowerCase().trim();
+  const input = document.getElementById("ricercaClientePopup");
 
-  const filtrati = CLIENTI_CACHE.filter(c =>
-    c.nome.toLowerCase().includes(q)
-  );
+  if(!input) return;
 
-  renderListaClienti(filtrati);
+  input.addEventListener("input", function(){
 
-});
+    const q = this.value.toLowerCase().trim();
+
+    const filtrati = CLIENTI_CACHE.filter(c =>
+      c.nome.toLowerCase().includes(q)
+    );
+
+    renderListaClienti(filtrati);
+
+  });
+
+}
 
 function caricaClientiPopup(){
 
