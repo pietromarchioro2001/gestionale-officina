@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyuX5yzVyvjYYUdNtrSaMizvzodtOuOsp11gcb-PwrWtGgekh52uU1UtiEaEO5us75f/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwW-EWLBgH2YO5DfrjrjQzwVuflBT2U9I157oj5yIwauwYI9H2kutpGjeOJl804xL8z/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
