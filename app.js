@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyJJd4RqZma3lwzCsP0ripyZctgYpIxqou71Zr8D5SZ7I13521wi7TmbOdXNfo-27Nh/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyuX5yzVyvjYYUdNtrSaMizvzodtOuOsp11gcb-PwrWtGgekh52uU1UtiEaEO5us75f/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -11,6 +11,7 @@ let voceAssistente = null;
 let confirmCallback = null;
 let promptCallback = null;
 let ID_CLIENTE_SCELTO = null;
+let CLIENTI_CACHE = [];
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -357,60 +358,93 @@ function salva() {
 
 }
 
-async function apriPopupCliente(){
+function apriPopupCliente(){
 
-  const nomeCliente = document.getElementById("nome").value.trim();
+  document.getElementById("popupCliente").classList.remove("hidden");
 
-  if(!nomeCliente){
-    inviaSalvataggio();
-    return;
-  }
+  document.getElementById("ricercaClientePopup").value = "";
 
-  const risultati = await callBackend(
-    "cercaClientiPerPopup",
-    [nomeCliente]
-  );
-
-  mostraPopupClienti(risultati);
+  caricaClientiPopup();
 
 }
 
-function mostraPopupClienti(lista){
+function chiudiPopupCliente(){
 
-  const box = document.getElementById("popupClienti");
-  const list = document.getElementById("popupClientiLista");
+  document.getElementById("popupCliente").classList.add("hidden");
 
-  list.innerHTML = "";
+}
+
+function nuovoClientePopup(){
+
+  chiudiPopupCliente();
+  inviaSalvataggio();
+
+}
+
+function selezionaClientePopup(idCliente){
+
+  ID_CLIENTE_SCELTO = idCliente;
+
+  chiudiPopupCliente();
+
+  inviaSalvataggio(idCliente);
+
+}
+
+document
+.getElementById("ricercaClientePopup")
+.addEventListener("input", function(){
+
+  const q = this.value.toLowerCase().trim();
+
+  const filtrati = CLIENTI_CACHE.filter(c =>
+    c.nome.toLowerCase().includes(q)
+  );
+
+  renderListaClienti(filtrati);
+
+});
+
+function caricaClientiPopup(){
+
+  if(CLIENTI_CACHE.length > 0){
+    renderListaClienti(CLIENTI_CACHE);
+    return;
+  }
+
+  callBackend("listaClientiCompleta", [])
+    .then(lista => {
+
+      CLIENTI_CACHE = lista;
+      renderListaClienti(lista);
+
+    });
+
+}
+
+function renderListaClienti(lista){
+
+  const box = document.getElementById("listaClientiPopup");
+  box.innerHTML = "";
 
   lista.forEach(c => {
 
     const div = document.createElement("div");
-    div.className = "cliente-riga";
+    div.className = "cliente-riga-popup";
 
     div.innerHTML = `
-      <b>${c.nome}</b><br>
-      ${c.indirizzo || ""}<br>
-      ${c.targhe || ""}
+      <strong>${c.nome}</strong><br>
+      ${c.indirizzo || "-"}<br>
+      <span style="color:#666;font-size:13px">
+        ${c.targhe.join(", ") || "NESSUN VEICOLO"}
+      </span>
     `;
 
-    div.onclick = () => selezionaClientePopup(c);
+    div.onclick = () => selezionaClientePopup(c.id);
 
-    list.appendChild(div);
+    box.appendChild(div);
 
   });
-
-  box.classList.remove("hidden");
-
-}
-
-function selezionaClientePopup(cliente){
-
-  document.getElementById("nome").value = cliente.nome;
-
-  inviaSalvataggio(cliente.id);
-
-  document.getElementById("popupClienti")
-    .classList.add("hidden");
 
 }
 
