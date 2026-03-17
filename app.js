@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzHkzHoP3Qoqk5OwrsHeewCDYKjEvYRp3Ris7IhKSPwulxxD8dliRJtRd9pTKnoU2vr/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwnnt-drsc6CksSSg8TRMtXjgnCNIbJXFBFODXFo5D6BALy-TF4Kya4V1joMr5qOXuS/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -22,6 +22,7 @@ let promptCallback = null;
 let ID_CLIENTE_SCELTO = null;
 let CLIENTI_CACHE = [];
 let CACHE_REVISIONI = null;
+let CLIENTI_VEICOLI_CACHE = [];
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -613,6 +614,85 @@ function cercaVeicolo() {
       esito.textContent = "Errore ricerca";
 
     });
+  apriPopupRicerca();
+}
+
+function apriPopupRicerca(){
+
+  document
+  .getElementById("popupRicercaCliente")
+  .classList.remove("hidden");
+
+  renderRicercaClienti(CLIENTI_VEICOLI_CACHE);
+
+}
+
+function filtraRicercaClienti(){
+
+  const nome = document
+  .getElementById("searchNome").value.toLowerCase();
+
+  const targa = document
+  .getElementById("searchTarga").value.toLowerCase();
+
+  const veicolo = document
+  .getElementById("searchVeicolo").value.toLowerCase();
+
+  const filtrati = CLIENTI_VEICOLI_CACHE.filter(r=>{
+
+    return (
+      r.nomeCliente.toLowerCase().includes(nome) &&
+      r.targa.toLowerCase().includes(targa) &&
+      r.veicolo.toLowerCase().includes(veicolo)
+    );
+
+  });
+
+  renderRicercaClienti(filtrati);
+
+}
+
+function renderRicercaClienti(lista){
+
+  const box = document.getElementById("listaRicercaCliente");
+  box.innerHTML = "";
+
+  lista.forEach(r=>{
+
+    const div = document.createElement("div");
+    div.className = "cliente-riga-popup";
+
+    div.innerHTML = `
+      <strong>${r.nomeCliente}</strong><br>
+      ${r.indirizzo || "-"}<br>
+      <span style="color:#666;font-size:13px">
+        ${r.targa} — ${r.veicolo}
+      </span>
+    `;
+
+    div.onclick = ()=>{
+      selezionaClienteRicerca(r);
+    };
+
+    box.appendChild(div);
+
+  });
+
+}
+
+function selezionaClienteRicerca(r){
+
+  chiudiPopupRicerca();
+
+  document.getElementById("nome").value = r.nomeCliente;
+  document.getElementById("telefono").value = r.telefono || "";
+  document.getElementById("veicolo").value = r.veicolo || "";
+  document.getElementById("targa").value = r.targa || "";
+  document.getElementById("immatricolazione").value =
+    r.immatricolazione || "";
+
+  clienteEsistente = true;
+
 }
 /********************
  * CONTATORE FILE (X file)
@@ -666,6 +746,7 @@ function bindFileCount(inputId, countId, linkId){
   preloadSchede();
   preloadOrdini();
   preloadRevisioni();
+  preloadClientiVeicoli();
   librettoLink = document.getElementById("librettoLink");
   targaLink = document.getElementById("targaLink");
   btnCartellaCliente = document.getElementById("btnCartellaCliente");
@@ -2883,6 +2964,18 @@ function preloadRevisioni(){
 
 }
 
+function preloadClientiVeicoli(){
+
+  if(CLIENTI_VEICOLI_CACHE.length) return;
+
+  callBackend("getClientiVeicoliBundle")
+  .then(lista=>{
+    CLIENTI_VEICOLI_CACHE = lista;
+    console.log("Preload clienti/veicoli ok");
+  });
+
+}
+
 function caricaAppuntamentiOggi() {
 
   const box = document.getElementById("oggiEventi");
@@ -3352,6 +3445,7 @@ setInterval(() => {
   preloadOrdini();
   preloadSchede();
   preloadRevisioni();
+  preloadClientiVeicoli();
 
 }, 60000);
 
