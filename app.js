@@ -21,6 +21,7 @@ let confirmCallback = null;
 let promptCallback = null;
 let ID_CLIENTE_SCELTO = null;
 let CLIENTI_CACHE = [];
+let CACHE_REVISIONI = null;
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -664,6 +665,7 @@ function bindFileCount(inputId, countId, linkId){
  ********************/
   preloadSchede();
   preloadOrdini();
+  preloadRevisioni();
   librettoLink = document.getElementById("librettoLink");
   targaLink = document.getElementById("targaLink");
   btnCartellaCliente = document.getElementById("btnCartellaCliente");
@@ -2864,6 +2866,23 @@ function preloadOrdini() {
     });
 }
 
+function preloadRevisioni(){
+
+  if(CACHE_REVISIONI) return;
+
+  console.log("Preload revisioni...");
+
+  callBackend("getRevisioni")
+    .then(lista=>{
+      CACHE_REVISIONI = lista;
+      console.log("Preload revisioni completato");
+    })
+    .catch(err=>{
+      console.warn("Preload revisioni fallito", err);
+    });
+
+}
+
 function caricaAppuntamentiOggi() {
 
   const box = document.getElementById("oggiEventi");
@@ -3332,6 +3351,7 @@ setInterval(() => {
 
   preloadOrdini();
   preloadSchede();
+  preloadRevisioni();
 
 }, 60000);
 
@@ -3407,11 +3427,19 @@ container.innerHTML = "Caricamento...";
   }
 }
 
-function caricaRevisioni(){
-  callBackend("getRevisioni", []).then(data=>{
-    console.log("REVISIONI RAW:", data);
-    renderRevisioni(data);
-  });
+function caricaRevisioni(force = false){
+
+  if(!force && CACHE_REVISIONI){
+    renderRevisioni(CACHE_REVISIONI);
+    return;
+  }
+
+  callBackend("getRevisioni", [])
+    .then(data=>{
+      CACHE_REVISIONI = data;
+      renderRevisioni(data);
+    });
+
 }
 
 function renderRevisioni(lista){
