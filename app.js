@@ -624,6 +624,13 @@ function apriPopupRicerca(){
   .classList.remove("hidden");
 
   renderRicercaClienti(CLIENTI_VEICOLI_CACHE);
+    ["searchNome","searchTarga","searchVeicolo"]
+  .forEach(id=>{
+  
+    document.getElementById(id)
+    .addEventListener("input", filtraRicercaClienti);
+  
+  });
 
 }
 
@@ -761,6 +768,9 @@ function bindFileCount(inputId, countId, linkId){
   document
   .getElementById("btnRefreshClienti")
   ?.addEventListener("click", resetClienti);
+
+ document.getElementById("btnCerca")
+.addEventListener("click", apriPopupRicerca);
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
