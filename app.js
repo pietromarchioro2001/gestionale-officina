@@ -23,6 +23,7 @@ let ID_CLIENTE_SCELTO = null;
 let CLIENTI_CACHE = [];
 let CACHE_REVISIONI = null;
 let CLIENTI_VEICOLI_CACHE = [];
+let autoOpenSection = false;
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -1347,10 +1348,12 @@ function showSection(id) {
       break;
 
     case "ordini":
-      localStorage.setItem("seen_ordini", Date.now());
-      toggleBadgeOrdini(false);
-      caricaOrdiniUI?.();
-      break;
+      if (!window.autoOpenSection) {
+        localStorage.setItem("view_ordini", Date.now());
+        toggleBadgeOrdini(false);
+      }
+      caricaOrdiniUI();
+    break;
 
     case "schede":
       localStorage.setItem("seen_schede", Date.now());
@@ -3058,18 +3061,34 @@ function caricaAppuntamentiOggi() {
 
 // HOME → ORDINI → Nuovo ordine
 function homeNuovoOrdine() {
+
+  autoOpenSection = true;
+
   showSection("ordini");
+
   setTimeout(() => {
     nuovoOrdine();
   }, 150);
+
+  setTimeout(() => {
+    autoOpenSection = false;
+  }, 800);
 }
 
 // HOME → ORDINI → Ordine vocale
 function homeOrdineVocale() {
+
+  autoOpenSection = true;
+
   showSection("ordini");
+
   setTimeout(() => {
     avviaOrdineVocale();
   }, 150);
+
+  setTimeout(() => {
+    autoOpenSection = false;
+  }, 800);
 }
 
 // HOME → CARICA LIBRETTO (SOLUZIONE FUNZIONANTE)
