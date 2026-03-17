@@ -753,6 +753,7 @@ input.targa {
   padding: 15px 24px 20px 24px; /* meno spazio sopra */
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .home-module h3 {
@@ -903,6 +904,55 @@ input.targa {
 
 .hidden{
   display:none;
+}
+
+/* 🔴 badge rosso ORDINI / SCHEDE */
+.badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 14px;
+  height: 14px;
+  background: #ff3b30;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px white;
+  display: none;
+  animation: badgePulse 1.2s infinite;
+}
+
+.badge.show {
+  display: block;
+}
+
+@keyframes badgePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}
+
+/* ⚠️ warning revisioni */
+.revisioni-box {
+  position: relative;
+}
+
+.badge-warning {
+  position: absolute;
+  top: -8px;
+  right: -4px;
+  font-size: 18px;
+  color: #ff9500;
+  display: none;
+  animation: warningBlink 1.5s infinite;
+}
+
+.badge-warning.show {
+  display: block;
+}
+
+@keyframes warningBlink {
+  0% { opacity: 1; }
+  50% { opacity: .3; }
+  100% { opacity: 1; }
 }
 
 /* =========================================================
