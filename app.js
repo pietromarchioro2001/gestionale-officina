@@ -3446,16 +3446,26 @@ function renderRevisioni(lista){
     card.dataset.veicolo = r.veicolo;
 
    card.innerHTML = `
-      <button class="btn-cal">${ICON_CALENDAR}</button>
-    
-      <div class="revisione-cliente">${cliente}</div>
-    
-      <div class="revisione-veicolo">${veicolo}</div>
-    
-      <div class="revisione-data">${data}</div>
-    
-      <button class="btn-whatsapp">RICORDA</button>
-    `;
+    <button class="btn-cal"
+      onclick="modificaRevisione('${r.idCliente}','${r.veicolo}')">
+      ${ICON_CALENDAR}
+    </button>
+  
+    <div class="revisione-cliente">${r.cliente}</div>
+  
+    <div class="revisione-veicolo">
+      ${String(r.veicolo).replace(/\n/g," ")}
+    </div>
+  
+    <div class="revisione-data">
+      ${formatData(r.revisione)}
+    </div>
+  
+    <button class="btn-whatsapp"
+      onclick="ricordaRevisione('${r.telefono}','${r.veicolo}','${r.revisione}')">
+      RICORDA
+    </button>
+  `;
 
     box.appendChild(card);
 
