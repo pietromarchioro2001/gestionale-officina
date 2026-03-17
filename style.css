@@ -892,26 +892,6 @@ input.targa {
 
 }
 
-.badge{
-  display:none;
-  width:10px;
-  height:10px;
-  background:red;
-  border-radius:50%;
-  margin-left:6px;
-}
-
-.badge-warning{
-  color:orange;
-  font-size:18px;
-  margin-left:6px;
-}
-
-.hidden{
-  display:none;
-}
-
-/* 🔴 badge rosso ORDINI / SCHEDE */
 .badge {
   position: absolute;
   top: -6px;
@@ -926,7 +906,21 @@ input.targa {
 }
 
 .badge.show {
-  display:inline-block;
+  display: block;
+}
+
+.badge-warning{
+  color:orange;
+  font-size:18px;
+  margin-left:6px;
+}
+
+.hidden{
+  display:none;
+}
+
+.home-block button{
+  position: relative;
 }
 
 @keyframes badgePulse {
