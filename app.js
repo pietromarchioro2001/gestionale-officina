@@ -3407,7 +3407,6 @@ function renderRevisioni(lista){
 
   lista.forEach(r=>{
 
-    let classe = "";
     let diff = null;
     
     if(r.revisione){
@@ -3422,11 +3421,18 @@ function renderRevisioni(lista){
 
     let statoClasse = "";
 
-    if(diff < 0) statoClasse = "scaduta";
-    else if(diff <= 30) statoClasse = "warning";
+    if(r.revisione){
+      const dataRev = new Date(r.revisione);
+      const diff = (dataRev - oggi) / (1000*60*60*24);
+    
+      if(diff < 0) statoClasse = "scaduta";
+      else if(diff <= 30) statoClasse = "warning";
+    }
 
     const card = document.createElement("div");
     card.className = "revisione-card " + statoClasse;
+    card.dataset.idcliente = r.idCliente;
+    card.dataset.veicolo = r.veicolo;
 
     card.innerHTML = `
       <div class="revisione-left">
@@ -3453,6 +3459,26 @@ function renderRevisioni(lista){
   });
 
 }
+
+document.getElementById("filtroRevisioni")
+.addEventListener("input", function(){
+
+  const q = this.value.toLowerCase();
+
+  document.querySelectorAll(".revisione-card")
+  .forEach(card=>{
+
+    const nome = card
+      .querySelector(".revisione-cliente")
+      .innerText
+      .toLowerCase();
+
+    card.style.display =
+      nome.includes(q) ? "flex" : "none";
+
+  });
+
+});
 
 function ricordaRevisione(tel, veicolo, data){
 
@@ -3494,8 +3520,12 @@ window.modificaRevisione = function(idCliente, veicolo){
     callBackend("updateRevisione", [
       {idCliente, veicolo, revisione: nuova}
     ]).then(()=>{
+    
+      // aggiorna SOLO UI
+      aggiornaCardRevisione(idCliente, veicolo, nuova);
+    
       popup.remove();
-      caricaRevisioni();
+    
     });
 
   };
@@ -3517,5 +3547,16 @@ function formatData(data){
   return `${gg}/${mm}/${aa}`;
 }
 
+function aggiornaCardRevisione(idCliente, veicolo, nuova){
 
+  const card = document.querySelector(
+    `[data-idcliente="${idCliente}"][data-veicolo="${veicolo}"]`
+  );
+
+  if(!card) return;
+
+  card.querySelector(".revisione-data").innerText =
+    formatData(nuova);
+
+}
 
