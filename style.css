@@ -2885,12 +2885,6 @@ html, body {
 
 /* ================= REVISIONI ================= */
 
-.revisione-card{
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-  }
-
   .revisione-cliente,
   .revisione-veicolo,
   .revisione-data{
