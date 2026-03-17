@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwA3U6tN3EdLi-mnvTyGyj-EujUR47xVl_YqT-Kfr4cUFGizecEfG3wpJ4763ZtYrYF/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwyG_BDvurhssAU7HNPdpE0zSiNFFNg-jT93RtD95-bLQ-ls87-QMKq4wAA84izV6zT/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -3407,8 +3407,18 @@ function renderRevisioni(lista){
 
   lista.forEach(r=>{
 
-    const dataRev = new Date(r.revisione);
-    const diff = (dataRev - oggi) / (1000*60*60*24);
+    let classe = "";
+    let diff = null;
+    
+    if(r.revisione){
+    
+      const dataRev = new Date(r.revisione);
+      diff = (dataRev - oggi) / (1000*60*60*24);
+    
+      if(diff < 0) classe = "scaduta";
+      else if(diff <= 30) classe = "warning";
+    
+    }
 
     let classe = "";
 
