@@ -2103,6 +2103,18 @@ font-size:14px;
   box-sizing: border-box;   /* ⭐ FIX */
 }
 
+.ricerca-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.ricerca-loading{
+  margin-top:6px;
+  font-size:13px;
+  color:#666;
+}
+
 /* =========================================================
    13. REVISIONI
 ========================================================= */
