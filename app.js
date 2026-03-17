@@ -3478,6 +3478,20 @@ function modificaRevisione(idCliente, veicolo){
 
 }
 
+function formatData(data){
+
+  if(!data) return "—";
+
+  const d = new Date(data);
+
+  if(isNaN(d)) return data;
+
+  const gg = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
+  const aa = d.getFullYear();
+
+  return `${gg}/${mm}/${aa}`;
+}
 
 
 
