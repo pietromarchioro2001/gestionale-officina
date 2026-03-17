@@ -3422,11 +3422,13 @@ function renderRevisioni(lista){
     let statoClasse = "";
 
     if(r.revisione){
+    
       const dataRev = new Date(r.revisione);
       const diff = (dataRev - oggi) / (1000*60*60*24);
     
       if(diff < 0) statoClasse = "scaduta";
       else if(diff <= 30) statoClasse = "warning";
+    
     }
 
     const card = document.createElement("div");
