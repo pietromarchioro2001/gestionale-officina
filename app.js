@@ -608,6 +608,8 @@ function selezionaClienteRicerca(targa){
 
   chiudiPopupRicerca();
 
+  mostraLoadingRicerca();   // 🔥 QUI
+
   callBackend("cercaVeicolo_PROXY", [targa])
   .then(res => {
 
@@ -633,7 +635,20 @@ function selezionaClienteRicerca(targa){
     clienteEsistente = true;
 
   });
+  .finally(()=>{
+    nascondiLoadingRicerca();   // 🔥 QUI
+  });
 
+}
+
+function mostraLoadingRicerca(){
+  const el = document.getElementById("ricercaLoading");
+  if(el) el.classList.remove("hidden");
+}
+
+function nascondiLoadingRicerca(){
+  const el = document.getElementById("ricercaLoading");
+  if(el) el.classList.add("hidden");
 }
 /********************
  * CONTATORE FILE (X file)
