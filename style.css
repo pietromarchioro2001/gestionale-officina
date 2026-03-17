@@ -2143,6 +2143,29 @@ font-size:14px;
   color:#fff;
 }
 
+.popup-calendario{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.4);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+
+.popup-cal-box{
+  background:white;
+  padding:30px;
+  border-radius:14px;
+  width:320px;
+}
+
+.popup-cal-actions{
+  margin-top:20px;
+  display:flex;
+  justify-content:space-between;
+}
+
 /* =========================================================
    RESPONSIVE LIGHT – 15 POLLICI
    (riduzione proporzionale leggera, nessuna rottura layout)
