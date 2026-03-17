@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzt-62EjiwIVANwDpjqiF-BYWLXVuoexMQUF2DkWwBjdN8Zm5mthp2T5bDhxh_kj7fE/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyYztX5Z-qxwXcqXJSLKY0C9ZhDY1wU-nfFZvTz1xZ0ZtqlKYBmuEBwUurjHUctE_88/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -1360,14 +1360,10 @@ function showSection(id) {
       break;
 
     case "ordini":
-      localStorage.setItem("view_ordini", Date.now());
-      toggleBadgeOrdini(false);
       caricaOrdiniUI?.();
       break;
 
     case "schede":
-      localStorage.setItem("view_schede", Date.now());
-      toggleBadgeSchede(false);
       caricaSchede?.();
       break;
 
