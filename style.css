@@ -2172,11 +2172,17 @@ font-size:14px;
   z-index:9999;
 }
 
+.popup-cal-box input{
+  width:100%;
+  box-sizing:border-box;
+}
+
 .popup-cal-box{
   background:white;
   padding:30px;
   border-radius:14px;
-  width:320px;
+  width:340px;
+  max-width:90vw;
 }
 
 .popup-cal-actions{
