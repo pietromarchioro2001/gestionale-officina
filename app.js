@@ -3440,12 +3440,10 @@ function renderRevisioni(lista){
 
       <button class="btn-revisione btn-cal"
         onclick="modificaRevisione('${r.idCliente}','${r.veicolo}')">
-    
         <svg viewBox="0 0 24 24" class="icon-svg">
           <rect x="3" y="5" width="18" height="16" rx="2"/>
           <path d="M16 3v4M8 3v4M3 11h18"/>
         </svg>
-    
       </button>
     
       <div class="revisione-cliente">${r.cliente}</div>
@@ -3458,6 +3456,7 @@ function renderRevisioni(lista){
         onclick="ricordaRevisione('${r.telefono}','${r.veicolo}','${r.revisione}')">
         RICORDA
       </button>
+    
     `;
 
     box.appendChild(card);
