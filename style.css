@@ -2091,25 +2091,23 @@ font-size:14px;
 
 .revisione-card{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  gap:25px;
 
-  background:#fff;
-  border-radius:14px;
+  background:white;
   padding:18px 22px;
-  margin-bottom:14px;
+  border-radius:14px;
+  margin-bottom:12px;
 
   box-shadow:0 4px 12px rgba(0,0,0,0.05);
-
-  position:relative;
 }
 
 .revisione-card.scaduta{
-  background:rgba(229,57,53,0.08);
+  background: rgba(229, 57, 53, 0.18);
 }
 
 .revisione-card.warning{
-  background:rgba(255,193,7,0.12);
+  background: rgba(255, 214, 0, 0.18);
 }
 
 .revisione-left{
@@ -2119,18 +2117,19 @@ font-size:14px;
 
 .revisione-cliente{
   font-weight:700;
-  font-size:16px;
+  min-width:220px;
 }
 
 .revisione-veicolo{
+  flex:1;
   font-size:14px;
   color:#555;
   margin-top:4px;
 }
 
 .revisione-data{
-  font-weight:700;
-  margin-top:6px;
+  font-weight:600;
+  min-width:130px;
 }
 
 .revisione-actions{
@@ -2147,12 +2146,20 @@ font-size:14px;
 }
 
 .btn-cal{
+  font-size:18px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
   background:#eee;
 }
 
 .btn-whatsapp{
-  background:#2e7d32;
-  color:#fff;
+  background:#25D366;
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:8px;
+  cursor:pointer;
 }
 
 .popup-calendario{
@@ -2860,7 +2867,12 @@ html, body {
 
 }
 
+/* ================= REVISIONI ================= */
 
+.revisione-card{
+    flex-direction:column;
+    align-items:flex-start;
+  }
 
 
 
