@@ -1143,7 +1143,7 @@ a#targaLink:hover {
 }
 
 #clienti .doc-row {
-  margin-top: -16px;
+  margin-top: 28px;
 }
 
 @keyframes spinLogo {
@@ -2900,13 +2900,17 @@ html, body {
      width:100%;
   }
 
-   #revisioni .page-header {
-    margin-top: 0;
-    padding-top: 12px;
+   #revisioni.page {
+    padding-top: 0 !important;
+  }
+
+  #revisioni .page-header {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
   #revisioni .page-title {
-    margin-top: 0;
+    margin-top: 6px !important;
   }
 
 }
