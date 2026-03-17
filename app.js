@@ -1567,66 +1567,39 @@ function apriAssistente() {
   }
 
   Object.assign(sessioneAssistente, {
-  schedaId: null,
-  inRipresa: false,
-  step: null,
-  stepQueue: [
-    "TARGA",
-    "CHILOMETRI",
-    "PROBLEMI",
-    "LAVORI",
-    "PRODOTTI",
-    "ORE_IMPIEGATE",
-    "NOTE",
-    "CHIUSURA"
-  ],
-  listaProblemi: [],
-  listaLavori: [],
-  listaProdotti: [],
-  valoriEsistenti: {},
-
-  // 🔥 QUESTO È IL NUOVO BLOCCO
-  dati: {
-    targa: "",
-    chilometri: "",
-    problemi: [],
-    lavori: [],
-    prodotti: [],
-    ore: "",
-    note: ""
-  }
-});
+    schedaId: null,
+    inRipresa: false,
+    step: "TARGA",   // 🔥 ORA PARTE DIRETTAMENTE DA QUI
+    stepQueue: [
+      "CHILOMETRI",
+      "PROBLEMI",
+      "LAVORI",
+      "PRODOTTI",
+      "ORE_IMPIEGATE",
+      "NOTE",
+      "CHIUSURA"
+    ],
+    listaProblemi: [],
+    listaLavori: [],
+    listaProdotti: [],
+    valoriEsistenti: {},
+    dati: {
+      targa: "",
+      chilometri: "",
+      problemi: [],
+      lavori: [],
+      prodotti: [],
+      ore: "",
+      note: ""
+    }
+  });
 
   const input = document.getElementById("assistenteInput");
-  input.disabled = true;
+  input.disabled = false;
+  input.focus();
 
-  callBackend("creaNuovaScheda")
-    .then(res => {
+  messaggioBot("Inserisci la targa del veicolo.");
 
-      if (!res || !res.docId) {
-        messaggioBot("Errore creazione scheda.");
-        input.disabled = false;
-        return;
-      }
-
-      sessioneAssistente.schedaId = res.docId;
-
-      input.disabled = false;
-      input.focus();
-
-      messaggioBot(`Scheda #${res.numeroScheda} creata.`);
-
-      setTimeout(() => {
-        rispostaInElaborazione = false;
-        prossimaDomanda();
-      }, 600);
-
-    })
-    .catch(err => {
-      console.error("Errore creaNuovaScheda", err);
-      messaggioBot("Errore server.");
-      input.disabled = false;
-    });
 }
 
 function esciAssistente() {
@@ -1989,27 +1962,42 @@ if (!sessioneAssistente.dati) {
       }
     
       const targaLetta = leggiTargaItaliana(targaNorm);
-
+    
       if (modalitaAssistente === "vocale") {
         parlaTesto(`Targa ${targaLetta}`);
       }
-      
+    
       messaggioBot(`Targa rilevata: ${targaNorm}`);
-          
+    
       try {
     
+        // 🔎 PRIMA controlla se esiste
+        const check = await callBackend("checkTargaEsistente", [targaNorm]);
+    
+        if (!check) {
+          rispostaInElaborazione = false;
+          messaggioBot("⚠️ Veicolo non presente nel gestionale.");
+          messaggioBot("Inserisci prima il profilo del veicolo.");
+          return;
+        }
+    
+        // ✅ CREA SCHEDA SOLO ORA
+        const crea = await callBackend("creaNuovaScheda");
+    
+        if (!crea || !crea.docId) {
+          rispostaInElaborazione = false;
+          messaggioBot("Errore creazione scheda.");
+          return;
+        }
+    
+        sessioneAssistente.schedaId = crea.docId;
+    
+        // 🔥 ORA completa con i dati del veicolo
         const res = await callBackend(
           "completaSchedaDaTarga",
           [sessioneAssistente.schedaId, targaNorm]
         );
     
-        if (!res || !res.ok) {
-          rispostaInElaborazione = false;
-          messaggioBot("Veicolo non trovato. Ripeti la targa.");
-          return;
-        }
-    
-        // 🔥 SALVO DATI NELLA SESSIONE
         sessioneAssistente.dati.targa = targaNorm;
         sessioneAssistente.dati.nomeCliente = res.nomeCliente || "";
         sessioneAssistente.dati.veicolo = res.veicolo || "";
@@ -2017,17 +2005,15 @@ if (!sessioneAssistente.dati) {
         rispostaInElaborazione = false;
     
         rispostaConPausa(
-          `Cliente trovato: ${res.nomeCliente}`,
+          `Scheda #${crea.numeroScheda} creata per ${res.nomeCliente}`,
           1200,
           () => prossimaDomanda()
         );
     
       } catch (err) {
-    
         console.error(err);
         rispostaInElaborazione = false;
         messaggioBot("Errore ricerca veicolo.");
-    
       }
     
       return;
@@ -3756,26 +3742,5 @@ function initRevisioneCliente(){
     };
 
   });
-
-}
-
-async function controllaNotificheHome(){
-
-  const lastOrdini = localStorage.getItem("lastOrdiniSeen") || 0;
-  const lastSchede = localStorage.getItem("lastSchedeSeen") || 0;
-
-  const res = await callBackend("getNotificheHome");
-
-  if(res.nuovoOrdineTs > lastOrdini){
-    document.getElementById("badgeOrdini").classList.remove("hidden");
-  }
-
-  if(res.nuovaSchedaTs > lastSchede){
-    document.getElementById("badgeSchede").classList.remove("hidden");
-  }
-
-  if(res.revisioniInScadenza){
-    document.getElementById("badgeRevisioni").classList.remove("hidden");
-  }
 
 }
