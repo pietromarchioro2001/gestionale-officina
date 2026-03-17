@@ -1384,12 +1384,7 @@ function showSection(id) {
       break;
 
     case "revisioni":
-      localStorage.setItem("view_revisioni", Date.now());
-      toggleWarningRevisioni(false);
-
-      // 🔥 QUESTA È LA PARTE CHE TI MANCA
       caricaRevisioni?.();
-
       break;
 
   }
