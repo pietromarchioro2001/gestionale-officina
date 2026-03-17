@@ -1143,7 +1143,7 @@ a#targaLink:hover {
 }
 
 #clienti .doc-row {
-  margin-top: 35px;
+  margin-top: 45px;
 }
 
 @keyframes spinLogo {
@@ -2899,19 +2899,6 @@ html, body {
   } 
   .btn-whatsapp{ 
      width:100%;
-  }
-
-   #revisioni.page {
-    padding-top: 0 !important;
-  }
-
-  #revisioni .page-header {
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
-
-  #revisioni .page-title {
-    margin-top: 6px !important;
   }
 
 }
