@@ -2149,7 +2149,8 @@ font-size:14px;
 }
 .revisione-veicolo{
   color:#666;
-  min-width:0;
+  text-align:center;
+  font-weight:500;
 }
 .revisione-data{
   font-weight:600;
@@ -2218,9 +2219,10 @@ font-size:14px;
    margin-top:20px; 
    display:flex; 
    justify-content:space-between; 
-} .btn-cal svg{ 
-   width:22px; 
-   height:22px; 
+} 
+.btn-cal svg{ 
+   width:26px; 
+   height:26px; 
    stroke:#333; 
    stroke-width:2; 
    fill:none; 
