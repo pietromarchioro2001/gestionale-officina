@@ -2110,9 +2110,12 @@ font-size:14px;
 }
 
 .ricerca-loading{
-  margin-top:6px;
   font-size:13px;
-  color:#666;
+  color:#888;
+}
+
+.hidden{
+  display:none;
 }
 
 /* =========================================================
