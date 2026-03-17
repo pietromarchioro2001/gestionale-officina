@@ -2185,6 +2185,18 @@ font-size:14px;
   justify-content:space-between;
 }
 
+.btn-cal svg{
+  width:22px;
+  height:22px;
+  stroke:#333;
+  stroke-width:2;
+  fill:none;
+}
+
+.btn-cal:hover svg{
+  stroke:#000;
+}
+
 /* =========================================================
    RESPONSIVE LIGHT – 15 POLLICI
    (riduzione proporzionale leggera, nessuna rottura layout)
