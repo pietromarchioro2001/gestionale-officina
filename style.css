@@ -2106,7 +2106,7 @@ font-size:14px;
 .ricerca-header{
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  gap:14px;
 }
 
 .ricerca-loading{
