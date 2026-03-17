@@ -2090,16 +2090,20 @@ font-size:14px;
 }
 
 .revisione-card{
-  display:flex;
+
+  display:grid;
+  grid-template-columns: 60px 240px 1fr 160px 140px;
+
   align-items:center;
-  gap:30px;
+  gap:20px;
 
   background:white;
-  padding:18px 24px;
+  padding:16px 22px;
   border-radius:14px;
   margin-bottom:14px;
 
   box-shadow:0 6px 16px rgba(0,0,0,0.06);
+
 }
 
 .revisione-card.scaduta{
@@ -2108,11 +2112,6 @@ font-size:14px;
 
 .revisione-card.warning{
   background: rgba(255, 214, 0, 0.18);
-}
-
-.revisione-left{
-  display:flex;
-  flex-direction:column;
 }
 
 .revisione-cliente{
@@ -2130,11 +2129,6 @@ font-size:14px;
 .revisione-data{
   font-weight:600;
   min-width:130px;
-}
-
-.revisione-actions{
-  display:flex;
-  gap:10px;
 }
 
 .btn-revisione{
@@ -2892,9 +2886,9 @@ html, body {
 /* ================= REVISIONI ================= */
 
 .revisione-card{
+    display:flex;
     flex-direction:column;
     align-items:flex-start;
-    gap:10px;
   }
 
   .revisione-cliente,
