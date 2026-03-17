@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwyG_BDvurhssAU7HNPdpE0zSiNFFNg-jT93RtD95-bLQ-ls87-QMKq4wAA84izV6zT/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzHkzHoP3Qoqk5OwrsHeewCDYKjEvYRp3Ris7IhKSPwulxxD8dliRJtRd9pTKnoU2vr/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -479,6 +479,7 @@ function raccogliDatiCliente(){
     motore: document.getElementById("motore").value.trim(),
     targa: document.getElementById("targa").value.trim(),
     immatricolazione: document.getElementById("immatricolazione").value.trim(),
+    revisione: document.getElementById("revisioneInput")?.dataset.raw || "",
 
     tempLibrettoId: TEMP_LIBRETTO_ID,
     tempTargaId: TEMP_TARGA_ID,
@@ -571,6 +572,12 @@ function cercaVeicolo() {
       document.getElementById("motore").value = v.motore || "";
       document.getElementById("targa").value = v.targa || "";
       document.getElementById("immatricolazione").value = v.immatricolazione || "";
+
+      if(v.revisione){
+        const inputRev = document.getElementById("revisioneInput");
+        inputRev.value = formatData(v.revisione);
+        inputRev.dataset.raw = v.revisione;
+      }
 
       esito.textContent = "Veicolo trovato";
 
@@ -1289,6 +1296,7 @@ function showSection(id) {
       if (typeof resetClienti === "function") {
         resetClienti();
       }
+      initRevisioneCliente();   // 🔥 QUI
       break;
 
     case "appuntamenti":
@@ -3570,6 +3578,48 @@ function aggiornaCardRevisione(idCliente, veicolo, nuova){
 
   card.querySelector(".revisione-data").innerText =
     formatData(nuova);
+
+}
+
+function initRevisioneCliente(){
+
+  const input = document.getElementById("revisioneInput");
+  if(!input) return;
+
+  input.addEventListener("click", function(){
+
+    const popup = document.createElement("div");
+    popup.className = "popup-calendario";
+
+    popup.innerHTML = `
+      <div class="popup-cal-box">
+        <h3>Scadenza revisione</h3>
+        <input type="date" id="revClienteData">
+        <div class="popup-cal-actions">
+          <button id="salvaRevCliente">Salva</button>
+          <button id="annullaRevCliente">Annulla</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+
+    document.getElementById("annullaRevCliente").onclick = ()=>{
+      popup.remove();
+    };
+
+    document.getElementById("salvaRevCliente").onclick = ()=>{
+
+      const val = document.getElementById("revClienteData").value;
+      if(!val) return;
+
+      input.value = formatData(val);
+      input.dataset.raw = val;
+
+      popup.remove();
+    };
+
+  });
 
 }
 
