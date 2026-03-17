@@ -3464,31 +3464,43 @@ function ricordaRevisione(tel, veicolo, data){
 
 }
 
-function modificaRevisione(idCliente, veicolo){
+window.modificaRevisione = function(idCliente, veicolo){
 
-  const input = document.createElement("input");
-  input.type = "date";
-  input.style.position = "fixed";
-  input.style.left = "-9999px";
+  const popup = document.createElement("div");
+  popup.className = "popup-calendario";
 
-  document.body.appendChild(input);
+  popup.innerHTML = `
+    <div class="popup-cal-box">
+      <h3>Nuova data revisione</h3>
+      <input type="date" id="dataRevInput">
+      <div class="popup-cal-actions">
+        <button id="salvaRevBtn">Salva</button>
+        <button id="annullaRevBtn">Annulla</button>
+      </div>
+    </div>
+  `;
 
-  input.onchange = function(){
+  document.body.appendChild(popup);
 
-    const nuova = input.value;
+  document.getElementById("annullaRevBtn").onclick = ()=>{
+    popup.remove();
+  };
+
+  document.getElementById("salvaRevBtn").onclick = ()=>{
+
+    const nuova = document.getElementById("dataRevInput").value;
     if(!nuova) return;
 
     callBackend("updateRevisione", [
       {idCliente, veicolo, revisione: nuova}
     ]).then(()=>{
-      caricaRevisioni(); // refresh automatico
+      popup.remove();
+      caricaRevisioni();
     });
 
   };
 
-  input.click();
-
-}
+};
 
 function formatData(data){
 
