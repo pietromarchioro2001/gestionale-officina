@@ -47,37 +47,35 @@ function checkNotificheHome(){
 
       const now = Date.now();
 
-      const notifOrdini =
+      const ordineTS = new Date(res.ultimoOrdine || 0).getTime();
+      const schedaTS = new Date(res.ultimaScheda || 0).getTime();
+
+      let notifOrdini =
         Number(localStorage.getItem("notif_ordini") || 0);
 
-      const notifSchede =
+      let notifSchede =
         Number(localStorage.getItem("notif_schede") || 0);
 
-      const ordineTS =
-        new Date(res.ultimoOrdine || 0).getTime();
-
-      const schedaTS =
-        new Date(res.ultimaScheda || 0).getTime();
-
-      // 🔴 ORDINI
+      // 🔴 NUOVO ORDINE
       if (ordineTS > notifOrdini) {
-        localStorage.setItem("notif_ordini", now);
+        localStorage.setItem("notif_ordini", ordineTS);
+        notifOrdini = ordineTS;
       }
 
-      // 🔴 SCHEDE
+      // 🔴 NUOVA SCHEDA
       if (schedaTS > notifSchede) {
-        localStorage.setItem("notif_schede", now);
+        localStorage.setItem("notif_schede", schedaTS);
+        notifSchede = schedaTS;
       }
 
-      const ordiniVisible =
+      const showOrdini =
         now - notifOrdini < 10 * 60 * 1000;
 
-      const schedeVisible =
+      const showSchede =
         now - notifSchede < 10 * 60 * 1000;
 
-      toggleBadgeOrdini(ordiniVisible);
-      toggleBadgeSchede(schedeVisible);
-
+      toggleBadgeOrdini(showOrdini);
+      toggleBadgeSchede(showSchede);
       toggleWarningRevisioni(res.revisioneWarning);
 
     });
