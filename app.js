@@ -41,12 +41,18 @@ function confirmNo(){
   if(confirmCallback) confirmCallback(false);
 }
 
-function checkNotificheHome(){
+window.checkNotificheHome = function(){
 
   callBackend("getNotificheHome")
     .then(res => {
 
       if(!res) return;
+
+      const now = Date.now();
+      const TEN_MIN = 10 * 60 * 1000;
+
+      const lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
+      const lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
 
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
@@ -56,20 +62,22 @@ function checkNotificheHome(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      const lastSeenOrdini =
-        Number(localStorage.getItem("seen_ordini") || 0);
+      const showOrdini =
+        ordineTS > lastViewOrdini ||
+        now - ordineTS < TEN_MIN;
 
-      const lastSeenSchede =
-        Number(localStorage.getItem("seen_schede") || 0);
+      const showSchede =
+        schedaTS > lastViewSchede ||
+        now - schedaTS < TEN_MIN;
 
-      toggleBadgeOrdini(ordineTS > lastSeenOrdini);
-      toggleBadgeSchede(schedaTS > lastSeenSchede);
+      toggleBadgeOrdini(showOrdini);
+      toggleBadgeSchede(showSchede);
+
       toggleWarningRevisioni(res.revisioneWarning);
 
     });
 
-}
-
+};
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
@@ -237,6 +245,12 @@ function refreshOrdini(btn){
   }, 800);
 
 }
+
+window.toggleWarningRevisioni = function(show){
+  const el = document.getElementById("badgeRevisioni");
+  if(!el) return;
+  el.classList.toggle("show", show);
+};
 
 function homeCaricaLibrettoCamera() {
   showSection('clienti');
