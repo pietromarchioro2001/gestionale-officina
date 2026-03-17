@@ -229,11 +229,14 @@ OneSignalDeferred.push(async function(OneSignal) {
   <section class="section">
     <h3>Ricerca</h3>
 
-    <div class="row">
+    <div class="ricerca-header">
+      <h3>Ricerca</h3>
       <button class="secondary" id="btnCerca">Cerca</button>
     </div>
-
-    <p id="esitoRicerca" class="esito-ricerca"></p>
+    
+    <p id="ricercaLoading" class="ricerca-loading hidden">
+      Caricamento...
+    </p>
 
     <div class="doc-row">
       <span class="doc-label">Libretto</span>
