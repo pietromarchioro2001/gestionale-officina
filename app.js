@@ -45,10 +45,17 @@ function checkNotificheHome(){
   callBackend("getNotificheHome")
     .then(res => {
 
+      if(!res) return;
+
       const now = Date.now();
 
-      const ordineTS = new Date(res.ultimoOrdine || 0).getTime();
-      const schedaTS = new Date(res.ultimaScheda || 0).getTime();
+      const ordineTS = res.ultimoOrdine
+        ? new Date(res.ultimoOrdine).getTime()
+        : 0;
+
+      const schedaTS = res.ultimaScheda
+        ? new Date(res.ultimaScheda).getTime()
+        : 0;
 
       let notifOrdini =
         Number(localStorage.getItem("notif_ordini") || 0);
@@ -56,13 +63,11 @@ function checkNotificheHome(){
       let notifSchede =
         Number(localStorage.getItem("notif_schede") || 0);
 
-      // 🔴 NUOVO ORDINE
       if (ordineTS > notifOrdini) {
         localStorage.setItem("notif_ordini", ordineTS);
         notifOrdini = ordineTS;
       }
 
-      // 🔴 NUOVA SCHEDA
       if (schedaTS > notifSchede) {
         localStorage.setItem("notif_schede", schedaTS);
         notifSchede = schedaTS;
@@ -78,10 +83,9 @@ function checkNotificheHome(){
       toggleBadgeSchede(showSchede);
       toggleWarningRevisioni(res.revisioneWarning);
 
-    });
-
+    })
+    .catch(err => console.error("Notif home error", err));
 }
-
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
@@ -1396,17 +1400,17 @@ function apriRevisioniConReset(){
 
 function toggleBadgeOrdini(show){
   document.getElementById("badgeOrdini")
-    ?.classList.toggle("show", show);
+    ?.classList.toggle("hidden", !show);
 }
 
 function toggleBadgeSchede(show){
   document.getElementById("badgeSchede")
-    ?.classList.toggle("show", show);
+    ?.classList.toggle("hidden", !show);
 }
 
 function toggleWarningRevisioni(show){
   document.getElementById("badgeRevisioni")
-    ?.classList.toggle("show", show);
+    ?.classList.toggle("hidden", !show);
 }
 
 function isComandoUscita(testo) {
@@ -3375,6 +3379,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   resetFileInput("altriDocumenti", "altriLink");
   checkNotificheHome();
+  setInterval(checkNotificheHome, 60000);
 
 });
 
