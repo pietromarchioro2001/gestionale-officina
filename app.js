@@ -1386,7 +1386,7 @@ function showSection(id) {
       break;
 
     case "revisioni":
-      caricaRevisioni?.();
+      caricaRevisioni(); // o la tua funzione
       break;
 
   }
