@@ -1,5 +1,14 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwyG_BDvurhssAU7HNPdpE0zSiNFFNg-jT93RtD95-bLQ-ls87-QMKq4wAA84izV6zT/exec";
 
+const ICON_CALENDAR = `
+<svg viewBox="0 0 24 24">
+  <rect x="3" y="5" width="18" height="16" rx="3"/>
+  <line x1="16" y1="3" x2="16" y2="7"/>
+  <line x1="8" y1="3" x2="8" y2="7"/>
+  <line x1="3" y1="11" x2="21" y2="11"/>
+</svg>
+`;
+
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
 let TEMP_ALTRI_DOCUMENTI = [];
