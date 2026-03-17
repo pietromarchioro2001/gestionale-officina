@@ -381,6 +381,12 @@ function apriPopupCliente(){
 
 }
 
+function chiudiPopupRicerca(){
+  document
+    .getElementById("popupRicercaCliente")
+    .classList.add("hidden");
+}
+
 function chiudiPopupCliente(){
 
   document.getElementById("popupCliente").classList.add("hidden");
@@ -527,95 +533,6 @@ function inviaSalvataggio(idClienteScelto = null) {
     });
 
 }
-/********************
- * RICERCA VEICOLO
- ********************/
-function cercaVeicolo() {
-
-  const inputTarga = document.getElementById("ricercaTarga");
-  const esito = document.getElementById("esitoRicerca");
-
-  const targaRicerca = inputTarga.value.trim().toUpperCase();
-
-  if (!targaRicerca) {
-    esito.textContent = "Inserisci una targa";
-    return;
-  }
-
-  esito.textContent = "Ricerca in corso...";
-
-  callBackend("cercaVeicolo_PROXY", targaRicerca)
-
-    .then(res => {
-
-      console.log("RISPOSTA BACKEND:", res);
-
-      if (!res || !res.veicolo) {
-        esito.textContent = "Veicolo non trovato";
-        return;
-      }
-
-      const c = res.cliente || {};
-      const v = res.veicolo || {};
-
-      // ======================
-      // DATI CLIENTE
-      // ======================
-      document.getElementById("nome").value = c.nome || "";
-      document.getElementById("indirizzo").value = c.indirizzo || "";
-      document.getElementById("telefono").value = c.telefono || "";
-      document.getElementById("data").value = c.dataNascita || "";
-      document.getElementById("cf").value = c.codiceFiscale || "";
-
-      // ======================
-      // DATI VEICOLO
-      // ======================
-      document.getElementById("veicolo").value = v.veicolo || "";
-      document.getElementById("motore").value = v.motore || "";
-      document.getElementById("targa").value = v.targa || "";
-      document.getElementById("immatricolazione").value = v.immatricolazione || "";
-
-      if(v.revisione){
-        const inputRev = document.getElementById("revisioneInput");
-        inputRev.value = formatData(v.revisione);
-        inputRev.dataset.raw = v.revisione;
-      }
-
-      esito.textContent = "Veicolo trovato";
-
-      // ======================
-      // CARTELLA CLIENTE
-      // ======================
-      const btnCartellaCliente = document.getElementById("btnCartellaCliente");
-
-      if (res.cartellaClienteUrl) {
-      
-        btnCartellaCliente.style.display = "";   // 🔥 sblocca inline style
-        btnCartellaCliente.classList.remove("hidden");
-      
-        btnCartellaCliente.onclick = () => {
-          window.open(res.cartellaClienteUrl, "_blank");
-        };
-      
-      } else {
-      
-        btnCartellaCliente.style.display = "none"; // 🔥 nasconde davvero
-        btnCartellaCliente.classList.add("hidden");
-      
-      }
-
-      clienteEsistente = true;
-
-    })
-
-    .catch(err => {
-
-      console.error(err);
-      esito.textContent = "Errore ricerca";
-
-    });
-  apriPopupRicerca();
-}
 
 function apriPopupRicerca(){
 
@@ -687,18 +604,35 @@ function renderRicercaClienti(lista){
 
 }
 
-function selezionaClienteRicerca(r){
+function selezionaClienteRicerca(targa){
 
   chiudiPopupRicerca();
 
-  document.getElementById("nome").value = r.nomeCliente;
-  document.getElementById("telefono").value = r.telefono || "";
-  document.getElementById("veicolo").value = r.veicolo || "";
-  document.getElementById("targa").value = r.targa || "";
-  document.getElementById("immatricolazione").value =
-    r.immatricolazione || "";
+  callBackend("cercaVeicolo_PROXY", targa)
+  .then(res => {
 
-  clienteEsistente = true;
+    if(!res || !res.veicolo){
+      showAlert("Veicolo non trovato");
+      return;
+    }
+
+    const c = res.cliente || {};
+    const v = res.veicolo || {};
+
+    document.getElementById("nome").value = c.nome || "";
+    document.getElementById("indirizzo").value = c.indirizzo || "";
+    document.getElementById("telefono").value = c.telefono || "";
+    document.getElementById("data").value = c.dataNascita || "";
+    document.getElementById("cf").value = c.codiceFiscale || "";
+
+    document.getElementById("veicolo").value = v.veicolo || "";
+    document.getElementById("motore").value = v.motore || "";
+    document.getElementById("targa").value = v.targa || "";
+    document.getElementById("immatricolazione").value = v.immatricolazione || "";
+
+    clienteEsistente = true;
+
+  });
 
 }
 /********************
@@ -764,13 +698,8 @@ function bindFileCount(inputId, countId, linkId){
 
   document.getElementById("btnAnalizza")?.addEventListener("click", analizza);
   document.getElementById("btnSalva")?.addEventListener("click", salva);
-  document.getElementById("btnCerca")?.addEventListener("click", cercaVeicolo);
-  document
-  .getElementById("btnRefreshClienti")
-  ?.addEventListener("click", resetClienti);
-
- document.getElementById("btnCerca")
-.addEventListener("click", apriPopupRicerca);
+  document.getElementById("btnRefreshClienti")?.addEventListener("click", resetClienti);
+  document.getElementById("btnCerca").addEventListener("click", apriPopupRicerca);
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
