@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwumxosZrmHP_y_wVWCtq5BhPpb9sNCU-NuUunzoqm-Mzq9y4VF7HJ1q-qbLCXqOl6k/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz8HHPpxiJ39BkUWWzrNvbGXYBtsRazlXJRYJhFF2nAUvqOO76kfE0XdMRHnEdbEYRn/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -1375,6 +1375,15 @@ function showSection(id) {
       toggleWarningRevisioni(false);
       break;
   }
+}
+
+function apriRevisioniConReset(){
+
+  localStorage.setItem("view_revisioni", Date.now());
+  toggleWarningRevisioni(false);
+
+  showSection("revisioni");   // 🔥 apre sezione interna
+
 }
 
 function toggleBadgeOrdini(show){
