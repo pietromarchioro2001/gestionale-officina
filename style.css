@@ -871,6 +871,11 @@ input.targa {
   cursor: pointer;
 }
 
+.home-module h3{
+  position: relative;
+  display:inline-block;
+}
+
 @media (max-width: 1400px) {
 
   .home-main-title {
@@ -888,7 +893,7 @@ input.targa {
 }
 
 .badge{
-  display:inline-block;
+  display:none;
   width:10px;
   height:10px;
   background:red;
