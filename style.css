@@ -2077,6 +2077,18 @@ font-size:14px;
 
 /* ================= REVISIONI ================= */
 
+.revisioni-header{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.input-revisioni{
+  width:260px;
+  max-width:100%;
+}
+
 .revisione-card{
   display:flex;
   justify-content:space-between;
