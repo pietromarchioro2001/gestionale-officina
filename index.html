@@ -102,7 +102,10 @@ OneSignalDeferred.push(async function(OneSignal) {
     <div class="home-modules">
 
       <section class="home-module ordini">
-        <h3>ORDINI</h3>
+        <h3>
+          ORDINI
+          <span id="badgeOrdini" class="badge hidden"></span>
+        </h3>
       
         <div class="module-icons two">
           <div class="icon-action" onclick="homeNuovoOrdine()">
@@ -146,7 +149,10 @@ OneSignalDeferred.push(async function(OneSignal) {
       </section>
 
       <section class="home-module schede">
-        <h3>SCHEDE</h3>
+        <h3>
+          SCHEDE
+          <span id="badgeSchede" class="badge hidden"></span>
+        </h3>
       
         <div class="module-icons two">
           <div class="icon-action" onclick="apriAssistente()">
@@ -179,15 +185,20 @@ OneSignalDeferred.push(async function(OneSignal) {
             </svg>
             <span>FATTURE</span>
           </div>
-          <div class="icon-action"
-          onclick="showSection('revisioni')">
-          <svg viewBox="0 0 24 24">
-            <path d="M6 2h12"/>
-            <path d="M6 22h12"/>
-            <path d="M8 2v4c0 3 8 3 8 6s-8 3-8 6v4"/>
-          </svg>
-          <span>REVISIONI</span>
-        </div>
+          <div class="icon-action revisioni-box"
+            onclick="apriRevisioniConReset()">
+          
+            <span id="badgeRevisioni" class="badge-warning hidden">⚠</span>
+          
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2h12"/>
+              <path d="M6 22h12"/>
+              <path d="M8 2v4c0 3 8 3 8 6s-8 3-8 6v4"/>
+            </svg>
+          
+            <span>REVISIONI</span>
+          
+          </div>
         </div>
       </section>
      </div>   <!-- chiude home-modules -->
