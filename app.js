@@ -2921,16 +2921,10 @@ function preloadRevisioni(){
 
 function preloadClientiVeicoli(){
 
-  const loading = document.getElementById("ricercaLoading");
-  if(loading) loading.classList.remove("hidden");
-
   callBackend("getClientiVeicoliBundle")
   .then(lista=>{
     CLIENTI_VEICOLI_CACHE = lista;
     console.log("Preload clienti/veicoli ok");
-  })
-  .finally(()=>{
-    if(loading) loading.classList.add("hidden");
   });
 
 }
