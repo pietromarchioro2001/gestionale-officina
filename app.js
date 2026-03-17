@@ -633,12 +633,13 @@ function selezionaClienteRicerca(targa){
     document.getElementById("immatricolazione").value = v.immatricolazione || "";
 
     clienteEsistente = true;
+    nascondiLoadingRicerca();
 
+  })
+  .catch(err=>{
+    nascondiLoadingRicerca();
+    showAlert("Errore caricamento cliente");
   });
-  .finally(()=>{
-    nascondiLoadingRicerca();   // 🔥 QUI
-  });
-
 }
 
 function mostraLoadingRicerca(){
