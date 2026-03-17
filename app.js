@@ -47,8 +47,6 @@ function checkNotificheHome(){
 
       if(!res) return;
 
-      const now = Date.now();
-
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : 0;
@@ -57,35 +55,20 @@ function checkNotificheHome(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      let notifOrdini =
-        Number(localStorage.getItem("notif_ordini") || 0);
+      const lastSeenOrdini =
+        Number(localStorage.getItem("seen_ordini") || 0);
 
-      let notifSchede =
-        Number(localStorage.getItem("notif_schede") || 0);
+      const lastSeenSchede =
+        Number(localStorage.getItem("seen_schede") || 0);
 
-      if (ordineTS > notifOrdini) {
-        localStorage.setItem("notif_ordini", ordineTS);
-        notifOrdini = ordineTS;
-      }
-
-      if (schedaTS > notifSchede) {
-        localStorage.setItem("notif_schede", schedaTS);
-        notifSchede = schedaTS;
-      }
-
-      const showOrdini =
-        now - notifOrdini < 10 * 60 * 1000;
-
-      const showSchede =
-        now - notifSchede < 10 * 60 * 1000;
-
-      toggleBadgeOrdini(showOrdini);
-      toggleBadgeSchede(showSchede);
+      toggleBadgeOrdini(ordineTS > lastSeenOrdini);
+      toggleBadgeSchede(schedaTS > lastSeenSchede);
       toggleWarningRevisioni(res.revisioneWarning);
 
-    })
-    .catch(err => console.error("Notif home error", err));
+    });
+
 }
+
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
@@ -1364,10 +1347,14 @@ function showSection(id) {
       break;
 
     case "ordini":
+      localStorage.setItem("seen_ordini", Date.now());
+      toggleBadgeOrdini(false);
       caricaOrdiniUI?.();
       break;
 
     case "schede":
+      localStorage.setItem("seen_schede", Date.now());
+      toggleBadgeSchede(false);
       caricaSchede?.();
       break;
 
