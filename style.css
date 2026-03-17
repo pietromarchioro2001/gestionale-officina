@@ -1492,16 +1492,16 @@ a#targaLink:hover {
 
 .ordine-row {
   display: grid;
-  grid-template-columns: 
-    50px        /* checkbox */
-    2.4fr       /* descrizione larga */
-    220px       /* blocco select */
-    160px;      /* bottone */
+  grid-template-columns: 1fr;   /* layout verticale */
   align-items: center;
   gap: 10px;
-  padding: 18px 0;
+  padding: 14px;
   border-bottom: 1px solid #eee;
   position: relative; 
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  margin-bottom: 12px
 }
 
 .ordine-row:hover {
@@ -1760,6 +1760,34 @@ font-size:14px;
 #btnOrdineVocale:hover {
   transform: scale(1.08);
   box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+}
+
+/* ================= ORDINE ================= */
+
+
+
+.ordine-check {
+  justify-content: flex-start;
+}
+
+.ordine-descr {
+  font-size: 15px;
+  text-align: center;
+  padding: 4px 6px;
+
+}
+
+.ordine-row select {
+  width: 100%;
+  max-width: 100%;
+  height: 40px;
+}
+
+.ordine-row button {
+  width: 100%;
+  height: 42px;
+  margin-left: 0;
+
 }
 
 
@@ -2774,76 +2802,28 @@ html, body {
      border-radius: 50%;
    }
 
-/* ================= ORDINE ================= */
-
-.ordine-row {
-
-  display: grid;
-
-  grid-template-columns: 1fr;   /* layout verticale */
-
-  gap: 10px;
-
-  padding: 14px;
-
-  background: #ffffff;
-  border-radius: 12px;
-
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-
-  margin-bottom: 12px;
-
-}
-
-.ordine-check {
-  justify-content: flex-start;
-}
-
-.ordine-descr {
-
-  font-size: 15px;
-
-  text-align: center;
-
-  padding: 4px 6px;
-
-}
-
-.ordine-row select {
-
-  width: 100%;
-  max-width: 100%;
-
-  height: 40px;
-
-}
-
-.ordine-row button {
-
-  width: 100%;
-
-  height: 42px;
-
-  margin-left: 0;
-
-}
-
 /* ================= REVISIONI ================= */
 
- .rev-card{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    padding:16px;
-  }
-
-  .rev-cal{
-    align-self:flex-start;
-  }
-
-  .rev-ricorda{
-    width:100%;
-    height:42px;
+ .revisione-card{ 
+    display:flex; flex-direction:column; align-items:flex-start; gap:10px; 
+ } 
+  .revisione-card-top{ 
+     display:flex; gap:12px; align-items:center; 
+  } 
+  .revisione-cliente{ 
+     font-size:15px; font-weight:700; 
+  } 
+  .revisione-veicolo{
+     font-size:13px; color:#666; 
+  } 
+   .revisione-data{ 
+      font-size:14px; font-weight:600; 
+   } 
+  .revisione-actions{ 
+     width:100%; display:flex; justify-content:flex-end; 
+  } 
+  .btn-whatsapp{ 
+     width:100%;
   }
 
 }
