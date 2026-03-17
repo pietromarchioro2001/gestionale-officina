@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyWl3vjZYUap8a4KpumF9EaNPF8jqozkwvD6ByD9E6Wb8POLGxF7gXearuzqoKyQUKU/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzpq8NqqaOL0-Nw86-2SIm0dRTedXUjzl9BD40Y2pszdCgeWnxChusTrlcciJWHEM8Y/exec";
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -3393,7 +3393,8 @@ container.innerHTML = "Caricamento...";
 function caricaRevisioni(){
 
   callBackend("getRevisioni", []).then(data=>{
-    renderRevisioni(data);
+    const lista = Array.isArray(data) ? data : data.data;
+    renderRevisioni(lista);
   });
 
 }
