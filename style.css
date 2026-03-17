@@ -2077,28 +2077,16 @@ font-size:14px;
 
 /* ================= REVISIONI ================= */
 
-.revisioni-header{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:10px;
-}
-
-.input-revisioni{
-  width:260px;
-  max-width:100%;
-}
-
-.revisione-card{
+.rev-card{
 
   display:grid;
-  grid-template-columns: 60px 260px 1fr 160px 140px;
+  grid-template-columns: 60px 260px 1fr 160px 160px;
 
   align-items:center;
-  gap:20px;
+  gap:18px;
 
   background:white;
-  padding:16px 22px;
+  padding:18px 22px;
   border-radius:14px;
   margin-bottom:14px;
 
@@ -2106,100 +2094,58 @@ font-size:14px;
 
 }
 
-.revisione-card.scaduta{
-  background: rgba(229, 57, 53, 0.18);
+/* stati */
+
+.rev-card.scaduta{
+  background: rgba(229,57,53,0.18);
 }
 
-.revisione-card.warning{
-  background: rgba(255, 214, 0, 0.18);
+.rev-card.warning{
+  background: rgba(255,214,0,0.18);
 }
 
-.revisione-cliente{
+/* elementi */
+
+.rev-cliente{
   font-weight:700;
 }
 
-.revisione-veicolo{
+.rev-veicolo{
   color:#666;
 }
 
-.revisione-data{
+.rev-data{
   font-weight:600;
 }
 
-.btn-revisione{
-  padding:8px 14px;
-  border-radius:8px;
-  border:none;
-  cursor:pointer;
-  font-weight:600;
-}
+/* bottone calendario */
 
-.btn-cal{
-  background:#eee;
-  border:none;
+.rev-cal{
   width:42px;
   height:42px;
   border-radius:10px;
+  border:none;
+  background:#eee;
   display:flex;
   align-items:center;
   justify-content:center;
   cursor:pointer;
 }
 
-.btn-whatsapp{
+/* bottone ricorda stile ORDINI */
+
+.rev-ricorda{
+  height:38px;
+  border-radius:8px;
+  border:none;
   background:#f1c40f;
   color:#000;
-  border:none;
-  padding:10px 18px;
-  border-radius:10px;
   font-weight:600;
   cursor:pointer;
-  transition:0.15s;
 }
 
-.btn-whatsapp:hover{
+.rev-ricorda:hover{
   background:#e0b90d;
-}
-
-.popup-calendario{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.4);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-
-.popup-cal-box input{
-  width:100%;
-  box-sizing:border-box;
-}
-
-.popup-cal-box{
-  background:white;
-  padding:30px;
-  border-radius:14px;
-  width:340px;
-  max-width:90vw;
-}
-
-.popup-cal-actions{
-  margin-top:20px;
-  display:flex;
-  justify-content:space-between;
-}
-
-.btn-cal svg{
-  width:22px;
-  height:22px;
-  stroke:#333;
-  stroke-width:2;
-  fill:none;
-}
-
-.btn-cal:hover svg{
-  stroke:#000;
 }
 
 /* =========================================================
@@ -2828,8 +2774,6 @@ html, body {
      border-radius: 50%;
    }
 
-}
-
 /* ================= ORDINE ================= */
 
 .ordine-row {
@@ -2886,43 +2830,23 @@ html, body {
 
 /* ================= REVISIONI ================= */
 
-  .revisione-card{
+ .rev-card{
     display:flex;
     flex-direction:column;
-    align-items:flex-start;
     gap:10px;
+    padding:16px;
   }
 
-  .revisione-card-top{
-    display:flex;
-    gap:12px;
-    align-items:center;
+  .rev-cal{
+    align-self:flex-start;
   }
 
-  .revisione-cliente{
-    font-size:15px;
-    font-weight:700;
-  }
-
-  .revisione-veicolo{
-    font-size:13px;
-    color:#666;
-  }
-
-  .revisione-data{
-    font-size:14px;
-    font-weight:600;
-  }
-
-  .revisione-actions{
+  .rev-ricorda{
     width:100%;
-    display:flex;
-    justify-content:flex-end;
+    height:42px;
   }
 
-  .btn-whatsapp{
-    width:100%;
-  }
+}
 
 
 
