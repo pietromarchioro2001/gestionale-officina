@@ -3466,15 +3466,27 @@ function ricordaRevisione(tel, veicolo, data){
 
 function modificaRevisione(idCliente, veicolo){
 
-  const nuova = prompt("Inserisci nuova data revisione (gg/mm/aaaa)");
+  const input = document.createElement("input");
+  input.type = "date";
+  input.style.position = "fixed";
+  input.style.left = "-9999px";
 
-  if(!nuova) return;
+  document.body.appendChild(input);
 
-  callBackend("updateRevisione", [
-    {idCliente, veicolo, revisione: nuova}
-  ]).then(()=>{
-    caricaRevisioni();
-  });
+  input.onchange = function(){
+
+    const nuova = input.value;
+    if(!nuova) return;
+
+    callBackend("updateRevisione", [
+      {idCliente, veicolo, revisione: nuova}
+    ]).then(()=>{
+      caricaRevisioni(); // refresh automatico
+    });
+
+  };
+
+  input.click();
 
 }
 
