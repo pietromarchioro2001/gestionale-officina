@@ -595,7 +595,7 @@ function renderRicercaClienti(lista){
     `;
 
     div.onclick = ()=>{
-      selezionaClienteRicerca(r);
+      selezionaClienteRicerca(r.targa);
     };
 
     box.appendChild(div);
@@ -608,7 +608,7 @@ function selezionaClienteRicerca(targa){
 
   chiudiPopupRicerca();
 
-  callBackend("cercaVeicolo_PROXY", targa)
+  callBackend("cercaVeicolo_PROXY", [targa])
   .then(res => {
 
     if(!res || !res.veicolo){
