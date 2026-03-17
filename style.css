@@ -886,6 +886,25 @@ input.targa {
 
 }
 
+.badge{
+  display:inline-block;
+  width:10px;
+  height:10px;
+  background:red;
+  border-radius:50%;
+  margin-left:6px;
+}
+
+.badge-warning{
+  color:orange;
+  font-size:18px;
+  margin-left:6px;
+}
+
+.hidden{
+  display:none;
+}
+
 /* =========================================================
    8. APPUNTAMENTI
 ========================================================= */
