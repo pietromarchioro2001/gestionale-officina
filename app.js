@@ -47,11 +47,11 @@ function checkNotificheHome(){
 
       const now = Date.now();
 
-      const lastOrdiniView =
-        Number(localStorage.getItem("view_ordini") || 0);
+      const notifOrdini =
+        Number(localStorage.getItem("notif_ordini") || 0);
 
-      const lastSchedeView =
-        Number(localStorage.getItem("view_schede") || 0);
+      const notifSchede =
+        Number(localStorage.getItem("notif_schede") || 0);
 
       const ordineTS =
         new Date(res.ultimoOrdine || 0).getTime();
@@ -59,8 +59,25 @@ function checkNotificheHome(){
       const schedaTS =
         new Date(res.ultimaScheda || 0).getTime();
 
-      toggleBadgeOrdini(ordineTS > lastOrdiniView);
-      toggleBadgeSchede(schedaTS > lastSchedeView);
+      // 🔴 ORDINI
+      if (ordineTS > notifOrdini) {
+        localStorage.setItem("notif_ordini", now);
+      }
+
+      // 🔴 SCHEDE
+      if (schedaTS > notifSchede) {
+        localStorage.setItem("notif_schede", now);
+      }
+
+      const ordiniVisible =
+        now - notifOrdini < 10 * 60 * 1000;
+
+      const schedeVisible =
+        now - notifSchede < 10 * 60 * 1000;
+
+      toggleBadgeOrdini(ordiniVisible);
+      toggleBadgeSchede(schedeVisible);
+
       toggleWarningRevisioni(res.revisioneWarning);
 
     });
@@ -1320,7 +1337,7 @@ function messaggioUtente(testo) {
 }
 
 function showSection(id) {
-  console.log("Sezione aperta:", id);
+
   console.log("➡️ showSection:", id);
 
   // nascondi tutte le pagine
@@ -1332,49 +1349,51 @@ function showSection(id) {
   const page = document.getElementById(id);
   if (page) page.classList.add("active");
 
-  // rimuove active dai bottoni
+  // attiva bottone menu
   document.querySelectorAll(".menu button, .mobile-drawer button").forEach(b => {
     b.classList.toggle("active", b.dataset.page === id);
   });
 
   // INIT SEZIONI
   switch (id) {
+
     case "home":
-      if (typeof caricaAppuntamentiOggi === "function") {
-        caricaAppuntamentiOggi();
-      }
+      caricaAppuntamentiOggi?.();
       break;
 
     case "ordini":
       localStorage.setItem("view_ordini", Date.now());
       toggleBadgeOrdini(false);
-      caricaOrdiniUI();
+      caricaOrdiniUI?.();
       break;
 
     case "schede":
       localStorage.setItem("view_schede", Date.now());
       toggleBadgeSchede(false);
-      caricaSchede();
+      caricaSchede?.();
       break;
 
     case "clienti":
-      if (typeof resetClienti === "function") {
-        resetClienti();
-      }
-      initRevisioneCliente();   // 🔥 QUI
+      resetClienti?.();
       break;
 
     case "appuntamenti":
       if (window.innerWidth <= 768) {
-        caricaAgendaSettimanale();
+        caricaAgendaSettimanale?.();
       }
       break;
 
     case "revisioni":
       localStorage.setItem("view_revisioni", Date.now());
       toggleWarningRevisioni(false);
+
+      // 🔥 QUESTA È LA PARTE CHE TI MANCA
+      caricaRevisioni?.();
+
       break;
+
   }
+
 }
 
 function apriRevisioniConReset(){
