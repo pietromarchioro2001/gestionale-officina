@@ -1287,6 +1287,12 @@ function showSection(id) {
         caricaAgendaSettimanale();
       }
       break;
+
+    case "revisioni":
+      if (typeof caricaRevisioni === "function") {
+        caricaRevisioni();
+      }
+      break;
   }
 }
 
@@ -3398,6 +3404,7 @@ function renderRevisioni(lista){
   box.innerHTML = "";
 
   const oggi = new Date();
+  oggi.setHours(0,0,0,0);
 
   lista.forEach(r=>{
 
