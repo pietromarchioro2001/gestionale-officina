@@ -240,11 +240,6 @@ main {
   overflow: hidden; /* niente scroll esterno */
 }
 
-#clienti .page-header,
-#appuntamenti .page-header {
-  margin-top: 24px;
-}
-
 
 /* =========================================================
    4. COMPONENTI GLOBALI
