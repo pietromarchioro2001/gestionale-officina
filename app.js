@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwnnt-drsc6CksSSg8TRMtXjgnCNIbJXFBFODXFo5D6BALy-TF4Kya4V1joMr5qOXuS/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwumxosZrmHP_y_wVWCtq5BhPpb9sNCU-NuUunzoqm-Mzq9y4VF7HJ1q-qbLCXqOl6k/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -38,6 +38,33 @@ function confirmYes(){
 function confirmNo(){
   document.getElementById("confirmBox").classList.add("hidden");
   if(confirmCallback) confirmCallback(false);
+}
+
+function checkNotificheHome(){
+
+  callBackend("getNotificheHome")
+    .then(res => {
+
+      const now = Date.now();
+
+      const lastOrdiniView =
+        Number(localStorage.getItem("view_ordini") || 0);
+
+      const lastSchedeView =
+        Number(localStorage.getItem("view_schede") || 0);
+
+      const ordineTS =
+        new Date(res.ultimoOrdine || 0).getTime();
+
+      const schedaTS =
+        new Date(res.ultimaScheda || 0).getTime();
+
+      toggleBadgeOrdini(ordineTS > lastOrdiniView);
+      toggleBadgeSchede(schedaTS > lastSchedeView);
+      toggleWarningRevisioni(res.revisioneWarning);
+
+    });
+
 }
 
 function showAlert(msg){
@@ -1319,15 +1346,15 @@ function showSection(id) {
       break;
 
     case "ordini":
-      if (typeof caricaOrdiniUI === "function") {
-        caricaOrdiniUI();
-      }
+      localStorage.setItem("view_ordini", Date.now());
+      toggleBadgeOrdini(false);
+      caricaOrdiniUI();
       break;
 
     case "schede":
-      if (typeof caricaSchede === "function") {
-        caricaSchede();
-      }
+      localStorage.setItem("view_schede", Date.now());
+      toggleBadgeSchede(false);
+      caricaSchede();
       break;
 
     case "clienti":
@@ -1344,11 +1371,25 @@ function showSection(id) {
       break;
 
     case "revisioni":
-      if (typeof caricaRevisioni === "function") {
-        caricaRevisioni();
-      }
+      localStorage.setItem("view_revisioni", Date.now());
+      toggleWarningRevisioni(false);
       break;
   }
+}
+
+function toggleBadgeOrdini(show){
+  document.getElementById("badgeOrdini")
+    ?.classList.toggle("show", show);
+}
+
+function toggleBadgeSchede(show){
+  document.getElementById("badgeSchede")
+    ?.classList.toggle("show", show);
+}
+
+function toggleWarningRevisioni(show){
+  document.getElementById("badgeRevisioni")
+    ?.classList.toggle("show", show);
 }
 
 function isComandoUscita(testo) {
@@ -3338,6 +3379,7 @@ document.addEventListener("DOMContentLoaded", () => {
   resetFileInput("targaCamera", "targaLink");
 
   resetFileInput("altriDocumenti", "altriLink");
+  checkNotificheHome();
 
 });
 
@@ -3401,6 +3443,8 @@ setInterval(() => {
   preloadClientiVeicoli();
 
 }, 60000);
+
+setInterval(checkNotificheHome, 60000);
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -3698,3 +3742,23 @@ function initRevisioneCliente(){
 
 }
 
+async function controllaNotificheHome(){
+
+  const lastOrdini = localStorage.getItem("lastOrdiniSeen") || 0;
+  const lastSchede = localStorage.getItem("lastSchedeSeen") || 0;
+
+  const res = await callBackend("getNotificheHome");
+
+  if(res.nuovoOrdineTs > lastOrdini){
+    document.getElementById("badgeOrdini").classList.remove("hidden");
+  }
+
+  if(res.nuovaSchedaTs > lastSchede){
+    document.getElementById("badgeSchede").classList.remove("hidden");
+  }
+
+  if(res.revisioniInScadenza){
+    document.getElementById("badgeRevisioni").classList.remove("hidden");
+  }
+
+}
