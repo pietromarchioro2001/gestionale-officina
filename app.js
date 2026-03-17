@@ -3391,12 +3391,10 @@ container.innerHTML = "Caricamento...";
 }
 
 function caricaRevisioni(){
-
   callBackend("getRevisioni", []).then(data=>{
-    const lista = Array.isArray(data) ? data : data.data;
-    renderRevisioni(lista);
+    console.log("REVISIONI RAW:", data);
+    renderRevisioni(data);
   });
-
 }
 
 function renderRevisioni(lista){
