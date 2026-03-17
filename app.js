@@ -1971,42 +1971,41 @@ if (!sessioneAssistente.dati) {
     
       try {
     
-        // 🔎 PRIMA controlla se esiste
-        const check = await callBackend("checkTargaEsistente", [targaNorm]);
+        const res = await callBackend(
+          "checkTargaEsistente",
+          [targaNorm]
+        );
     
-        if (!check) {
+        if (!res) {
           rispostaInElaborazione = false;
-          messaggioBot("⚠️ Veicolo non presente nel gestionale.");
-          messaggioBot("Inserisci prima il profilo del veicolo.");
+    
+          messaggioBot("⚠️ Nessun veicolo trovato.");
+          messaggioBot("Ripeti la targa.");
+    
+          sessioneAssistente.step = "TARGA";
+    
           return;
         }
     
-        // ✅ CREA SCHEDA SOLO ORA
+        // 🔥 SOLO QUI crea scheda
         const crea = await callBackend("creaNuovaScheda");
-    
-        if (!crea || !crea.docId) {
-          rispostaInElaborazione = false;
-          messaggioBot("Errore creazione scheda.");
-          return;
-        }
     
         sessioneAssistente.schedaId = crea.docId;
     
-        // 🔥 ORA completa con i dati del veicolo
-        const res = await callBackend(
+        const dati = await callBackend(
           "completaSchedaDaTarga",
-          [sessioneAssistente.schedaId, targaNorm]
+          [crea.docId, targaNorm]
         );
     
         sessioneAssistente.dati.targa = targaNorm;
-        sessioneAssistente.dati.nomeCliente = res.nomeCliente || "";
-        sessioneAssistente.dati.veicolo = res.veicolo || "";
+        sessioneAssistente.dati.nomeCliente = dati.nomeCliente;
+        sessioneAssistente.dati.veicolo = dati.veicolo;
     
         rispostaInElaborazione = false;
     
         rispostaConPausa(
-          `Scheda #${crea.numeroScheda} creata per ${res.nomeCliente}`,
-          1200,
+          `Scheda #${crea.numeroScheda} creata.`,
+          1000,
           () => prossimaDomanda()
         );
     
@@ -2018,7 +2017,6 @@ if (!sessioneAssistente.dati) {
     
       return;
     }
-
     case "CHILOMETRI": {
 
       const km = normalizzaChilometri(testo);
