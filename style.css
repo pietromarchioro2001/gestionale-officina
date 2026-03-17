@@ -921,7 +921,7 @@ input.targa {
 }
 
 .badge.show {
-  display: block;
+  display:inline-block;
 }
 
 @keyframes badgePulse {
