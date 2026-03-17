@@ -3420,13 +3420,13 @@ function renderRevisioni(lista){
     
     }
 
-    let classe = "";
+    let statoClasse = "";
 
-    if(diff < 0) classe = "scaduta";
-    else if(diff <= 30) classe = "warning";
+    if(diff < 0) statoClasse = "scaduta";
+    else if(diff <= 30) statoClasse = "warning";
 
     const card = document.createElement("div");
-    card.className = "revisione-card " + classe;
+    card.className = "revisione-card " + statoClasse;
 
     card.innerHTML = `
       <div class="revisione-left">
