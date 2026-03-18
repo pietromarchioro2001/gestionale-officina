@@ -1658,7 +1658,7 @@ function resetModalitaAssistente() {
   }
 }
 
-function riprendiScheda(id) {
+window.riprendiScheda = function(id) {
 
   // aspetta che la sezione sia visibile
   requestAnimationFrame(() => {
