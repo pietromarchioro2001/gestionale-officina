@@ -2188,6 +2188,12 @@ font-size:14px;
   display:none;
 }
 
+#assistenteChat {
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+}
+
 /* =========================================================
    13. REVISIONI
 ========================================================= */
@@ -2839,20 +2845,6 @@ html, body {
   gap: 6px;
 }
 
-.assistente-chat,
-#assistenteChat {
-
-  flex: 1;
-
-  display: flex;
-  flex-direction: column-reverse;  
-
-  overflow-y: auto;
-
-  padding: 8px 10px;
-}
-
-
    /* messaggi */
    
    .msg {
@@ -2911,7 +2903,13 @@ html, body {
      border-top: 1px solid #ddd;
    }
 
+  .assistente-chat,
   #assistenteChat {
+    flex: 1;
+    display: flex;
+    flex-direction: column-reverse;  
+    overflow-y: auto;
+    padding: 8px 10px;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
   }
