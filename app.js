@@ -3716,30 +3716,32 @@ window.modificaRevisione = function(idCliente, veicolo){
 
   document.getElementById("salvaRevBtn").onclick = ()=>{
 
-    const nuova = document.getElementById("dataRevInput").value;
-    if(!nuova) return;
+  const nuova = document.getElementById("dataRevInput").value;
+  if(!nuova) return;
 
-    callBackend("updateRevisione", [...]).then(()=>{
+  callBackend("updateRevisione", [
+    { idCliente, veicolo, revisione: nuova }
+  ]).then(()=>{
 
-      const item = CACHE_REVISIONI.find(r =>
-        r.idCliente == idCliente && r.veicolo == veicolo
-      )
-    
-      if(item) item.revisione = nuova
-    
-      CACHE_REVISIONI.sort((a,b)=>{
-        if(!a.revisione) return 1
-        if(!b.revisione) return -1
-        return new Date(a.revisione) - new Date(b.revisione)
-      })
-    
-      renderRevisioni(CACHE_REVISIONI)
-    
-      popup.remove()
-    
+    const item = CACHE_REVISIONI.find(r =>
+      r.idCliente == idCliente && r.veicolo == veicolo
+    )
+
+    if(item) item.revisione = nuova
+
+    CACHE_REVISIONI.sort((a,b)=>{
+      if(!a.revisione) return 1
+      if(!b.revisione) return -1
+      return new Date(a.revisione) - new Date(b.revisione)
     })
 
-  };
+    renderRevisioni(CACHE_REVISIONI)
+
+    popup.remove()
+
+  })
+
+};
 
 };
 
