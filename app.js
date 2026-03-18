@@ -48,23 +48,29 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      const schedaTS = res.ultimaScheda
-        ? new Date(res.ultimaScheda).getTime()
-        : 0;
+      const lastViewOrdini =
+        Number(localStorage.getItem("view_ordini") || 0);
 
       const lastViewSchede =
         Number(localStorage.getItem("view_schede") || 0);
 
+      const ordineTS = res.ultimoOrdine
+        ? new Date(res.ultimoOrdine).getTime()
+        : 0;
+
+      const schedaTS = res.ultimaScheda
+        ? new Date(res.ultimaScheda).getTime()
+        : 0;
+
+      const showOrdini = ordineTS > lastViewOrdini;
       const showSchede = schedaTS > lastViewSchede;
 
+      toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
+      toggleWarningRevisioni(res.revisioneWarning);
 
-      // ⭐ SOLO SE NON CI SONO NUOVE
-      if(!showSchede && schedaTS){
-        localStorage.setItem("view_schede", schedaTS);
-      }
-
-    });
+    })
+    .catch(err => console.error("checkNotificheHome error", err));
 };
 
 function showAlert(msg){
