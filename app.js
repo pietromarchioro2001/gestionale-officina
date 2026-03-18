@@ -62,13 +62,8 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      const showOrdini =
-        ordineTS > lastViewOrdini ||
-        now - ordineTS < TEN_MIN;
-
-      const showSchede =
-        schedaTS > lastViewSchede ||
-        now - schedaTS < TEN_MIN;
+      const showOrdini = ordineTS > lastViewOrdini;
+      const showSchede = schedaTS > lastViewSchede;
 
       toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
@@ -1394,22 +1389,17 @@ function showSection(id) {
 }
 
 function apriRevisioniConReset(){
-
-  localStorage.setItem("view_revisioni", Date.now());
-  toggleWarningRevisioni(false);
-
-  showSection("revisioni");   // 🔥 apre sezione interna
-
+  showSection("revisioni");
 }
 
 function toggleBadgeOrdini(show){
   document.getElementById("badgeOrdini")
-    ?.classList.toggle("hidden", !show);
+    ?.classList.toggle("show", show);
 }
 
 function toggleBadgeSchede(show){
   document.getElementById("badgeSchede")
-    ?.classList.toggle("hidden", !show);
+    ?.classList.toggle("show", show);
 }
 
 function toggleWarningRevisioni(show){
