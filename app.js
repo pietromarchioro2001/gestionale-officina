@@ -48,12 +48,6 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      const lastViewOrdini =
-        Number(localStorage.getItem("view_ordini") || 0);
-
-      const lastViewSchede =
-        Number(localStorage.getItem("view_schede") || 0);
-
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : 0;
@@ -62,15 +56,18 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      const showOrdini = ordineTS > lastViewOrdini;
-      const showSchede = schedaTS > lastViewSchede;
+      const viewOrdini =
+        Number(localStorage.getItem("view_ordini") || 0);
 
-      toggleBadgeOrdini(showOrdini);
-      toggleBadgeSchede(showSchede);
+      const viewSchede =
+        Number(localStorage.getItem("view_schede") || 0);
+
+      toggleBadgeOrdini(ordineTS > viewOrdini);
+      toggleBadgeSchede(schedaTS > viewSchede);
       toggleWarningRevisioni(res.revisioneWarning);
 
     })
-    .catch(err => console.error("checkNotificheHome error", err));
+    .catch(err => console.error(err));
 };
 
 function showAlert(msg){
@@ -1353,8 +1350,29 @@ function showSection(id) {
   switch (id) {
 
     case "home":
-      caricaAppuntamentiOggi?.();
-      break;
+
+      callBackend("getNotificheHome")
+        .then(r => {
+    
+          if(r?.ultimoOrdine){
+            localStorage.setItem(
+              "view_ordini",
+              new Date(r.ultimoOrdine).getTime()
+            );
+          }
+    
+          if(r?.ultimaScheda){
+            localStorage.setItem(
+              "view_schede",
+              new Date(r.ultimaScheda).getTime()
+            );
+          }
+    
+        });
+    
+      checkNotificheHome();
+    
+    break;
 
     case "ordini":
 
