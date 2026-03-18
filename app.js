@@ -59,8 +59,6 @@ window.checkNotificheHome = function(){
           localStorage.setItem("view_schede", schedaTS);
           viewSchede = schedaTS; 
           } // ⭐ DEBUG (IMPORTANTE ORA) 
-          console.log("schedaTS:", schedaTS);
-          console.log("viewSchede:", viewSchede);
           const showSchede = schedaTS !== null && viewSchede !== null && schedaTS > viewSchede;
       toggleBadgeSchede(showSchede);
       const showOrdini = ordineTS !== null && viewOrdini !== null && ordineTS > viewOrdini;
@@ -2260,7 +2258,7 @@ async function gestisciRisposta(testo) {
 
         setTimeout(() => {
           resetModalitaAssistente();
-          showSection("schede");
+          showSection("home");
           caricaSchede(true);
         }, 1800);
 
