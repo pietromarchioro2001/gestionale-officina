@@ -1978,72 +1978,69 @@ if (!sessioneAssistente.dati) {
 
     case "TARGA": {
 
-      const targaNorm = normalizzaTarga(testo);
-    
-      if (!targaNorm) {
-        rispostaInElaborazione = false;
-        messaggioBot("Non ho capito la targa. Ripeti.");
-        return;
-      }
-    
-      messaggioBot(`Controllo veicolo ${targaNorm}...`);
-    
-      // 1️⃣ CERCA IN CACHE
-      let veicolo = CLIENTI_VEICOLI_CACHE?.find(
-        v => v.targa === targaNorm
-      );
-    
-      // 2️⃣ SE NON TROVATO → BACKEND
-      if (!veicolo) {
-        try {
-          veicolo = await callBackend(
-            "checkTargaEsistenteFull",
-            [targaNorm]
+        const targaNorm = normalizzaTarga(testo);
+      
+        if (!targaNorm) {
+          rispostaInElaborazione = false;
+          rispostaConPausa("Non ho capito la targa. Ripeti.", 1000);
+          return;
+        }
+      
+        // 🔎 CERCA VEICOLO PRIMA
+        let veicolo = CLIENTI_VEICOLI_CACHE?.find(
+          v => v.targa === targaNorm
+        );
+      
+        if (!veicolo) {
+          try {
+            veicolo = await callBackend(
+              "checkTargaEsistenteFull",
+              [targaNorm]
+            );
+          } catch(e) {}
+        }
+      
+        // ❌ SE NON TROVATO → BLOCCA TUTTO
+        if (!veicolo) {
+      
+          rispostaInElaborazione = false;
+      
+          rispostaConPausa(
+            "Veicolo non trovato. Ripeti la targa.",
+            1200,
+            () => {
+              sessioneAssistente.step = "TARGA";
+              domandaCorrente();
+            }
           );
-        } catch(e) {}
-      }
-    
-      // ❌ VEICOLO NON TROVATO → BLOCCA FLUSSO
-      if (!veicolo) {
-
+      
+          return;
+        }
+      
+        // ✅ SOLO ORA CREA SCHEDA
+        const crea = await callBackend("creaNuovaScheda");
+      
+        sessioneAssistente.schedaId = crea.docId;
+      
+        await callBackend(
+          "completaSchedaDaTarga",
+          [crea.docId, targaNorm]
+        );
+      
+        sessioneAssistente.dati.targa = targaNorm;
+        sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
+        sessioneAssistente.dati.veicolo = veicolo.veicolo;
+      
         rispostaInElaborazione = false;
       
         rispostaConPausa(
-          "Veicolo non trovato. Ripeti la targa.",
-          1200,
-          () => {
-            sessioneAssistente.step = "TARGA";
-            domandaCorrente();
-          }
+          `Scheda #${crea.numeroScheda} creata.`,
+          900,
+          () => prossimaDomanda()
         );
       
         return;
       }
-    
-      // ✅ VEICOLO TROVATO → CREA SCHEDA
-      const crea = await callBackend("creaNuovaScheda");
-    
-      sessioneAssistente.schedaId = crea.docId;
-    
-      await callBackend(
-        "completaSchedaDaTarga",
-        [crea.docId, targaNorm]
-      );
-    
-      sessioneAssistente.dati.targa = targaNorm;
-      sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
-      sessioneAssistente.dati.veicolo = veicolo.veicolo;
-    
-      rispostaInElaborazione = false;
-    
-      rispostaConPausa(
-        `Scheda #${crea.numeroScheda} creata.`,
-        900,
-        () => prossimaDomanda()
-      );
-    
-      return;
-    }
       
     case "CHILOMETRI": {
 
