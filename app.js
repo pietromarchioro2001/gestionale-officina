@@ -1349,27 +1349,8 @@ function showSection(id) {
   // INIT SEZIONI
   switch (id) {
 
-    case "home":
+   case "home":
 
-      callBackend("getNotificheHome")
-        .then(r => {
-    
-          if(r?.ultimoOrdine){
-            localStorage.setItem(
-              "view_ordini",
-              new Date(r.ultimoOrdine).getTime()
-            );
-          }
-    
-          if(r?.ultimaScheda){
-            localStorage.setItem(
-              "view_schede",
-              new Date(r.ultimaScheda).getTime()
-            );
-          }
-    
-        });
-    
       checkNotificheHome();
     
     break;
