@@ -64,11 +64,6 @@ window.checkNotificheHome = function(){
         lastViewOrdini = ordineTS;
       }
 
-      if(!lastViewSchede && schedaTS){
-        localStorage.setItem("view_schede", schedaTS);
-        lastViewSchede = schedaTS;
-      }
-
       const showOrdini = ordineTS > lastViewOrdini;
       const showSchede = schedaTS > lastViewSchede;
 
