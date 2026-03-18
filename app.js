@@ -48,31 +48,31 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      let ordineTS = null;
-
-      if (res.ultimoOrdine) {
-        ordineTS = new Date(res.ultimoOrdine).getTime();
-      }
-      
-      const viewOrdini =
-        Number(localStorage.getItem("view_ordini") || 0);
-      
-      if (ordineTS !== null) {
-        toggleBadgeOrdini(ordineTS > viewOrdini);
-      }
-
-      const schedaTS = res.ultimaScheda
-        ? new Date(res.ultimaScheda).getTime()
-        : 0;
-
       const viewOrdini =
         Number(localStorage.getItem("view_ordini") || 0);
 
       const viewSchede =
         Number(localStorage.getItem("view_schede") || 0);
 
-      toggleBadgeOrdini(ordineTS > viewOrdini);
-      toggleBadgeSchede(schedaTS > viewSchede);
+      let ordineTS = null;
+      let schedaTS = null;
+
+      if (res.ultimoOrdine) {
+        ordineTS = new Date(res.ultimoOrdine).getTime();
+      }
+
+      if (res.ultimaScheda) {
+        schedaTS = new Date(res.ultimaScheda).getTime();
+      }
+
+      if (ordineTS !== null) {
+        toggleBadgeOrdini(ordineTS > viewOrdini);
+      }
+
+      if (schedaTS !== null) {
+        toggleBadgeSchede(schedaTS > viewSchede);
+      }
+
       toggleWarningRevisioni(res.revisioneWarning);
 
     })
