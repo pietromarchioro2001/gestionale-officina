@@ -24,6 +24,7 @@ let CLIENTI_CACHE = [];
 let CACHE_REVISIONI = null;
 let CLIENTI_VEICOLI_CACHE = [];
 let autoOpenSection = false;
+let currentSection = "home";
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -1330,7 +1331,7 @@ function messaggioUtente(testo) {
 }
 
 function showSection(id) {
-
+  currentSection = section; 
   console.log("➡️ showSection:", id);
 
   // nascondi tutte le pagine
