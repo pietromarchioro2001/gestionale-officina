@@ -1390,16 +1390,24 @@ function showSection(id) {
 break;
 
     case "schede":
-      callBackend("getNotificheHome").then(r=>{
-        if(r?.ultimaScheda){
-          localStorage.setItem(
-            "view_schede",
-            new Date(r.ultimaScheda).getTime()
-          );
-        }
-      });
-      toggleBadgeSchede(false);
+
+      if (!autoOpenSection) {
+    
+        callBackend("getNotificheHome").then(r=>{
+          if(r?.ultimaScheda){
+            localStorage.setItem(
+              "view_schede",
+              new Date(r.ultimaScheda).getTime()
+            );
+          }
+        });
+    
+        toggleBadgeSchede(false);
+    
+      }
+    
       caricaSchede();
+    
     break;
 
     case "clienti":
