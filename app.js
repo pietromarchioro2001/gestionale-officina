@@ -48,9 +48,18 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      const ordineTS = res.ultimoOrdine
-        ? new Date(res.ultimoOrdine).getTime()
-        : 0;
+      let ordineTS = null;
+
+      if (res.ultimoOrdine) {
+        ordineTS = new Date(res.ultimoOrdine).getTime();
+      }
+      
+      const viewOrdini =
+        Number(localStorage.getItem("view_ordini") || 0);
+      
+      if (ordineTS !== null) {
+        toggleBadgeOrdini(ordineTS > viewOrdini);
+      }
 
       const schedaTS = res.ultimaScheda
         ? new Date(res.ultimaScheda).getTime()
@@ -1344,9 +1353,7 @@ function showSection(id) {
   switch (id) {
 
    case "home":
-
       checkNotificheHome();
-    
     break;
 
     case "ordini":
