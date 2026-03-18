@@ -1986,14 +1986,14 @@ if (!sessioneAssistente.dati) {
         return;
       }
     
-      messaggioBot(`Targa rilevata: ${targaNorm}`);
+      messaggioBot(`Controllo veicolo ${targaNorm}...`);
     
-      // 🔥 1️⃣ CERCA IN CACHE (istantaneo)
+      // 1️⃣ CERCA IN CACHE
       let veicolo = CLIENTI_VEICOLI_CACHE?.find(
         v => v.targa === targaNorm
       );
     
-      // 🔥 2️⃣ SE NON TROVATO → BACKEND
+      // 2️⃣ SE NON TROVATO → BACKEND
       if (!veicolo) {
         try {
           veicolo = await callBackend(
@@ -2003,19 +2003,25 @@ if (!sessioneAssistente.dati) {
         } catch(e) {}
       }
     
-      // 🔴 3️⃣ SE ANCORA NON TROVATO
+      // ❌ VEICOLO NON TROVATO → BLOCCA FLUSSO
       if (!veicolo) {
+
         rispostaInElaborazione = false;
-        messaggioBot("⚠️ Nessun veicolo trovato.");
-        messaggioBot("Ripeti la targa.");
-        sessioneAssistente.step = "TARGA";
+      
+        rispostaConPausa(
+          "Veicolo non trovato. Ripeti la targa.",
+          1200,
+          () => {
+            sessioneAssistente.step = "TARGA";
+            domandaCorrente();
+          }
+        );
+      
         return;
       }
     
-      // ✅ CREA SCHEDA
+      // ✅ VEICOLO TROVATO → CREA SCHEDA
       const crea = await callBackend("creaNuovaScheda");
-      toggleBadgeSchede(true);
-      setTimeout(checkNotificheHome, 800);
     
       sessioneAssistente.schedaId = crea.docId;
     
@@ -2038,6 +2044,7 @@ if (!sessioneAssistente.dati) {
     
       return;
     }
+      
     case "CHILOMETRI": {
 
       const km = normalizzaChilometri(testo);
