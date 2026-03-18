@@ -48,11 +48,11 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      const viewOrdini =
-        Number(localStorage.getItem("view_ordini") || 0);
+      let viewOrdini =
+        Number(localStorage.getItem("view_ordini"));
 
-      const viewSchede =
-        Number(localStorage.getItem("view_schede") || 0);
+      let viewSchede =
+        Number(localStorage.getItem("view_schede"));
 
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
@@ -61,6 +61,17 @@ window.checkNotificheHome = function(){
       const schedaTS = res.ultimaScheda
         ? new Date(res.ultimaScheda).getTime()
         : null;
+
+      // ⭐ PRIMO AVVIO → NON MOSTRA BADGE
+      if (!viewOrdini && ordineTS) {
+        localStorage.setItem("view_ordini", ordineTS);
+        viewOrdini = ordineTS;
+      }
+
+      if (!viewSchede && schedaTS) {
+        localStorage.setItem("view_schede", schedaTS);
+        viewSchede = schedaTS;
+      }
 
       if (ordineTS !== null) {
         toggleBadgeOrdini(ordineTS > viewOrdini);
@@ -1356,6 +1367,7 @@ function showSection(id) {
   switch (id) {
 
    case "home":
+      caricaAppuntamentiOggi();
       checkNotificheHome();
     break;
 
