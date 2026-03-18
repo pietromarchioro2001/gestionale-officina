@@ -1582,7 +1582,8 @@ function apriDocumento(link) {
 
 function apriAssistente() {
 
-  showSection("assistente");
+  sessioneAssistente = {};
+
   document.getElementById("assistenteChat").innerHTML = "";
 
   setTimeout(scrollAssistenteBottom, 200);
@@ -1656,8 +1657,6 @@ function resetModalitaAssistente() {
 }
 
 function riprendiScheda(id) {
-
-  showSection("assistente");
 
   // aspetta che la sezione sia visibile
   requestAnimationFrame(() => {
@@ -1975,6 +1974,10 @@ if (!sessioneAssistente.dati) {
   }
 
   switch (sessioneAssistente.step) {
+
+    case "assistente":
+      apriAssistente();
+    break;
 
     case "TARGA": {
 
