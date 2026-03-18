@@ -47,9 +47,6 @@ window.checkNotificheHome = function(){
     .then(res => {
       if(!res) return;
 
-      const lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
-      const lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
-
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : 0;
@@ -58,23 +55,29 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      // ⭐ PRIMA APERTURA = tutto visto
+      let lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
+      let lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
+
+      // ⭐ prima apertura = sincronizza
       if(!lastViewOrdini && ordineTS){
         localStorage.setItem("view_ordini", ordineTS);
+        lastViewOrdini = ordineTS;
       }
 
       if(!lastViewSchede && schedaTS){
         localStorage.setItem("view_schede", schedaTS);
+        lastViewSchede = schedaTS;
       }
 
-      const showOrdini = ordineTS > Number(localStorage.getItem("view_ordini"));
-      const showSchede = schedaTS > Number(localStorage.getItem("view_schede"));
+      const showOrdini = ordineTS > lastViewOrdini;
+      const showSchede = schedaTS > lastViewSchede;
 
       toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
       toggleWarningRevisioni(res.revisioneWarning);
     });
 };
+
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
@@ -1367,7 +1370,7 @@ function showSection(id) {
     break;
 
     case "schede":
-      localStorage.setItem("seen_schede", Date.now());
+      localStorage.setItem("view_schede", Date.now());
       toggleBadgeSchede(false);
       caricaSchede?.();
       break;
@@ -2201,6 +2204,7 @@ if (!sessioneAssistente.dati) {
             "chiudiScheda",
             [sessioneAssistente.schedaId]
           );
+          setTimeout(checkNotificheHome, 800);
 
           rispostaConPausa("Scheda chiusa correttamente.", 1000);
 
@@ -2771,7 +2775,6 @@ function nuovoOrdine() {
 
     callBackend("creaNuovoOrdine", [descrizione])
       .then(res => {
-
         const nuovoOrdine = {
           row: res?.row || Date.now(),
           check: false,
@@ -2784,20 +2787,17 @@ function nuovoOrdine() {
             giuliano: ""
           }
         };
-
         if (!CACHE_ORDINI) {
           CACHE_ORDINI = { ordini: [], clienti: [], veicoli: [], fornitori: [] };
         }
-
         CACHE_ORDINI.ordini.push(nuovoOrdine);
-
         renderOrdini(
           CACHE_ORDINI.ordini,
           CACHE_ORDINI.clienti,
           CACHE_ORDINI.veicoli,
           CACHE_ORDINI.fornitori
         );
-
+        setTimeout(checkNotificheHome, 800);
       });
 
   });
@@ -2898,6 +2898,7 @@ function avviaOrdineVocale() {
       .then(() => {
         console.log("✅ Ordine vocale salvato");
         caricaOrdiniUI(true); // ricarica lista
+        checkNotificheHome();
       })
       .catch(err => {
         console.error("Errore inserimento ordine vocale", err);
@@ -3483,6 +3484,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
   });
+
+  checkNotificheHome();
+  setInterval(checkNotificheHome, 60000);
 
 });
 
