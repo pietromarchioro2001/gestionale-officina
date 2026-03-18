@@ -46,10 +46,10 @@ window.checkNotificheHome = function(){
   callBackend("getNotificheHome")
     .then(res => {
       if(!res) return;
-      const now = Date.now();
-      const TEN_MIN = 10 * 60 * 1000;
+
       const lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
       const lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
+
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : 0;
@@ -58,15 +58,23 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      const showOrdini = ordineTS > lastViewOrdini;
-      const showSchede = schedaTS > lastViewSchede;
+      // ⭐ PRIMA APERTURA = tutto visto
+      if(!lastViewOrdini && ordineTS){
+        localStorage.setItem("view_ordini", ordineTS);
+      }
+
+      if(!lastViewSchede && schedaTS){
+        localStorage.setItem("view_schede", schedaTS);
+      }
+
+      const showOrdini = ordineTS > Number(localStorage.getItem("view_ordini"));
+      const showSchede = schedaTS > Number(localStorage.getItem("view_schede"));
 
       toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
       toggleWarningRevisioni(res.revisioneWarning);
     });
 };
-
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
