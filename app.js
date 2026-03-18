@@ -48,12 +48,6 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      let viewOrdini = localStorage.getItem("view_ordini");
-      let viewSchede = localStorage.getItem("view_schede");
-
-      viewOrdini = viewOrdini ? Number(viewOrdini) : null;
-      viewSchede = viewSchede ? Number(viewSchede) : null;
-
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : null;
@@ -62,7 +56,13 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : null;
 
-      // ⭐ PRIMO AVVIO → salva timestamp ma NON mostra badge
+      let viewOrdini = localStorage.getItem("view_ordini");
+      let viewSchede = localStorage.getItem("view_schede");
+
+      viewOrdini = viewOrdini ? Number(viewOrdini) : null;
+      viewSchede = viewSchede ? Number(viewSchede) : null;
+
+      // ⭐ PRIMO AVVIO
       if (viewOrdini === null && ordineTS) {
         localStorage.setItem("view_ordini", ordineTS);
         viewOrdini = ordineTS;
@@ -73,22 +73,29 @@ window.checkNotificheHome = function(){
         viewSchede = schedaTS;
       }
 
-      // ⭐ BADGE LOGICA
-      const showOrdini =
-        ordineTS && viewOrdini && ordineTS > viewOrdini;
+      // ⭐ DEBUG (IMPORTANTE ORA)
+      console.log("schedaTS:", schedaTS);
+      console.log("viewSchede:", viewSchede);
 
       const showSchede =
-        schedaTS && viewSchede && schedaTS > viewSchede;
+        schedaTS !== null &&
+        viewSchede !== null &&
+        schedaTS > viewSchede;
 
-      toggleBadgeOrdini(!!showOrdini);
-      toggleBadgeSchede(!!showSchede);
+      toggleBadgeSchede(showSchede);
+
+      const showOrdini =
+        ordineTS !== null &&
+        viewOrdini !== null &&
+        ordineTS > viewOrdini;
+
+      toggleBadgeOrdini(showOrdini);
 
       toggleWarningRevisioni(!!res.revisioneWarning);
 
     })
     .catch(err => console.error(err));
 };
-
 window.toggleWarningRevisioni = function(show){
   const el = document.getElementById("badgeRevisioni");
   if(!el) return;
