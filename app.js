@@ -1331,7 +1331,7 @@ function messaggioUtente(testo) {
 }
 
 function showSection(id) {
-  currentSection = section; 
+  currentSection = id; 
   console.log("➡️ showSection:", id);
 
   // nascondi tutte le pagine
@@ -3719,16 +3719,25 @@ window.modificaRevisione = function(idCliente, veicolo){
     const nuova = document.getElementById("dataRevInput").value;
     if(!nuova) return;
 
-    callBackend("updateRevisione", [
-      {idCliente, veicolo, revisione: nuova}
-    ]).then(()=>{
+    callBackend("updateRevisione", [...]).then(()=>{
+
+      const item = CACHE_REVISIONI.find(r =>
+        r.idCliente == idCliente && r.veicolo == veicolo
+      )
     
-      // aggiorna SOLO UI
-      aggiornaCardRevisione(idCliente, veicolo, nuova);
+      if(item) item.revisione = nuova
     
-      popup.remove();
+      CACHE_REVISIONI.sort((a,b)=>{
+        if(!a.revisione) return 1
+        if(!b.revisione) return -1
+        return new Date(a.revisione) - new Date(b.revisione)
+      })
     
-    });
+      renderRevisioni(CACHE_REVISIONI)
+    
+      popup.remove()
+    
+    })
 
   };
 
