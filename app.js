@@ -1357,12 +1357,21 @@ function showSection(id) {
       break;
 
     case "ordini":
-      if (!window.autoOpenSection) {
-        localStorage.setItem("view_ordini", Date.now());
-        toggleBadgeOrdini(false);
+
+  callBackend("getNotificheHome")
+    .then(r => {
+      if(r?.ultimoOrdine){
+        localStorage.setItem(
+          "view_ordini",
+          new Date(r.ultimoOrdine).getTime()
+        );
       }
-      caricaOrdiniUI();
-    break;
+    });
+
+  toggleBadgeOrdini(false);
+  caricaOrdini();
+
+break;
 
     case "schede":
       callBackend("getNotificheHome").then(r=>{
