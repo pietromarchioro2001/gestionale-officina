@@ -45,31 +45,25 @@ window.checkNotificheHome = function(){
 
   callBackend("getNotificheHome")
     .then(res => {
-      if(!res) return;
 
-      const ordineTS = res.ultimoOrdine
-        ? new Date(res.ultimoOrdine).getTime()
-        : 0;
+      if(!res) return;
 
       const schedaTS = res.ultimaScheda
         ? new Date(res.ultimaScheda).getTime()
         : 0;
 
-      let lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
-      let lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
+      const lastViewSchede =
+        Number(localStorage.getItem("view_schede") || 0);
 
-      // ⭐ prima apertura = sincronizza
-      if(!lastViewOrdini && ordineTS){
-        localStorage.setItem("view_ordini", ordineTS);
-        lastViewOrdini = ordineTS;
-      }
-
-      const showOrdini = ordineTS > lastViewOrdini;
       const showSchede = schedaTS > lastViewSchede;
 
-      toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
-      toggleWarningRevisioni(res.revisioneWarning);
+
+      // ⭐ SOLO SE NON CI SONO NUOVE
+      if(!showSchede && schedaTS){
+        localStorage.setItem("view_schede", schedaTS);
+      }
+
     });
 };
 
