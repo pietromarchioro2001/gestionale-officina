@@ -48,11 +48,11 @@ window.checkNotificheHome = function(){
 
       if(!res) return;
 
-      let viewOrdini =
-        Number(localStorage.getItem("view_ordini"));
+      let viewOrdini = localStorage.getItem("view_ordini");
+      let viewSchede = localStorage.getItem("view_schede");
 
-      let viewSchede =
-        Number(localStorage.getItem("view_schede"));
+      viewOrdini = viewOrdini ? Number(viewOrdini) : null;
+      viewSchede = viewSchede ? Number(viewSchede) : null;
 
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
@@ -62,24 +62,26 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : null;
 
-      // ⭐ PRIMO AVVIO → NON MOSTRA BADGE
-      if (!viewOrdini && ordineTS) {
+      // ⭐ PRIMO AVVIO → salva timestamp ma NON mostra badge
+      if (viewOrdini === null && ordineTS) {
         localStorage.setItem("view_ordini", ordineTS);
         viewOrdini = ordineTS;
       }
 
-      if (!viewSchede && schedaTS) {
+      if (viewSchede === null && schedaTS) {
         localStorage.setItem("view_schede", schedaTS);
         viewSchede = schedaTS;
       }
 
-      if (ordineTS !== null) {
-        toggleBadgeOrdini(ordineTS > viewOrdini);
-      }
+      // ⭐ BADGE LOGICA
+      const showOrdini =
+        ordineTS && viewOrdini && ordineTS > viewOrdini;
 
-      if (schedaTS !== null) {
-        toggleBadgeSchede(schedaTS > viewSchede);
-      }
+      const showSchede =
+        schedaTS && viewSchede && schedaTS > viewSchede;
+
+      toggleBadgeOrdini(!!showOrdini);
+      toggleBadgeSchede(!!showSchede);
 
       toggleWarningRevisioni(!!res.revisioneWarning);
 
