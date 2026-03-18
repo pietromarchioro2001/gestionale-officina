@@ -42,6 +42,10 @@ function confirmNo(){
 }
 
 window.checkNotificheHome = function(){ 
+  if (currentSection === "schede") {
+    console.log("⛔ skip notifiche (sei in schede)")
+    return
+  }
   callBackend("getNotificheHome") 
     .then(res => { if(!res) return; 
       const ordineTS = res.ultimoOrdine ? new Date(res.ultimoOrdine)
@@ -1371,21 +1375,19 @@ break;
 
     case "schede":
 
-      if (!autoOpenSection) {
+      callBackend("getNotificheHome").then(r => {
     
-        callBackend("getNotificheHome").then(r=>{
-          if(r?.ultimaScheda){
-            localStorage.setItem(
-              "view_schede",
-              new Date(r.ultimaScheda).getTime()
-            );
-          }
-        });
-        toggleBadgeSchede(false);
+        if (r?.ultimaScheda) {
+          const ts = new Date(r.ultimaScheda).getTime()
+          localStorage.setItem("view_schede", ts)
+          console.log("✅ Schede segnate come viste:", ts)
+        }
     
-      }
+        toggleBadgeSchede(false)
     
-      caricaSchede();
+      })
+    
+      caricaSchede()
     
     break;
 
