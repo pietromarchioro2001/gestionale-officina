@@ -1591,7 +1591,27 @@ function apriAssistente() {
 
   showSection("assistente");
 
-  sessioneAssistente = {};
+  Object.assign(sessioneAssistente, {
+      schedaId: null,
+      inRipresa: false,
+      step: "TARGA",
+      stepQueue: [],
+      listaProblemi: [],
+      listaLavori: [],
+      listaProdotti: [],
+      valoriEsistenti: {},
+      dati: {
+        targa: "",
+        chilometri: "",
+        nomeCliente: "",
+        veicolo: "",
+        problemi: [],
+        lavori: [],
+        prodotti: [],
+        ore: "",
+        note: ""
+      }
+    });
 
   document.getElementById("assistenteChat").innerHTML = "";
 
@@ -1686,6 +1706,20 @@ function riprendiScheda(id) {
 
     callBackend("statoScheda", [id])
       .then(info => {
+
+        const v = info.valori || {};
+
+          sessioneAssistente.dati = {
+            targa: v.TARGA || "",
+            chilometri: v.CHILOMETRI || "",
+            nomeCliente: v.NOME_CLIENTE || "",
+            veicolo: v.VEICOLO || "",
+            problemi: v.PROBLEMI ? v.PROBLEMI.split("\n").filter(Boolean) : [],
+            lavori: v.LAVORI ? v.LAVORI.split("\n").filter(Boolean) : [],
+            prodotti: v.PRODOTTI ? v.PRODOTTI.split("\n").filter(Boolean) : [],
+            ore: v.ORE_IMPIEGATE || "",
+            note: v.NOTE || ""
+          };
 
         messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
 
@@ -1929,16 +1963,16 @@ function rispostaConPausa(testo, pausa = 1200, callback = null) {
 async function gestisciRisposta(testo) {
 
   if (!sessioneAssistente.dati) {
-  sessioneAssistente.dati = {
-    targa: sessioneAssistente.dati?.targa || "",
-    chilometri: sessioneAssistente.dati?.chilometri || "",
-    nomeCliente: sessioneAssistente.dati?.nomeCliente || "",
-    veicolo: sessioneAssistente.dati?.veicolo || "",
-    problemi: sessioneAssistente.dati?.problemi || [],
-    lavori: sessioneAssistente.dati?.lavori || [],
-    prodotti: sessioneAssistente.dati?.prodotti || [],
-    ore: sessioneAssistente.dati?.ore || "",
-    note: sessioneAssistente.dati?.note || ""
+    sessioneAssistente.dati = sessioneAssistente.dati || {
+    targa: "",
+    chilometri: "",
+    nomeCliente: "",
+    veicolo: "",
+    problemi: [],
+    lavori: [],
+    prodotti: [],
+    ore: "",
+    note: ""
   };
 }
 
@@ -1997,6 +2031,10 @@ async function gestisciRisposta(testo) {
     
       // 🔥 CREA SCHEDA SOLO ORA
       const crea = await callBackend("creaNuovaScheda");
+
+      sessioneAssistente.dati.targa = targaNorm;
+      sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
+      sessioneAssistente.dati.veicolo = veicolo.veicolo;
     
       sessioneAssistente.schedaId = crea.docId;
     
