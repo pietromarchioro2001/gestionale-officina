@@ -1369,7 +1369,8 @@ function showSection(id) {
     });
 
   toggleBadgeOrdini(false);
-  caricaOrdini();
+
+  preloadOrdini();   // ⭐ QUESTA è la tua vera funzione
 
 break;
 
