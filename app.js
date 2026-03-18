@@ -1932,27 +1932,16 @@ async function gestisciRisposta(testo) {
   // 🔒 GARANTISCE STRUTTURA DATI SEMPRE PRESENTE
 if (!sessioneAssistente.dati) {
   sessioneAssistente.dati = {
-      targa: v.TARGA || sessioneAssistente.dati?.targa || "",
-      chilometri: v.CHILOMETRI || sessioneAssistente.dati?.chilometri || "",
-      nomeCliente: v.NOME_CLIENTE || sessioneAssistente.dati?.nomeCliente || "",
-      veicolo: v.VEICOLO || sessioneAssistente.dati?.veicolo || "",
-    
-      problemi: v.PROBLEMI
-        ? String(v.PROBLEMI).split("\n").filter(Boolean)
-        : sessioneAssistente.dati?.problemi || [],
-    
-      lavori: v.LAVORI
-        ? String(v.LAVORI).split("\n").filter(Boolean)
-        : sessioneAssistente.dati?.lavori || [],
-    
-      prodotti: v.PRODOTTI
-        ? String(v.PRODOTTI).split("\n").filter(Boolean)
-        : sessioneAssistente.dati?.prodotti || [],
-    
-      ore: v.ORE_IMPIEGATE || sessioneAssistente.dati?.ore || "",
-      note: v.NOTE || sessioneAssistente.dati?.note || ""
-    
-    };
+    targa: "",
+    chilometri: "",
+    nomeCliente: "",
+    veicolo: "",
+    problemi: [],
+    lavori: [],
+    prodotti: [],
+    ore: "",
+    note: ""
+  };
 }
 
   testo = testo.toUpperCase().trim();
@@ -1978,53 +1967,73 @@ if (!sessioneAssistente.dati) {
 
     case "TARGA": {
 
-  const targaNorm = normalizzaTarga(testo);
-
-  if (!targaNorm) {
-    rispostaInElaborazione = false;
-    messaggioBot("Targa non valida. Ripeti.");
-    return;
-  }
-
-  let veicolo = CLIENTI_VEICOLI_CACHE.find(
-    v => v.targa === targaNorm
-  );
-
-  if (!veicolo) {
-    rispostaInElaborazione = false;
-    messaggioBot("Veicolo non trovato. Ripeti la targa.");
-    return;
-  }
-
-  // ✅ SOLO ORA parte tutto
-
-  const crea = await callBackend("creaNuovaScheda");
-
-  sessioneAssistente.schedaId = crea.docId;
-
-  await callBackend(
-    "completaSchedaDaTarga",
-    [crea.docId, targaNorm]
-  );
-
-  sessioneAssistente.stepQueue = [
-    "CHILOMETRI",
-    "PROBLEMI",
-    "LAVORI",
-    "PRODOTTI",
-    "ORE_IMPIEGATE",
-    "NOTE",
-    "CHIUSURA"
-  ];
-
-  rispostaInElaborazione = false;
-
-  messaggioBot(`Scheda #${crea.numeroScheda} creata.`);
-
-  prossimaDomanda();
-
-  return;
-}
+      const targaNorm = normalizzaTarga(testo);
+    
+      if (!targaNorm) {
+        rispostaInElaborazione = false;
+        messaggioBot("Targa non valida. Ripeti.");
+        return;
+      }
+    
+      let veicolo = CLIENTI_VEICOLI_CACHE?.find(
+        v => v.targa === targaNorm
+      );
+    
+      if (!veicolo) {
+        try {
+          veicolo = await callBackend(
+            "checkTargaEsistenteFull",
+            [targaNorm]
+          );
+        } catch (e) {}
+      }
+    
+      if (!veicolo) {
+        rispostaInElaborazione = false;
+        messaggioBot("Veicolo non trovato. Ripeti la targa.");
+        return;
+      }
+    
+      // 🔥 CREA SCHEDA SOLO ORA
+      const crea = await callBackend("creaNuovaScheda");
+    
+      sessioneAssistente.schedaId = crea.docId;
+    
+      sessioneAssistente.dati = {
+        targa: targaNorm,
+        nomeCliente: veicolo.nomeCliente,
+        veicolo: veicolo.veicolo,
+        chilometri: "",
+        problemi: [],
+        lavori: [],
+        prodotti: [],
+        ore: "",
+        note: ""
+      };
+    
+      await callBackend(
+        "completaSchedaDaTarga",
+        [crea.docId, targaNorm]
+      );
+    
+      sessioneAssistente.stepQueue = [
+        "CHILOMETRI",
+        "PROBLEMI",
+        "LAVORI",
+        "PRODOTTI",
+        "ORE_IMPIEGATE",
+        "NOTE",
+        "CHIUSURA"
+      ];
+    
+      rispostaInElaborazione = false;
+    
+      messaggioBot(`Scheda #${crea.numeroScheda} creata.`);
+    
+      prossimaDomanda();
+    
+      return;
+    }
       
     case "CHILOMETRI": {
 
