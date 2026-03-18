@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzLUjKh4D46OEgY4wLJzgw_zJg785h3YIC8yxNF34JeQWexazP83YgMp6isVmPnG5bc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxOLVCBWE14FGYljj8B4jucNaezJc3MvszSe814cKA78C9OxBoC0UcNNL_NybmJWETn/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -2220,7 +2220,7 @@ async function gestisciRisposta(testo) {
 
         } else {
 
-          rispostaConPausa("Scheda salvata come parziale.", 1000);
+          rispostaConPausa("Scheda salvata.", 1000);
 
         }
 
