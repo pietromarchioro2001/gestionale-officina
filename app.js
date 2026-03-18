@@ -238,12 +238,6 @@ function refreshOrdini(btn){
 
 }
 
-window.toggleWarningRevisioni = function(show){
-  const el = document.getElementById("badgeRevisioni");
-  if(!el) return;
-  el.classList.toggle("show", show);
-};
-
 function homeCaricaLibrettoCamera() {
   showSection('clienti');
   setTimeout(() => {
@@ -2003,6 +1997,7 @@ if (!sessioneAssistente.dati) {
     
       // ✅ CREA SCHEDA
       const crea = await callBackend("creaNuovaScheda");
+      toggleBadgeSchede(true);
       setTimeout(checkNotificheHome, 800);
     
       sessioneAssistente.schedaId = crea.docId;
@@ -2811,6 +2806,7 @@ function nuovoOrdine() {
           CACHE_ORDINI.veicoli,
           CACHE_ORDINI.fornitori
         );
+        toggleBadgeOrdini(true);
         setTimeout(checkNotificheHome, 800);
       });
 
