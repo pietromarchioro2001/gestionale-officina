@@ -1992,6 +1992,7 @@ if (!sessioneAssistente.dati) {
     
       // ✅ CREA SCHEDA
       const crea = await callBackend("creaNuovaScheda");
+      setTimeout(checkNotificheHome, 800);
     
       sessioneAssistente.schedaId = crea.docId;
     
@@ -2188,6 +2189,8 @@ if (!sessioneAssistente.dati) {
           "salvaSchedaCompleta",
           [sessioneAssistente.schedaId, sessioneAssistente.dati]
         );
+
+        setTimeout(checkNotificheHome, 800);
 
         // 🔔 NOTIFICA SCHEDE
         await callBackend(
