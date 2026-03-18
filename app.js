@@ -56,46 +56,26 @@ window.checkNotificheHome = function(){
         ? new Date(res.ultimaScheda).getTime()
         : null;
 
-      let viewOrdini = localStorage.getItem("view_ordini");
-      let viewSchede = localStorage.getItem("view_schede");
+      let viewOrdini = Number(localStorage.getItem("view_ordini") || 0);
+      let viewSchede = Number(localStorage.getItem("view_schede") || 0);
 
-      viewOrdini = viewOrdini ? Number(viewOrdini) : null;
-      viewSchede = viewSchede ? Number(viewSchede) : null;
-
-      // ⭐ PRIMO AVVIO
-      if (viewOrdini === null && ordineTS) {
-        localStorage.setItem("view_ordini", ordineTS);
-        viewOrdini = ordineTS;
-      }
-
-      if (viewSchede === null && schedaTS) {
-        localStorage.setItem("view_schede", schedaTS);
-        viewSchede = schedaTS;
-      }
-
-      // ⭐ DEBUG (IMPORTANTE ORA)
       console.log("schedaTS:", schedaTS);
       console.log("viewSchede:", viewSchede);
 
-      const showSchede =
-        schedaTS !== null &&
-        viewSchede !== null &&
-        schedaTS > viewSchede;
+      toggleBadgeSchede(
+        schedaTS && schedaTS > viewSchede
+      );
 
-      toggleBadgeSchede(showSchede);
-
-      const showOrdini =
-        ordineTS !== null &&
-        viewOrdini !== null &&
-        ordineTS > viewOrdini;
-
-      toggleBadgeOrdini(showOrdini);
+      toggleBadgeOrdini(
+        ordineTS && ordineTS > viewOrdini
+      );
 
       toggleWarningRevisioni(!!res.revisioneWarning);
 
     })
     .catch(err => console.error(err));
 };
+
 window.toggleWarningRevisioni = function(show){
   const el = document.getElementById("badgeRevisioni");
   if(!el) return;
@@ -1409,7 +1389,7 @@ break;
             );
           }
         });
-    
+        localStorage.setItem("view_schede", Date.now());
         toggleBadgeSchede(false);
     
       }
