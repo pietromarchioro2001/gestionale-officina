@@ -1365,10 +1365,17 @@ function showSection(id) {
     break;
 
     case "schede":
-      localStorage.setItem("view_schede", Date.now());
+      callBackend("getNotificheHome").then(r=>{
+        if(r?.ultimaScheda){
+          localStorage.setItem(
+            "view_schede",
+            new Date(r.ultimaScheda).getTime()
+          );
+        }
+      });
       toggleBadgeSchede(false);
-      caricaSchede?.();
-      break;
+      caricaSchede();
+    break;
 
     case "clienti":
       resetClienti?.();
