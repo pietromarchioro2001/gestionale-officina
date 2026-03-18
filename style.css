@@ -1767,6 +1767,17 @@ padding:8px 10px;
 box-shadow:0 6px 14px rgba(0,0,0,0.12);
 }
 
+.popup-box input,
+#promptInput {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #222;
+  font-size: 18px;
+  box-sizing: border-box;
+  outline: none;
+}
+
 .ordine-delete{
 background:transparent;
 border:none;
