@@ -45,15 +45,11 @@ window.checkNotificheHome = function(){
 
   callBackend("getNotificheHome")
     .then(res => {
-
       if(!res) return;
-
       const now = Date.now();
       const TEN_MIN = 10 * 60 * 1000;
-
       const lastViewOrdini = Number(localStorage.getItem("view_ordini") || 0);
       const lastViewSchede = Number(localStorage.getItem("view_schede") || 0);
-
       const ordineTS = res.ultimoOrdine
         ? new Date(res.ultimoOrdine).getTime()
         : 0;
@@ -67,12 +63,10 @@ window.checkNotificheHome = function(){
 
       toggleBadgeOrdini(showOrdini);
       toggleBadgeSchede(showSchede);
-
       toggleWarningRevisioni(res.revisioneWarning);
-
     });
-
 };
+
 function showAlert(msg){
   const box = document.getElementById("customAlert");
   const text = document.getElementById("customAlertText");
