@@ -1582,6 +1582,8 @@ function apriDocumento(link) {
 
 function apriAssistente() {
 
+  showSection("assistente");
+
   sessioneAssistente = {};
 
   document.getElementById("assistenteChat").innerHTML = "";
@@ -1976,7 +1978,7 @@ if (!sessioneAssistente.dati) {
   switch (sessioneAssistente.step) {
 
     case "assistente":
-      apriAssistente();
+      // niente preload
     break;
 
     case "TARGA": {
