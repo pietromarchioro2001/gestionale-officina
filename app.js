@@ -1928,6 +1928,20 @@ function rispostaConPausa(testo, pausa = 1200, callback = null) {
 
 async function gestisciRisposta(testo) {
 
+  if (!sessioneAssistente.dati) {
+  sessioneAssistente.dati = {
+    targa: sessioneAssistente.dati?.targa || "",
+    chilometri: sessioneAssistente.dati?.chilometri || "",
+    nomeCliente: sessioneAssistente.dati?.nomeCliente || "",
+    veicolo: sessioneAssistente.dati?.veicolo || "",
+    problemi: sessioneAssistente.dati?.problemi || [],
+    lavori: sessioneAssistente.dati?.lavori || [],
+    prodotti: sessioneAssistente.dati?.prodotti || [],
+    ore: sessioneAssistente.dati?.ore || "",
+    note: sessioneAssistente.dati?.note || ""
+  };
+}
+
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
 
