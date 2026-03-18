@@ -1612,6 +1612,8 @@ function apriAssistente() {
     valoriEsistenti: {},
     dati: {
       targa: "",
+      nomeCliente: "",
+      veicolo: "",
       chilometri: "",
       problemi: [],
       lavori: [],
@@ -1928,21 +1930,6 @@ async function gestisciRisposta(testo) {
 
   if (rispostaInElaborazione) return;
   rispostaInElaborazione = true;
-
-  // 🔒 GARANTISCE STRUTTURA DATI SEMPRE PRESENTE
-if (!sessioneAssistente.dati) {
-  sessioneAssistente.dati = {
-    targa: "",
-    chilometri: "",
-    nomeCliente: "",
-    veicolo: "",
-    problemi: [],
-    lavori: [],
-    prodotti: [],
-    ore: "",
-    note: ""
-  };
-}
 
   testo = testo.toUpperCase().trim();
 
