@@ -982,12 +982,11 @@ setTimeout(preparaVoceAssistente, 500);
 function scrollAssistenteBottom() {
 
   const chat = document.getElementById("assistenteChat");
-
   if (!chat) return;
 
   setTimeout(() => {
-    chat.scrollTop = chat.scrollHeight;
-  }, 300);
+    chat.scrollTop = 0;
+  }, 100);
 
 }
 
@@ -1244,7 +1243,7 @@ function messaggioBot(testo) {
   div.className = "msg bot";
   div.textContent = testo;
   chat.prepend(div);
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop = 0;
 
   scrollAssistenteBottom(); 
 }
@@ -1342,7 +1341,7 @@ function messaggioUtente(testo) {
   div.className = "msg user";
   div.textContent = testo;
   chat.prepend(div);
-  chat.scrollTop = chat.scrollHeight;
+  chat.scrollTop = 0;
 }
 
 function showSection(id) {
