@@ -54,16 +54,13 @@ window.checkNotificheHome = function(){
       const viewSchede =
         Number(localStorage.getItem("view_schede") || 0);
 
-      let ordineTS = null;
-      let schedaTS = null;
+      const ordineTS = res.ultimoOrdine
+        ? new Date(res.ultimoOrdine).getTime()
+        : null;
 
-      if (res.ultimoOrdine) {
-        ordineTS = new Date(res.ultimoOrdine).getTime();
-      }
-
-      if (res.ultimaScheda) {
-        schedaTS = new Date(res.ultimaScheda).getTime();
-      }
+      const schedaTS = res.ultimaScheda
+        ? new Date(res.ultimaScheda).getTime()
+        : null;
 
       if (ordineTS !== null) {
         toggleBadgeOrdini(ordineTS > viewOrdini);
@@ -73,10 +70,16 @@ window.checkNotificheHome = function(){
         toggleBadgeSchede(schedaTS > viewSchede);
       }
 
-      toggleWarningRevisioni(res.revisioneWarning);
+      toggleWarningRevisioni(!!res.revisioneWarning);
 
     })
     .catch(err => console.error(err));
+};
+
+window.toggleWarningRevisioni = function(show){
+  const el = document.getElementById("badgeRevisioni");
+  if(!el) return;
+  el.classList.toggle("show", show);
 };
 
 function showAlert(msg){
@@ -1417,11 +1420,6 @@ function toggleBadgeOrdini(show){
 function toggleBadgeSchede(show){
   document.getElementById("badgeSchede")
     ?.classList.toggle("show", show);
-}
-
-function toggleWarningRevisioni(show){
-  document.getElementById("badgeRevisioni")
-    ?.classList.toggle("hidden", !show);
 }
 
 function isComandoUscita(testo) {
