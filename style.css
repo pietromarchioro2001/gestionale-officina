@@ -910,12 +910,6 @@ input.targa {
   display: block;
 }
 
-.badge-warning{
-  color:orange;
-  font-size:18px;
-  margin-left:6px;
-}
-
 .hidden{
   display:none;
 }
@@ -937,9 +931,9 @@ input.targa {
 
 .badge-warning {
   position: absolute;
-  top: -8px;
-  right: -4px;
-  font-size: 18px;
+  top: -10px;
+  right: -6px;
+  font-size: 22px;
   color: #ff9500;
   display: none;
   animation: warningBlink 1.5s infinite;
