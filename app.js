@@ -1932,11 +1932,27 @@ async function gestisciRisposta(testo) {
   // 🔒 GARANTISCE STRUTTURA DATI SEMPRE PRESENTE
 if (!sessioneAssistente.dati) {
   sessioneAssistente.dati = {
-    problemi: [],
-    lavori: [],
-    prodotti: [],
-    note: ""
-  };
+      targa: v.TARGA || sessioneAssistente.dati?.targa || "",
+      chilometri: v.CHILOMETRI || sessioneAssistente.dati?.chilometri || "",
+      nomeCliente: v.NOME_CLIENTE || sessioneAssistente.dati?.nomeCliente || "",
+      veicolo: v.VEICOLO || sessioneAssistente.dati?.veicolo || "",
+    
+      problemi: v.PROBLEMI
+        ? String(v.PROBLEMI).split("\n").filter(Boolean)
+        : sessioneAssistente.dati?.problemi || [],
+    
+      lavori: v.LAVORI
+        ? String(v.LAVORI).split("\n").filter(Boolean)
+        : sessioneAssistente.dati?.lavori || [],
+    
+      prodotti: v.PRODOTTI
+        ? String(v.PRODOTTI).split("\n").filter(Boolean)
+        : sessioneAssistente.dati?.prodotti || [],
+    
+      ore: v.ORE_IMPIEGATE || sessioneAssistente.dati?.ore || "",
+      note: v.NOTE || sessioneAssistente.dati?.note || ""
+    
+    };
 }
 
   testo = testo.toUpperCase().trim();
