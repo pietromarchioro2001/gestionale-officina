@@ -1383,7 +1383,6 @@ break;
             );
           }
         });
-        localStorage.setItem("view_schede", Date.now());
         toggleBadgeSchede(false);
     
       }
