@@ -895,8 +895,8 @@ input.targa {
 
 .badge {
   position: absolute;
-  top: -6px;
-  right: -6px;
+  top: 6px;
+  right: 6px;
   width: 14px;
   height: 14px;
   background: #ff3b30;
@@ -2542,15 +2542,15 @@ display:none;
 }
 
 .home-module .badge {
-    position:absolute;
-    top:-8px;
-    right:-8px;
-    width:14px;
-    height:14px;
-    background:#ff3b30;
-    border-radius:50%;
-    box-shadow:0 0 0 3px var(--bg);
-    z-index:5;
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  background: #ff3b30;
+  border-radius: 50%;
+  box-shadow: none;
+  z-index: 5;
   }
 
 /* contenitore icone */
