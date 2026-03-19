@@ -241,6 +241,28 @@ main {
   overflow: hidden; /* niente scroll esterno */
 }
 
+.mic-indicator {
+  display: none;
+  margin-left: 8px;
+  color: red;
+  animation: micBlink 1s infinite;
+}
+
+.mic-indicator::before {
+  content: "🎤";
+  font-size: 18px;
+}
+
+.mic-indicator.active {
+  display: inline-block;
+}
+
+@keyframes micBlink {
+  0% { opacity: 1; }
+  50% { opacity: .2; }
+  100% { opacity: 1; }
+}
+
 
 /* =========================================================
    4. COMPONENTI GLOBALI
