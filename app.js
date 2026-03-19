@@ -3051,6 +3051,20 @@ function preloadClientiVeicoli(){
 
 }
 
+function mostraLoadingOrdini(){
+
+  const container = document.getElementById("ordiniList");
+  if(!container) return;
+
+  container.innerHTML = `
+    <div class="loading-block">
+      <div class="spinner"></div>
+      <div>Caricamento ordini...</div>
+    </div>
+  `;
+
+}
+
 function caricaAppuntamentiOggi() {
 
   const box = document.getElementById("oggiEventi");
