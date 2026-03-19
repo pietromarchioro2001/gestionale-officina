@@ -1582,9 +1582,10 @@ a#targaLink:hover {
   font-size: 13px;
   background: #fff;
   cursor: pointer;
-  width: 130px;
-  max-width: 130px;
   min-width: 130px;
+  width: 260px;
+  max-width: 100%;
+  height: 40px;
 }
 
 .ordine-row select:focus {
@@ -1685,8 +1686,9 @@ a#targaLink:hover {
 }
 
 .ordine-invia {
-  wwidth: 160px;
+  width: 220px;
   height: 42px;
+  font-size: 15px;
 }
 
 .ordine-invia.loading {
@@ -1848,12 +1850,6 @@ font-size:14px;
   text-align: center;
   padding: 4px 6px;
 
-}
-
-.ordine-row select {
-  width: 260px;
-  max-width: 100%;
-  height: 40px;
 }
 
 .ordine-row button {
@@ -2675,6 +2671,17 @@ font-size:18px;
     height: 50px;
     font-size: 17px;
   }
+
+   
+   /* ================= ORDINI ================= */
+   
+   .ordine-row select {
+    width: 100%;
+    max-width: 320px;   /* 🔥 centrato e proporzionato mobile */
+    margin: 0 auto;
+    display: block;
+  }
+   
    
    /* ================= SCHEDE ================= */
    
