@@ -2676,8 +2676,8 @@ font-size:18px;
    /* ================= ORDINI ================= */
    
    .ordine-row select {
-    width: 100%;          /* 🔥 più lunghi ma non come INVIA */
-    max-width: 100%;
+    width: 92%;          /* 🔥 più lunghi ma non come INVIA */
+    max-width: 92%;
     margin: 0 auto;
   }   
    
