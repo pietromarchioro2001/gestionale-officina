@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx4dcJH4Wu5ry8IJuxmh6wObAW7t9TfeUHJEmQAlIBMUhZOJMlTkFGpc93uz3228-Zc/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyHOwamqA8kVqMHOqwjoWyn1vJ4m3HcO0PJqNgJDBPiISbBIj16yxDubmTowcqJRgN9/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -2032,7 +2032,6 @@ async function gestisciRisposta(testo) {
     
       // 🔥 CREA SCHEDA SOLO ORA
       const crea = await callBackend("creaNuovaScheda");
-      setTimeout(checkNotificheHome, 500);
 
       sessioneAssistente.dati.targa = targaNorm;
       sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
@@ -2251,8 +2250,6 @@ async function gestisciRisposta(testo) {
           [sessioneAssistente.schedaId, sessioneAssistente.dati]
         );
 
-        setTimeout(checkNotificheHome, 800);
-
         // 🔔 NOTIFICA SCHEDE
         await callBackend(
           "notificaScheda",
@@ -2268,7 +2265,6 @@ async function gestisciRisposta(testo) {
             "chiudiScheda",
             [sessioneAssistente.schedaId]
           );
-          setTimeout(checkNotificheHome, 800);
 
           rispostaConPausa("Scheda chiusa correttamente.", 1000);
 
