@@ -44,18 +44,18 @@ function confirmNo(){
 
 window.checkNotificheHome = function(){ 
   
-  if (!localStorage.getItem("view_schede") && res.ultimaScheda) {
-      localStorage.setItem(
-        "view_schede",
-        new Date(res.ultimaScheda).getTime()
-      );
-    }
   if (currentSection === "schede") {
     console.log("⛔ skip notifiche (sei in schede)")
     return
   }
   callBackend("getNotificheHome") 
     .then(res => { if(!res) return; 
+      if (!localStorage.getItem("view_schede") && res.ultimaScheda) {
+      localStorage.setItem(
+        "view_schede",
+        new Date(res.ultimaScheda).getTime()
+      );
+    }
       const ordineTS = res.ultimoOrdine ? new Date(res.ultimoOrdine)
         .getTime() : null; 
       const schedaTS = res.ultimaScheda ? new Date(res.ultimaScheda)
@@ -1364,22 +1364,20 @@ function showSection(id) {
     break;
 
     case "ordini":
-
-  callBackend("getNotificheHome")
-    .then(r => {
-      if(r?.ultimoOrdine){
-        localStorage.setItem(
-          "view_ordini",
-          new Date(r.ultimoOrdine).getTime()
-        );
+      if (!autoOpenSection) {
+        callBackend("getNotificheHome")
+          .then(r => {
+            if(r?.ultimoOrdine){
+              localStorage.setItem(
+                "view_ordini",
+                new Date(r.ultimoOrdine).getTime()
+              );
+            }
+          });
+        toggleBadgeOrdini(false);
       }
-    });
-
-  toggleBadgeOrdini(false);
-
-  preloadOrdini();   // ⭐ QUESTA è la tua vera funzione
-
-break;
+      caricaOrdiniUI();
+    break;
 
     case "schede":
       if (!autoOpenSection) {
@@ -3497,16 +3495,6 @@ function stopLoading(id){
     el.classList.remove("ok");
   }, 1500);
 }
-
-// 🔄 aggiorna cache in background ogni minuto
-setInterval(() => {
-
-  preloadOrdini();
-  preloadSchede();
-  preloadRevisioni();
-  preloadClientiVeicoli();
-
-}, 60000);
 
 document.addEventListener("DOMContentLoaded", () => {
 
