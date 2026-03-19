@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyxJsK62BebmWG09rHRRdtr_kLHsU1LPTZ5_3GPGj85b7JPhS2bCuOOFHcwwDFc7XA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbye8oMApNB0pleHlXV3IyOes_xkRHmPk8tADspESBEiBaSIi-Rk6je98ehka9F_ul7g/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -2829,6 +2829,7 @@ function nuovoOrdine() {
 
     callBackend("creaNuovoOrdine", [descrizione])
       .then(res => {
+        callBackend("notificaNuovoOrdine", [descrizione]);
         const nuovoOrdine = {
           row: res?.row || Date.now(),
           check: false,
