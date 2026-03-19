@@ -43,6 +43,13 @@ function confirmNo(){
 }
 
 window.checkNotificheHome = function(){ 
+  
+  if (!localStorage.getItem("view_schede") && res.ultimaScheda) {
+      localStorage.setItem(
+        "view_schede",
+        new Date(res.ultimaScheda).getTime()
+      );
+    }
   if (currentSection === "schede") {
     console.log("⛔ skip notifiche (sei in schede)")
     return
@@ -1375,22 +1382,18 @@ function showSection(id) {
 break;
 
     case "schede":
-
       if (!autoOpenSection) {
-    
         callBackend("getNotificheHome").then(r => {
           if (r?.ultimaScheda) {
-            const ts = new Date(r.ultimaScheda).getTime()
-            localStorage.setItem("view_schede", ts)
+            localStorage.setItem(
+              "view_schede",
+              new Date(r.ultimaScheda).getTime()
+            );
           }
-        })
-    
-        toggleBadgeSchede(false)
-    
+        });
+        toggleBadgeSchede(false);
       }
-    
-      caricaSchede()
-    
+      caricaSchede();
     break;
 
     case "clienti":
@@ -3505,8 +3508,6 @@ setInterval(() => {
 
 }, 60000);
 
-setInterval(checkNotificheHome, 60000);
-
 document.addEventListener("DOMContentLoaded", () => {
 
   const toggleBtn = document.getElementById("toggleOggi");
@@ -3534,7 +3535,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   checkNotificheHome();
-  setInterval(checkNotificheHome, 60000);
 
 });
 
