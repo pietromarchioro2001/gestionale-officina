@@ -2554,10 +2554,10 @@ display:none;
   }
 
 .badge-warning{
-    top: 6px;       /* ↓ scende dentro la card */
-    right: 14px;    /* ← si avvicina al logo REVISIONI */
+    top: 10px;       /* ↓ scende dentro la card */
+    right: 18px;    /* ← si avvicina al logo REVISIONI */
 
-    font-size: 26px;   /* ⭐ leggermente più grande */
+    font-size: 32px;   /* ⭐ leggermente più grande */
   }
 
 /* contenitore icone */
