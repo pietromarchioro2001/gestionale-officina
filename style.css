@@ -2127,7 +2127,7 @@ font-size:14px;
 
 .popup-cliente-box {
   width: 92%;
-  max-width: 820px;      /* 🔥 più largo desktop */
+  max-width: 700px;      /* 🔥 più largo desktop */
   background: #fff;
   border-radius: 18px;
   padding: 34px 40px;    /* 🔥 più aria */
@@ -2137,7 +2137,12 @@ font-size:14px;
   gap: 22px;
 }
 
+.popup-cliente-box input {
+    width: 100%;
+  }
+
 .lista-clienti-popup {
+  width: 100%;
   max-height: 360px;     /* 🔥 più spazio */
   overflow-y: auto;
   border-radius: 14px;
