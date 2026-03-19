@@ -1553,9 +1553,14 @@ a#targaLink:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 18px 22px;
   gap: 12px;
   position: relative;
+  background: #ffffff;
+  border: 1px solid #e2e2e2;        /* 🔥 bordo visibile ma elegante */
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+  margin-bottom: 18px;              /* 🔥 spazio tra card */
+  padding: 22px 26px;
 }
 
 .ordine-row:hover {
