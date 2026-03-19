@@ -243,15 +243,18 @@ main {
 
 .mic-indicator {
   display: none;
-  margin-left: 10px;
-  color: #ff2d2d;
-  animation: micBlink 1s infinite;
+  margin-left: 12px;
+  color: #ff3b3b;
+
+  animation: micBlink 1.2s infinite;
 }
 
 .mic-indicator svg {
-  width: 22px;
-  height: 22px;
+  width: 26px;
+  height: 26px;
   fill: currentColor;
+
+  filter: drop-shadow(0 0 4px rgba(255,0,0,0.4));
 }
 
 .mic-indicator.active {
@@ -259,9 +262,9 @@ main {
 }
 
 @keyframes micBlink {
-  0% { opacity: 1; }
-  50% { opacity: .25; }
-  100% { opacity: 1; }
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 
