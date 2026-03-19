@@ -42,43 +42,56 @@ function confirmNo(){
   if(confirmCallback) confirmCallback(false);
 }
 
-window.checkNotificheHome = function(){ 
-  
-  if (currentSection === "schede") {
-    console.log("⛔ skip notifiche (sei in schede)")
-    return
-  }
-  callBackend("getNotificheHome") 
-    .then(res => { if(!res) return; 
-      if (!localStorage.getItem("view_schede") && res.ultimaScheda) {
-      localStorage.setItem(
-        "view_schede",
-        new Date(res.ultimaScheda).getTime()
+window.checkNotificheHome = function(){
+
+  callBackend("getNotificheHome")
+    .then(res => {
+
+      if(!res) return;
+
+      // ===== ORDINI (NUOVO SISTEMA STABILE)
+      const lastOrdineBackend = res.ultimoOrdine
+        ? new Date(res.ultimoOrdine).getTime()
+        : null;
+
+      const lastOrdineLocal = Number(
+        localStorage.getItem("last_created_order")
       );
-    }
-      const ordineTS = res.ultimoOrdine ? new Date(res.ultimoOrdine)
-        .getTime() : null; 
-      const schedaTS = res.ultimaScheda ? new Date(res.ultimaScheda)
-    .getTime() : null;
-      let viewOrdini = localStorage.getItem("view_ordini");
-      let viewSchede = localStorage.getItem("view_schede"); 
-          viewOrdini = viewOrdini ? Number(viewOrdini) : null;
-          viewSchede = viewSchede ? Number(viewSchede) : null; // ⭐ PRIMO AVVIO 
-          if (viewOrdini === null && ordineTS) {
-          localStorage.setItem("view_ordini", ordineTS); viewOrdini = ordineTS;
-          } 
-          if (viewSchede === null && schedaTS) {
-          localStorage.setItem("view_schede", schedaTS);
-          viewSchede = schedaTS; 
-          } // ⭐ DEBUG (IMPORTANTE ORA) 
-          const showSchede = schedaTS !== null && viewSchede !== null && schedaTS > viewSchede;
+
+      const showOrdini =
+        lastOrdineLocal &&
+        lastOrdineBackend &&
+        lastOrdineBackend <= lastOrdineLocal;
+
+      toggleBadgeOrdini(!!showOrdini);
+
+      // ===== SCHEDE (TIMESTAMP BACKEND)
+      const schedaTS = res.ultimaScheda
+        ? new Date(res.ultimaScheda).getTime()
+        : null;
+
+      let viewSchede = localStorage.getItem("view_schede");
+      viewSchede = viewSchede ? Number(viewSchede) : null;
+
+      // primo avvio → segna come viste
+      if(viewSchede === null && schedaTS){
+        localStorage.setItem("view_schede", schedaTS);
+        viewSchede = schedaTS;
+      }
+
+      const showSchede =
+        schedaTS !== null &&
+        viewSchede !== null &&
+        schedaTS > viewSchede;
+
       toggleBadgeSchede(showSchede);
-      const showOrdini = ordineTS !== null && viewOrdini !== null && ordineTS > viewOrdini;
-      toggleBadgeOrdini(showOrdini);
+
+      // ===== REVISIONI
       toggleWarningRevisioni(!!res.revisioneWarning);
-     })
-    .catch(err => console.error(err)); 
-  };
+
+    })
+    .catch(err => console.error(err));
+};
 
 window.toggleWarningRevisioni = function(show){
   const el = document.getElementById("badgeRevisioni");
@@ -1378,6 +1391,7 @@ function showSection(id) {
               );
             }
           });
+        localStorage.removeItem("last_created_order")
         toggleBadgeOrdini(false);
       }
       caricaOrdiniUI();
@@ -2849,6 +2863,7 @@ function nuovoOrdine() {
           CACHE_ORDINI.veicoli,
           CACHE_ORDINI.fornitori
         );
+        localStorage.setItem("last_created_order", Date.now())
         toggleBadgeOrdini(true);
       });
 
