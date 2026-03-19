@@ -2846,7 +2846,6 @@ function nuovoOrdine() {
           CACHE_ORDINI.fornitori
         );
         toggleBadgeOrdini(true);
-        setTimeout(checkNotificheHome, 800);
       });
 
   });
