@@ -1379,40 +1379,10 @@ function showSection(id) {
     break;
 
     case "ordini":
-
       if (!autoOpenSection) {
-        localStorage.removeItem("last_created_order")
         toggleBadgeOrdini(false);
       }
-    
-      if (CACHE_ORDINI) {
-    
-        // render immediato
-        renderOrdini(CACHE_ORDINI.ordini);
-    
-      } else {
-    
-        mostraLoadingOrdini();
-    
-      }
-    
-      // refresh async sempre
-      callBackend("getOrdiniBundle")
-        .then(bundle => {
-    
-          CACHE_ORDINI = {
-            ordini: bundle?.ordini || [],
-            clienti: bundle?.clienti || [],
-            veicoli: bundle?.veicoli || [],
-            fornitori: bundle?.fornitori || []
-          };
-    
-          VEICOLI_ALL = CACHE_ORDINI.veicoli;
-    
-          renderOrdini(CACHE_ORDINI.ordini);
-    
-        });
-    
+      caricaOrdiniUI();
     break;
 
     case "schede":
@@ -2528,41 +2498,50 @@ function bipMicrofono() {
 }
 
 function caricaOrdiniUI(force = false) {
+
   const now = Date.now();
 
-  // ✅ usa cache se valida
-  if (
-    !force &&
-    CACHE_ORDINI &&
-    now - CACHE_TS < CACHE_TTL
-  ) {
+  // 🔥 1️⃣ Se ho cache → mostro subito
+  if (CACHE_ORDINI) {
     renderOrdini(
       CACHE_ORDINI.ordini || [],
       CACHE_ORDINI.clienti || [],
       CACHE_ORDINI.veicoli || [],
       CACHE_ORDINI.fornitori || []
     );
+  }
+
+  // 🔥 2️⃣ Se cache valida → STOP
+  if (
+    !force &&
+    CACHE_ORDINI &&
+    now - CACHE_TS < CACHE_TTL
+  ) {
     return;
   }
 
-   callBackend("getOrdiniBundle")
-  .then(res => {
-    const ordini = res?.ordini || [];
-    const clienti = res?.clienti || [];
-    const veicoli = res?.veicoli || [];
-    const fornitori = res?.fornitori || [];
+  // 🔥 3️⃣ Aggiornamento backend in background
+  callBackend("getOrdiniBundle")
+    .then(res => {
 
-    CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
-    CACHE_TS = Date.now();
+      const ordini = res?.ordini || [];
+      const clienti = res?.clienti || [];
+      const veicoli = res?.veicoli || [];
+      const fornitori = res?.fornitori || [];
 
-    VEICOLI_ALL = veicoli;
+      CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
+      CACHE_TS = Date.now();
 
-    renderOrdini(ordini, clienti, veicoli, fornitori);
-  })
-  .catch(err => {
-    console.error("Errore caricamento ordini", err);
-    showAlert("Errore caricamento ordini");
-  });
+      VEICOLI_ALL = veicoli;
+
+      renderOrdini(ordini, clienti, veicoli, fornitori);
+
+    })
+    .catch(err => {
+      console.error("Errore caricamento ordini", err);
+      showAlert("Errore caricamento ordini");
+    });
+
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
@@ -3048,20 +3027,6 @@ function preloadClientiVeicoli(){
     CLIENTI_VEICOLI_CACHE = lista;
     console.log("Preload clienti/veicoli ok");
   });
-
-}
-
-function mostraLoadingOrdini(){
-
-  const container = document.getElementById("ordiniList");
-  if(!container) return;
-
-  container.innerHTML = `
-    <div class="loading-block">
-      <div class="spinner"></div>
-      <div>Caricamento ordini...</div>
-    </div>
-  `;
 
 }
 
@@ -3571,6 +3536,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   checkNotificheHome();
+  preloadOrdini();   // 🔥 QUI
 
 });
 
