@@ -27,13 +27,12 @@ let autoOpenSection = false;
 let currentSection = "home";
 let ORDINI_CACHE = null;
 
-function toggleMicIndicator(state){
+function toggleMicIndicator(state) {
 
-  const o = document.getElementById("micIndicatorOrdini");
-  const a = document.getElementById("micIndicatorAssistente");
-
-  if(o) o.classList.toggle("active", state);
-  if(a) a.classList.toggle("active", state);
+  document.querySelectorAll("#micIndicator")
+    .forEach(el => {
+      el.classList.toggle("active", state);
+    });
 
 }
 
