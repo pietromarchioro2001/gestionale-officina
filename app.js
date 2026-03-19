@@ -27,6 +27,16 @@ let autoOpenSection = false;
 let currentSection = "home";
 let ORDINI_CACHE = null;
 
+function toggleMicIndicator(state){
+
+  const o = document.getElementById("micIndicatorOrdini");
+  const a = document.getElementById("micIndicatorAssistente");
+
+  if(o) o.classList.toggle("active", state);
+  if(a) a.classList.toggle("active", state);
+
+}
+
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
   document.getElementById("confirmBox").classList.remove("hidden");
@@ -1834,13 +1844,14 @@ function initVoce() {
 
   recognition.onstart = () => {
     ascoltoAttivo = true;
+    toggleMicIndicator(true);
     console.log("🎤 ascolto ON");
   };
 
   recognition.onend = () => {
 
   ascoltoAttivo = false;
-
+  toggleMicIndicator(false);
   console.log("🎤 microfono spento");
 
 };
@@ -2920,6 +2931,7 @@ function editDescrizione(span, row) {
 let recognitionOrdine = null;
 
 function avviaOrdineVocale() {
+
   if (modalitaAssistente === "vocale") {
     showAlert("Chiudi prima l’assistente");
     return;
@@ -2939,10 +2951,14 @@ function avviaOrdineVocale() {
   recognitionOrdine.continuous = false;
 
   recognitionOrdine.onstart = () => {
+    toggleMicIndicator(true);
     console.log("🎤 Ascolto nuovo ordine...");
   };
 
   recognitionOrdine.onresult = e => {
+
+    toggleMicIndicator(false);   // 🔴 IMPORTANTISSIMO
+
     const testo = e.results[0][0].transcript.trim();
     console.log("📝 Ordine vocale:", testo);
 
@@ -2953,7 +2969,7 @@ function avviaOrdineVocale() {
     callBackend("inserisciNuovoOrdineVocale", [descrizione])
       .then(() => {
         console.log("✅ Ordine vocale salvato");
-        caricaOrdiniUI(true); // ricarica lista
+        caricaOrdiniUI(true);
         checkNotificheHome();
       })
       .catch(err => {
@@ -2963,8 +2979,14 @@ function avviaOrdineVocale() {
   };
 
   recognitionOrdine.onerror = e => {
+    toggleMicIndicator(false);   // 🔴 QUI
     console.error("Errore microfono ordine", e);
     showAlert("Errore microfono");
+  };
+
+  recognitionOrdine.onend = () => {
+    toggleMicIndicator(false);   // 🔴 QUI (backup sicurezza)
+    console.log("🎤 Mic ordine spento");
   };
 
   recognitionOrdine.start();
