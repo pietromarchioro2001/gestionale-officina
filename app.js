@@ -63,8 +63,6 @@ window.checkNotificheHome = function(){
         lastOrdineBackend &&
         lastOrdineBackend <= lastOrdineLocal;
 
-      toggleBadgeOrdini(!!showOrdini);
-
       // ===== SCHEDE (TIMESTAMP BACKEND)
       const schedaTS = res.ultimaScheda
         ? new Date(res.ultimaScheda).getTime()
