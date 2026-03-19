@@ -2676,16 +2676,10 @@ font-size:18px;
    /* ================= ORDINI ================= */
    
    .ordine-row select {
-    width: 100%;
-    max-width: none;    /* 🔥 centrato e proporzionato mobile */
+    width: 100%;          /* 🔥 più lunghi ma non come INVIA */
+    max-width: 100%;
     margin: 0 auto;
-    display: block;
-  }
-
-  .ordine-invia {
-     width: 100%;          /* 🔥 già probabilmente così, ma sicuro */
-   }
-   
+  }   
    
    /* ================= SCHEDE ================= */
    
