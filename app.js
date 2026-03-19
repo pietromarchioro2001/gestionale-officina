@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyHOwamqA8kVqMHOqwjoWyn1vJ4m3HcO0PJqNgJDBPiISbBIj16yxDubmTowcqJRgN9/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyw4gNzcOi1mQ4tbduDU9kL_l1Q4-m1-ULbOe96W5jEXzJupjSz3KPcCYFE83rOncpt/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -63,26 +63,25 @@ window.checkNotificheHome = function(){
         lastOrdineBackend &&
         lastOrdineBackend <= lastOrdineLocal;
 
-      // ===== SCHEDE (TIMESTAMP BACKEND)
+      // ===== SCHEDE (backend timestamp)
       const schedaTS = res.ultimaScheda
         ? new Date(res.ultimaScheda).getTime()
         : null;
 
-      let viewSchede = localStorage.getItem("view_schede");
-      viewSchede = viewSchede ? Number(viewSchede) : null;
+      let lastSeenSchede = Number(
+        localStorage.getItem("schede_last_seen") || 0
+      );
 
-      // primo avvio → segna come viste
-      if(viewSchede === null && schedaTS){
-        localStorage.setItem("view_schede", schedaTS);
-        viewSchede = schedaTS;
+      if(!lastSeenSchede && schedaTS){
+        localStorage.setItem("schede_last_seen", schedaTS);
+        lastSeenSchede = schedaTS;
       }
 
       const showSchede =
-        schedaTS !== null &&
-        viewSchede !== null &&
-        schedaTS > viewSchede;
+        schedaTS &&
+        schedaTS > lastSeenSchede;
 
-      toggleBadgeSchede(showSchede);
+      toggleBadgeSchede(!!showSchede);
 
       // ===== REVISIONI
       toggleWarningRevisioni(!!res.revisioneWarning);
@@ -1396,18 +1395,22 @@ function showSection(id) {
     break;
 
     case "schede":
+
       if (!autoOpenSection) {
         callBackend("getNotificheHome").then(r => {
           if (r?.ultimaScheda) {
             localStorage.setItem(
-              "view_schede",
+              "schede_last_seen",
               new Date(r.ultimaScheda).getTime()
             );
           }
         });
+    
         toggleBadgeSchede(false);
       }
+    
       caricaSchede();
+    
     break;
 
     case "clienti":
