@@ -2979,10 +2979,13 @@ function avviaOrdineVocale() {
   };
 
   recognitionOrdine.onerror = e => {
-    toggleMicIndicator(false);   // 🔴 QUI
-    console.error("Errore microfono ordine", e);
-    showAlert("Errore microfono");
-  };
+  toggleMicIndicator(false);
+  if (e.error === "no-speech") return;
+  if (e.error === "aborted") return;
+  if (e.error === "network") return;
+  console.error("Errore microfono ordine", e);
+  showAlert("Errore microfono");
+};
 
   recognitionOrdine.onend = () => {
     toggleMicIndicator(false);   // 🔴 QUI (backup sicurezza)
