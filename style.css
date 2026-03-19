@@ -2126,8 +2126,8 @@ font-size:14px;
 }
 
 .popup-cliente-box {
-  width: 92%;
-  max-width: 700px;      /* 🔥 più largo desktop */
+  width: 720px;
+  max-width: 720px;
   background: #fff;
   border-radius: 18px;
   padding: 34px 40px;    /* 🔥 più aria */
@@ -2138,11 +2138,14 @@ font-size:14px;
 }
 
 .popup-cliente-box input {
-    width: 100%;
+   width: calc(100% - 40px);
+   margin: 0 auto;
+   display: block;
   }
 
 .lista-clienti-popup {
-  width: 100%;
+  width: calc(100% - 40px);
+  margin: 20px auto 0 auto;
   max-height: 360px;     /* 🔥 più spazio */
   overflow-y: auto;
   border-radius: 14px;
@@ -2679,12 +2682,21 @@ font-size:18px;
 
    
    /* ================= ORDINI ================= */
-   
-   .ordine-row select {
-    width: 92%;          /* 🔥 più lunghi ma non come INVIA */
-    max-width: 92%;
-    margin: 0 auto;
-  }   
+
+  .ordine-row{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ordine-row select{
+    width: 85%;
+    max-width: 85%;
+  }
+
+  .ordine-invia{
+    width: 85%;
+  } 
    
    /* ================= SCHEDE ================= */
    
