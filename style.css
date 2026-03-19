@@ -2553,6 +2553,13 @@ display:none;
   z-index: 5;
   }
 
+.badge-warning{
+    top: 6px;       /* ↓ scende dentro la card */
+    right: 14px;    /* ← si avvicina al logo REVISIONI */
+
+    font-size: 26px;   /* ⭐ leggermente più grande */
+  }
+
 /* contenitore icone */
 
 .module-icons{
