@@ -2684,19 +2684,21 @@ font-size:18px;
    /* ================= ORDINI ================= */
 
   .ordine-row{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 16px;   /* 🔥 meno padding laterale */
+}
 
-  .ordine-row select{
-    width: 85%;
-    max-width: 85%;
-  }
+.ordine-row select{
+  width: 100%;
+  max-width: 300px;     /* 🔥 larghezza visiva corretta */
+}
 
-  .ordine-invia{
-    width: 85%;
-  } 
+.ordine-invia{
+  width: 100%;
+  max-width: 300px;
+}
    
    /* ================= SCHEDE ================= */
    
