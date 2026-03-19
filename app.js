@@ -25,6 +25,7 @@ let CACHE_REVISIONI = null;
 let CLIENTI_VEICOLI_CACHE = [];
 let autoOpenSection = false;
 let currentSection = "home";
+let ORDINI_CACHE = null;
 
 function showConfirm(msg, callback){
   document.getElementById("confirmText").textContent = msg;
@@ -1378,20 +1379,40 @@ function showSection(id) {
     break;
 
     case "ordini":
+
       if (!autoOpenSection) {
-        callBackend("getNotificheHome")
-          .then(r => {
-            if(r?.ultimoOrdine){
-              localStorage.setItem(
-                "view_ordini",
-                new Date(r.ultimoOrdine).getTime()
-              );
-            }
-          });
         localStorage.removeItem("last_created_order")
         toggleBadgeOrdini(false);
       }
-      caricaOrdiniUI();
+    
+      if (CACHE_ORDINI) {
+    
+        // render immediato
+        renderOrdini(CACHE_ORDINI.ordini);
+    
+      } else {
+    
+        mostraLoadingOrdini();
+    
+      }
+    
+      // refresh async sempre
+      callBackend("getOrdiniBundle")
+        .then(bundle => {
+    
+          CACHE_ORDINI = {
+            ordini: bundle?.ordini || [],
+            clienti: bundle?.clienti || [],
+            veicoli: bundle?.veicoli || [],
+            fornitori: bundle?.fornitori || []
+          };
+    
+          VEICOLI_ALL = CACHE_ORDINI.veicoli;
+    
+          renderOrdini(CACHE_ORDINI.ordini);
+    
+        });
+    
     break;
 
     case "schede":
