@@ -1376,17 +1376,18 @@ break;
 
     case "schede":
 
-      callBackend("getNotificheHome").then(r => {
+      if (!autoOpenSection) {
     
-        if (r?.ultimaScheda) {
-          const ts = new Date(r.ultimaScheda).getTime()
-          localStorage.setItem("view_schede", ts)
-          console.log("✅ Schede segnate come viste:", ts)
-        }
+        callBackend("getNotificheHome").then(r => {
+          if (r?.ultimaScheda) {
+            const ts = new Date(r.ultimaScheda).getTime()
+            localStorage.setItem("view_schede", ts)
+          }
+        })
     
         toggleBadgeSchede(false)
     
-      })
+      }
     
       caricaSchede()
     
@@ -2014,6 +2015,7 @@ async function gestisciRisposta(testo) {
     
       // 🔥 CREA SCHEDA SOLO ORA
       const crea = await callBackend("creaNuovaScheda");
+      setTimeout(checkNotificheHome, 500);
 
       sessioneAssistente.dati.targa = targaNorm;
       sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
