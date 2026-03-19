@@ -1360,7 +1360,11 @@ function showSection(id) {
 
    case "home":
       caricaAppuntamentiOggi();
-      checkNotificheHome();
+    
+      if (!autoOpenSection) {
+        checkNotificheHome();
+      }
+    
     break;
 
     case "ordini":
@@ -3118,7 +3122,6 @@ function caricaAppuntamentiOggi() {
 function homeNuovoOrdine() {
 
   autoOpenSection = true;
-
   showSection("ordini");
 
   setTimeout(() => {
@@ -3134,7 +3137,6 @@ function homeNuovoOrdine() {
 function homeOrdineVocale() {
 
   autoOpenSection = true;
-
   showSection("ordini");
 
   setTimeout(() => {
