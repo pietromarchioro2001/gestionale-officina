@@ -2515,10 +2515,9 @@ display:none;
 
 /* card */
 
-.home-module{
-
-  position: relative;
+.home-module {
   display:grid;
+  position: relative;
   grid-template-columns:90px 1fr 1fr;
   align-items:center;
   background: var(--bg);
@@ -2542,12 +2541,16 @@ display:none;
 
 }
 
-.home-module .badge{
-    top: 6px;
-    right: 8px;
-    width: 12px;
-    height: 12px;
-    box-shadow: 0 0 0 2px var(--bg);
+.home-module .badge {
+    position:absolute;
+    top:-8px;
+    right:-8px;
+    width:14px;
+    height:14px;
+    background:#ff3b30;
+    border-radius:50%;
+    box-shadow:0 0 0 3px var(--bg);
+    z-index:5;
   }
 
 /* contenitore icone */
