@@ -2677,10 +2677,14 @@ font-size:18px;
    
    .ordine-row select {
     width: 100%;
-    max-width: 320px;   /* 🔥 centrato e proporzionato mobile */
+    max-width: none;    /* 🔥 centrato e proporzionato mobile */
     margin: 0 auto;
     display: block;
   }
+
+  .ordine-invia {
+     width: 100%;          /* 🔥 già probabilmente così, ma sicuro */
+   }
    
    
    /* ================= SCHEDE ================= */
