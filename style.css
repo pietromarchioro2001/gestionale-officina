@@ -1551,16 +1551,16 @@ a#targaLink:hover {
 
 .ordine-row {
   display: grid;
-  grid-template-columns: 1fr;   /* layout verticale */
+  grid-template-columns: 28px 1fr auto auto auto 80px;
   align-items: center;
   gap: 10px;
-  padding: 14px;
+  padding: 12px 14px;
   border-bottom: 1px solid #eee;
-  position: relative; 
-  background: #ffffff;
+  background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  margin-bottom: 12px
+  margin-bottom: 12px;
+  position: relative;
 }
 
 .ordine-row:hover {
@@ -1568,8 +1568,9 @@ a#targaLink:hover {
 }
 
 .ordine-check {
-  display: flex;
-  justify-content: center;
+  position: absolute;
+  top: 10px;
+  left: 10px;
 }
 
 /* SELECT GESTIONALE */
@@ -1627,8 +1628,8 @@ a#targaLink:hover {
 }
 
 .ordine-descr {
+  text-align: left;
   font-size: 15px;
-  line-height: 1.3;
 }
 
 /* HEADER ORDINI */
@@ -1683,7 +1684,9 @@ a#targaLink:hover {
 }
 
 .ordine-invia {
-  transition: background 0.2s ease, opacity 0.2s ease;
+  width: 80px;
+  height: 34px;
+  padding: 0;
 }
 
 .ordine-invia.loading {
@@ -1848,13 +1851,11 @@ font-size:14px;
 }
 
 .ordine-row select {
-  width: 100%;
-  max-width: 100%;
-  height: 40px;
+  width: 140px;
+  height: 34px;
 }
 
 .ordine-row button {
-  width: 100%;
   height: 42px;
   margin-left: 0;
 
