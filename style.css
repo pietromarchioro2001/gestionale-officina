@@ -134,36 +134,33 @@ main{
   display:block;
 }
 
-/* PAGINE */
+/* ===== SISTEMA LARGHEZZA UNIFICATO ===== */
 
 .page{
-  display:none;
   width:100%;
+  display:none;
 }
 
 .page.active{
-  display:block;
+  display:flex;
+  flex-direction:column;
 }
-
-
-/* CONTENUTO STANDARD */
 
 .page-content{
-  flex:1;
-  min-height:0;
-  overflow:auto;
+  width:100%;
   max-width:1200px;
   margin:0 auto;
-  width:100%;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
 }
 
-.page-header,
-.page-content,
-.calendar-wrapper{
-  max-width:1200px;
+/* HEADER sempre allineato alla toolbar */
+.page-header{
   width:100%;
+  max-width:1200px;
+  margin:20px auto 10px auto;
 }
-/* HOME = NO SCROLL */
 
 #home{
   width:100%;
@@ -177,21 +174,7 @@ main{
   height:100%;
 }
 
-#home .page-content{
-  overflow:hidden;
-}
-
 /* CALENDARIO = NO SCROLL */
-
-#appuntamenti.page.active{
-  overflow:hidden;
-}
-
-.calendar-wrapper{
-  flex:1;
-  min-height:0;
-  overflow:hidden;
-}
 
 .calendar-wrapper iframe{
   width:100%;
@@ -201,11 +184,7 @@ main{
 
 /* HEADER PAGINA */
 
-.page-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
+
 
 
 /* =========================================================
@@ -919,7 +898,8 @@ input.targa {
   display: block;
 }
 
-#home .page-content{
+#home .page-content
+padding:0 10px;
 overflow:hidden !important;
 }
 
@@ -949,9 +929,9 @@ overflow:hidden !important;
 }
 
 .calendar-wrapper{
-height:calc(100vh - 130px);
-display:block;
-overflow:hidden;
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
 }
 
 .calendar-wrapper iframe{
@@ -962,7 +942,10 @@ border:0;
 
 #appuntamenti.page.active{
 flex:1;
-overflow:hidden;
+}
+
+#appuntamenti .calendar-full{
+  width:100%;
 }
 
 iframe[src*="googleusercontent"],
@@ -1191,6 +1174,11 @@ a#targaLink:hover {
   margin-top: 45px;
 }
 
+#clienti .page-content{
+  overflow:auto;
+  padding:0 10px 40px;
+}
+
 @keyframes spinLogo {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
@@ -1211,6 +1199,16 @@ a#targaLink:hover {
 
 #schede .page-content > button {
   margin-bottom: 30px; /* 🔧 aumenta o diminuisci questo valore */
+}
+
+#schede .page-content{
+  display:flex;
+  flex-direction:column;
+}
+
+#listaSchede{
+  overflow:auto;
+  flex:1;
 }
 
 .schede-left,
@@ -1796,6 +1794,16 @@ font-size:14px;
   background: #aaa;
 }
 
+#ordini .page-content{
+  display:flex;
+  flex-direction:column;
+}
+
+#ordiniContainer{
+  overflow:auto;
+  flex:1;
+}
+
 /* Pulsante vocale CENTRATO nella sezione */
 
 #listaOrdini {
@@ -2197,9 +2205,11 @@ font-size:14px;
 .revisioni-header{ 
    display:flex; flex-direction:column; 
    align-items:flex-start; gap:10px; 
+   margin-bottom:20px;
 } 
 .input-revisioni{ 
-   width:260px; max-width:100%; 
+   width:260px; max-width:100%;
+   margin-bottom:10px;
 } 
 .revisione-card{
 
