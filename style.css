@@ -168,10 +168,9 @@ main{
 }
 
 #home.page.active{
-  overflow:hidden;
   display:flex;
   flex-direction:column;
-  height:100%;
+  flex:1;
 }
 
 /* CALENDARIO = NO SCROLL */
@@ -467,6 +466,9 @@ input.targa {
   gap: 20px;
   height:100%;
   overflow:hidden;
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
 }
 
 .home-block.today {
@@ -932,6 +934,7 @@ overflow:hidden !important;
   width:100%;
   max-width:1200px;
   margin:0 auto;
+  height:calc(100vh - 120px);
 }
 
 .calendar-wrapper iframe{
@@ -1176,6 +1179,8 @@ a#targaLink:hover {
 
 #clienti .page-content{
   overflow:auto;
+  max-width:1200px;
+  margin:0 auto;
   padding:0 10px 40px;
 }
 
@@ -1190,11 +1195,13 @@ a#targaLink:hover {
    10. SCHEDE
 ========================================================= */
 
-.schede-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 28px;
+.schede-header{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto 20px auto;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 #schede .page-content > button {
@@ -1797,6 +1804,8 @@ font-size:14px;
 #ordini .page-content{
   display:flex;
   flex-direction:column;
+  max-width:1200px;
+  margin:0 auto;
 }
 
 #ordiniContainer{
@@ -1808,6 +1817,8 @@ font-size:14px;
 
 #listaOrdini {
   margin-top: 30px;
+  max-width:900px;
+  margin:30px auto 0 auto;
 }
 
 
@@ -2211,6 +2222,17 @@ font-size:14px;
    width:260px; max-width:100%;
    margin-bottom:10px;
 } 
+
+#revisioni .page-content{
+  max-width:1200px;
+  margin:0 auto;
+}
+
+.revisioni-list{
+  max-width:900px;
+  margin:0 auto;
+}
+
 .revisione-card{
 
   display:grid;
