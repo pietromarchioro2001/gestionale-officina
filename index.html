@@ -26,10 +26,7 @@ OneSignalDeferred.push(async function(OneSignal) {
   
     serviceWorkerPath: "/gestionale-officina/OneSignalSDKWorker.js",
     serviceWorkerParam: { scope: "/gestionale-officina/" },
-  
-    notifyButton: {
-      enable: true
-    }
+
   });
 
   await OneSignal.Notifications.requestPermission();
