@@ -29,10 +29,11 @@ let ORDINI_CACHE = null;
 
 function toggleMicIndicator(state) {
 
-  document.querySelectorAll("#micIndicator")
-    .forEach(el => {
-      el.classList.toggle("active", state);
-    });
+  const mic1 = document.getElementById("micOrdini");
+  const mic2 = document.getElementById("micAssistente");
+
+  if (mic1) mic1.classList.toggle("hidden", !state);
+  if (mic2) mic2.classList.toggle("hidden", !state);
 
 }
 
