@@ -25,25 +25,15 @@ OneSignalDeferred.push(async function(OneSignal) {
     appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
   });
 
-  // 🔥 FORZA richiesta permessi
-  const permission = await OneSignal.Notifications.requestPermission();
+  await OneSignal.Notifications.requestPermission();
 
-  console.log("Permission:", permission);
+  const pushId = OneSignal.User.PushSubscription.id;
 
-  // 🔥 CONTROLLA SE VERAMENTE ISCRITTO
-  const optedIn = await OneSignal.User.PushSubscription.optedIn;
-  console.log("OptedIn:", optedIn);
+  console.log("SUB ID:", pushId);
 
-  if (!optedIn) return;
+  if(!pushId) return;
 
-  // 🔥 PRENDI VERO SUBSCRIPTION ID
-  const subId = await OneSignal.User.PushSubscription.id;
-
-  console.log("SUB ID:", subId);
-
-  if (!subId) return;
-
-  callBackend("salvaPushId", [{id: subId}]);
+  callBackend("salvaPushId", [{id: pushId}]);
 
 });
 </script>
