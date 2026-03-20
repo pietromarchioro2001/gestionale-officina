@@ -155,13 +155,19 @@ main{
 .page-content{
   flex:1;
   min-height:0;
-  overflow:auto; /* scroll SOLO QUI */
+  overflow:auto;
+  max-width:1200px;
+  margin:0 auto;
+  width:100%;
 }
 
 /* HOME = NO SCROLL */
 
 #home.page.active{
   overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  height:100%;
 }
 
 #home .page-content{
@@ -675,6 +681,7 @@ input.targa {
 .home-appointments {
   height: 220px;
   margin-bottom: 25px;
+  flex:0 0 auto;
 }
 
 .home-appointments h3 {
@@ -703,6 +710,8 @@ input.targa {
   grid-template-rows: auto auto;
   gap: 25px;
   margin-top: 20px;      /* abbassa tutto */
+  flex:1;
+  min-height:0;
 }
 
 /* CARD SEZIONE */
@@ -2414,13 +2423,14 @@ overflow-x:hidden;
 }
 
 .page-title {
-  font-size: 21px;
+  font-size: 20px;
   letter-spacing: 0.5px;
 }
 
 .page-header {
   margin-top:8px !important;
   margin-bottom:18px !important;
+  padding:6px 10px 0 10px;
 }
 
 .topbar{
