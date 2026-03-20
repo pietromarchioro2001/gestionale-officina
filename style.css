@@ -120,11 +120,9 @@ html, body {
 
 main{
 margin-top:70px;
-height:calc(100vh - 70px);
-padding:0;
+min-height:calc(100vh - 70px);
 display:flex;
 flex-direction:column;
-overflow:hidden;
 }
 
 .page {
@@ -163,7 +161,9 @@ overflow:hidden;
   max-width: 1200px;
   margin: 0 auto;
   padding:16px;
+  flex:1;
   overflow:auto;
+  min-height:0;
 }
 
 .page > * {
@@ -174,7 +174,7 @@ overflow:hidden;
 }
 
 #home.page.active{
-height:100%;
+height:calc(100vh - 70px);
 overflow:hidden;
 }
 
@@ -2491,7 +2491,17 @@ font-size:14px;
 
 @media (max-width: 768px) {
 
-   .page-title {
+*{
+box-sizing:border-box;
+}
+
+.page{
+width:100%;
+max-width:100%;
+overflow-x:hidden;
+}
+
+.page-title {
   font-size: 21px;
   letter-spacing: 0.5px;
 }
@@ -2522,6 +2532,7 @@ margin-top:4px;
 main{
 margin-top:60px;
 min-height:calc(100dvh - 60px);
+padding:12px;
 }
 
  .btn-refresh:active {
@@ -2768,6 +2779,10 @@ font-size:18px;
   #ricercaClientePopup {
     height: 50px;
     font-size: 17px;
+  }
+
+  #clienti.page.active{
+  overflow:auto;
   }
 
    
