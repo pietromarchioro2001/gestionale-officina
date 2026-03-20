@@ -25,15 +25,19 @@ OneSignalDeferred.push(async function(OneSignal) {
     appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
   });
 
-  await OneSignal.Notifications.requestPermission();
+  const permission = await OneSignal.Notifications.requestPermission();
 
-  const externalId = crypto.randomUUID();
+  if(permission !== "granted") return;
 
-  await OneSignal.login(externalId);
+  const sub = OneSignal.User.PushSubscription;
 
-  console.log("External ID:", externalId);
+  const pushId = sub.id;
 
-  callBackend("salvaPushId", [{id: externalId}]);
+  console.log("Subscription ID:", pushId);
+
+  if(!pushId) return;
+
+  callBackend("salvaPushId", [{id: pushId}]);
 
 });
 </script>
