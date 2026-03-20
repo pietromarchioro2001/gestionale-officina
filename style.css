@@ -134,6 +134,7 @@ main{
   display:flex;
   flex-direction:column;
   overflow:hidden;
+  align-items:center;
 }
 
 /* PAGINE */
@@ -143,6 +144,8 @@ main{
   flex:1;
   min-height:0;
   overflow:hidden;
+  width:100%;
+  max-width:1200px;
 }
 
 .page.active{
@@ -161,7 +164,18 @@ main{
   width:100%;
 }
 
+.page-header,
+.page-content,
+.calendar-wrapper{
+  max-width:1200px;
+  width:100%;
+
 /* HOME = NO SCROLL */
+
+#home{
+  width:100%;
+  max-width:1200px;
+}
 
 #home.page.active{
   overflow:hidden;
@@ -2428,7 +2442,7 @@ overflow-x:hidden;
 }
 
 .page-header {
-  margin-top:8px !important;
+  margin-top:12px !important;
   margin-bottom:18px !important;
   padding:6px 10px 0 10px;
 }
