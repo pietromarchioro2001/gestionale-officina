@@ -118,19 +118,20 @@ html, body {
    (main, page, section, header)
 ========================================================= */
 
-main {
-  margin-top:70px;
-  padding:16px;
-  min-height:calc(100dvh - 70px);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
+main{
+margin-top:70px;
+height:calc(100vh - 70px);
+padding:12px 16px;
+display:flex;
+flex-direction:column;
+overflow:hidden;
 }
 
 .page {
   display: none;
   flex-direction: column;
   width: 100%;
+  min-height:0;
 }
 
 .page.active {
@@ -171,7 +172,7 @@ main {
 }
 
 #home.page.active{
-flex:1;
+height:100%;
 overflow:hidden;
 }
 
@@ -560,6 +561,8 @@ input.targa {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   grid-template-rows: auto 1fr 1fr;
   gap: 20px;
+  height:100%;
+  overflow:hidden;
 }
 
 .home-block.today {
@@ -2487,8 +2490,8 @@ font-size:14px;
 }
 
 .page-header {
-  margin-top: 22px !important;
-  margin-bottom: 22px !important;
+  margin-top:8px !important;
+  margin-bottom:18px !important;
 }
 
 .topbar{
