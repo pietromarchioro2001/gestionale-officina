@@ -27,13 +27,13 @@ OneSignalDeferred.push(async function(OneSignal) {
 
   await OneSignal.Notifications.requestPermission();
 
-  const pushId = OneSignal.User.onesignalId;
+  const externalId = crypto.randomUUID();
 
-  console.log("OneSignal Player ID:", pushId);
+  await OneSignal.login(externalId);
 
-  if(!pushId) return;
+  console.log("External ID:", externalId);
 
-  callBackend("salvaPushId", [{id: pushId}]);
+  callBackend("salvaPushId", [{id: externalId}]);
 
 });
 </script>
