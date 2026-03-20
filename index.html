@@ -22,23 +22,17 @@ window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function(OneSignal) {
 
   await OneSignal.init({
-    appId: "6045b276-3e22-4a12-8f45-641cfc8990ff",
-  
-    serviceWorkerPath: "/gestionale-officina/OneSignalSDKWorker.js",
-    serviceWorkerParam: { scope: "/gestionale-officina/" },
-
+    appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
   });
 
   await OneSignal.Notifications.requestPermission();
 
-  // 🔔 OTTIENE ID DISPOSITIVO
   const pushId = await OneSignal.User.PushSubscription.id;
 
   console.log("OneSignal Push ID:", pushId);
 
   if(!pushId) return;
 
-  // 🔔 INVIA ID AL BACKEND
   callBackend("salvaPushId", [{id: pushId}]);
 
 });
