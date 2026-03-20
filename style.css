@@ -241,30 +241,37 @@ main {
   overflow: hidden; /* niente scroll esterno */
 }
 
-.mic-indicator {
-  display: none;
-  margin-left: 12px;
-  color: #ff3b3b;
-
-  animation: micBlink 1.2s infinite;
+.mic-indicator{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-left:10px;
 }
 
-.mic-indicator svg {
-  width: 26px;
-  height: 26px;
-  fill: currentColor;
-
-  filter: drop-shadow(0 0 4px rgba(255,0,0,0.4));
+.rec-dot{
+  width:12px;
+  height:12px;
+  background:#ff2b2b;
+  border-radius:50%;
+  animation:recBlink 1s infinite;
+  box-shadow:0 0 0 rgba(255,43,43,0.7);
 }
 
-.mic-indicator.active {
-  display: inline-flex;
-}
-
-@keyframes micBlink {
-  0% { opacity: 1; transform: scale(1); }
-  50% { opacity: .4; transform: scale(1.15); }
-  100% { opacity: 1; transform: scale(1); }
+@keyframes recBlink{
+  0%{
+    transform:scale(1);
+    opacity:1;
+    box-shadow:0 0 0 0 rgba(255,43,43,0.7);
+  }
+  70%{
+    transform:scale(1.3);
+    opacity:0.6;
+    box-shadow:0 0 0 8px rgba(255,43,43,0);
+  }
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
 }
 
 
