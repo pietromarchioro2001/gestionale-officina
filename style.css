@@ -130,27 +130,21 @@ body{
 
 main{
   margin-top:70px;
-  height:calc(100vh - 70px);
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  align-items:center;
+  min-height:calc(100vh - 70px);
+  display:block;
 }
 
 /* PAGINE */
 
 .page{
   display:none;
-  flex:1;
-  min-height:0;
-  overflow:hidden;
   width:100%;
 }
 
 .page.active{
-  display:flex;
-  flex-direction:column;
+  display:block;
 }
+
 
 /* CONTENUTO STANDARD */
 
@@ -173,7 +167,7 @@ main{
 
 #home{
   width:100%;
-  max-width:1200px;
+  max-width:none;
 }
 
 #home.page.active{
@@ -2416,6 +2410,18 @@ font-size:14px;
   .home-appointments {
     height: 190px;
     flex: 1.4;
+  }
+}
+
+@media (max-width: 1600px){
+  body{
+    zoom:0.9;
+  }
+}
+
+@media (max-width: 1400px){
+  body{
+    zoom:0.85;
   }
 }
 
