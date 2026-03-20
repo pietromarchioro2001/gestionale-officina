@@ -120,7 +120,7 @@ html, body {
 html, body{
   height:100%;
   margin:0;
-  overflow:hidden; /* ROOT NON SCROLLA MAI */
+  overflow-x:hidden; /* ROOT NON SCROLLA MAI */
 }
 
 body{
@@ -145,7 +145,6 @@ main{
   min-height:0;
   overflow:hidden;
   width:100%;
-  max-width:1200px;
 }
 
 .page.active{
@@ -209,8 +208,9 @@ main{
 /* HEADER PAGINA */
 
 .page-header{
-  flex-shrink:0;
-  padding:18px 16px 0 16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
 }
 
 
@@ -955,7 +955,7 @@ overflow:hidden !important;
 }
 
 .calendar-wrapper{
-height:calc(100vh - 160px);
+height:calc(100vh - 130px);
 display:block;
 overflow:hidden;
 }
