@@ -2999,24 +2999,20 @@ font-size:18px;
  /* ================= ASSISTENTE MOBILE FIX REALE ================= */
 
 #assistente{
-  position:fixed;
-  inset:0;
+  position: fixed;
+  inset: 0;
 
-  width:100vw;
-  height:100dvh;
+  width: 100vw;
+  height: 100dvh;
 
-  display:none;
-  flex-direction:column;
+  display: none;
+  flex-direction: column;
 
-  background:var(--bg);
+  background: var(--bg);
+  z-index: 9999;
 
-  margin:0;
-  padding:0;
-
-  border-radius:0;
-  overflow:hidden;
-
-  z-index:9999;
+  margin: 0;
+  padding: 0;
 }
 
 #assistente.active{
