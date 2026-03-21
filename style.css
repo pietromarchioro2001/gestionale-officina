@@ -1592,10 +1592,25 @@ a#targaLink:hover {
 .ordine-row {
   width:100%;
   background:white;
-  border-radius:14px;
-  padding:22px 26px;
+  border-radius:18px;
+  padding:26px 28px;
+  margin-bottom:20px;
+  box-shadow:0 8px 22px rgba(0,0,0,0.06);
+}
+
+.ordine-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
   margin-bottom:18px;
-  box-shadow:0 6px 16px rgba(0,0,0,0.06);
+}
+
+.ordine-title{
+  flex:1;
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+  letter-spacing:0.5px;
 }
 
 .ordine-row:hover {
@@ -1606,8 +1621,32 @@ a#targaLink:hover {
   position: absolute;
   top: 14px;
   left: 14px;
+  width:20px;
+  height:20px;
 }
 
+.ordine-body{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+/* SELECT */
+
+.ordine-body select{
+  flex:1;
+  height:44px;
+  border-radius:10px;
+}
+
+/* BUTTON INVIA */
+
+.ordine-invia{
+  width:180px;
+  height:44px;
+  border-radius:10px;
+  font-weight:700;
+}
 /* HEADER */
 
 .ordini-header-top{
@@ -2848,10 +2887,14 @@ font-size:18px;
   max-width: 300px;     /* 🔥 larghezza visiva corretta */
 }
 
-.ordine-invia{
-  width: 100%;
-  max-width: 300px;
-}
+.ordine-body{
+    flex-direction:column;
+    align-items:stretch;
+  }
+
+  .ordine-invia{
+    width:100%;
+  }
    
    /* ================= SCHEDE ================= */
    
