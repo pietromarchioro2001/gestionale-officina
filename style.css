@@ -1603,6 +1603,7 @@ a#targaLink:hover {
   align-items:center;
   justify-content:space-between;
   margin-bottom:18px;
+  position:relative;
 }
 
 .ordine-title{
@@ -1610,7 +1611,6 @@ a#targaLink:hover {
   text-align:center;
   font-size:20px;
   font-weight:700;
-  letter-spacing:0.5px;
 }
 
 .ordine-row:hover {
@@ -1618,11 +1618,10 @@ a#targaLink:hover {
 }
 
 .ordine-check {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width:20px;
-  height:20px;
+  width:18px;
+  height:18px;
+  margin-right:12px;
+  flex-shrink:0;
 }
 
 .ordine-body{
@@ -1855,9 +1854,9 @@ a#targaLink:hover {
 }
 
 .ordine-menu{
-  position: absolute;
-  top: 14px;
-  right: 14px;
+  width:40px;
+  display:flex;
+  justify-content:flex-end;
 }
 
 .ordine-menu-btn{
