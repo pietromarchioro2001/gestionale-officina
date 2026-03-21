@@ -3190,7 +3190,14 @@ html, body {
 
 }
 
-
+@media (max-width: 1600px){ 
+   body{ zoom:0.9; 
+   } 
+}
+@media (max-width: 1400px){ 
+   body{ zoom:0.85; 
+   } 
+}
 
 
 
