@@ -445,15 +445,52 @@ OneSignalDeferred.push(async function(OneSignal) {
       </button>
     </div>
 
-    <div id="listaOrdini"></div>
+    <div id="listaOrdini">
 
-  <button id="btnOrdineVocale" onclick="avviaOrdineVocale()">
-  <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-    <path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"/>
-    <path d="M19 11a7 7 0 01-14 0H3a9 9 0 0018 0h-2z"/>
-    <path d="M11 19h2v3h-2z"/>
-  </svg>
-</button>
+      <!-- ESEMPIO CARD ORDINE -->
+      <div class="ordine-row">
+
+        <div class="ordine-top">
+          <input type="checkbox" class="ordine-check">
+
+          <div class="ordine-title">
+            test
+          </div>
+
+          <div class="ordine-menu">
+            <button class="ordine-menu-btn">⋮</button>
+          </div>
+        </div>
+
+        <div class="ordine-body">
+          <select>
+            <option>Cliente</option>
+          </select>
+
+          <select>
+            <option>Seleziona veicolo</option>
+          </select>
+
+          <select>
+            <option>Fornitore</option>
+          </select>
+
+          <button class="ordine-invia">
+            INVIA
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <button id="btnOrdineVocale" onclick="avviaOrdineVocale()">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+        <path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3z"/>
+        <path d="M19 11a7 7 0 01-14 0H3a9 9 0 0018 0h-2z"/>
+        <path d="M11 19h2v3h-2z"/>
+      </svg>
+    </button>
 
   </div>
 
