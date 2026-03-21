@@ -1169,10 +1169,18 @@ a#targaLink:hover {
 }
 
 #clienti .page-content{
-  overflow:auto;
   max-width:1200px;
   margin:0 auto;
-  padding:0 10px 40px;
+  padding:0 20px 40px;
+
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
+#clienti form{
+  overflow:auto;
+  flex:1;
 }
 
 @keyframes spinLogo {
