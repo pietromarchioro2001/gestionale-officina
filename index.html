@@ -421,27 +421,26 @@ OneSignalDeferred.push(async function(OneSignal) {
  <!-- ================= ORDINI ================= -->
 <section id="ordini" class="page">
 
-  <div class="page-header">
+  <div class="page-header ordini-header-top">
     <h2 class="page-title">
       ORDINI
       <span id="micOrdini" class="mic-indicator hidden">
         <span class="rec-dot"></span>
       </span>
     </h2>
-    <button class="refresh-btn" onclick="refreshOrdini(this)">
 
-    <svg viewBox="0 0 24 24" class="icon-svg">
-        <path d="M20 12a8 8 0 1 1-2.34-5.66" />
-        <path d="M20 4v6h-6" />
+    <button class="icon-btn btn-refresh-ordini" onclick="refreshOrdini(this)">
+      <svg viewBox="0 0 24 24" class="icon-svg">
+        <path d="M20 12a8 8 0 1 1-2.34-5.66"/>
+        <path d="M20 4v6h-6"/>
       </svg>
-
-  </button>
+    </button>
   </div>
 
   <div class="page-content">
 
-    <div class="ordini-actions">
-      <button class="btn-nuovo" onclick="nuovoOrdine()">
+    <div class="ordini-toolbar">
+      <button class="btn-nuovo-ordine" onclick="nuovoOrdine()">
         ➕ Nuovo ordine
       </button>
     </div>
