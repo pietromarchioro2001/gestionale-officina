@@ -393,21 +393,27 @@ OneSignalDeferred.push(async function(OneSignal) {
   <!-- ================= SCHEDE ================= -->
   <section id="schede" class="page">
 
-  <div class="page-header">
+  <div class="page-header schede-header-top">
     <h2 class="page-title">SCHEDE</h2>
-    <button class="refresh-btn" onclick="refreshSchede(this)">
 
-    <svg viewBox="0 0 24 24" class="icon-svg">
+    <button class="icon-btn btn-refresh-schede" onclick="refreshSchede(this)">
+      <svg viewBox="0 0 24 24" class="icon-svg">
         <path d="M20 12a8 8 0 1 1-2.34-5.66" />
         <path d="M20 4v6h-6" />
       </svg>
-
-  </button>
+    </button>
   </div>
 
   <div class="page-content">
-    <button onclick="apriAssistente()">➕ Nuova scheda</button>
+
+    <div class="schede-toolbar">
+      <button class="btn-nuova-scheda" onclick="apriAssistente()">
+        ➕ Nuova scheda
+      </button>
+    </div>
+
     <div id="listaSchede"></div>
+
   </div>
 
 </section>
