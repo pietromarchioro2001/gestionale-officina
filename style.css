@@ -1601,9 +1601,12 @@ a#targaLink:hover {
 .ordine-top{
   display:grid;
   grid-template-columns: auto 1fr auto;
-  align-items:center;        /* centra verticalmente */
-  min-height:42px;           /* altezza coerente */
+  align-items:center;
+  min-height:42px;
   margin-bottom:14px;
+
+  padding-left:14px;   /* ← QUESTO è il fix vero */
+  padding-right:8px;
 }
 
 .ordine-title{
