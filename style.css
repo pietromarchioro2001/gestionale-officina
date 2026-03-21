@@ -164,7 +164,6 @@ main{
 #home.page.active{
   display:flex;
   flex-direction:column;
-  flex:1;
 }
 
 /* CALENDARIO = NO SCROLL */
