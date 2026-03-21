@@ -2567,59 +2567,56 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
     row.className = "ordine-row";
 
     row.innerHTML = `
-    
-      <!-- CHECKBOX -->
-      <div class="ordine-check">
-        <input type="checkbox"
-          ${o.check ? "checked" : ""}
-          onchange="onToggleCheckbox(${o.row}, this.checked)">
-      </div>
-    
-      <!-- DESCRIZIONE -->
-      <div class="ordine-descr"
-           onclick="editDescrizione(this, ${o.row})">
-        ${o.descrizione || "Scrivi descrizione ordine…"}
-      </div>
-    
-      <!-- SELECT -->
-      <div class="ordine-select-group">
-    
-        <select class="ordine-select"
-          onchange="onChangeCliente(${o.row}, this.value)">
-          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
-          ${clienti.map(c => `
-            <option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>
-          `).join("")}
-        </select>
-    
-        ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
-    
-        ${fornitoreHtml(o, fornitori)}
-    
-      </div>
-    
-      <!-- INVIA -->
-      <button class="ordine-invia"
-              onclick="inviaOrdine(${o.row}, this)">
-        INVIA
+
+  <div class="ordine-top">
+
+    <input type="checkbox"
+      class="ordine-check"
+      ${o.check ? "checked" : ""}
+      onchange="onToggleCheckbox(${o.row}, this.checked)">
+
+    <div class="ordine-title"
+         onclick="editDescrizione(this, ${o.row})">
+      ${o.descrizione || "Scrivi descrizione ordine…"}
+    </div>
+
+    <div class="ordine-menu">
+      <button class="ordine-menu-btn"
+              onclick="toggleMenu(this)">
+        ⋮
       </button>
-    
-      <!-- MENU (UGUALE ALLE SCHEDE) -->
-      <div class="ordine-menu">
-        <button class="ordine-menu-btn"
-                onclick="toggleMenu(this)">
-          ⋮
+
+      <div class="ordine-menu-popup">
+        <button class="ordine-delete"
+                onclick="eliminaOrdine(${o.row})">
+          Elimina
         </button>
-    
-        <div class="ordine-menu-popup">
-          <button class="ordine-delete"
-                  onclick="eliminaOrdine(${o.row})">
-            Elimina
-          </button>
-        </div>
       </div>
-    
-    `;
+    </div>
+
+  </div>
+
+  <div class="ordine-body">
+
+    <select class="ordine-select"
+      onchange="onChangeCliente(${o.row}, this.value)">
+      <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
+      ${clienti.map(c => `
+        <option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>
+      `).join("")}
+    </select>
+
+    ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
+
+    ${fornitoreHtml(o, fornitori)}
+
+    <button class="ordine-invia"
+            onclick="inviaOrdine(${o.row}, this)">
+      INVIA
+    </button>
+
+  </div>
+`;
     fragment.appendChild(row);
 
   });
