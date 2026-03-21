@@ -1997,8 +1997,7 @@ font-size:14px;
   padding: 20px 28px;
   background: linear-gradient(90deg, #1e1e1e, #242424);
   color: white;
-  border-top-left-radius: 22px;
-  border-top-right-radius: 22px;
+  border-radius:0;
 }
 
 .assistente {
@@ -2190,21 +2189,24 @@ font-size:14px;
 }
 
 #assistente {
-
   position: fixed;
   inset: 0;
-
   display: none;
   flex-direction: column;
-
   background: var(--bg);
   z-index: 2000;
-
-  align-items: center;   /* 🔥 centra orizzontalmente */
+  align-items: stretch;   /* ✅ FULL WIDTH */
 }
 
 #assistente.active {
   display: flex;
+}
+
+#assistente.active .assistente {
+  width:100%;
+  height:100%;
+  max-width:none;
+  border-radius:0;
 }
 
 #assistenteInput {
