@@ -1156,6 +1156,16 @@ a#targaLink:hover {
   text-decoration: underline;
 }
 
+.clienti-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.btn-delete-clienti{
+  margin-top:46px;   /* altezza per allinearlo a Ricerca */
+}
+
 #clienti input,
 #clienti select,
 #clienti textarea {
