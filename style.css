@@ -10,7 +10,6 @@
   --accent-dark: #1b5e20;
 }
 
-
 /* =========================================================
    2. RESET / BASE HTML-BODY
 ========================================================= */
@@ -160,11 +159,6 @@ main{
   width:100%;
   max-width:1200px;
   margin:20px auto 10px auto;
-}
-
-#home{
-  width:100%;
-  max-width:none;
 }
 
 #home.page.active{
