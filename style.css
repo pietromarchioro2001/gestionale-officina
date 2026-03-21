@@ -1627,8 +1627,9 @@ a#targaLink:hover {
 
 .ordine-body{
   display:flex;
-  gap:18px;
   align-items:center;
+  padding-left:14px;     /* spazio dalla card */
+  padding-right:10px;    /* spazio da INVIA */
 }
 
 /* SELECT */
@@ -1637,6 +1638,7 @@ a#targaLink:hover {
   flex:1;
   height:44px;
   border-radius:10px;
+  margin-right:10px;
 }
 
 /* BUTTON INVIA */
@@ -1646,6 +1648,7 @@ a#targaLink:hover {
   height:44px;
   border-radius:10px;
   font-weight:700;
+  margin-left:auto;
 }
 /* HEADER */
 
