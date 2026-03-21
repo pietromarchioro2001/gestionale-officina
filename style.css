@@ -2346,31 +2346,28 @@ font-size:14px;
   margin:0 auto;
 }
 
-.revisioni-list{
-  max-width:900px;
-  margin:0 auto;
-}
-
 .revisione-card{
 
   display:grid;
 
   grid-template-columns:
-    50px      /* calendario */
-    240px     /* cliente */
-    1fr       /* veicolo */
-    140px     /* data */
-    160px;    /* bottone */
+    50px
+    240px
+    1fr
+    140px
+    160px;
 
   align-items:center;
   gap:18px;
 
   background:white;
-  padding:18px 22px;
+  padding:18px 24px;
   border-radius:14px;
   margin-bottom:14px;
 
-  box-shadow:0 6px 16px rgba(0,0,0,0.06);
+  box-shadow:0 4px 12px rgba(0,0,0,0.05);
+
+  width:100%;
 }
 .revisione-card.scaduta{ 
    background: rgba(229, 57, 53, 0.18); 
@@ -2466,6 +2463,17 @@ font-size:14px;
 } 
 .btn-cal:hover svg{ 
    stroke:#000; 
+}
+
+#revisioni .page-content{
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+
+#listaRevisioni{
+  width:100%;
 }
 
 /* =========================================================
