@@ -2341,11 +2341,6 @@ font-size:14px;
    margin-bottom:10px;
 } 
 
-#revisioni .page-content{
-  max-width:1200px;
-  margin:0 auto;
-}
-
 .revisione-card{
 
   display:grid;
@@ -2468,8 +2463,14 @@ font-size:14px;
 #revisioni .page-content{
   max-width:1200px;
   margin:0 auto;
-  display:flex;
+  display:block;
   flex-direction:column;
+}
+
+.revisioni-wrapper{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
 }
 
 #listaRevisioni{
@@ -2558,18 +2559,6 @@ font-size:14px;
   .home-appointments {
     height: 190px;
     flex: 1.4;
-  }
-}
-
-@media (max-width: 1600px){
-  body{
-    zoom:0.9;
-  }
-}
-
-@media (max-width: 1400px){
-  body{
-    zoom:0.85;
   }
 }
 
