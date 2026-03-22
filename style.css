@@ -2679,19 +2679,20 @@ display:none;
 .home-appointments{
   height:auto;
   min-height:unset;
-  max-height:70px;   /* ⭐ spazio massimo teaser */
+  margin:8px 0 10px;
+  max-height:90px;     /* ⭐ più aria ma controllata */
   overflow:hidden;
-  margin:4px 0 6px;
   padding:0;
 }
 
 .appointments-list{
-  max-height:50px;
+  max-height:70px;
   overflow:hidden;
 }
 
 .home-appointments h3{
-  font-size:13px;
+  margin-bottom:4px;
+  font-size:14px;
   margin:0 0 2px;
 }
 
