@@ -29,7 +29,7 @@ OneSignalDeferred.push(async function(OneSignal) {
 
   await OneSignal.Notifications.requestPermission();
 
-  const pushId = OneSignal.User.PushSubscription.id;
+  const pushId = await OneSignal.User.PushSubscription.getId();
 
   console.log("SUB ID:", pushId);
 
