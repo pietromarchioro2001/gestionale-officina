@@ -33,20 +33,11 @@ OneSignalDeferred.push(async function(OneSignal) {
     await OneSignal.Notifications.requestPermission();
   }
 
+  // LOGIN UTENTE (soluzione definitiva)
+  await OneSignal.login("officina");
+
+  // assicura subscription attiva
   await OneSignal.User.PushSubscription.optIn();
-
-  const subId = await OneSignal.User.PushSubscription.id;
-
-  console.log("SUB ID:", subId);
-
-  if (subId) {
-    callBackend("salvaPushId", [{ id: subId }]);
-  }
-
-  OneSignal.User.PushSubscription.addEventListener("change", async (event) => {
-    console.log("SUB CHANGED:", event.current.id);
-    callBackend("salvaPushId", [{ id: event.current.id }]);
-  });
 
 });
 </script>
