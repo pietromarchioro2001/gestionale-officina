@@ -1659,20 +1659,26 @@ function apriAssistente() {
 function esciAssistente() {
 
   try {
-    recognition?.abort();   // spegne subito
+    recognition?.abort();
   } catch {}
 
   ascoltoAttivo = false;
   botStaParlando = false;
 
-  speechSynthesis.cancel(); // ferma eventuale voce
+  speechSynthesis.cancel();
 
   resetModalitaAssistente();
 
-  showSection("schede");
-  caricaSchede();
+  const assistente = document.getElementById("assistente");
+  assistente.classList.remove("active");   // ⭐ QUESTO MANCAVA
+
+  document.body.style.overflow = "";
+  document.documentElement.style.overflow = "";
 
   document.getElementById("statoSchedaBox")?.classList.add("hidden");
+
+  showSection("schede");
+  caricaSchede();
 }
 
 function resetModalitaAssistente() {
