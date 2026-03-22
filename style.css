@@ -2663,7 +2663,7 @@ display:none;
 #home{
   overflow-x:hidden;
   padding:6px 10px 8px;
-  padding-top:12px;
+  padding-top:2px;
 }
 
 /* titolo */
@@ -2677,17 +2677,18 @@ display:none;
 /* appuntamenti */
 
 .home-appointments{
-  margin-bottom:6px;
+margin:2px 0 4px;
+padding:0;
 }
 
 .home-appointments h3{
-  font-size:14px;
-  margin-bottom:2px;
+margin:0 0 2px;
+font-size:13px;
 }
 
-.appointments-list p{
-  font-size:13px;
-  margin:1px 0;
+.appointments-list{
+font-size:13px;
+line-height:1.25;
 }
 
 /* container sezioni */
@@ -2695,7 +2696,7 @@ display:none;
 .home-modules{
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:6px;
 }
 
 /* card */
