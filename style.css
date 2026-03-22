@@ -1860,6 +1860,7 @@ a#targaLink:hover {
   width:40px;
   display:flex;
   justify-content:flex-end;
+  position: relative; /* 🔥 fondamentale */
 }
 
 .ordine-menu-btn{
@@ -1876,14 +1877,17 @@ color: #777;
 }
 
 .ordine-menu-popup{
-display:none;
-position:absolute;
-right:0;
-top:26px;
-background:#f4f4f4;
-border-radius:12px;
-padding:8px 10px;
-box-shadow:0 6px 14px rgba(0,0,0,0.12);
+position: absolute;
+  top: 100%;        /* sotto il bottone */
+  right: 0;         /* allineato a destra */
+  margin-top: 6px;
+
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+
+  display: none; /* già lo gestisci via JS */
 }
 
 .popup-box input,
