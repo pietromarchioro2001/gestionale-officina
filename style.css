@@ -2616,18 +2616,19 @@ margin-top:4px;
 
 main{
 margin-top:60px;
-min-height:0;
 padding:12px;
-height:100dvh;
+min-height:100dvh;
+height:auto;
 }
 
 #home.page{
-overflow:hidden;
+min-height:100%;
+overflow:auto;
 }
 
 #home.page.active{
-height:calc(100dvh - 60px);
-overflow:hidden;
+height:auto;
+overflow:auto;
 }
 
 .btn-refresh:active {
