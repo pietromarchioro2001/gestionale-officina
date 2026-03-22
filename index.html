@@ -27,15 +27,26 @@ OneSignalDeferred.push(async function(OneSignal) {
     appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
   });
 
-  await OneSignal.Notifications.requestPermission();
+  const perm = await OneSignal.Notifications.permission;
 
-  const pushId = await OneSignal.User.PushSubscription.id;
+  if (perm !== "granted") {
+    await OneSignal.Notifications.requestPermission();
+  }
 
-  console.log("SUB ID:", pushId);
+  await OneSignal.User.PushSubscription.optIn();
 
-  if(!pushId) return;
+  const subId = await OneSignal.User.PushSubscription.id;
 
-  callBackend("salvaPushId", [{id: pushId}]);
+  console.log("SUB ID:", subId);
+
+  if (subId) {
+    callBackend("salvaPushId", [{ id: subId }]);
+  }
+
+  OneSignal.User.PushSubscription.addEventListener("change", async (event) => {
+    console.log("SUB CHANGED:", event.current.id);
+    callBackend("salvaPushId", [{ id: event.current.id }]);
+  });
 
 });
 </script>
