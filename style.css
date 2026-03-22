@@ -2619,7 +2619,7 @@ height:100dvh;
 
 #home.page{
 overflow:hidden;
-}+
+}
 
 #home.page.active{
 height:calc(100dvh - 60px);
@@ -2999,97 +2999,38 @@ font-size:18px;
  /* ================= ASSISTENTE MOBILE FIX REALE ================= */
 
 #assistente{
-  position: fixed;
-  inset: 0;
+  position:fixed;
+  inset:0;
 
-  width: 100vw;
-  height: 100dvh;
+  width:100vw;
+  height:100vh;
 
-  display: none;
-  flex-direction: column;
+  display:none;
+  flex-direction:column;
 
-  background: var(--bg);
-  z-index: 9999;
-
-  margin: 0;
-  padding: 0;
+  background:#f4f4f4;
+  z-index:99999;
 }
 
 #assistente.active{
   display:flex;
 }
 
-/* HEADER */
-
 .assistente-header{
-  flex-shrink:0;
-
   height:56px;
-  padding:0 16px;
-
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-
-  background:#1e1e1e;
-  color:white;
-
-  border-radius:0;
+  flex-shrink:0;
 }
-
-/* CHAT */
 
 .assistente-chat{
   flex:1;
-
-  overflow-y:auto;
-  padding:12px 10px;
-
-  display:flex;
-  flex-direction:column-reverse;
-
-  -webkit-overflow-scrolling:touch;
+  overflow:auto;
+  padding:10px;
 }
-
-/* INPUT BAR */
 
 .assistente-input-row{
   flex-shrink:0;
-
   padding:8px;
-  background:#f0f0f0;
-
-  display:flex;
-  gap:8px;
-}
-
-/* INPUT */
-
-#assistenteInput{
-  flex:1;
-  height:44px;
-
-  border-radius:22px;
-  border:1px solid #ccc;
-
-  padding:0 14px;
-  font-size:15px;
-}
-
-/* MIC BUTTON */
-
-#btnMic{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-}
-
-/* FIX SAFE AREA iPhone */
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .assistente-input-row{
-    padding-bottom: calc(8px + env(safe-area-inset-bottom));
-  }
+  background:#eee;
 }
    
 /* ================= REVISIONI ================= */
