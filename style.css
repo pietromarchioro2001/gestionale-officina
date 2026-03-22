@@ -3017,8 +3017,29 @@ font-size:18px;
 }
 
 .assistente-header{
-  height:56px;
   flex-shrink:0;
+
+  height:64px;          /* ↑ più alto */
+  padding:0 18px;
+
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+
+  background:#1e1e1e;
+  color:white;
+}
+
+.assistente-title{
+  font-size:17px;
+  font-weight:700;
+  transform:translateY(-1px);   /* micro allineamento ottico */
+}
+
+.assistente-close{
+  width:42px;
+  height:42px;
+  font-size:18px;
 }
 
 .assistente-chat{
