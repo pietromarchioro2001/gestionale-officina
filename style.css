@@ -2674,21 +2674,31 @@ display:none;
   text-align:center;
 }
 
-/* appuntamenti */
+/* ===== FIX ALTEZZA APPUNTAMENTI MOBILE ===== */
 
 .home-appointments{
-margin:2px 0 4px;
-padding:0;
-}
-
-.home-appointments h3{
-margin:0 0 2px;
-font-size:13px;
+  height:auto;
+  min-height:unset;
+  max-height:70px;   /* ⭐ spazio massimo teaser */
+  overflow:hidden;
+  margin:4px 0 6px;
+  padding:0;
 }
 
 .appointments-list{
-font-size:13px;
-line-height:1.25;
+  max-height:50px;
+  overflow:hidden;
+}
+
+.home-appointments h3{
+  font-size:13px;
+  margin:0 0 2px;
+}
+
+.appointments-list p{
+  margin:0;
+  font-size:13px;
+  line-height:1.2;
 }
 
 /* container sezioni */
