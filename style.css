@@ -2616,9 +2616,8 @@ margin-top:4px;
 
 main{
 margin-top:60px;
-padding:12px;
-min-height:100dvh;
-height:auto;
+padding:6px 10px 10px;
+height:100dvh;
 }
 
 #home.page{
