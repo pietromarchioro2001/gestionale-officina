@@ -3032,6 +3032,40 @@ font-size:18px;
   padding:8px;
   background:#eee;
 }
+
+#assistente{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+
+  width:100vw;
+  height:100vh;
+
+  display:none;
+  z-index:99999;
+
+  background:#f4f4f4;
+}
+
+#assistente.active{
+  display:flex;
+}
+
+#assistente .assistente{
+  width:100vw !important;
+  height:100vh !important;
+  max-width:none !important;
+  border-radius:0 !important;
+}
+
+@supports (height: 100dvh){
+  #assistente,
+  #assistente .assistente{
+    height:100dvh !important;
+  }
+}
    
 /* ================= REVISIONI ================= */
 
@@ -3066,6 +3100,12 @@ font-size:18px;
 @media (max-width: 1400px){ 
    body{ zoom:0.85; 
    } 
+
+@media (max-width: 900px){
+  body{
+    zoom:1 !important;
+  }
+   
 }
 
 
