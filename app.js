@@ -3838,3 +3838,23 @@ function initRevisioneCliente(){
   });
 
 }
+
+async function verificaBackend(){
+
+  try{
+    await callBackend("ping");   // o qualsiasi funzione GAS
+  }catch(e){
+
+    alert(
+      "⚠️ Connessione backend scaduta.\n\n" +
+      "Apri questo link e autorizza:\n" +
+      API_URL
+    );
+
+  }
+
+}
+
+document.addEventListener("DOMContentLoaded", ()=>{
+  verificaBackend();
+});
