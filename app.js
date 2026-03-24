@@ -3842,17 +3842,35 @@ function initRevisioneCliente(){
 async function verificaBackend(){
 
   try{
-    await callBackend("ping");   // o qualsiasi funzione GAS
+    await callBackend("ping");
   }catch(e){
-
-    alert(
-      "⚠️ Connessione backend scaduta.\n\n" +
-      "Apri questo link e autorizza:\n" +
-      API_URL
-    );
-
+    mostraPopupBackend();
   }
 
+}
+
+function mostraPopupBackend(){
+
+  if(document.getElementById("backendPopup")) return;
+
+  const div = document.createElement("div");
+  div.id = "backendPopup";
+  div.className = "backend-popup";
+
+  div.innerHTML = `
+    <div class="backend-box">
+      <h3>Connessione scaduta</h3>
+      <p>Serve riattivare il backend.</p>
+      <button class="primary" onclick="riattivaBackend()">Riattiva</button>
+    </div>
+  `;
+
+  document.body.appendChild(div);
+
+}
+
+function riattivaBackend(){
+  window.open(API_URL, "_blank");
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
