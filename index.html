@@ -27,17 +27,37 @@ OneSignalDeferred.push(async function(OneSignal) {
     appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
   });
 
+  // 🔐 ID UNICO PER OGNI DISPOSITIVO
+  let userId = localStorage.getItem("onesignal_user_id");
+
+  if (!userId) {
+    userId = "user_" + Math.random().toString(36).slice(2);
+    localStorage.setItem("onesignal_user_id", userId);
+  }
+
+  await OneSignal.login(userId);
+
+  // 🔔 permessi
   const perm = await OneSignal.Notifications.permission;
 
   if (perm !== "granted") {
     await OneSignal.Notifications.requestPermission();
   }
 
-  // LOGIN UTENTE (soluzione definitiva)
-  await OneSignal.login("officina");
-
-  // assicura subscription attiva
   await OneSignal.User.PushSubscription.optIn();
+
+  // 🔥 INVIA SUBSCRIPTION AL BACKEND
+  const subId = OneSignal.User.PushSubscription.id;
+
+  if (subId) {
+    fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        action: "salvaPushId",
+        pushId: subId
+      })
+    });
+  }
 
 });
 </script>
