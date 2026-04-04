@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxUR_SPhdricbUty1px8rWvMSri0vXswjWZcF8x7FJ0Q7xXBqUuEeIY1lRQY7L2tRw/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyKqq4-qwkDUlhrHg7gQ2Kv66nDUfTod5nlswPfJ57LZE-E43w9F8o_Jt8Q-NwAdZF7/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3870,7 +3870,7 @@ function mostraPopupBackend(){
 }
 
 function riattivaBackend(){
-  window.open(API_URL, "_blank");
+  window.open("https://accounts.google.com/AccountChooser?continue=" + encodeURIComponent(API_URL), "_blank");
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
