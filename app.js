@@ -3935,7 +3935,18 @@ async function initPush() {
 
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
+
       console.log("📩 Notifica foreground:", payload);
+    
+      const { title, body } = payload.notification || {};
+    
+      if (!title) return;
+    
+      new Notification(title, {
+        body: body,
+        icon: "/icon-192.png"
+      });
+    
     });
 
     // 🔥 5️⃣ TOKEN
