@@ -3894,13 +3894,13 @@ async function initPush() {
 
   try {
 
-    // 1️⃣ registra service worker
+    // 1️⃣ Service Worker
     const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
     await navigator.serviceWorker.ready;
 
     console.log("✅ SW pronto");
 
-    // 2️⃣ permesso notifiche
+    // 2️⃣ Permesso notifiche
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
@@ -3908,10 +3908,33 @@ async function initPush() {
       return;
     }
 
-    // 3️⃣ IMPORT DINAMICO (FONDAMENTALE)
-    const { getToken } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+    // 3️⃣ Firebase init
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    const { getMessaging, getToken, onMessage } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
 
-    const token = await getToken(window.messaging, {
+    const firebaseConfig = {
+      apiKey: "AIza...",
+      authDomain: "goldencar-notifiche.firebaseapp.com",
+      projectId: "goldencar-notifiche",
+      messagingSenderId: "932662604015",
+      appId: "1:932662604015:web:2d3a38bcbdd9c12253ab1a"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
+    onMessage(messaging, (payload) => {
+      console.log("📩 Notifica foreground:", payload);
+
+      new Notification(payload.notification.title, {
+        body: payload.notification.body,
+        icon: "/icon-192.png"
+      });
+    });
+
+    // 🔥 5️⃣ TOKEN
+    const token = await getToken(messaging, {
       vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
       serviceWorkerRegistration: registration
     });
@@ -3923,7 +3946,7 @@ async function initPush() {
       return;
     }
 
-    // 4️⃣ salva backend
+    // 6️⃣ Salvataggio backend
     await fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -3939,5 +3962,4 @@ async function initPush() {
   }
 }
 
-// avvio automatico
 initPush();
