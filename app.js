@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxQoT-zmYSnhpxQEPStxrv6D71F_ilwWs1Nkp69r28Zw9IOvHMcDKda1rlBHiOU1mb8/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxq409AcnCMjmjxW5DmaYSGjnDv9rb0nJ9uCQbQexVIqjiJZj-8zbsZHC29u9dq4_T4/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3937,6 +3937,9 @@ async function initPush() {
     onMessage(messaging, (payload) => {
 
       console.log("📩 Notifica foreground:", payload);
+    
+      // 🔥 evita doppioni
+      if (document.visibilityState !== "visible") return;
     
       const { title, body } = payload.notification || {};
     
