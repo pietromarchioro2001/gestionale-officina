@@ -3911,7 +3911,7 @@ async function initPush() {
     }
 
     // 2️⃣ service worker
-    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    const registration = await navigator.serviceWorker.register("/gestionale-officina/firebase-messaging-sw.js");
 
     // 3️⃣ ottieni token
     const token = await messaging.getToken({
