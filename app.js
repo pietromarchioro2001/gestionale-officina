@@ -3885,23 +3885,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 
 // ==========================
-// 🔥 FIREBASE INIT
-// ==========================
-
-const firebaseConfig = {
-  apiKey: "AIzaSyC4OPs05sPxSb5H6LQSwV9b4-bMrGfMYjY",
-  authDomain: "goldencar-notifiche.firebaseapp.com",
-  projectId: "goldencar-notifiche",
-  storageBucket: "goldencar-notifiche.firebasestorage.app",
-  messagingSenderId: "932662604015",
-  appId: "1:932662604015:web:2d3a38bcbdd9c12253ab1a"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const messaging = firebase.messaging();
-
-// ==========================
 // 🔔 REGISTRA DISPOSITIVO
 // ==========================
 
