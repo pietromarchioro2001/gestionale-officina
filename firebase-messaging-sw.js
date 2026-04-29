@@ -52,6 +52,10 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+
+  // 🔥 NON toccare richieste Firebase
+  if (event.request.url.includes("firebase")) return;
+
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
   );
