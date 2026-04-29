@@ -3920,8 +3920,17 @@ async function initPush() {
       appId: "1:932662604015:web:2d3a38bcbdd9c12253ab1a"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const messaging = getMessaging(app);
+    import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    let app;
+    
+    if (!getApps().length) {
+      app = initializeApp(firebaseConfig);
+    } else {
+      app = getApp();
+    }
+    
+    const messaging = window.messaging;
 
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
