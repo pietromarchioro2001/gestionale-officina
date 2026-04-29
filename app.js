@@ -3916,17 +3916,10 @@ async function initPush() {
       return;
     }
 
-    console.log("📡 richiesta token...");
-
-    // 3️⃣ ottieni token
-    console.log("📡 PRIMA getToken");
-
-    const token = await messaging.getToken({
-      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
-      serviceWorkerRegistration: registration
+    const token = await getToken(messaging, {
+      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk"
     });
     
-    console.log("📡 DOPO getToken");
     console.log("🔥 TOKEN:", token);
 
     if (!token) {
