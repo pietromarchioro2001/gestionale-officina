@@ -3915,10 +3915,15 @@ async function initPush() {
     console.log("📡 richiesta token...");
 
     // 3️⃣ ottieni token
+    console.log("📡 PRIMA getToken");
+
     const token = await messaging.getToken({
       vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
       serviceWorkerRegistration: registration
     });
+    
+    console.log("📡 DOPO getToken");
+    console.log("🔥 TOKEN:", token);
 
     if (!token) {
       console.warn("❌ Nessun token ottenuto");
