@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyguVxkK0ogmdqnySz7xwMdADqm85KfGDATQeuyovg5Sj8gwM_mph_9FJW4RJ9wL_3c/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwpHpLaoZ_PFLnaMlqv3PiLOWnL1hV9HdBQAkvIo40lA4fDu6cj9DA8Bmw6blfcUH4E/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3956,6 +3956,22 @@ async function initPush() {
       vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
       serviceWorkerRegistration: registration
     });
+
+    const oldToken = localStorage.getItem("pushToken");
+
+    if (token && token !== oldToken) {
+    
+      await fetch(API_URL, {
+        method: "POST",
+        body: new URLSearchParams({
+          action: "salvaPushToken",
+          token: token
+        })
+      });
+    
+      localStorage.setItem("pushToken", token);
+      console.log("✅ Token salvato (nuovo)");
+    }
 
     console.log("🔥 TOKEN:", token);
 
