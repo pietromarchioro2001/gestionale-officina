@@ -3890,6 +3890,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 async function initPush() {
 
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
   console.log("🚀 initPush partito");
 
   try {
