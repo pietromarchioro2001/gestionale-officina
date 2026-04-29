@@ -3900,7 +3900,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
-messaging.usePublicVapidKey("BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk");
 
 // ==========================
 // 🔔 REGISTRA DISPOSITIVO
@@ -3932,6 +3931,7 @@ async function initPush() {
 
     // 3️⃣ ottieni token
     const token = await messaging.getToken({
+      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
       serviceWorkerRegistration: registration
     });
 
