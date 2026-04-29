@@ -14,53 +14,11 @@
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
-
-  <!-- OneSignal -->
-<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-
-<script>
-window.OneSignalDeferred = window.OneSignalDeferred || [];
-
-OneSignalDeferred.push(async function(OneSignal) {
-
-  await OneSignal.init({
-    appId: "6045b276-3e22-4a12-8f45-641cfc8990ff"
-  });
-
-  // 🔐 ID UNICO PER OGNI DISPOSITIVO
-  let userId = localStorage.getItem("onesignal_user_id");
-
-  if (!userId) {
-    userId = "user_" + Math.random().toString(36).slice(2);
-    localStorage.setItem("onesignal_user_id", userId);
-  }
-
-  await OneSignal.login(userId);
-
-  // 🔔 permessi
-  const perm = await OneSignal.Notifications.permission;
-
-  if (perm !== "granted") {
-    await OneSignal.Notifications.requestPermission();
-  }
-
-  await OneSignal.User.PushSubscription.optIn();
-
-  // 🔥 INVIA SUBSCRIPTION AL BACKEND
-  const subId = OneSignal.User.PushSubscription.id;
-
-  if (subId) {
-    fetch(API_URL, {
-      method: "POST",
-      body: new URLSearchParams({
-        action: "salvaPushId",
-        pushId: subId
-      })
-    });
-  }
-
-});
-</script>
+  
+  <!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+  
 </head>
 
 <body>
