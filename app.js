@@ -3890,20 +3890,12 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 async function initPush() {
 
-  if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-  }
-
   console.log("🚀 initPush partito");
 
   try {
 
-    await new Promise(r => setTimeout(r, 1000)); // 👈 aggiungi questo
-
     // 1️⃣ registra service worker
-    const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js')
-
-    // 👉 IMPORTANTISSIMO: aspetta che sia attivo
+    const registration = await navigator.serviceWorker.register('firebase-messaging-sw.js');
     await navigator.serviceWorker.ready;
 
     console.log("✅ SW pronto");
@@ -3916,10 +3908,14 @@ async function initPush() {
       return;
     }
 
-    const token = await getToken(messaging, {
-      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk"
+    // 3️⃣ IMPORT DINAMICO (FONDAMENTALE)
+    const { getToken } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+
+    const token = await getToken(window.messaging, {
+      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
+      serviceWorkerRegistration: registration
     });
-    
+
     console.log("🔥 TOKEN:", token);
 
     if (!token) {
@@ -3927,9 +3923,7 @@ async function initPush() {
       return;
     }
 
-    console.log("🔥 TOKEN:", token);
-
-    // 4️⃣ salva nel backend
+    // 4️⃣ salva backend
     await fetch(API_URL, {
       method: "POST",
       body: new URLSearchParams({
@@ -3943,7 +3937,6 @@ async function initPush() {
   } catch (err) {
     console.error("❌ Errore push:", err);
   }
-
 }
 
 // avvio automatico
