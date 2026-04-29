@@ -22,3 +22,16 @@ self.addEventListener('notificationclick', function(event) {
   );
 
 });
+
+messaging.onBackgroundMessage(payload => {
+
+  self.registration.showNotification(
+    payload.data.title,
+    {
+      body: payload.data.body,
+      icon: "/icon-192.png",
+      data: payload.data
+    }
+  );
+
+});
