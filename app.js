@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxY_Yul95oMn0K8sUNMQJ6fwcfHJaJ6IflAU4T4JET9lLgVR1uI-75NJgJCjaLyEqXj/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxfw2LI5RzE3idp03Zg34Q8_W0ZZnZ7MWWGOjb6fX4J-nQ1wU_q0iOit-L6Oz4_1-1N/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3902,16 +3902,21 @@ async function initPush() {
 
   try {
 
-    // 1️⃣ permesso notifiche
+    // 1️⃣ registra service worker
+    const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+
+    // 👉 IMPORTANTISSIMO: aspetta che sia attivo
+    await navigator.serviceWorker.ready;
+
+    console.log("✅ SW pronto");
+
+    // 2️⃣ permesso notifiche
     const permission = await Notification.requestPermission();
 
     if (permission !== "granted") {
-      console.warn("Notifiche non autorizzate");
+      console.warn("❌ Notifiche non autorizzate");
       return;
     }
-
-    // 2️⃣ service worker
-    const registration = await navigator.serviceWorker.register("/gestionale-officina/firebase-messaging-sw.js");
 
     // 3️⃣ ottieni token
     const token = await messaging.getToken({
@@ -3920,7 +3925,7 @@ async function initPush() {
     });
 
     if (!token) {
-      console.warn("Nessun token ottenuto");
+      console.warn("❌ Nessun token ottenuto");
       return;
     }
 
@@ -3935,8 +3940,10 @@ async function initPush() {
       })
     });
 
+    console.log("✅ Token salvato");
+
   } catch (err) {
-    console.error("Errore push:", err);
+    console.error("❌ Errore push:", err);
   }
 
 }
