@@ -3876,3 +3876,70 @@ function riattivaBackend(){
 document.addEventListener("DOMContentLoaded", ()=>{
   verificaBackend();
 });
+
+// ==========================
+// 🔥 FIREBASE INIT
+// ==========================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyC4OPs05sPxSb5H6LQSwV9b4-bMrGfMYjY",
+  authDomain: "goldencar-notifiche.firebaseapp.com",
+  projectId: "goldencar-notifiche",
+  storageBucket: "goldencar-notifiche.firebasestorage.app",
+  messagingSenderId: "932662604015",
+  appId: "1:932662604015:web:2d3a38bcbdd9c12253ab1a"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const messaging = firebase.messaging();
+
+// ==========================
+// 🔔 REGISTRA DISPOSITIVO
+// ==========================
+
+async function initPush() {
+
+  try {
+
+    // 1️⃣ permesso notifiche
+    const permission = await Notification.requestPermission();
+
+    if (permission !== "granted") {
+      console.warn("Notifiche non autorizzate");
+      return;
+    }
+
+    // 2️⃣ service worker
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+
+    // 3️⃣ ottieni token
+    const token = await messaging.getToken({
+      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
+      serviceWorkerRegistration: registration
+    });
+
+    if (!token) {
+      console.warn("Nessun token ottenuto");
+      return;
+    }
+
+    console.log("🔥 TOKEN:", token);
+
+    // 4️⃣ salva nel backend
+    await fetch(API_URL, {
+      method: "POST",
+      body: new URLSearchParams({
+        action: "salvaPushToken",
+        token: token
+      })
+    });
+
+  } catch (err) {
+    console.error("Errore push:", err);
+  }
+
+}
+
+// avvio automatico
+initPush();
