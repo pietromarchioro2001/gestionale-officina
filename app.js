@@ -3909,8 +3909,11 @@ async function initPush() {
     }
 
     // 3️⃣ Firebase init
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-    const { getMessaging, getToken, onMessage } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
+    const { initializeApp, getApps, getApp } =
+      await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+    
+    const { getMessaging, getToken, onMessage } =
+      await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js");
 
     const firebaseConfig = {
       apiKey: "AIza...",
@@ -3919,8 +3922,6 @@ async function initPush() {
       messagingSenderId: "932662604015",
       appId: "1:932662604015:web:2d3a38bcbdd9c12253ab1a"
     };
-
-    import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
     let app;
     
