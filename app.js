@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwREeG7QUA-Ii6REQWOVwW-6kJJ_4TX-iWKY5vXyisNQ1wTQM9oETxYi49Uo2rQz6kT/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwcW-2P8wD3mAePj20GLffjywXgR-u1P1UpYV5ZWBIcsZP2xqanhOxcIHySw3uuCmOF/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3936,11 +3936,6 @@ async function initPush() {
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
       console.log("📩 Notifica foreground:", payload);
-
-      new Notification(payload.notification.title, {
-        body: payload.notification.body,
-        icon: "/icon-192.png"
-      });
     });
 
     // 🔥 5️⃣ TOKEN
