@@ -3901,7 +3901,7 @@ async function initPush() {
     await new Promise(r => setTimeout(r, 1000)); // 👈 aggiungi questo
 
     // 1️⃣ registra service worker
-    const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js');
 
     // 👉 IMPORTANTISSIMO: aspetta che sia attivo
     await navigator.serviceWorker.ready;
