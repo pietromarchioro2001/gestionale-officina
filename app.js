@@ -3931,7 +3931,7 @@ async function initPush() {
       app = getApp();
     }
     
-    const messaging = window.messaging;
+    const messaging = getMessaging(app);
 
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
