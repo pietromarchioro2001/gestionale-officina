@@ -3874,7 +3874,14 @@ function riattivaBackend(){
 }
 
 document.addEventListener("DOMContentLoaded", ()=>{
+
   verificaBackend();
+
+  // 🔥 KEEP ALIVE BACKEND
+  setInterval(() => {
+    callBackend("ping").catch(()=>{});
+  }, 5 * 60 * 1000);
+
 });
 
 // ==========================
@@ -3893,12 +3900,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 const messaging = firebase.messaging();
+messaging.usePublicVapidKey("BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk");
 
 // ==========================
 // 🔔 REGISTRA DISPOSITIVO
 // ==========================
 
 async function initPush() {
+
+  console.log("🚀 initPush partito");
 
   try {
 
@@ -3918,9 +3928,10 @@ async function initPush() {
       return;
     }
 
+    console.log("📡 richiesta token...");
+
     // 3️⃣ ottieni token
     const token = await messaging.getToken({
-      vapidKey: "BOSe3OL0HEzLB6vtcwGcTWh8YqQGFLIFFgHiURlMzKyHJ4hlZrfyo1qL5554g6ObMzGNRWgAvkmjabzvRXdgVDk",
       serviceWorkerRegistration: registration
     });
 
