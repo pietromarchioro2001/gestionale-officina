@@ -3968,26 +3968,26 @@ async function initPush() {
 
     const oldToken = localStorage.getItem("pushToken");
 
-    if (token && (!oldToken || token !== oldToken)) {
+    if (token) {
+  
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        action: "salvaPushToken",
+        token: token,
+        deviceId: getDeviceId()
+      })
+    });
     
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          action: "salvaPushToken",
-          token: token,
-          deviceId: getDeviceId()
-        })
-      });
-      
-      const text = await res.text();
-      console.log("📡 RISPOSTA SERVER:", text);
-    
-      localStorage.setItem("pushToken", token);
-      console.log("✅ Token salvato (nuovo)");
-    }
+    const text = await res.text();
+    console.log("📡 RISPOSTA SERVER:", text);
+  
+    localStorage.setItem("pushToken", token);
+    console.log("✅ Token salvato (forzato)");
+  }
 
     console.log("🔥 TOKEN:", token);
 
