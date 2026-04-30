@@ -2612,6 +2612,11 @@ max-width:100%;
 overflow-x:hidden;
 }
 
+.brand{
+    left: 12px;
+    gap: 8px; /* leggermente meno spazio tra logo e testo */
+}
+
 .page-title {
   font-size: 20px;
   letter-spacing: 0.5px;
@@ -2635,6 +2640,7 @@ align-items:center;
 .logo{
 height:40px;
 margin-top:4px;
+margin-left: 2px; /* micro aggiustamento visivo */
 }
 
 .brand-name{
