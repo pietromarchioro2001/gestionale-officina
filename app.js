@@ -34,7 +34,6 @@ function toggleMicIndicator(state) {
 
   if (mic1) mic1.classList.toggle("hidden", !state);
   if (mic2) mic2.classList.toggle("hidden", !state);
-
 }
 
 function showConfirm(msg, callback){
