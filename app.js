@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbykBB9TFHbL2OqlAsPPIdzWn0JoSDUxdvW7mq9jAfg-wMwR6RoxF_CUUzbPD5IqEGxx/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby946-SZMRfZUq6JjTeIxNMXgg3zjH3O8_Nx4CB2PybE-kh1zPRf6Nifv2YaFhg4F7-/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3972,10 +3972,7 @@ async function initPush() {
   
     const res = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+      body: new URLSearchParams({
         action: "salvaPushToken",
         token: token,
         deviceId: getDeviceId()
