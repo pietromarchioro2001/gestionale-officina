@@ -3971,7 +3971,7 @@ async function initPush() {
 
     if (token && token !== oldToken) {
     
-      await fetch(API_URL, {
+      const res = await fetch(API_URL, {
         method: "POST",
         body: new URLSearchParams({
           action: "salvaPushToken",
@@ -3979,6 +3979,9 @@ async function initPush() {
           deviceId: getDeviceId()
         })
       });
+      
+      const text = await res.text();
+      console.log("📡 RISPOSTA SERVER:", text);
     
       localStorage.setItem("pushToken", token);
       console.log("✅ Token salvato (nuovo)");
