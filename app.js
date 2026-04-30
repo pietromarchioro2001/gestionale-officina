@@ -3947,10 +3947,8 @@ async function initPush() {
 
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
-    
+
       console.log("📩 Notifica foreground:", payload);
-    
-      if (document.visibilityState !== "visible") return;
     
       const { title, body } = payload.data || {};
     
