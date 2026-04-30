@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwpHpLaoZ_PFLnaMlqv3PiLOWnL1hV9HdBQAkvIo40lA4fDu6cj9DA8Bmw6blfcUH4E/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzr-9T4i4UK6PCIuZ3jvQUR16yjncwM6vXpP-WXsRpBuebCQcT9XvODReiIhaEThKE/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3884,6 +3884,18 @@ document.addEventListener("DOMContentLoaded", ()=>{
 
 });
 
+
+function getDeviceId() {
+  let id = localStorage.getItem("device_id");
+  
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("device_id", id);
+  }
+  
+  return id;
+}
+
 // ==========================
 // 🔔 REGISTRA DISPOSITIVO
 // ==========================
@@ -3965,7 +3977,8 @@ async function initPush() {
         method: "POST",
         body: new URLSearchParams({
           action: "salvaPushToken",
-          token: token
+          token: token,
+          deviceId: getDeviceId()
         })
       });
     
@@ -3979,17 +3992,6 @@ async function initPush() {
       console.warn("❌ Nessun token ottenuto");
       return;
     }
-
-    // 6️⃣ Salvataggio backend
-    await fetch(API_URL, {
-      method: "POST",
-      body: new URLSearchParams({
-        action: "salvaPushToken",
-        token: token
-      })
-    });
-
-    console.log("✅ Token salvato");
 
   } catch (err) {
     console.error("❌ Errore push:", err);
