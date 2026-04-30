@@ -11,16 +11,10 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-self.addEventListener('notificationclick', function(event) {
-
-  event.notification.close();
-
-  const url = event.notification.data?.url || "/";
-
-  event.waitUntil(
-    clients.openWindow(url)
-  );
-
+self.registration.showNotification(title, {
+  body: body,
+  icon: "/icon-192.png",   // 👈 metti il tuo logo qui
+  badge: "/icon-192.png"
 });
 
 messaging.onBackgroundMessage(payload => {
