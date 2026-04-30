@@ -11,21 +11,43 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-self.registration.showNotification(title, {
-  body: body,
-  icon: "/icon-192.png",   // 👈 metti il tuo logo qui
-  badge: "/icon-192.png"
-});
 
+// 🔥 NOTIFICHE BACKGROUND
 messaging.onBackgroundMessage(payload => {
 
-  self.registration.showNotification(
-    payload.data.title,
-    {
-      body: payload.data.body,
-      icon: "/icon-192.png",
-      data: payload.data
-    }
+  const { title, body, url } = payload.data || {};
+
+  self.registration.showNotification(title, {
+    body: body,
+    icon: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
+    badge: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
+    data: { url }
+  });
+
+});
+
+
+// 🔥 CLICK NOTIFICA
+self.addEventListener("notificationclick", function(event) {
+
+  event.notification.close();
+
+  const url = event.notification.data?.url || "https://pietromarchioro2001.github.io/gestionale-officina/";
+
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true })
+      .then(windowClients => {
+
+        for (let client of windowClients) {
+          if (client.url.includes("gestionale-officina")) {
+            client.focus();
+            client.navigate(url);
+            return;
+          }
+        }
+
+        return clients.openWindow(url);
+      })
   );
 
 });
