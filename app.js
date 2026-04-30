@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxg-pPUTz2VnJ7-BXYLaR04pApk3uh9PLZHIF7uTCqKT60cqdTaQWoTJRqfc9TsPWpP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzoZ7W79r9pqsOHj5rJM7yel8AdpLzA_wiK_NLyB2kidKu2oha-qTU92aavSNQF8oxe/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3968,7 +3968,7 @@ async function initPush() {
 
     const oldToken = localStorage.getItem("pushToken");
 
-    if (token && token !== oldToken) {
+    if (token && (!oldToken || token !== oldToken)) {
     
       const res = await fetch(API_URL, {
         method: "POST",
