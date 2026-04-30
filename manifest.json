@@ -1,7 +1,8 @@
 {
   "name": "Gestionale Officina",
   "short_name": "Officina",
-  "start_url": "./",
+  "start_url": "/gestionale-officina/",
+  "scope": "/gestionale-officina/",
   "display": "standalone",
   "background_color": "#1e1e1e",
   "theme_color": "#2e7d32",
@@ -10,6 +11,12 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "/gestionale-officina/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
