@@ -21,6 +21,7 @@ messaging.onBackgroundMessage(payload => {
     body: body,
     icon: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
     badge: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
+    vibrate: [200, 100, 200], 
     data: { url }
   });
 
