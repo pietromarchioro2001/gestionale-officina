@@ -2585,7 +2585,7 @@ function caricaOrdiniUI(force = false) {
       renderOrdini(ordini, clienti, veicoli, fornitori);
 
     })
-    catch(err => {
+    .catch(err => {
   UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
 });
 
@@ -2822,7 +2822,7 @@ function inviaOrdine(row, btnElement) {
 
       window.open(link, "_blank");
     })
-    catch(err => {
+    .catch(err => {
   UI.error("Errore invio ordine: " + err.message, "inviaOrdine");
   btn.classList.remove("loading");
   btn.textContent = "INVIA";
@@ -3368,45 +3368,28 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function eliminaOrdine(row) {
+  showConfirm("⚠️ Eliminare questo ordine?", conferma => {
+    if (!conferma) return;
 
-showConfirm("⚠️ Eliminare questo ordine?", conferma => {
+    if (!CACHE_ORDINI || !CACHE_ORDINI.ordini) return;
 
-if(!conferma) return;
+    const backup = [...CACHE_ORDINI.ordini];
 
-if (!CACHE_ORDINI || !CACHE_ORDINI.ordini) return;
+    CACHE_ORDINI.ordini = CACHE_ORDINI.ordini.filter(o => o.row !== row);
+    renderOrdini(CACHE_ORDINI.ordini, CACHE_ORDINI.clienti, CACHE_ORDINI.veicoli, CACHE_ORDINI.fornitori);
 
-const backup = [...CACHE_ORDINI.ordini];
-
-CACHE_ORDINI.ordini =
-CACHE_ORDINI.ordini.filter(o => o.row !== row);
-
-renderOrdini(
-CACHE_ORDINI.ordini,
-CACHE_ORDINI.clienti,
-CACHE_ORDINI.veicoli,
-CACHE_ORDINI.fornitori
-);
-
-callBackend("eliminaOrdine", [row])
-.then(() => {
-console.log("Ordine eliminato");
-})
-.catch(err => {
-  UI.error("Errore eliminazione ordine: " + err.message, "eliminaOrdine");
-  CACHE_ORDINI.ordini = backup;
-  renderOrdini(
-    CACHE_ORDINI.ordini,
-    CACHE_ORDINI.clienti,
-    CACHE_ORDINI.veicoli,
-    CACHE_ORDINI.fornitori
-  );
-});
-
-showAlert("Errore eliminazione ordine");
-
-});
-
-});
+    callBackend("eliminaOrdine", [row])
+      .then(() => {
+        console.log("Ordine eliminato");
+      })
+      .catch(err => {
+        UI.error("Errore eliminazione ordine: " + err.message, "eliminaOrdine");
+        // Ripristina cache in caso di errore
+        CACHE_ORDINI.ordini = backup;
+        renderOrdini(CACHE_ORDINI.ordini, CACHE_ORDINI.clienti, CACHE_ORDINI.veicoli, CACHE_ORDINI.fornitori);
+      });
+  });
+}
 
 }
 
