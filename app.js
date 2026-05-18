@@ -182,9 +182,9 @@ function showPrompt(callback){
   const input = document.getElementById("promptInput");
 
   if(!box || !input){
-    showAlert("Popup ordine non trovato");
-    return;
-  }
+  UI.error("Popup ordine non trovato nel DOM", "showPrompt");
+  return;
+}
 
   input.value = "";
   box.classList.remove("hidden");
@@ -755,9 +755,9 @@ function selezionaClienteRicerca(targa){
 
   })
   .catch(err=>{
-    nascondiLoadingRicerca();
-    showAlert("Errore caricamento cliente");
-  });
+  nascondiLoadingRicerca();
+  UI.error("Errore caricamento cliente: " + err.message, "selezionaClienteRicerca");
+});
 }
 
 function mostraLoadingRicerca(){
@@ -1013,14 +1013,9 @@ async function uploadTargaFile(file){
 
   }
   catch(err){
-
-    console.error("Errore upload targa:", err);
-
-    showAlert("Errore upload targa");
-
-    stopLoading("loadingTarga");
-
-  }
+  UI.error("Errore upload targa: " + err.message, "uploadTargaFile");
+  stopLoading("loadingTarga");
+}
 
 }
 
@@ -1129,11 +1124,8 @@ async function uploadAltriDocumenti(e){
 
   }
   catch(err){
-
-    console.error("Errore upload altri documenti:", err);
-    showAlert("Errore upload documenti: " + err.message);
-
-  }
+  UI.error("Errore upload documenti: " + err.message, "uploadAltriDocumenti");
+}
   finally{
 
     stopLoading("loadingAltri");
@@ -2593,10 +2585,9 @@ function caricaOrdiniUI(force = false) {
       renderOrdini(ordini, clienti, veicoli, fornitori);
 
     })
-    .catch(err => {
-      console.error("Errore caricamento ordini", err);
-      showAlert("Errore caricamento ordini");
-    });
+    catch(err => {
+  UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
+});
 
 }
 
@@ -2721,9 +2712,8 @@ function onChangeCliente(row, cliente) {
       }
     })
     .catch(err => {
-      console.error("Errore aggiornamento cliente:", err);
-      showAlert("Errore nel salvataggio del cliente");
-    });
+  UI.error("Errore salvataggio cliente: " + err.message, "onChangeCliente");
+});
 }
 
 function onChangeVeicolo(row, veicolo) {
@@ -2740,9 +2730,8 @@ function onChangeVeicolo(row, veicolo) {
       }
     })
     .catch(err => {
-      console.error("Errore aggiornamento veicolo:", err);
-      showAlert("Errore nel salvataggio del veicolo");
-    });
+  UI.error("Errore salvataggio veicolo: " + err.message, "onChangeVeicolo");
+});
 }
 
 function onChangeFornitore(row, fornitore) {
@@ -2758,9 +2747,8 @@ function onChangeFornitore(row, fornitore) {
       }
     })
     .catch(err => {
-      console.error("Errore aggiornamento fornitore:", err);
-      showAlert("Errore salvataggio fornitore");
-    });
+  UI.error("Errore salvataggio fornitore: " + err.message, "onChangeFornitore");
+});
 }
 
 function fornitoreHtml(o) {
@@ -2834,12 +2822,11 @@ function inviaOrdine(row, btnElement) {
 
       window.open(link, "_blank");
     })
-    .catch(err => {
-      console.error(err);
-      btn.classList.remove("loading");
-      btn.textContent = "INVIA";
-      showAlert("Errore invio ordine");
-    });
+    catch(err => {
+  UI.error("Errore invio ordine: " + err.message, "inviaOrdine");
+  btn.classList.remove("loading");
+  btn.textContent = "INVIA";
+});
 }
 
 function onToggleCheckbox(row, checked) {
@@ -2992,9 +2979,9 @@ function avviaOrdineVocale() {
     window.SpeechRecognition || window.webkitSpeechRecognition;
 
   if (!SpeechRecognition) {
-    showAlert("Il riconoscimento vocale non è supportato da questo browser");
-    return;
-  }
+  UI.error("Speech Recognition non supportato dal browser", "avviaOrdineVocale");
+  return;
+}
 
   recognitionOrdine = new SpeechRecognition();
   recognitionOrdine.lang = "it-IT";
@@ -3024,9 +3011,8 @@ function avviaOrdineVocale() {
         checkNotificheHome();
       })
       .catch(err => {
-        console.error("Errore inserimento ordine vocale", err);
-        showAlert("Errore inserimento ordine vocale");
-      });
+  UI.error("Errore inserimento ordine vocale: " + err.message, "avviaOrdineVocale");
+});
   };
 
   recognitionOrdine.onerror = e => {
@@ -3034,8 +3020,7 @@ function avviaOrdineVocale() {
   if (e.error === "no-speech") return;
   if (e.error === "aborted") return;
   if (e.error === "network") return;
-  console.error("Errore microfono ordine", e);
-  showAlert("Errore microfono");
+  UI.error("Errore microfono: " + e.error, "avviaOrdineVocale");
 };
 
   recognitionOrdine.onend = () => {
@@ -3232,9 +3217,9 @@ function homeOrdineVocale() {
 function homeCaricaLibretto() {
   const input = document.getElementById("libretto");
   if (!input) {
-    showAlert("Input libretto non trovato");
-    return;
-  }
+  UI.error("Input libretto non trovato nel DOM", "homeCaricaLibretto");
+  return;
+}
 
   // reset form PRIMA
   resetClienti();
@@ -3333,15 +3318,10 @@ function eliminaScheda(idScheda, status, linkDoc) {
         console.log("Scheda eliminata definitivamente");
       })
       .catch(err => {
-
-        console.error("Errore eliminazione:", err);
-
-        cacheSchede = backupCache;
-        renderSchede(cacheSchede);
-
-        showAlert("Errore eliminazione scheda");
-
-      });
+  UI.error("Errore eliminazione scheda: " + err.message, "eliminaScheda");
+  cacheSchede = backupCache;
+  renderSchede(cacheSchede);
+});
 
   });
 
@@ -3412,17 +3392,15 @@ callBackend("eliminaOrdine", [row])
 console.log("Ordine eliminato");
 })
 .catch(err => {
-
-console.error(err);
-
-CACHE_ORDINI.ordini = backup;
-
-renderOrdini(
-CACHE_ORDINI.ordini,
-CACHE_ORDINI.clienti,
-CACHE_ORDINI.veicoli,
-CACHE_ORDINI.fornitori
-);
+  UI.error("Errore eliminazione ordine: " + err.message, "eliminaOrdine");
+  CACHE_ORDINI.ordini = backup;
+  renderOrdini(
+    CACHE_ORDINI.ordini,
+    CACHE_ORDINI.clienti,
+    CACHE_ORDINI.veicoli,
+    CACHE_ORDINI.fornitori
+  );
+});
 
 showAlert("Errore eliminazione ordine");
 
