@@ -3391,8 +3391,6 @@ function eliminaOrdine(row) {
   });
 }
 
-}
-
 function isMobile() {
   return document.body.classList.contains("is-mobile");
 }
