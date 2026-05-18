@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwVtWbtXY_JFQUueDX-bdxXThqNVYT0vAz4i9OCt6gGEFFhwjxROTH1E9RnS4UEEshs/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbx0cf1D0H9CHA1YIZp6w_pWfkb25kXMziKj-y2TkeZSCrf3c5hym7jdpGiRZSkZNqsL/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -8,6 +8,36 @@ const ICON_CALENDAR = `
   <line x1="3" y1="11" x2="21" y2="11"/>
 </svg>
 `;
+
+const UI = {
+  /**
+   * Mostra errore all'utente + log in console
+   * @param {string} msg - Messaggio da mostrare
+   * @param {string} context - Contesto per il log (es. "uploadLibretto")
+   */
+  error(msg, context = "") {
+    const fullMsg = context ? `[${context}] ${msg}` : msg;
+    console.error("❌", fullMsg);
+    
+    // Mostra all'utente (usa la tua showAlert esistente)
+    if (typeof showAlert === "function") {
+      showAlert("⚠️ " + (msg || "Si è verificato un errore"));
+    }
+    
+    // Opzionale: log remoto nel backend (se vuoi tracciare gli errori)
+    // callBackend("logErrore", [context, msg, navigator.userAgent]).catch(()=>{});
+  },
+  
+  /**
+   * Mostra messaggio di successo
+   */
+  success(msg) {
+    console.log("✅", msg);
+    if (typeof showAlert === "function") {
+      showAlert("✅ " + msg);
+    }
+  }
+};
 
 let TEMP_LIBRETTO_ID = null;
 let TEMP_TARGA_ID = null;
@@ -26,6 +56,38 @@ let CLIENTI_VEICOLI_CACHE = [];
 let autoOpenSection = false;
 let currentSection = "home";
 let ORDINI_CACHE = null;
+
+// 🔥 AGGIUNGI QUESTA FUNZIONE:
+function sanitizeInput(str, mode = "text") {
+  if (!str && str !== 0) return "";
+  
+  let s = String(str).trim();
+  
+  // Modalità specifiche
+  if (mode === "targa") {
+    // Solo lettere maiuscole e numeri, max 8 caratteri
+    return s.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8);
+  }
+  if (mode === "cf") {
+    // Codice fiscale: 16 caratteri alfanumerici maiuscoli
+    return s.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 16);
+  }
+  if (mode === "phone") {
+    // Telefono: solo numeri, +, spazi, parentesi
+    return s.replace(/[^0-9+\s()-]/g, "").slice(0, 20);
+  }
+  if (mode === "number") {
+    // Numeri decimali
+    const num = parseFloat(s.replace(",", "."));
+    return isNaN(num) ? "" : num;
+  }
+  
+  // Default: testo normale, rimuovi tag HTML e limita lunghezza
+  return s
+    .replace(/[<>]/g, "")      // Rimuove < e > per prevenire XSS
+    .replace(/\s+/g, " ")      // Collassa spazi multipli
+    .slice(0, 500);            // Limite di sicurezza
+}
 
 function toggleMicIndicator(state) {
 
@@ -396,9 +458,7 @@ async function analizza() {
     stopLoading("loadingOCR");
 
   } catch(err) {
-
-    console.error(err);
-    showAlert("Errore OCR");
+    UI.error("Errore OCR: " + err.message, "analizza");
     stopLoading("loadingOCR");
   }
 }
@@ -540,27 +600,21 @@ function renderListaClienti(lista){
 }
 
 function raccogliDatiCliente(){
-
   return {
-
-    nomeCliente: document.getElementById("nome").value.trim(),
-    indirizzo: document.getElementById("indirizzo").value.trim(),
-    telefono: document.getElementById("telefono").value.trim(),
-    dataNascita: document.getElementById("data").value.trim(),
-    codiceFiscale: document.getElementById("cf").value.trim(),
-
-    veicolo: document.getElementById("veicolo").value.trim(),
-    motore: document.getElementById("motore").value.trim(),
-    targa: document.getElementById("targa").value.trim(),
-    immatricolazione: document.getElementById("immatricolazione").value.trim(),
+    nomeCliente: sanitizeInput(document.getElementById("nome").value),
+    indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
+    telefono: sanitizeInput(document.getElementById("telefono").value, "phone"),
+    dataNascita: sanitizeInput(document.getElementById("data").value),
+    codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
+    veicolo: sanitizeInput(document.getElementById("veicolo").value),
+    motore: sanitizeInput(document.getElementById("motore").value),
+    targa: sanitizeInput(document.getElementById("targa").value, "targa"),
+    immatricolazione: sanitizeInput(document.getElementById("immatricolazione").value),
     revisione: document.getElementById("revisioneInput")?.dataset.raw || "",
-
     tempLibrettoId: TEMP_LIBRETTO_ID,
     tempTargaId: TEMP_TARGA_ID,
     altriDocumenti: TEMP_ALTRI_DOCUMENTI
-
   };
-
 }
 
 /********************
@@ -578,13 +632,11 @@ function inviaSalvataggio(idClienteScelto = null) {
     .then(res => {
 
       if (!res.ok) {
-
         if (res.error === "VEICOLO_ESISTENTE") {
-          showAlert("⚠️ Veicolo già presente nel gestionale");
+          UI.error("Veicolo già esistente: " + dati.targa, "salvaCliente");
           return;
         }
-
-        showAlert("Errore salvataggio: " + res.error);
+        UI.error("Salvataggio fallito: " + res.error, "salvaCliente");
         return;
       }
 
@@ -1189,13 +1241,9 @@ async function uploadLibretto(e){
 
   }
   catch(err){
-
-    console.error(err);
-    showAlert("Errore upload libretto");
-
-    stopLoading("loadingLibretto");
-
-  }
+  UI.error("Errore upload libretto: " + err.message, "uploadLibretto");
+  stopLoading("loadingLibretto");
+}
 
 }
 
@@ -2013,7 +2061,7 @@ async function gestisciRisposta(testo) {
 
     case "TARGA": {
 
-      const targaNorm = normalizzaTarga(testo);
+      const targaNorm = sanitizeInput(normalizzaTarga(testo), "targa");
     
       if (!targaNorm) {
         rispostaInElaborazione = false;
@@ -2087,7 +2135,8 @@ async function gestisciRisposta(testo) {
       
     case "CHILOMETRI": {
 
-      const km = normalizzaChilometri(testo);
+      const kmRaw = normalizzaChilometri(testo);
+      const km = kmRaw ? sanitizeInput(kmRaw, "number") : "";
 
       if (!km) {
         rispostaInElaborazione = false;
@@ -3501,9 +3550,12 @@ function abilitaPreview(inputId, linkId){
     link.style.display = "inline-block";
 
     link.onclick = () => {
-
       window.open(url, "_blank");
-
+      // 🔥 REVOKA L'URL DOPO 60 SECONDI PER LIBERARE MEMORIA
+      setTimeout(() => {
+        URL.revokeObjectURL(url);
+        console.log("🗑️ URL revocato:", file.name);
+      }, 60000);
     };
 
     console.log("Preview pronta:", file.name);
@@ -3872,15 +3924,72 @@ function riattivaBackend(){
   window.open("https://accounts.google.com/AccountChooser?continue=" + encodeURIComponent(API_URL), "_blank");
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
+// ==========================
+// 🔁 KEEP-ALIVE ROBUSTO
+// ==========================
+let keepAliveInterval = null;
 
+function startKeepAlive() {
+  // Ferma eventuali intervalli precedenti
+  if (keepAliveInterval) clearInterval(keepAliveInterval);
+  
+  // Ping ogni 15 minuti (sotto la soglia di timeout di Google)
+  keepAliveInterval = setInterval(() => {
+    callBackend("ping")
+      .then(() => {
+        console.log("🟢 Keep-alive OK");
+        // Se c'era un popup di errore, chiudilo
+        const popup = document.getElementById("backendPopup");
+        if (popup) popup.remove();
+      })
+      .catch((err) => {
+        console.warn("⚠️ Ping fallito:", err.message);
+        // Solo se il popup non esiste già, mostralo
+        if (!document.getElementById("backendPopup")) {
+          mostraPopupBackend();
+        }
+      });
+  }, 15 * 60 * 1000); // 15 minuti in millisecondi
+}
+
+function stopKeepAlive() {
+  if (keepAliveInterval) {
+    clearInterval(keepAliveInterval);
+    keepAliveInterval = null;
+    console.log("⏸️ Keep-alive fermato");
+  }
+}
+
+// Gestione visibilità pagina: ferma il ping se l'utente cambia tab
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    startKeepAlive();
+  } else {
+    stopKeepAlive();
+  }
+});
+
+// ==========================
+// INIT PRINCIPALE
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  
+  // 1. Verifica connessione iniziale
   verificaBackend();
-
-  // 🔥 KEEP ALIVE BACKEND
-  setInterval(() => {
-    callBackend("ping").catch(()=>{});
-  }, 5 * 60 * 1000);
-
+  
+  // 2. Avvia keep-alive
+  startKeepAlive();
+  
+  // 3. Reset file input (tua logica esistente)
+  resetFileInput("librettoGallery", "librettoLink");
+  resetFileInput("librettoCamera", "librettoLink");
+  resetFileInput("targaGallery", "targaLink");
+  resetFileInput("targaCamera", "targaLink");
+  resetFileInput("altriDocumenti", "altriLink");
+  
+  // 4. Check notifiche
+  checkNotificheHome();
+  
 });
 
 
