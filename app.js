@@ -4033,19 +4033,34 @@ async function initPush() {
 
     // 🔥 4️⃣ ON MESSAGE (QUI GIUSTO)
     onMessage(messaging, (payload) => {
+  console.log("📩 Notifica foreground:", payload);
+  
+  const { title, body, sound = true, vibrate = true } = payload.data || {};
+  if (!title) return;
 
-      console.log("📩 Notifica foreground:", payload);
-    
-      const { title, body } = payload.data || {};
-    
-      if (!title) return;
-    
-      new Notification(title, {
-        body: body,
-        icon: "/icon-192.png"
-      });
-    
-    });
+  // 🔊 Riproduci suono (se supportato)
+  if (sound) {
+    try {
+      const audio = new Audio('/notification-sound.mp3'); // ← Crea questo file!
+      audio.volume = 0.7;
+      audio.play().catch(e => console.warn("🔇 Audio bloccato:", e));
+    } catch (e) {
+      console.warn("Audio non riprodotto:", e);
+    }
+  }
+
+  // 📳 Vibrazione (se supportata)
+  const vibrationPattern = vibrate ? [200, 100, 200] : [];
+
+  new Notification(title, {
+    body: body,
+    icon: "/icon-192.png",
+    vibrate: vibrationPattern,
+    tag: "goldencar-notification", // Evita duplicati
+    requireInteraction: false,
+    silent: false // ← Importante: non silenziosa!
+  });
+});
 
     // 🔥 5️⃣ TOKEN
     const token = await getToken(messaging, {
