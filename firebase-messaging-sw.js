@@ -11,26 +11,30 @@ firebase.initializeApp({
 
 const messaging = firebase.messaging();
 
-
 // 🔥 NOTIFICHE BACKGROUND
 messaging.onBackgroundMessage(payload => {
+  const { title, body, url, sound = true } = payload.data || {};
 
-  const { title, body, url } = payload.data || {};
+  // 📳 Pattern vibrazione: breve-lungo-breve
+  const vibrationPattern = [200, 100, 200];
 
-  self.registration.showNotification(title, {
+  const notificationOptions = {
     body: body,
     icon: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
     badge: "https://pietromarchioro2001.github.io/gestionale-officina/icon-192.png",
-    vibrate: [200, 100, 200], 
-    data: { url }
-  });
+    vibrate: vibrationPattern,
+    tag: "goldencar-notification", // Evita notifiche duplicate
+    silent: false, // ← IMPORTANTE: non silenziosa!
+    data: { url },
+    // 🔊 Suono: proprietà sperimentale, funziona su alcuni Android
+    sound: sound ? "https://pietromarchioro2001.github.io/gestionale-officina/notification-sound.mp3" : undefined
+  };
 
+  self.registration.showNotification(title, notificationOptions);
 });
-
 
 // 🔥 CLICK NOTIFICA
 self.addEventListener("notificationclick", function(event) {
-
   event.notification.close();
 
   const url = event.notification.data?.url || "https://pietromarchioro2001.github.io/gestionale-officina/";
@@ -38,7 +42,6 @@ self.addEventListener("notificationclick", function(event) {
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true })
       .then(windowClients => {
-
         for (let client of windowClients) {
           if (client.url.includes("gestionale-officina")) {
             client.focus();
@@ -46,9 +49,7 @@ self.addEventListener("notificationclick", function(event) {
             return;
           }
         }
-
         return clients.openWindow(url);
       })
   );
-
 });
