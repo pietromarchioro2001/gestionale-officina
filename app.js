@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyxEgAdcLfXEn7-U9yXik5IZLKuubJtj5uKZwbRiMuD4WXUdbm7X0HjmCk06bTNN770/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwikN6_5VGIiEflBsUi8FQD5ZQXNl-T1sO97Ahn4hij490OJHsuc5HjlmXriJhdh2qq/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -2551,16 +2551,16 @@ function bipMicrofono() {
 function caricaOrdiniUI(force = false) {
   const now = Date.now();
 
-  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste e ha dati validi)
-  if (CACHE_ORDINI && CACHE_ORDINI.ordini?.length > 0) {
+  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste)
+  if (CACHE_ORDINI) {
     renderOrdini(
-      CACHE_ORDINI.ordini,
+      CACHE_ORDINI.ordini || [],
       CACHE_ORDINI.clienti || [],
       CACHE_ORDINI.veicoli || [],
       CACHE_ORDINI.fornitori || []
     );
   } else {
-    // 🔥 Mostra messaggio se non c'è cache
+    // Mostra loading se non c'è cache
     const container = document.getElementById("listaOrdini");
     if (container) {
       container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Caricamento ordini...</div>';
@@ -2575,10 +2575,7 @@ function caricaOrdiniUI(force = false) {
   // 🔥 3️⃣ Aggiornamento backend in BACKGROUND
   callBackend("getOrdiniBundle")
     .then(res => {
-      // 🔥 FILTRA ORDINI VUOTI: solo se hanno descrizione
-      const ordini = (res?.ordini || [])
-        .filter(o => o.descrizione && o.descrizione.trim() !== "" && o.descrizione.trim() !== "Scrivi descrizione ordine…");
-      
+      const ordini = res?.ordini || [];
       const clienti = res?.clienti || [];
       const veicoli = res?.veicoli || [];
       const fornitori = res?.fornitori || [];
@@ -2587,7 +2584,6 @@ function caricaOrdiniUI(force = false) {
       CACHE_TS = Date.now();
       VEICOLI_ALL = veicoli;
 
-      // 🔥 Renderizza solo se ci sono ordini validi
       renderOrdini(ordini, clienti, veicoli, fornitori);
     })
     .catch(err => {
