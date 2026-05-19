@@ -56,6 +56,10 @@ let CLIENTI_VEICOLI_CACHE = [];
 let autoOpenSection = false;
 let currentSection = "home";
 let ORDINI_CACHE = null;
+// 🔥 CACHE PER RICERCA CLIENTI
+let CLIENTI_CACHE_POPUP = null;
+let CLIENTI_CACHE_TS = 0;
+const CLIENTI_CACHE_TTL = 5 * 60 * 1000; // 5 minuti
 
 // 🔥 AGGIUNGI QUESTA FUNZIONE:
 function sanitizeInput(str, mode = "text") {
@@ -512,16 +516,41 @@ function salva() {
   apriPopupModalitaSalvataggio(dati);
 }
 
-function apriPopupCliente(){
-
-  document.getElementById("popupCliente").classList.remove("hidden");
-
-  document.getElementById("ricercaClientePopup").value = "";
-
-  initFiltroClientiPopup();   // 🔥 QUI
-
-  caricaClientiPopup();
-
+function apriPopupCliente() {
+  console.log("🗂️ apriPopupCliente chiamata");
+  
+  const popup = document.getElementById("popupCliente");
+  const input = document.getElementById("ricercaClientePopup");
+  const lista = document.getElementById("listaClientiPopup");
+  
+  if (!popup || !input || !lista) {
+    console.error("❌ Elementi popup non trovati");
+    return;
+  }
+  
+  // Reset input e mostra popup
+  input.value = "";
+  popup.classList.remove("hidden");
+  
+  // 🔥 Focus con leggero delay per evitare glitch
+  setTimeout(() => {
+    input.focus();
+  }, 100);
+  
+  // 🔥 Se c'è cache, mostra subito; altrimenti carica
+  if (CLIENTI_CACHE_POPUP && Date.now() - CLIENTI_CACHE_TS <= CLIENTI_CACHE_TTL) {
+    console.log("✅ Mostro cache clienti subito");
+    renderListaClienti(CLIENTI_CACHE_POPUP);
+  } else {
+    console.log("🔄 Carico clienti (cache scaduta o assente)");
+    caricaClientiPopup(false);
+  }
+  
+  // Inizializza filtro (se non già fatto)
+  if (!input.dataset.filtroInizializzato) {
+    initFiltroClientiPopup();
+    input.dataset.filtroInizializzato = "true";
+  }
 }
 
 function chiudiPopupRicerca(){
@@ -553,41 +582,83 @@ function selezionaClientePopup(idCliente){
 
 }
 
-function initFiltroClientiPopup(){
-
+function initFiltroClientiPopup() {
   const input = document.getElementById("ricercaClientePopup");
-
-  if(!input) return;
-
-  input.addEventListener("input", function(){
-
+  if (!input) return;
+  
+  let debounceTimer = null;
+  
+  input.addEventListener("input", function() {
     const q = this.value.toLowerCase().trim();
-
-    const filtrati = CLIENTI_CACHE.filter(c =>
-      c.nome.toLowerCase().includes(q)
-    );
-
-    renderListaClienti(filtrati);
-
+    
+    // 🔥 Debounce: aspetta 150ms prima di filtrare
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      
+      // Se la query è vuota, mostra tutti
+      if (!q) {
+        renderListaClienti(CLIENTI_CACHE_POPUP || []);
+        return;
+      }
+      
+      // Filtra dalla cache (veloce, niente backend)
+      const filtrati = (CLIENTI_CACHE_POPUP || []).filter(c =>
+        c.nome?.toLowerCase().includes(q) ||
+        c.indirizzo?.toLowerCase().includes(q) ||
+        c.targhe?.join(" ").toLowerCase().includes(q)
+      );
+      
+      console.log("🔍 Filtrati " + filtrati.length + " clienti per '" + q + "'");
+      renderListaClienti(filtrati);
+      
+    }, 150); // 150ms di debounce
   });
-
 }
 
-function caricaClientiPopup(){
-
-  if(CLIENTI_CACHE.length > 0){
-    renderListaClienti(CLIENTI_CACHE);
+function caricaClientiPopup(force = false) {
+  const now = Date.now();
+  const box = document.getElementById("listaClientiPopup");
+  
+  console.log("🔍 caricaClientiPopup - force:", force, "cache:", !!CLIENTI_CACHE_POPUP);
+  
+  // 🔥 Mostra subito loading se non c'è cache valida
+  if (!CLIENTI_CACHE_POPUP || now - CLIENTI_CACHE_TS > CLIENTI_CACHE_TTL || force) {
+    if (box) {
+      box.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Caricamento clienti...</div>';
+    }
+  }
+  
+  // 🔥 Se c'è cache valida, mostra subito i risultati
+  if (CLIENTI_CACHE_POPUP && now - CLIENTI_CACHE_TS <= CLIENTI_CACHE_TTL && !force) {
+    console.log("✅ Uso cache clienti (" + CLIENTI_CACHE_POPUP.length + " elementi)");
+    renderListaClienti(CLIENTI_CACHE_POPUP);
     return;
   }
-
+  
+  // 🔥 Altrimenti carica dal backend
+  console.log("📡 Carico clienti dal backend...");
+  
   callBackend("listaClientiCompleta", [])
     .then(lista => {
-
-      CLIENTI_CACHE = lista;
+      console.log("✅ Ricevuti " + lista.length + " clienti dal backend");
+      
+      CLIENTI_CACHE_POPUP = lista;
+      CLIENTI_CACHE_TS = now;
+      
       renderListaClienti(lista);
-
+    })
+    .catch(err => {
+      console.error("❌ Errore caricamento clienti:", err);
+      if (box) {
+        box.innerHTML = '<div style="padding:20px;text-align:center;color:#f44336;">Errore caricamento</div>';
+      }
+      
+      // Fallback: usa cache vecchia se esiste
+      if (CLIENTI_CACHE_POPUP) {
+        console.log("⚠️ Fallback: uso cache vecchia");
+        renderListaClienti(CLIENTI_CACHE_POPUP);
+      }
     });
-
 }
 
 function renderListaClienti(lista){
@@ -1664,59 +1735,47 @@ function showSection(id) {
 
   // INIT SEZIONI
   switch (id) {
-
-   case "home":
+    case "home":
       caricaAppuntamentiOggi();
-    
-      if (!autoOpenSection) {
-        checkNotificheHome();
-      }
-    
-    break;
+      if (!autoOpenSection) checkNotificheHome();
+      break;
 
     case "ordini":
-  if (!autoOpenSection) {
-    toggleBadgeOrdini(false);
-    // 🔥 FORZA SEMPRE il caricamento quando apri la pagina
-    caricaOrdiniUI(true);
-  }
-  break;
+      if (!autoOpenSection) {
+        toggleBadgeOrdini(false);
+        caricaOrdiniUI(true);
+      }
+      break;
 
     case "schede":
-
       if (!autoOpenSection) {
         callBackend("getNotificheHome").then(r => {
           if (r?.ultimaScheda) {
-            localStorage.setItem(
-              "schede_last_seen",
-              new Date(r.ultimaScheda).getTime()
-            );
+            localStorage.setItem("schede_last_seen", new Date(r.ultimaScheda).getTime());
           }
         });
-    
         toggleBadgeSchede(false);
       }
-    
       caricaSchede();
-    
-    break;
+      break;
 
     case "clienti":
       resetClienti?.();
-      break;
-
-    case "appuntamenti":
-      if (window.innerWidth <= 768) {
-        caricaAgendaSettimanale?.();
+      // 🔥 PRELOAD CLIENTI quando apri la sezione
+      if (!CLIENTI_CACHE_POPUP || Date.now() - CLIENTI_CACHE_TS > CLIENTI_CACHE_TTL) {
+        console.log("🔄 Preload clienti in background...");
+        caricaClientiPopup(false); // Carica in background, non blocca
       }
       break;
 
-    case "revisioni":
-      caricaRevisioni(); // o la tua funzione
+    case "appuntamenti":
+      if (window.innerWidth <= 768) caricaAgendaSettimanale?.();
       break;
 
+    case "revisioni":
+      caricaRevisioni();
+      break;
   }
-
 }
 
 function apriRevisioniConReset(){
