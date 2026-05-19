@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyVUIZH5KfmYIHgRe4LTjV__Ipu5QnlxIB80rzHsjvgq6yZwaQLQE0imfLHMBj3Hjls/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwVysRyaUmzawZ314tud3JEMsNCBMP6owMJUGA9FYc4Apxu37xtzMIBGiX7SijNl1yB/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -237,7 +237,7 @@ function callBackend(action, args = []) {
     const timeout = setTimeout(() => {
       cleanup();
       reject(new Error("Timeout backend"));
-    }, 20000);
+    }, 30000);
 
     window[cb] = function(res) {
       clearTimeout(timeout);
@@ -3570,48 +3570,74 @@ document.addEventListener("DOMContentLoaded", () => {
 
 });
 
-async function caricaAgendaSettimanale() {
- const container = document.getElementById("agendaSettimanale");
- if (!container) return;
-container.classList.remove("hidden");
-container.innerHTML = "Caricamento...";
+async function caricaAgendaSettimanale(force = false) {
+  const container = document.getElementById("agendaSettimanale");
   if (!container) return;
+  
+  container.classList.remove("hidden");
   container.innerHTML = "Caricamento...";
+  
   try {
-    const data = await callBackend("getAppuntamentiSettimana");
-    if (!data || !data.length) {
-      container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
+    // 🔥 Usa cache se disponibile e non è force refresh
+    const CACHE_KEY = "appuntamenti_settimana_cache";
+    const CACHE_TIME = "appuntamenti_settimana_time";
+    const now = Date.now();
+    const cached = localStorage.getItem(CACHE_KEY);
+    const cachedTime = localStorage.getItem(CACHE_TIME);
+    
+    // Cache valida per 5 minuti
+    if (!force && cached && cachedTime && (now - parseInt(cachedTime)) < 5 * 60 * 1000) {
+      const data = JSON.parse(cached);
+      renderAgendaSettimanale(data, container);
       return;
     }
-    // Raggruppa per giorno
-    const grouped = {};
-    data.forEach(ev => {
-      const giorno = ev.giorno;
-      if (!grouped[giorno]) {
-        grouped[giorno] = [];
-      }
-      grouped[giorno].push(ev);
-    });
-        
-    container.innerHTML = "";
-    Object.keys(grouped).forEach(giorno => {
-      const dayDiv = document.createElement("div");
-      dayDiv.className = "agenda-day";
-      dayDiv.innerHTML = `<h3>${giorno}</h3>`;
-      grouped[giorno].forEach(ev => {
-        const eventDiv = document.createElement("div");
-        eventDiv.className = "agenda-event";
-        eventDiv.innerHTML =
-          `<span class="agenda-ora">${ev.ora}</span> ${ev.titolo}`;
-        dayDiv.appendChild(eventDiv);
-      });
-      container.appendChild(dayDiv);
-    });
-
+    
+    // Altrimenti carica dal backend
+    const data = await callBackend("getAppuntamentiSettimana");
+    
+    // Salva in cache
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    localStorage.setItem(CACHE_TIME, now.toString());
+    
+    renderAgendaSettimanale(data, container);
+    
   } catch (err) {
     console.error("Errore settimana:", err);
     container.innerHTML = "<p>Errore caricamento appuntamenti</p>";
   }
+}
+
+function renderAgendaSettimanale(data, container) {
+  if (!data || !data.length) {
+    container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
+    return;
+  }
+  
+  // Raggruppa per giorno
+  const grouped = {};
+  data.forEach(ev => {
+    const giorno = ev.giorno;
+    if (!grouped[giorno]) {
+      grouped[giorno] = [];
+    }
+    grouped[giorno].push(ev);
+  });
+  
+  container.innerHTML = "";
+  Object.keys(grouped).forEach(giorno => {
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "agenda-day";
+    dayDiv.innerHTML = `<h3>${giorno}</h3>`;
+    
+    grouped[giorno].forEach(ev => {
+      const eventDiv = document.createElement("div");
+      eventDiv.className = "agenda-event";
+      eventDiv.innerHTML = `<span class="agenda-ora">${ev.ora}</span> ${ev.titolo}`;
+      dayDiv.appendChild(eventDiv);
+    });
+    
+    container.appendChild(dayDiv);
+  });
 }
 
 function caricaRevisioni(force = false){
