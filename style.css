@@ -1231,19 +1231,28 @@ a#targaLink:hover {
 .btn-delete {
   background: #fff !important;
   border: 1px solid #d0d0d0 !important;
-  border-radius: 8px !important;
-  padding: 6px 10px !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;        /* 🔥 Aumentato: era 6px 10px */
   cursor: pointer !important;
-  display: none !important; /* Nascosto di default */
+  display: none !important;
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.2s ease !important;
   color: #666 !important;
   box-shadow: none !important;
+  margin-left: auto !important;         /* 🔥 SPINGE A DESTRA */
+  min-width: 44px !important;           /* 🔥 Larghezza minima */
+  height: 44px !important;              /* 🔥 Altezza fissa */
 }
 
 .btn-delete:not(.hidden) {
   display: inline-flex !important;
+}
+
+.btn-delete svg {
+  stroke: currentColor !important;
+  width: 22px !important;               /* 🔥 Icona più grande: era 18px */
+  height: 22px !important;              /* 🔥 Icona più grande: era 18px */
 }
 
 .btn-delete:hover {
@@ -1253,24 +1262,19 @@ a#targaLink:hover {
   transform: scale(1.05);
 }
 
-.btn-delete svg {
-  stroke: currentColor !important;
-}
-
-/* Mobile: posiziona in basso a destra */
+/* Mobile: assicura che sia a destra */
 @media (max-width: 768px) {
   .section.actions {
     display: flex !important;
     align-items: center !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
     gap: 10px !important;
   }
   
   #btnEliminaCliente {
-    margin-left: auto !important;
+    margin-left: auto !important;       /* 🔥 Sempre a destra su mobile */
   }
 }
-
 
 /* =========================================================
    10. SCHEDE
