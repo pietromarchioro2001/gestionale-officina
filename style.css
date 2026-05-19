@@ -2712,6 +2712,7 @@ display:none;
   height: auto;
   min-height: 0;
   margin: 0 0 4px 0;
+  margin-bottom: 4px !important;    /* Minimo spazio prima delle card */
   padding: 0;        /* 🔥 RIDOTTO ANCORA: 6px sotto */
   max-height: none;
   overflow: hidden;
@@ -2726,8 +2727,9 @@ display:none;
 }
 
 .home-today h3 {
-  margin: 0 0 4px 0;       /* 🔥 RIDOTTO: meno spazio sotto titolo */
-  font-size: 12px;
+  margin: 0 0 2px 0 !important;    /* ZERO spazio sotto il titolo */
+  font-size: 11px !important;       /* Titolo più piccolo */
+  line-height: 1 !important;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -2743,6 +2745,8 @@ display:none;
   max-height: 95px;      /* 🔥 3 appuntamenti × ~30px ciascuno */
   overflow: hidden;      /* 🔥 nasconde il resto */
   position: relative;
+  margin-top: 0 !important;         /* ZERO spazio sopra la lista */
+  padding-top: 0 !important;
 }
 
 /* Puntini quando ci sono più di 3 appuntamenti */
@@ -2759,16 +2763,6 @@ display:none;
   line-height: 1;
   padding-bottom: 2px;
   background: linear-gradient(to bottom, transparent, #fff8e1 40%);
-}
-
-   #oggiEventi:empty::before {
-  content: "Nessun appuntamento oggi";
-  display: block;
-  font-size: 13px;
-  color: #666;
-  font-style: italic;
-  padding: 8px 0;
-  text-align: center;
 }
 
 #oggiEventi p {
