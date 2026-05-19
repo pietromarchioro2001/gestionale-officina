@@ -1272,8 +1272,45 @@ a#targaLink:hover {
   }
   
   #btnEliminaCliente {
-    margin-left: auto !important;       /* 🔥 Sempre a destra su mobile */
-  }
+     background: #fff !important;
+     border: 1px solid #d0d0d0 !important;
+     border-radius: 10px !important;
+     padding: 10px 14px !important;
+     cursor: pointer !important;
+     display: none !important;
+     align-items: center !important;
+     justify-content: center !important;
+     transition: all 0.2s ease !important;
+     color: #666 !important;
+     box-shadow: none !important;
+     margin-left: auto !important;         /* 🔥 SPINGE TUTTO A DESTRA */
+     min-width: 44px !important;
+     height: 44px !important;
+   }
+
+   #btnEliminaCliente:not(.hidden) {
+     display: inline-flex !important;
+   }
+   
+   #btnEliminaCliente svg {
+     stroke: currentColor !important;
+     width: 22px !important;
+     height: 22px !important;
+   }
+   
+   #btnEliminaCliente:hover {
+     background: #ffebee !important;
+     border-color: #ef9a9a !important;
+     color: #c62828 !important;
+     transform: scale(1.05);
+   }
+   
+   /* Mobile: mantiene a destra */
+   @media (max-width: 768px) {
+     #btnEliminaCliente {
+       margin-left: auto !important;
+     }
+   }
 }
 
 /* =========================================================
