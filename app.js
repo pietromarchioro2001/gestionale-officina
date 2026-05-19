@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwVysRyaUmzawZ314tud3JEMsNCBMP6owMJUGA9FYc4Apxu37xtzMIBGiX7SijNl1yB/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzHCP0b6_gMaHzKYVHd6Y-EU1WEP9Tfyq0yN0NLA0Ri6fhKDkll61pImIgEozwMU_Bu/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -3083,51 +3083,91 @@ function preloadClientiVeicoli(){
 
 }
 
-async function caricaAppuntamentiOggi() {
-  console.log("📅 caricaAppuntamentiOggi chiamata");
-  
+function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   const toggleBtn = document.getElementById("toggleOggi");
-  
-  if (!box) {
-    console.error("❌ Container oggiEventi non trovato");
-    return;
-  }
-  
-  try {
-    console.log("🔄 Chiamo backend getAppuntamentiOggi...");
-    const res = await callBackend("getAppuntamentiOggi");
-    
-    const eventi = Array.isArray(res) ? res : res?.data || [];
-    console.log("✅ Appuntamenti oggi ricevuti:", eventi.length);
-    
-    if (!eventi.length) {
-      box.innerHTML = `<div class="no-eventi">Nessun appuntamento oggi</div>`;
-      if (toggleBtn) toggleBtn.style.display = "none";
-      return;
-    }
-    
-    box.innerHTML = eventi.map(e => `
-      <div class="evento-oggi">
-        <strong>${e.ora}</strong> – ${e.titolo}
-      </div>
-    `).join("");
-    
-    // Gestione toggle (come già hai)
-    const eventElements = box.querySelectorAll(".evento-oggi");
-    if (eventElements.length <= 5) {
-      box.style.maxHeight = "none";
-      box.style.overflow = "visible";
-      if (toggleBtn) toggleBtn.style.display = "none";
-    } else {
-      // ... codice esistente per il toggle
-    }
-    
-  } catch (err) {
-    console.error("❌ Errore appuntamenti oggi:", err);
-    box.innerHTML = `<div class="no-eventi">Errore caricamento</div>`;
-    if (toggleBtn) toggleBtn.style.display = "none";
-  }
+  if (!box) return;
+
+  // Nascondi toggle all'inizio
+  if (toggleBtn) toggleBtn.style.display = "none";
+
+  callBackend("getAppuntamentiOggi")
+    .then(eventi => {
+      if (!eventi || eventi.length === 0) {
+        box.innerHTML = "<p>Nessun appuntamento oggi</p>";
+        return;
+      }
+
+      // Lista semplice e rapida da leggere
+      box.innerHTML = eventi.map(e => 
+        `<div class="evento-oggi"><strong>${e.ora}</strong> – ${e.titolo}</div>`
+      ).join("");
+
+      // Gestione toggle solo se ce ne sono più di 5
+      const el = box.querySelectorAll(".evento-oggi");
+      if (el.length > 5) {
+        box.style.maxHeight = "120px";
+        box.style.overflow = "hidden";
+        box.style.transition = "max-height 0.3s ease";
+        if (toggleBtn) {
+          toggleBtn.style.display = "inline-block";
+          toggleBtn.textContent = "▼";
+          toggleBtn.onclick = () => {
+            const expanded = box.style.maxHeight !== "none";
+            box.style.maxHeight = expanded ? "120px" : "none";
+            toggleBtn.textContent = expanded ? "▼" : "▲";
+          };
+        }
+      } else {
+        box.style.maxHeight = "none";
+        box.style.overflow = "visible";
+      }
+    })
+    .catch(() => {
+      box.innerHTML = "<p>Errore caricamento</p>";
+    });
+}
+
+function caricaAgendaSettimanale() {
+  const container = document.getElementById("agendaSettimanale");
+  if (!container) return;
+
+  callBackend("getAppuntamentiSettimana")
+    .then(eventi => {
+      if (!eventi || eventi.length === 0) {
+        container.innerHTML = "<p>Nessun appuntamento questa settimana</p>";
+        return;
+      }
+
+      // Ordine giorni corretto
+      const ordine = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato", "Domenica"];
+      const grouped = {};
+      
+      eventi.forEach(ev => {
+        if (!grouped[ev.giorno]) grouped[ev.giorno] = [];
+        grouped[ev.giorno].push(ev);
+      });
+
+      // Render ultra-leggero: solo testo, spaziatura chiara
+      let html = "";
+      ordine.forEach(giorno => {
+        if (grouped[giorno]) {
+          html += `<div style="margin-bottom: 16px;">
+                     <strong style="font-size: 15px; display: block; margin-bottom: 6px;">${giorno}</strong>`;
+          grouped[giorno].forEach(ev => {
+            html += `<div style="margin: 4px 0 4px 8px; font-size: 14px; line-height: 1.4;">
+                       <span style="font-weight: 600; min-width: 45px; display: inline-block;">${ev.ora}</span> ${ev.titolo}
+                     </div>`;
+          });
+          html += "</div>";
+        }
+      });
+      
+      container.innerHTML = html;
+    })
+    .catch(() => {
+      container.innerHTML = "<p>Errore caricamento</p>";
+    });
 }
 
 /* ======================
