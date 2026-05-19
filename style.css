@@ -2664,7 +2664,7 @@ font-size:14px;
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  margin: 0 !important;
+  margin: 0 0 16px 0 !important;  /* 🔥 AGGIUNTO: 16px spazio sotto */
   padding: 0 !important;
   max-height: 90px !important;
   overflow: hidden !important;
@@ -2673,10 +2673,11 @@ font-size:14px;
 
 #oggiEventi p {
   margin: 0 !important;
-  font-size: 12px !important;
-  color: #666 !important;
-  font-style: italic !important;
-  padding: 6px 0 !important;
+  font-size: 13px !important;      /* 🔥 LEGGERMENTE PIÙ GRANDE */
+  color: #333 !important;          /* 🔥 NERO COME GLI ALTRI */
+  font-style: normal !important;   /* 🔥 NORMALE, NON ITALIC */
+  font-weight: 400 !important;     /* 🔥 PESO NORMALE */
+  padding: 8px 0 !important;       /* 🔥 PIÙ SPAZIO INTERNO */
   text-align: center !important;
 }
 
