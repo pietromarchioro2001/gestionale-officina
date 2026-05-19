@@ -3105,6 +3105,47 @@ button:active {
 
 }
 
+/* ===== PULSANTI DOCUMENTI CLIENTI ===== */
+
+/* Mostra link quando non sono .hidden */
+#librettoLink:not(.hidden),
+#targaLink:not(.hidden),
+#btnCartellaCliente:not(.hidden) {
+  display: inline-block !important;
+  margin: 8px 0 0 0 !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #2e7d32 !important;
+  background: #f1f8e9 !important;
+  border: 1px solid #c8e6c9 !important;
+  border-radius: 6px !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+}
+
+/* Hover effect */
+#librettoLink:not(.hidden):hover,
+#targaLink:not(.hidden):hover,
+#btnCartellaCliente:not(.hidden):hover {
+  background: #e8f5e9 !important;
+  border-color: #a5d6a7 !important;
+  text-decoration: underline !important;
+}
+
+/* Icona prima del testo (opzionale) */
+#librettoLink:not(.hidden)::before {
+  content: "📄 ";
+}
+
+#targaLink:not(.hidden)::before {
+  content: "🚗 ";
+}
+
+#btnCartellaCliente:not(.hidden)::before {
+  content: "📁 ";
+}
+
 /* Zoom desktop */
 @media (max-width: 1600px) {
   body { zoom: 0.9; }
