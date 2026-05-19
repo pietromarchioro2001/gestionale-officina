@@ -751,6 +751,14 @@ function selezionaClienteRicerca(targa){
     document.getElementById("targa").value = v.targa || "";
     document.getElementById("immatricolazione").value = v.immatricolazione || "";
 
+    // 🔥 Mostra pulsante elimina solo se è un cliente esistente
+const btnElimina = document.getElementById("btnEliminaCliente");
+if (btnElimina && ID_CLIENTE_SCELTO) {
+  btnElimina.classList.remove("hidden");
+  // Salva l'ID nel dataset per usarlo dopo
+  btnElimina.dataset.clienteId = ID_CLIENTE_SCELTO;
+}
+
     // 🔥 FIX REVISIONE: Leggi, formatta e salva dataset.raw
     const revisioneInput = document.getElementById("revisioneInput");
     if (revisioneInput && v.revisione) {
@@ -797,6 +805,61 @@ if (res.cartellaClienteUrl) {
     nascondiLoadingRicerca();
     UI.error("Errore caricamento cliente: " + err.message, "selezionaClienteRicerca");
   });
+}
+
+/**
+ * Mostra conferma ed elimina cliente se confermato
+ */
+function confermaEliminaCliente() {
+  const btn = document.getElementById("btnEliminaCliente");
+  const idCliente = btn?.dataset.clienteId;
+  
+  if (!idCliente) {
+    showAlert("Errore: ID cliente non trovato");
+    return;
+  }
+
+  showConfirm(
+    "⚠️ Vuoi eliminare questo cliente?\n\n" +
+    "Verranno eliminati:\n" +
+    "• La scheda cliente\n" +
+    "• Tutti i veicoli associati\n" +
+    "• La cartella su Drive\n\n" +
+    "Questa operazione è IRREVERSIBILE.",
+    (conferma) => {
+      if (!conferma) return;
+      
+      // Mostra loading
+      const btnElimina = document.getElementById("btnEliminaCliente");
+      btnElimina.disabled = true;
+      btnElimina.innerHTML = "⏳";
+      
+      callBackend("eliminaClienteEVeicoli", [idCliente])
+        .then(res => {
+          if (res?.ok) {
+            showAlert("✅ Cliente eliminato correttamente");
+            resetClienti(); // Pulisci form
+          } else {
+            showAlert("❌ Errore: " + (res?.error || "Eliminazione fallita"));
+          }
+        })
+        .catch(err => {
+          showAlert("❌ Errore di connessione: " + err.message);
+        })
+        .finally(() => {
+          // Ripristina pulsante
+          btnElimina.disabled = false;
+          btnElimina.innerHTML = `
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              <line x1="10" y1="11" x2="10" y2="17"></line>
+              <line x1="14" y1="11" x2="14" y2="17"></line>
+            </svg>
+          `;
+        });
+    }
+  );
 }
 
 function mostraLoadingRicerca(){
@@ -1293,6 +1356,13 @@ function resetClienti() {
     .forEach(input => {
       input.value = "";
     });
+
+  // 🔥 AGGIUNGI QUESTO IN FONDO:
+  const btnElimina = document.getElementById("btnEliminaCliente");
+  if (btnElimina) {
+    btnElimina.classList.add("hidden");
+    delete btnElimina.dataset.clienteId;
+  }
 
   // nascondi preview libretto
   const librettoLink = document.getElementById("librettoLink");
