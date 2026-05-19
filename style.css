@@ -1321,20 +1321,24 @@ a#targaLink:hover {
   gap: 8px 12px !important;
 }
 
-/* Pulsante Rileva: forza nuova riga e centrato */
+/* Pulsante Rileva: forza nuova riga */
 #btnAnalizza {
-  order: 10 !important;           /* Sposta in fondo al flex */
-  width: 100% !important;         /* Occupa tutta la riga */
-  max-width: 200px !important;    /* Ma non troppo largo */
-  margin: 12px auto 0 auto !important; /* Centrato con spazio sopra */
-  display: block !important;      /* Ignora flex per questo elemento */
+  order: 10 !important;                    /* Sposta in fondo al flex */
+  flex-basis: 100% !important;             /* Occupa tutta la riga */
+  max-width: 180px !important;             /* Desktop: non troppo largo */
+  width: auto !important;                  /* Larghezza automatica */
+  margin: 12px 0 0 0 !important;           /* Spazio sopra */
+  justify-self: center !important;         /* Centra orizzontalmente */
+  align-self: center !important;
 }
 
-/* Mobile: ancora più compatto */
+/* Mobile: più compatto */
 @media (max-width: 768px) {
   #btnAnalizza {
-    max-width: 100% !important;
+    max-width: 140px !important;           /* Mobile: più stretto */
     margin-top: 8px !important;
+    padding: 8px 16px !important;          /* Padding più piccolo */
+    font-size: 13px !important;            /* Testo più piccolo */
   }
 }
 
