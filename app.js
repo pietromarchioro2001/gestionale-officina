@@ -845,60 +845,99 @@ if (res.cartellaClienteUrl) {
   });
 }
 
+// 🔥 Variabile per memorizzare cosa stiamo eliminando
+let TIPO_ELIMINAZIONE_TEMP = null;
+
 /**
- * Mostra conferma ed elimina cliente se confermato
+ * Apre il popup di scelta eliminazione
  */
-function confermaEliminaCliente() {
-  const btn = document.getElementById("btnEliminaCliente");
-  const idCliente = btn?.dataset.clienteId;
-  
-  if (!idCliente) {
-    showAlert("Errore: ID cliente non trovato");
+function apriPopupEliminaScelta() {
+  const btnElimina = document.getElementById("btnEliminaCliente");
+  if (!btnElimina || !btnElimina.dataset.clienteId) {
+    showAlert("⚠️ Nessun cliente selezionato per l'eliminazione");
     return;
   }
-
-  showConfirm(
-    "⚠️ Vuoi eliminare questo cliente?\n\n" +
-    "Verranno eliminati:\n" +
-    "• La scheda cliente\n" +
-    "• Tutti i veicoli associati\n" +
-    "• La cartella su Drive\n\n" +
-    "Questa operazione è IRREVERSIBILE.",
-    (conferma) => {
-      if (!conferma) return;
-      
-      // Mostra loading
-      const btnElimina = document.getElementById("btnEliminaCliente");
-      btnElimina.disabled = true;
-      btnElimina.innerHTML = "⏳";
-      
-      callBackend("eliminaClienteEVeicoli", [idCliente])
-        .then(res => {
-          if (res?.ok) {
-            showAlert("✅ Cliente eliminato correttamente");
-            resetClienti(); // Pulisci form
-          } else {
-            showAlert("❌ Errore: " + (res?.error || "Eliminazione fallita"));
-          }
-        })
-        .catch(err => {
-          showAlert("❌ Errore di connessione: " + err.message);
-        })
-        .finally(() => {
-          // Ripristina pulsante
-          btnElimina.disabled = false;
-          btnElimina.innerHTML = `
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6"></polyline>
-              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              <line x1="10" y1="11" x2="10" y2="17"></line>
-              <line x1="14" y1="11" x2="14" y2="17"></line>
-            </svg>
-          `;
-        });
-    }
-  );
+  
+  document.getElementById("popupEliminaScelta").classList.remove("hidden");
 }
+
+/**
+ * Chiude il popup
+ */
+function chiudiPopupElimina() {
+  document.getElementById("popupEliminaScelta").classList.add("hidden");
+  TIPO_ELIMINAZIONE_TEMP = null;
+}
+
+/**
+ * Gestisce la scelta dell'utente
+ */
+async function confermaElimina(tipo) {
+  TIPO_ELIMINAZIONE_TEMP = tipo;
+  chiudiPopupElimina();
+  
+  const btnElimina = document.getElementById("btnEliminaCliente");
+  const idCliente = btnElimina?.dataset.clienteId;
+  const targa = document.getElementById("targa")?.value?.trim();
+  
+  if (!idCliente) {
+    showAlert("⚠️ Errore: ID cliente non trovato");
+    return;
+  }
+  
+  showAlert("⏳ Elaborazione in corso...");
+  
+  try {
+    let res;
+    
+    if (tipo === "veicolo") {
+      // 🔹 Elimina solo veicolo
+      if (!targa) {
+        showAlert("⚠️ Inserisci la targa del veicolo da eliminare");
+        return;
+      }
+      res = await callBackend("eliminaSoloVeicolo", [targa, idCliente]);
+    } else {
+      // 🔹 Elimina cliente + tutti i veicoli
+      res = await callBackend("eliminaClienteETuttiVeicoli", [idCliente]);
+    }
+    
+    if (!res.ok) {
+      showAlert("❌ Errore: " + (res.error || "Operazione fallita"));
+      return;
+    }
+    
+    // Successo
+    if (tipo === "veicolo") {
+      showAlert("✅ Veicolo eliminato correttamente");
+      // Pulisci solo i campi veicolo
+      document.getElementById("veicolo").value = "";
+      document.getElementById("motore").value = "";
+      document.getElementById("targa").value = "";
+      document.getElementById("immatricolazione").value = "";
+      document.getElementById("revisioneInput").value = "";
+      document.getElementById("revisioneInput").dataset.raw = "";
+    } else {
+      showAlert("✅ Cliente e tutti i veicoli eliminati correttamente");
+      resetClienti();
+    }
+    
+  } catch(err) {
+    console.error("❌ Errore eliminazione:", err);
+    showAlert("❌ Errore di connessione: " + err.message);
+  }
+}
+
+// 🔥 Chiudi popup se si clicca fuori
+document.addEventListener("click", function(e) {
+  const popup = document.getElementById("popupEliminaScelta");
+  if (popup && !popup.classList.contains("hidden")) {
+    const box = popup.querySelector(".popup-cliente-box");
+    if (!box.contains(e.target)) {
+      chiudiPopupElimina();
+    }
+  }
+});
 
 function mostraLoadingRicerca(){
   const el = document.getElementById("ricercaLoading");
