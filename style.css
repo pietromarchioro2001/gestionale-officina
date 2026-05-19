@@ -1226,6 +1226,51 @@ a#targaLink:hover {
 
 }
 
+/* ===== PULSANTE ELIMINA CLIENTE ===== */
+
+.btn-delete {
+  background: #fff !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px !important;
+  padding: 6px 10px !important;
+  cursor: pointer !important;
+  display: none !important; /* Nascosto di default */
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+  color: #666 !important;
+  box-shadow: none !important;
+}
+
+.btn-delete:not(.hidden) {
+  display: inline-flex !important;
+}
+
+.btn-delete:hover {
+  background: #ffebee !important;
+  border-color: #ef9a9a !important;
+  color: #c62828 !important;
+  transform: scale(1.05);
+}
+
+.btn-delete svg {
+  stroke: currentColor !important;
+}
+
+/* Mobile: posiziona in basso a destra */
+@media (max-width: 768px) {
+  .section.actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 10px !important;
+  }
+  
+  #btnEliminaCliente {
+    margin-left: auto !important;
+  }
+}
+
 
 /* =========================================================
    10. SCHEDE
