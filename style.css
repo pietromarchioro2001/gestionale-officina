@@ -3108,29 +3108,33 @@ button:active {
 /* ===== PULSANTI DOCUMENTI CLIENTI ===== */
 
 /* Mostra link quando non sono .hidden */
+/* ===== PULSANTI DOCUMENTI (STILE GRIGIO/NERO MINIMAL) ===== */
+
 #librettoLink:not(.hidden),
 #targaLink:not(.hidden),
 #btnCartellaCliente:not(.hidden) {
-  display: inline-block !important;
-  margin: 8px 0 0 0 !important;
-  padding: 6px 12px !important;
+  background-color: #f4f4f4 !important; /* Grigio chiarissimo */
+  color: #000 !important;               /* Testo nero */
+  border: 1px solid #d0d0d0 !important; /* Bordo sottile */
+  border-radius: 8px !important;        /* Bordi arrotondati */
+  padding: 6px 12px !important;         /* Compatto */
   font-size: 13px !important;
   font-weight: 600 !important;
-  color: #2e7d32 !important;
-  background: #f1f8e9 !important;
-  border: 1px solid #c8e6c9 !important;
-  border-radius: 6px !important;
   text-decoration: none !important;
-  cursor: pointer !important;
+  display: inline-flex !important;      /* Per allineare icona e testo */
+  align-items: center !important;
+  gap: 6px !important;                  /* Spazio tra icona e testo */
+  box-shadow: none !important;          /* Rimuove ombre verdi */
+  cursor: pointer;
+  transition: background 0.2s ease;
 }
 
-/* Hover effect */
+/* Effetto Hover: diventa un po' più scuro */
 #librettoLink:not(.hidden):hover,
 #targaLink:not(.hidden):hover,
 #btnCartellaCliente:not(.hidden):hover {
-  background: #e8f5e9 !important;
-  border-color: #a5d6a7 !important;
-  text-decoration: underline !important;
+  background-color: #e8e8e8 !important;
+  border-color: #bbb !important;
 }
 
 /* Zoom desktop */
