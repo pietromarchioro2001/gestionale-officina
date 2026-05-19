@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyA3vWHF3MDDgu9j_1CcqbHCKFA9ioU05_wwADyrklQaeNgTBBOo033fG62b7DJvOs/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxQOHFV0egaMZugiAxrzSl52RhG_he_zA2GsotHv_wYaUHtuinj1NojUgLmbuxCJHMP/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -738,26 +738,31 @@ function selezionaClienteRicerca(targa){
 
     const c = res.cliente || {};
     const v = res.veicolo || {};
-
+    
+    // 🔥 SALVA ID CLIENTE (fondamentale per il pulsante elimina)
+    if (c.id) {
+      ID_CLIENTE_SCELTO = c.id;
+    }
+    
     // Popola campi standard
     document.getElementById("nome").value = c.nome || "";
     document.getElementById("indirizzo").value = c.indirizzo || "";
     document.getElementById("telefono").value = c.telefono || "";
     document.getElementById("data").value = c.dataNascita || "";
     document.getElementById("cf").value = c.codiceFiscale || "";
-
+    
     document.getElementById("veicolo").value = v.veicolo || "";
     document.getElementById("motore").value = v.motore || "";
     document.getElementById("targa").value = v.targa || "";
     document.getElementById("immatricolazione").value = v.immatricolazione || "";
-
-    // 🔥 Mostra pulsante elimina solo se è un cliente esistente
-const btnElimina = document.getElementById("btnEliminaCliente");
-if (btnElimina && ID_CLIENTE_SCELTO) {
-  btnElimina.classList.remove("hidden");
-  // Salva l'ID nel dataset per usarlo dopo
-  btnElimina.dataset.clienteId = ID_CLIENTE_SCELTO;
-}
+    
+    // 🔥 Mostra pulsante elimina SOLO se c'è un ID cliente
+    const btnElimina = document.getElementById("btnEliminaCliente");
+    if (btnElimina && ID_CLIENTE_SCELTO) {
+      btnElimina.classList.remove("hidden");
+      btnElimina.dataset.clienteId = ID_CLIENTE_SCELTO;
+      console.log("✅ Pulsante elimina mostrato per ID:", ID_CLIENTE_SCELTO);
+    }
 
     // 🔥 FIX REVISIONE: Leggi, formatta e salva dataset.raw
     const revisioneInput = document.getElementById("revisioneInput");
