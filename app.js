@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwcLPWK9II8Ey6RGRUjdVBkd0R1_0nKyz3M-u2s_-eqKUkWvSwAQtycwKBcAVC3lTA/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzZfXh9FHdb0rlfe_D_tc8gHoF4msne5-uRORtKI_tYZEZPQt51Wpxwyv285IwG9KPd/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -621,10 +621,10 @@ function raccogliDatiCliente(){
   const telefonoRaw = document.getElementById("telefono")?.value || "";
   const telefonoSanitized = sanitizeInput(telefonoRaw, "phone");
   
-  return {
+  const dati = {
     nomeCliente: sanitizeInput(document.getElementById("nome").value),
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
-    telefono: telefonoSanitized,  // ← Telefono
+    telefono: telefonoSanitized,
     dataNascita: sanitizeInput(document.getElementById("data").value),
     codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
     veicolo: sanitizeInput(document.getElementById("veicolo").value),
@@ -639,6 +639,13 @@ function raccogliDatiCliente(){
     // 🔥 QUESTO È FONDAMENTALE:
     idClienteForzato: window.ID_CLIENTE_SCELTO || null
   };
+  
+  // 🔥 LOG DEBUG
+  console.log("📦 Dati da inviare:", dati);
+  console.log("🔑 ID_CLIENTE_FORZATO:", dati.idClienteForzato);
+  console.log("🔑 ID_CLIENTE_SCELTO (globale):", window.ID_CLIENTE_SCELTO);
+  
+  return dati;
 }
 
 /********************
@@ -4355,17 +4362,22 @@ async function confermaModalitaSalvataggio(modalita) {
   }
   
   const dati = DATI_SALVATAGGIO_TEMP;
-  chiudiPopupModalitaSalvataggio();
   
-  // Mostra loading
+  // 🔥 LOG DEBUG PRIMA DI INVIARE
+  console.log(" Invio salvataggio modalità:", modalita);
+  console.log("📋 Dati completi:", dati);
+  console.log("🔑 idClienteForzato:", dati.idClienteForzato);
+  
+  chiudiPopupModalitaSalvataggio();
   showAlert("⏳ Elaborazione in corso...");
   
   try {
     
     const res = await callBackend("salvaClienteConModalita", [dati, modalita]);
     
+    console.log("📩 Risposta backend:", res);
+    
     if (!res.ok) {
-      // Gestisci errori specifici
       switch(res.error) {
         case "CF_ESISTENTE":
           showAlert("⚠️ Esiste già un cliente con questo Codice Fiscale.");
@@ -4374,7 +4386,7 @@ async function confermaModalitaSalvataggio(modalita) {
           showAlert("⚠️ Esiste già un veicolo con questa targa.");
           break;
         case "CLIENTE_NON_TROVATO":
-          showAlert("⚠️ Cliente non trovato. Impossibile aggiungere il veicolo.");
+          showAlert("⚠️ Cliente non trovato. ID: " + dati.idClienteForzato);
           break;
         case "TARGA_GIA_ASSOCIATA":
           showAlert("⚠️ Questo veicolo è già associato al cliente.");
@@ -4393,12 +4405,10 @@ async function confermaModalitaSalvataggio(modalita) {
     
     showAlert(msg);
     
-    // Reset form se necessario
     if (modalita !== "sovrascrivi") {
       resetClienti();
     }
     
-    // Apri cartella Drive se creata
     if (res.cartellaVeicoloUrl) {
       setTimeout(() => {
         window.open(res.cartellaVeicoloUrl, "_blank");
