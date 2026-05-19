@@ -54,26 +54,31 @@ html, body {
 }
 
 .custom-alert-box{
-  background: #2e7d32;
+  background: #000 !important;  /* ← SFONDO NERO (era #2e7d32) */
   color: white;
   padding: 16px 22px;
   border-radius: 8px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.5);  /* ← Ombra più marcata */
   display: flex;
   align-items: center;
   gap: 16px;
   font-weight: 500;
+  border: 2px solid #333;  /* ← Bordo grigio scuro */
 }
 
 .custom-alert-box button{
-  background: white;
-  color: #2e7d32;
+  background: #fff;
+  color: #000;  /* ← Testo nero sul bottone */
   border: none;
   padding: 6px 14px;
   border-radius: 5px;
   cursor: pointer;
+  font-weight: 600;
 }
 
+.custom-alert-box button:hover{
+  background: #ddd;
+}
 /* ================= CONFIRM ================= */
 
 .confirm-box{
