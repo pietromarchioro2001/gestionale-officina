@@ -1347,6 +1347,34 @@ a#targaLink:hover {
   }
 }
 
+/* Overlay per click outside */
+#popupEliminaScelta {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+#popupEliminaScelta.hidden {
+  display: none !important;
+}
+
+#popupEliminaScelta .popup-cliente-box {
+  position: relative;
+  max-width: 400px;
+  width: 90%;
+}
+
+/* Pulsanti hover */
+#popupEliminaScelta button.secondary:hover {
+  background: #f5f5f5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
 /* =========================================================
    10. SCHEDE
 ========================================================= */
