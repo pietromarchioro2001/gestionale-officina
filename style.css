@@ -2695,8 +2695,7 @@ display:none;
 
 #home{
   overflow-x:hidden;
-  padding:6px 10px 8px;
-  padding-top:2px;
+  padding: 0 10px 8px;    /* 🔥 ZERO padding sopra */
 }
 
 /* titolo */
@@ -2712,10 +2711,27 @@ display:none;
 .home-appointments{
   height: auto;
   min-height: 0;
-  margin: 0 0 10px;        /* 🔥 RIDOTTO: quasi niente spazio sopra */
+  margin: 0 0 6px;         /* 🔥 RIDOTTO ANCORA: 6px sotto */
   max-height: none;
   overflow: hidden;
   padding: 0;
+}
+
+ .home-today {
+  padding: 6px 10px;       /* 🔥 RIDOTTO: meno padding interno */
+  margin: 0;
+  border-left: 4px solid #f5c400;
+  border-radius: 8px;
+  background: #fff8e1;
+}
+
+.home-today h3 {
+  margin: 0 0 6px 0;       /* 🔥 RIDOTTO: meno spazio sotto titolo */
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #000;
 }
 
 #oggiEventi {
@@ -2743,6 +2759,25 @@ display:none;
   line-height: 1;
   padding-bottom: 2px;
   background: linear-gradient(to bottom, transparent, #fff8e1 40%);
+}
+
+   #oggiEventi:empty::before {
+  content: "Nessun appuntamento oggi";
+  display: block;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  padding: 8px 0;
+  text-align: center;
+}
+
+#oggiEventi p {
+  margin: 0;
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  padding: 8px 0;
+  text-align: center;
 }
 
 .evento-oggi {
