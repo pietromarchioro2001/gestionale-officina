@@ -393,7 +393,7 @@ const SIGLE_MAIUSCOLE = [
 
 let CACHE_ORDINI = null;
 let CACHE_TS = 0;
-const CACHE_TTL = 3 * 60 * 1000;
+const CACHE_TTL = 10 * 60 * 1000;
 let librettoLink;
 let targaLink;
 let btnCartellaCliente;
@@ -2546,10 +2546,9 @@ function bipMicrofono() {
 }
 
 function caricaOrdiniUI(force = false) {
-
   const now = Date.now();
 
-  // 🔥 1️⃣ Se ho cache → mostro subito
+  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste)
   if (CACHE_ORDINI) {
     renderOrdini(
       CACHE_ORDINI.ordini || [],
@@ -2557,21 +2556,22 @@ function caricaOrdiniUI(force = false) {
       CACHE_ORDINI.veicoli || [],
       CACHE_ORDINI.fornitori || []
     );
+  } else {
+    // 🔥 Mostra skeleton/loading se non c'è cache
+    const container = document.getElementById("listaOrdini");
+    if (container) {
+      container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Caricamento ordini...</div>';
+    }
   }
 
-  // 🔥 2️⃣ Se cache valida → STOP
-  if (
-    !force &&
-    CACHE_ORDINI &&
-    now - CACHE_TS < CACHE_TTL
-  ) {
+  // 🔥 2️⃣ Se cache valida → STOP (non chiamo backend)
+  if (!force && CACHE_ORDINI && now - CACHE_TS < CACHE_TTL) {
     return;
   }
 
-  // 🔥 3️⃣ Aggiornamento backend in background
+  // 🔥 3️⃣ Aggiornamento backend in BACKGROUND (non blocca UI)
   callBackend("getOrdiniBundle")
     .then(res => {
-
       const ordini = res?.ordini || [];
       const clienti = res?.clienti || [];
       const veicoli = res?.veicoli || [];
@@ -2579,97 +2579,115 @@ function caricaOrdiniUI(force = false) {
 
       CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
       CACHE_TS = Date.now();
-
       VEICOLI_ALL = veicoli;
 
-      renderOrdini(ordini, clienti, veicoli, fornitori);
-
+      // 🔥 Solo se i dati sono cambiati, ri-renderizzo
+      if (JSON.stringify(ordini) !== JSON.stringify(CACHE_ORDINI?.ordini)) {
+        renderOrdini(ordini, clienti, veicoli, fornitori);
+      }
     })
     .catch(err => {
-  UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
-});
-
+      UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
+      // Mantengo la cache vecchia se c'è errore
+    });
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
-
   const container = document.getElementById("listaOrdini");
+  if (!container) return;
+
+  // 🔥 Usa DocumentFragment per rendering più veloce
   const fragment = document.createDocumentFragment();
 
-  // 🔥 ordina: non completati sopra, completati sotto
+  // 🔥 Ordina: non completati sopra, completati sotto
   const lista = [...ordini].sort((a, b) => {
-
     if (a.check && !b.check) return 1;
     if (!a.check && b.check) return -1;
-
-    return b.row - a.row; // nuovi sopra
-
+    return b.row - a.row;
   });
 
-  lista.forEach(o => {
+  // 🔥 Pre-calcola opzioni select per riutilizzo
+  const clientiOpts = clienti.map(c => 
+    `<option value="${c}">${c}</option>`
+  ).join("");
 
+  const fornitoriOpts = `
+    <option value="" selected disabled>Fornitore</option>
+    <option value="autoparts">Autoparts</option>
+    <option value="teamcar">Teamcar</option>
+    <option value="giuliano">Giuliano</option>
+  `;
+
+  lista.forEach(o => {
     const row = document.createElement("div");
     row.className = "ordine-row";
 
+    // 🔥 Costruisci select veicolo solo se serve
+    const veicoloOpts = veicoli
+      .filter(v => !o.cliente || v.clienteNome === o.cliente)
+      .map(v => `<option value="${v.veicolo}" ${v.veicolo === o.veicolo ? "selected" : ""}>${v.veicolo}</option>`)
+      .join("");
+
     row.innerHTML = `
-
-  <div class="ordine-top">
-
-    <input type="checkbox"
-      class="ordine-check"
-      ${o.check ? "checked" : ""}
-      onchange="onToggleCheckbox(${o.row}, this.checked)">
-
-    <div class="ordine-title"
-         onclick="editDescrizione(this, ${o.row})">
-      ${o.descrizione || "Scrivi descrizione ordine…"}
-    </div>
-
-    <div class="ordine-menu">
-      <button class="ordine-menu-btn"
-              onclick="toggleMenu(this)">
-        ⋮
-      </button>
-
-      <div class="ordine-menu-popup">
-        <button class="ordine-delete"
-                onclick="eliminaOrdine(${o.row})">
-          Elimina
-        </button>
+      <div class="ordine-top">
+        <input type="checkbox" class="ordine-check" ${o.check ? "checked" : ""} onchange="onToggleCheckbox(${o.row}, this.checked)">
+        <div class="ordine-title" onclick="editDescrizione(this, ${o.row})">
+          ${o.descrizione || "Scrivi descrizione ordine…"}
+        </div>
+        <div class="ordine-menu">
+          <button class="ordine-menu-btn" onclick="toggleMenu(this)">⋮</button>
+          <div class="ordine-menu-popup">
+            <button class="ordine-delete" onclick="eliminaOrdine(${o.row})">Elimina</button>
+          </div>
+        </div>
       </div>
-    </div>
+      <div class="ordine-body">
+        <select class="ordine-select" onchange="onChangeCliente(${o.row}, this.value)">
+          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
+          ${clientiOpts}
+        </select>
+        <select class="ordine-select" onchange="onChangeVeicolo(${o.row}, this.value)">
+          <option value="" disabled ${o.veicolo ? "" : "selected"}>Seleziona veicolo</option>
+          ${veicoloOpts}
+        </select>
+        <select class="ordine-select" onchange="onChangeFornitore(${o.row}, this.value)">
+          ${fornitoriOpts}
+        </select>
+        <button class="ordine-invia" onclick="inviaOrdine(${o.row}, this)">INVIA</button>
+      </div>
+    `;
 
-  </div>
-
-  <div class="ordine-body">
-
-    <select class="ordine-select"
-      onchange="onChangeCliente(${o.row}, this.value)">
-      <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
-      ${clienti.map(c => `
-        <option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>
-      `).join("")}
-    </select>
-
-    ${renderSelectVeicolo(o.row, o.veicolo, o.cliente, veicoli)}
-
-    ${fornitoreHtml(o, fornitori)}
-
-    <button class="ordine-invia"
-            onclick="inviaOrdine(${o.row}, this)">
-      INVIA
-    </button>
-
-  </div>
-`;
     fragment.appendChild(row);
-
   });
 
   container.innerHTML = "";
   container.appendChild(fragment);
-
 }
+
+// 🔥 Lazy load veicoli: carica select solo quando l'utente clicca
+function initLazyVeicoliSelect() {
+  document.querySelectorAll(".ordine-select[onchange*='onChangeVeicolo']").forEach(select => {
+    select.addEventListener("focus", function() {
+      if (this.dataset.loaded) return;
+      
+      const row = this.closest(".ordine-row");
+      const cliente = row?.querySelector("select[onchange*='onChangeCliente']")?.value;
+      
+      if (cliente && VEICOLI_ALL) {
+        const opts = VEICOLI_ALL
+          .filter(v => v.clienteNome === cliente)
+          .map(v => `<option value="${v.veicolo}">${v.veicolo}</option>`)
+          .join("");
+        
+        this.innerHTML = `<option value="" disabled selected>Seleziona veicolo</option>${opts}`;
+        this.dataset.loaded = "true";
+      }
+    }, { once: true });
+  });
+}
+
+// Chiama questa funzione alla fine di renderOrdini:
+// initLazyVeicoliSelect();
 
 function renderSelectVeicolo(row, veicoloSelezionato, clienteSelezionato, veicoli) {
   const lista = clienteSelezionato
