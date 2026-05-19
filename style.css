@@ -3133,19 +3133,6 @@ button:active {
   text-decoration: underline !important;
 }
 
-/* Icona prima del testo (opzionale) */
-#librettoLink:not(.hidden)::before {
-  content: "📄 ";
-}
-
-#targaLink:not(.hidden)::before {
-  content: "🚗 ";
-}
-
-#btnCartellaCliente:not(.hidden)::before {
-  content: "📁 ";
-}
-
 /* Zoom desktop */
 @media (max-width: 1600px) {
   body { zoom: 0.9; }
