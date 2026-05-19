@@ -2664,7 +2664,7 @@ font-size:14px;
   display: flex !important;
   flex-direction: column !important;
   gap: 4px !important;
-  margin: 0 0 45px 0 !important;  /* 🔥 AGGIUNTO: 16px spazio sotto */
+  margin: 0 0 55px 0 !important;  /* 🔥 AGGIUNTO: 16px spazio sotto */
   padding: 0 !important;
   max-height: 90px !important;
   overflow: hidden !important;
