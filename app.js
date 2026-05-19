@@ -1428,11 +1428,14 @@ function showSection(id) {
     break;
 
     case "ordini":
-      if (!autoOpenSection) {
-        toggleBadgeOrdini(false);
-      }
+  if (!autoOpenSection) {
+    toggleBadgeOrdini(false);
+    // 🔥 Carica solo se non c'è cache valida
+    if (!CACHE_ORDINI || Date.now() - CACHE_TS >= 10 * 60 * 1000) {
       caricaOrdiniUI();
-    break;
+    }
+  }
+  break;
 
     case "schede":
 
@@ -2548,31 +2551,34 @@ function bipMicrofono() {
 function caricaOrdiniUI(force = false) {
   const now = Date.now();
 
-  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste)
-  if (CACHE_ORDINI) {
+  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste e ha dati validi)
+  if (CACHE_ORDINI && CACHE_ORDINI.ordini?.length > 0) {
     renderOrdini(
-      CACHE_ORDINI.ordini || [],
+      CACHE_ORDINI.ordini,
       CACHE_ORDINI.clienti || [],
       CACHE_ORDINI.veicoli || [],
       CACHE_ORDINI.fornitori || []
     );
   } else {
-    // 🔥 Mostra skeleton/loading se non c'è cache
+    // 🔥 Mostra messaggio se non c'è cache
     const container = document.getElementById("listaOrdini");
     if (container) {
       container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Caricamento ordini...</div>';
     }
   }
 
-  // 🔥 2️⃣ Se cache valida → STOP (non chiamo backend)
-  if (!force && CACHE_ORDINI && now - CACHE_TS < CACHE_TTL) {
+  // 🔥 2️⃣ Se cache valida (meno di 10 min) → non chiamo backend
+  if (!force && CACHE_ORDINI && now - CACHE_TS < 10 * 60 * 1000) {
     return;
   }
 
-  // 🔥 3️⃣ Aggiornamento backend in BACKGROUND (non blocca UI)
+  // 🔥 3️⃣ Aggiornamento backend in BACKGROUND
   callBackend("getOrdiniBundle")
     .then(res => {
-      const ordini = res?.ordini || [];
+      // 🔥 FILTRA ORDINI VUOTI: solo se hanno descrizione
+      const ordini = (res?.ordini || [])
+        .filter(o => o.descrizione && o.descrizione.trim() !== "" && o.descrizione.trim() !== "Scrivi descrizione ordine…");
+      
       const clienti = res?.clienti || [];
       const veicoli = res?.veicoli || [];
       const fornitori = res?.fornitori || [];
@@ -2581,14 +2587,11 @@ function caricaOrdiniUI(force = false) {
       CACHE_TS = Date.now();
       VEICOLI_ALL = veicoli;
 
-      // 🔥 Solo se i dati sono cambiati, ri-renderizzo
-      if (JSON.stringify(ordini) !== JSON.stringify(CACHE_ORDINI?.ordini)) {
-        renderOrdini(ordini, clienti, veicoli, fornitori);
-      }
+      // 🔥 Renderizza solo se ci sono ordini validi
+      renderOrdini(ordini, clienti, veicoli, fornitori);
     })
     .catch(err => {
       UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
-      // Mantengo la cache vecchia se c'è errore
     });
 }
 
@@ -2596,11 +2599,23 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
   const container = document.getElementById("listaOrdini");
   if (!container) return;
 
-  // 🔥 Usa DocumentFragment per rendering più veloce
+  // 🔥 FILTRO EXTRA: rimuovi ordini senza descrizione valida
+  const ordiniValidi = ordini.filter(o => 
+    o.descrizione && 
+    o.descrizione.trim() !== "" && 
+    o.descrizione.trim() !== "Scrivi descrizione ordine…"
+  );
+
+  // Se nessun ordine valido, mostra messaggio
+  if (ordiniValidi.length === 0) {
+    container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Nessun ordine da gestire</div>';
+    return;
+  }
+
   const fragment = document.createDocumentFragment();
 
   // 🔥 Ordina: non completati sopra, completati sotto
-  const lista = [...ordini].sort((a, b) => {
+  const lista = [...ordiniValidi].sort((a, b) => {
     if (a.check && !b.check) return 1;
     if (!a.check && b.check) return -1;
     return b.row - a.row;
