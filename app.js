@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyUZOxcz2YQmU7ZjvO_wNgygJ1IRdMhrEHFQZGpexjaUNW6NTjX4Lc5We1o8aU7ZY7T/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwcLPWK9II8Ey6RGRUjdVBkd0R1_0nKyz3M-u2s_-eqKUkWvSwAQtycwKBcAVC3lTA/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -616,19 +616,15 @@ function renderListaClienti(lista){
 
 }
 
+// Nel frontend (app.js), quando raccogli i dati:
 function raccogliDatiCliente(){
   const telefonoRaw = document.getElementById("telefono")?.value || "";
   const telefonoSanitized = sanitizeInput(telefonoRaw, "phone");
   
-  console.log("📞 Telefono frontend:", {
-    raw: telefonoRaw,
-    sanitized: telefonoSanitized
-  });
-  
   return {
     nomeCliente: sanitizeInput(document.getElementById("nome").value),
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
-    telefono: telefonoSanitized,  // ← ASSICURATI CHE SIA PRESENTE
+    telefono: telefonoSanitized,  // ← Telefono
     dataNascita: sanitizeInput(document.getElementById("data").value),
     codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
     veicolo: sanitizeInput(document.getElementById("veicolo").value),
@@ -638,7 +634,10 @@ function raccogliDatiCliente(){
     revisione: document.getElementById("revisioneInput")?.dataset.raw || "",
     tempLibrettoId: TEMP_LIBRETTO_ID,
     tempTargaId: TEMP_TARGA_ID,
-    altriDocumenti: TEMP_ALTRI_DOCUMENTI
+    altriDocumenti: TEMP_ALTRI_DOCUMENTI,
+    
+    // 🔥 QUESTO È FONDAMENTALE:
+    idClienteForzato: window.ID_CLIENTE_SCELTO || null
   };
 }
 
