@@ -2627,7 +2627,10 @@ function caricaOrdiniUI(force = false) {
 
       CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
       CACHE_TS = Date.now();
-      VEICOLI_ALL = veicoli;
+      VEICOLI_ALL = veicoli.map(v => ({
+      clienteNome: v.clienteNome?.trim(),
+      veicolo: v.veicolo?.trim()
+    }));
 
       renderOrdini(ordini, clienti, veicoli, fornitori);
     })
@@ -2685,33 +2688,39 @@ function renderOrdini(ordini, clienti, veicoli, fornitori) {
       .join("");
 
     row.innerHTML = `
-      <div class="ordine-top">
-        <input type="checkbox" class="ordine-check" ${o.check ? "checked" : ""} onchange="onToggleCheckbox(${o.row}, this.checked)">
-        <div class="ordine-title" onclick="editDescrizione(this, ${o.row})">
-          ${o.descrizione || "Scrivi descrizione ordine…"}
-        </div>
-        <div class="ordine-menu">
-          <button class="ordine-menu-btn" onclick="toggleMenu(this)">⋮</button>
-          <div class="ordine-menu-popup">
-            <button class="ordine-delete" onclick="eliminaOrdine(${o.row})">Elimina</button>
-          </div>
-        </div>
+  <div class="ordine-top">
+    <input type="checkbox" class="ordine-check" ${o.check ? "checked" : ""} onchange="onToggleCheckbox(${o.row}, this.checked)">
+    <div class="ordine-title" onclick="editDescrizione(this, ${o.row})">
+      ${o.descrizione || "Scrivi descrizione ordine…"}
+    </div>
+    <div class="ordine-menu">
+      <button class="ordine-menu-btn" onclick="toggleMenu(this)">⋮</button>
+      <div class="ordine-menu-popup">
+        <button class="ordine-delete" onclick="eliminaOrdine(${o.row})">Elimina</button>
       </div>
-      <div class="ordine-body">
-        <select class="ordine-select" onchange="onChangeCliente(${o.row}, this.value)">
-          <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
-          ${clientiOpts}
-        </select>
-        <select class="ordine-select" onchange="onChangeVeicolo(${o.row}, this.value)">
-          <option value="" disabled ${o.veicolo ? "" : "selected"}>Seleziona veicolo</option>
-          ${veicoloOpts}
-        </select>
-        <select class="ordine-select" onchange="onChangeFornitore(${o.row}, this.value)">
-          ${fornitoriOpts}
-        </select>
-        <button class="ordine-invia" onclick="inviaOrdine(${o.row}, this)">INVIA</button>
-      </div>
-    `;
+    </div>
+  </div>
+  <div class="ordine-body">
+    <!-- 🔥 AGGIUNTO data-row -->
+    <select class="ordine-select" data-row="${o.row}" onchange="onChangeCliente(${o.row}, this.value)">
+      <option value="" disabled ${o.cliente ? "" : "selected"}>Cliente</option>
+      ${clienti.map(c => `<option value="${c}" ${c === o.cliente ? "selected" : ""}>${c}</option>`).join("")}
+    </select>
+    
+    <!-- 🔥 AGGIUNTO data-row -->
+    <select class="ordine-select" data-row="${o.row}" onchange="onChangeVeicolo(${o.row}, this.value)">
+      <option value="" disabled ${o.veicolo ? "" : "selected"}>Seleziona veicolo</option>
+      ${veicoloOpts}
+    </select>
+    
+    <!-- 🔥 AGGIUNTO data-row -->
+    <select class="ordine-select" data-row="${o.row}" onchange="onChangeFornitore(${o.row}, this.value)">
+      ${fornitoriOpts}
+    </select>
+    
+    <button class="ordine-invia" onclick="inviaOrdine(${o.row}, this)">INVIA</button>
+  </div>
+`;
 
     fragment.appendChild(row);
   });
@@ -2921,25 +2930,33 @@ function onToggleCheckbox(row, checked) {
 }
 
 function aggiornaSelectVeicoliUI(row, cliente) {
-  const ordineRow = [...document.querySelectorAll(".ordine-row")]
-    .find(r => r.innerHTML.includes(`onChangeCliente(${row}`));
-
-  if (!ordineRow) return;
-
-  const selectVeicolo = ordineRow.querySelector(
-    'select[onchange^="onChangeVeicolo"]'
+  // 🔥 Trova la select veicolo usando data-row attribute (più affidabile)
+  const selectVeicolo = document.querySelector(
+    `select[data-row="${row}"][onchange*="onChangeVeicolo"]`
   );
 
   if (!selectVeicolo) return;
 
-  const lista = cliente
-    ? VEICOLI_ALL.filter(v => v.clienteNome === cliente)
+  // 🔥 Filtra veicoli: se c'è un cliente, mostra solo i suoi veicoli
+  const lista = cliente 
+    ? VEICOLI_ALL.filter(v => {
+        // Confronto case-insensitive e trimmato
+        return v.clienteNome?.trim().toLowerCase() === cliente.trim().toLowerCase();
+      })
     : VEICOLI_ALL;
 
+  // 🔥 Mantieni la selezione corrente se ancora valida
+  const selected = selectVeicolo.value;
+  const stillValid = lista.some(v => v.veicolo === selected);
+
   selectVeicolo.innerHTML = `
-    <option value="" disabled selected>Seleziona veicolo</option>
-    ${lista.map(v =>
-      `<option value="${v.veicolo}">${v.veicolo}</option>`
+    <option value="" disabled ${!selected || !stillValid ? 'selected' : ''}>
+      Seleziona veicolo
+    </option>
+    ${lista.map(v => 
+      `<option value="${v.veicolo}" ${v.veicolo === selected ? 'selected' : ''}>
+        ${v.veicolo}
+      </option>`
     ).join("")}
   `;
 }
