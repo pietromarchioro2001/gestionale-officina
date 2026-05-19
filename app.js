@@ -1012,13 +1012,25 @@ document.getElementById("targaCamera")
   // ==========================
   // 🔥 MICROFONO ASSISTENTE
   // ==========================
-  document.getElementById("btnMic")?.addEventListener("click", () => {
-    modalitaAssistente = "vocale";
-
-    sbloccaAudio();       // 🔥 FONDAMENTALE
-    bipMicrofono();       // feedback
-    avviaMicrofono();     // mic reale
-  });
+  // ==========================
+// 🔥 MICROFONO ASSISTENTE (MANUALE - SOLO UNA RISPOSTA)
+// ==========================
+document.getElementById("btnMic")?.addEventListener("click", () => {
+  // 🔥 NON cambiare modalità! Attiva solo il microfono UNA volta
+  sbloccaAudio();
+  bipMicrofono();
+  
+  // Avvia recognition solo per questa risposta
+  if (!recognition) initVoce();
+  if (ascoltoAttivo) return;
+  
+  try {
+    recognition.start();
+    console.log("🎤 Microfono manuale attivato (singola risposta)");
+  } catch (e) {
+    console.warn("Mic non avviato:", e);
+  }
+});
 
 
 
