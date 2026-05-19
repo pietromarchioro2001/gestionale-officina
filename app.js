@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx0cf1D0H9CHA1YIZp6w_pWfkb25kXMziKj-y2TkeZSCrf3c5hym7jdpGiRZSkZNqsL/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyVUIZH5KfmYIHgRe4LTjV__Ipu5QnlxIB80rzHsjvgq6yZwaQLQE0imfLHMBj3Hjls/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -237,7 +237,7 @@ function callBackend(action, args = []) {
     const timeout = setTimeout(() => {
       cleanup();
       reject(new Error("Timeout backend"));
-    }, 15000);
+    }, 20000);
 
     window[cb] = function(res) {
       clearTimeout(timeout);
