@@ -2693,9 +2693,9 @@ button:active {
 display:none;
 }
 
-#home{
-  overflow-x:hidden;
-  padding: 0 10px 8px;    /* 🔥 ZERO padding sopra */
+#home {
+  overflow-x: hidden;
+  padding: 0;
 }
 
 /* titolo */
@@ -2711,14 +2711,14 @@ display:none;
 .home-appointments{
   height: auto;
   min-height: 0;
-  margin: 0 0 6px;         /* 🔥 RIDOTTO ANCORA: 6px sotto */
+  margin: 0 0 4px 0;
+  padding: 0;        /* 🔥 RIDOTTO ANCORA: 6px sotto */
   max-height: none;
   overflow: hidden;
-  padding: 0;
 }
 
  .home-today {
-  padding: 6px 10px;       /* 🔥 RIDOTTO: meno padding interno */
+  padding: 4px 8px;       /* 🔥 RIDOTTO: meno padding interno */
   margin: 0;
   border-left: 4px solid #f5c400;
   border-radius: 8px;
@@ -2726,8 +2726,8 @@ display:none;
 }
 
 .home-today h3 {
-  margin: 0 0 6px 0;       /* 🔥 RIDOTTO: meno spazio sotto titolo */
-  font-size: 13px;
+  margin: 0 0 4px 0;       /* 🔥 RIDOTTO: meno spazio sotto titolo */
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
