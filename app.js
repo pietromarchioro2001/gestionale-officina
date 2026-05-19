@@ -3571,7 +3571,7 @@ async function caricaAgendaSettimanale(force = false) {
   }
   
   container.classList.remove("hidden");
-  container.innerHTML = "<p>⏳ Caricamento appuntamenti...</p>";
+  container.innerHTML = "<p>Caricamento appuntamenti...</p>";
   
   try {
     console.log("🔄 Chiamo backend getAppuntamentiSettimana...");
