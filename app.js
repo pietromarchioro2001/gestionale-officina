@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbz0FsiZswTbBIhC3tc5PI8m5UO0io6blfBeYks7Oklwlxi7TLkan481ZaHqfpJ844Yt/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwHzh6CDfhwhCWmi2KtMPgyTKNJwTCa09be9Gy7r151DeRFMRnQNKjqDAoe6Xlxc8gx/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -405,12 +405,15 @@ async function analizza() {
 
   startLoading("loadingOCR");
 
+  // 🔥 FIX: Ferma loading se manca il libretto
   if (!TEMP_LIBRETTO_ID) {
-    showAlert("Carica prima il libretto");
+    stopLoading("loadingOCR");  // ← AGGIUNTO: ferma il loading!
+    showAlert("⚠️ Carica prima il libretto");
     return;
   }
 
   try {
+    console.log("🔍 Avvio OCR...");
 
     const res = await callBackend(
       "ocrLibrettoDaFile",
@@ -420,7 +423,8 @@ async function analizza() {
     console.log("RISPOSTA OCR:", res);
 
     if (!res?.ok) {
-
+      stopLoading("loadingOCR");  // ← Ferma loading in caso di errore backend
+      
       if (res.error === "VEICOLO_ESISTENTE") {
         showAlert("⚠️ Veicolo già presente nel sistema.");
         return;
@@ -433,33 +437,28 @@ async function analizza() {
 
     // 🔥 CONTROLLO TARGA ESISTENTE
     if (dati?.targa) {
-
       const check = await callBackend(
         "checkTargaEsistente",
         [dati.targa]
       );
 
       if (check === true) {
-
-        stopLoading("loadingOCR");
-
+        stopLoading("loadingOCR");  // ← Ferma loading se veicolo esiste
         showAlert("⚠️ Veicolo già esistente nel sistema.");
-
-        // opzionale: carica dati esistenti invece di quelli OCR
         cercaVeicoloConTarga(dati.targa);
-
-        return; // ❌ blocca popolamento nuovo
+        return;
       }
     }
 
-    // ✔️ solo se NON esiste
+    // ✔️ OCR completato con successo
     popolaFormOCR(dati);
-
-    stopLoading("loadingOCR");
+    stopLoading("loadingOCR");  // ← Ferma loading alla fine
 
   } catch(err) {
+    console.error("❌ Errore OCR:", err);
     UI.error("Errore OCR: " + err.message, "analizza");
-    stopLoading("loadingOCR");
+    stopLoading("loadingOCR");  // ← Ferma loading in caso di eccezione
+    showAlert("❌ Errore durante l'analisi del libretto");
   }
 }
 
