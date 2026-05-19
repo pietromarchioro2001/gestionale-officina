@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwHzh6CDfhwhCWmi2KtMPgyTKNJwTCa09be9Gy7r151DeRFMRnQNKjqDAoe6Xlxc8gx/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbwOYN_rK9l7gcddmB6aHgTCnt3XbLtFUi4b243Hf4e6iAu-YDtpjvM34DOFQ_5UQ5Qu/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -466,32 +466,50 @@ async function analizza() {
  * SALVATAGGIO
  ********************/
 function salva() {
-
+  
   console.log("TEMP_LIBRETTO_ID:", TEMP_LIBRETTO_ID);
   console.log("TEMP_TARGA_ID:", TEMP_TARGA_ID);
-
-  // ⚠️ controllo documenti come ora
-  if (!clienteEsistente && (!TEMP_LIBRETTO_ID || !TEMP_TARGA_ID)) {
-
-    showConfirm(
-      "⚠️ Non hai caricato libretto o targa.\n\n" +
-      "È consigliato inserirli per completezza del profilo.\n\n" +
-      "Vuoi continuare comunque?",
-      conferma => {
-
-        if (!conferma) return;
-
-        apriPopupCliente();
-
-      }
-    );
-
+  console.log("ID_CLIENTE_SCELTO:", ID_CLIENTE_SCELTO);
+  
+  // 🔥 Raccogli i dati dal form
+  const dati = raccogliDatiCliente();
+  
+  // 🔥 Controlli preliminari
+  if (!dati.targa || !dati.targa.trim()) {
+    showAlert("⚠️ Inserisci la targa del veicolo");
     return;
   }
-
-  // ✅ se documenti ok → popup cliente
-  apriPopupCliente();
-
+  
+  if (!dati.nomeCliente || !dati.nomeCliente.trim()) {
+    showAlert("⚠️ Inserisci il nome del cliente");
+    return;
+  }
+  
+  // 🔥 Se NON c'è un cliente selezionato dalla ricerca → chiedi se è nuovo o esistente
+  if (!ID_CLIENTE_SCELTO) {
+    
+    // Se mancano documenti, chiedi conferma
+    if (!TEMP_LIBRETTO_ID && !TEMP_TARGA_ID) {
+      showConfirm(
+        "⚠️ Non hai caricato libretto o targa.\n\n" +
+        "È consigliato inserirli per completezza del profilo.\n\n" +
+        "Vuoi continuare comunque?",
+        conferma => {
+          if (!conferma) return;
+          apriPopupModalitaSalvataggio(dati);
+        }
+      );
+      return;
+    }
+    
+    // Altrimenti apri direttamente il popup modalità
+    apriPopupModalitaSalvataggio(dati);
+    return;
+  }
+  
+  // 🔥 Se c'è un cliente selezionato (ID_CLIENTE_SCELTO) → apri popup con le 3 opzioni
+  // (l'utente può scegliere se sovrascrivere o aggiungere un nuovo veicolo)
+  apriPopupModalitaSalvataggio(dati);
 }
 
 function apriPopupCliente(){
@@ -602,17 +620,15 @@ function raccogliDatiCliente(){
   const telefonoRaw = document.getElementById("telefono")?.value || "";
   const telefonoSanitized = sanitizeInput(telefonoRaw, "phone");
   
-  // 🔥 Debug: log del telefono prima dell'invio
   console.log("📞 Telefono frontend:", {
     raw: telefonoRaw,
-    sanitized: telefonoSanitized,
-    length: telefonoSanitized?.length
+    sanitized: telefonoSanitized
   });
   
   return {
     nomeCliente: sanitizeInput(document.getElementById("nome").value),
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
-    telefono: telefonoSanitized,  // ← Assicurati che sia questo il valore inviato
+    telefono: telefonoSanitized,  // ← ASSICURATI CHE SIA PRESENTE
     dataNascita: sanitizeInput(document.getElementById("data").value),
     codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
     veicolo: sanitizeInput(document.getElementById("veicolo").value),
@@ -4307,3 +4323,91 @@ async function initPush() {
 }
 
 initPush();
+
+
+// 🔥 Variabile globale per memorizzare i dati e la modalità
+let DATI_SALVATAGGIO_TEMP = null;
+
+/**
+ * Apre il popup con le 3 modalità di salvataggio
+ */
+function apriPopupModalitaSalvataggio(dati) {
+  DATI_SALVATAGGIO_TEMP = dati; // Salva i dati temporaneamente
+  document.getElementById("popupModalitaSalvataggio").classList.remove("hidden");
+}
+
+/**
+ * Chiude il popup e resetta i dati temporanei
+ */
+function chiudiPopupModalitaSalvataggio() {
+  document.getElementById("popupModalitaSalvataggio").classList.add("hidden");
+  DATI_SALVATAGGIO_TEMP = null;
+}
+
+/**
+ * Gestisce la scelta dell'utente e chiama la funzione backend corretta
+ */
+async function confermaModalitaSalvataggio(modalita) {
+  
+  if (!DATI_SALVATAGGIO_TEMP) {
+    showAlert("⚠️ Errore: dati di salvataggio non trovati");
+    chiudiPopupModalitaSalvataggio();
+    return;
+  }
+  
+  const dati = DATI_SALVATAGGIO_TEMP;
+  chiudiPopupModalitaSalvataggio();
+  
+  // Mostra loading
+  showAlert("⏳ Elaborazione in corso...");
+  
+  try {
+    
+    const res = await callBackend("salvaClienteConModalita", [dati, modalita]);
+    
+    if (!res.ok) {
+      // Gestisci errori specifici
+      switch(res.error) {
+        case "CF_ESISTENTE":
+          showAlert("⚠️ Esiste già un cliente con questo Codice Fiscale.");
+          break;
+        case "TARGA_ESISTENTE":
+          showAlert("⚠️ Esiste già un veicolo con questa targa.");
+          break;
+        case "CLIENTE_NON_TROVATO":
+          showAlert("⚠️ Cliente non trovato. Impossibile aggiungere il veicolo.");
+          break;
+        case "TARGA_GIA_ASSOCIATA":
+          showAlert("⚠️ Questo veicolo è già associato al cliente.");
+          break;
+        default:
+          showAlert("❌ Errore: " + res.error);
+      }
+      return;
+    }
+    
+    // Successo
+    let msg = "✅ Operazione completata!";
+    if (res.clienteNuovo) msg = "✅ Nuovo cliente creato!";
+    if (res.veicoloNuovo) msg = "✅ Nuovo veicolo aggiunto!";
+    if (modalita === "sovrascrivi") msg = "✅ Dati cliente aggiornati!";
+    
+    showAlert(msg);
+    
+    // Reset form se necessario
+    if (modalita !== "sovrascrivi") {
+      resetClienti();
+    }
+    
+    // Apri cartella Drive se creata
+    if (res.cartellaVeicoloUrl) {
+      setTimeout(() => {
+        window.open(res.cartellaVeicoloUrl, "_blank");
+      }, 1000);
+    }
+    
+  } catch(err) {
+    console.error("❌ Errore salvataggio:", err);
+    showAlert("❌ Errore di connessione: " + err.message);
+  }
+}
