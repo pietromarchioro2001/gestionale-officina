@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxQOHFV0egaMZugiAxrzSl52RhG_he_zA2GsotHv_wYaUHtuinj1NojUgLmbuxCJHMP/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbz0FsiZswTbBIhC3tc5PI8m5UO0io6blfBeYks7Oklwlxi7TLkan481ZaHqfpJ844Yt/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -600,10 +600,20 @@ function renderListaClienti(lista){
 }
 
 function raccogliDatiCliente(){
+  const telefonoRaw = document.getElementById("telefono")?.value || "";
+  const telefonoSanitized = sanitizeInput(telefonoRaw, "phone");
+  
+  // 🔥 Debug: log del telefono prima dell'invio
+  console.log("📞 Telefono frontend:", {
+    raw: telefonoRaw,
+    sanitized: telefonoSanitized,
+    length: telefonoSanitized?.length
+  });
+  
   return {
     nomeCliente: sanitizeInput(document.getElementById("nome").value),
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
-    telefono: sanitizeInput(document.getElementById("telefono").value, "phone"),
+    telefono: telefonoSanitized,  // ← Assicurati che sia questo il valore inviato
     dataNascita: sanitizeInput(document.getElementById("data").value),
     codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
     veicolo: sanitizeInput(document.getElementById("veicolo").value),
