@@ -845,40 +845,77 @@ if (res.cartellaClienteUrl) {
   });
 }
 
-// 🔥 Variabile per memorizzare cosa stiamo eliminando
+// 🔥 VARIABILE GLOBALE PER ELIMINAZIONE
 let TIPO_ELIMINAZIONE_TEMP = null;
 
 /**
- * Apre il popup di scelta eliminazione
+ * Apre il popup di scelta eliminazione - VERSIONE DEBUG
  */
 function apriPopupEliminaScelta() {
+  console.log("🗑️ [DEBUG] apriPopupEliminaScelta chiamata");
+  
   const btnElimina = document.getElementById("btnEliminaCliente");
-  if (!btnElimina || !btnElimina.dataset.clienteId) {
+  console.log("🔍 [DEBUG] btnElimina:", btnElimina);
+  
+  if (!btnElimina) {
+    console.error("❌ [DEBUG] Pulsante btnEliminaCliente NON trovato nel DOM!");
+    showAlert("⚠️ Errore: pulsante elimina non trovato");
+    return;
+  }
+  
+  console.log("🔍 [DEBUG] dataset.clienteId:", btnElimina.dataset.clienteId);
+  
+  if (!btnElimina.dataset.clienteId) {
+    console.error("❌ [DEBUG] ID cliente NON presente nel dataset!");
     showAlert("⚠️ Nessun cliente selezionato per l'eliminazione");
     return;
   }
   
-  document.getElementById("popupEliminaScelta").classList.remove("hidden");
+  const popup = document.getElementById("popupEliminaScelta");
+  console.log("🔍 [DEBUG] popupEliminaScelta:", popup);
+  console.log("🔍 [DEBUG] classList prima:", popup?.classList);
+  
+  if (!popup) {
+    console.error("❌ [DEBUG] Popup #popupEliminaScelta NON trovato nel DOM!");
+    showAlert("⚠️ Errore: popup eliminazione non trovato");
+    return;
+  }
+  
+  // Rimuovi hidden e forza il rendering
+  popup.classList.remove("hidden");
+  console.log("✅ [DEBUG] Popup mostrato, classList dopo:", popup.classList);
+  
+  // Forza un reflow per assicurarsi che il popup appaia
+  void popup.offsetWidth;
 }
 
 /**
- * Chiude il popup
+ * Chiude il popup - VERSIONE DEBUG
  */
 function chiudiPopupElimina() {
-  document.getElementById("popupEliminaScelta").classList.add("hidden");
+  console.log("❌ [DEBUG] chiudiPopupElimina chiamata");
+  const popup = document.getElementById("popupEliminaScelta");
+  if (popup) {
+    popup.classList.add("hidden");
+    console.log("✅ [DEBUG] Popup nascosto");
+  }
   TIPO_ELIMINAZIONE_TEMP = null;
 }
 
 /**
- * Gestisce la scelta dell'utente
+ * Gestisce la scelta dell'utente - VERSIONE DEBUG
  */
 async function confermaElimina(tipo) {
+  console.log(" [DEBUG] confermaElimina chiamata con tipo:", tipo);
+  
   TIPO_ELIMINAZIONE_TEMP = tipo;
   chiudiPopupElimina();
   
   const btnElimina = document.getElementById("btnEliminaCliente");
   const idCliente = btnElimina?.dataset.clienteId;
   const targa = document.getElementById("targa")?.value?.trim();
+  
+  console.log("📋 [DEBUG] Parametri:", { tipo, idCliente, targa });
   
   if (!idCliente) {
     showAlert("⚠️ Errore: ID cliente non trovato");
@@ -891,49 +928,52 @@ async function confermaElimina(tipo) {
     let res;
     
     if (tipo === "veicolo") {
-      // 🔹 Elimina solo veicolo
       if (!targa) {
         showAlert("⚠️ Inserisci la targa del veicolo da eliminare");
         return;
       }
+      console.log("🚗 [DEBUG] Chiamo eliminaSoloVeicolo");
       res = await callBackend("eliminaSoloVeicolo", [targa, idCliente]);
     } else {
-      // 🔹 Elimina cliente + tutti i veicoli
+      console.log("👤 [DEBUG] Chiamo eliminaClienteETuttiVeicoli");
       res = await callBackend("eliminaClienteETuttiVeicoli", [idCliente]);
     }
+    
+    console.log("📩 [DEBUG] Risposta backend:", res);
     
     if (!res.ok) {
       showAlert("❌ Errore: " + (res.error || "Operazione fallita"));
       return;
     }
     
-    // Successo
     if (tipo === "veicolo") {
       showAlert("✅ Veicolo eliminato correttamente");
-      // Pulisci solo i campi veicolo
       document.getElementById("veicolo").value = "";
       document.getElementById("motore").value = "";
       document.getElementById("targa").value = "";
       document.getElementById("immatricolazione").value = "";
       document.getElementById("revisioneInput").value = "";
-      document.getElementById("revisioneInput").dataset.raw = "";
+      if (document.getElementById("revisioneInput")) {
+        document.getElementById("revisioneInput").dataset.raw = "";
+      }
     } else {
       showAlert("✅ Cliente e tutti i veicoli eliminati correttamente");
       resetClienti();
     }
     
   } catch(err) {
-    console.error("❌ Errore eliminazione:", err);
+    console.error("❌ [DEBUG] Errore eliminazione:", err);
     showAlert("❌ Errore di connessione: " + err.message);
   }
 }
 
-// 🔥 Chiudi popup se si clicca fuori
+// 🔥 Chiudi popup se si clicca fuori - VERSIONE DEBUG
 document.addEventListener("click", function(e) {
   const popup = document.getElementById("popupEliminaScelta");
   if (popup && !popup.classList.contains("hidden")) {
     const box = popup.querySelector(".popup-cliente-box");
-    if (!box.contains(e.target)) {
+    if (box && !box.contains(e.target)) {
+      console.log("🖱️ [DEBUG] Click fuori dal popup, chiudo");
       chiudiPopupElimina();
     }
   }
