@@ -3948,6 +3948,7 @@ document.addEventListener("DOMContentLoaded", () => {
   
   // 4. Check notifiche
   checkNotificheHome();
+  initRevisioneCliente();
   
 });
 
