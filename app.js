@@ -725,39 +725,84 @@ function renderRicercaClienti(lista){
 function selezionaClienteRicerca(targa){
 
   chiudiPopupRicerca();
-
-  mostraLoadingRicerca();   // 🔥 QUI
+  mostraLoadingRicerca();
 
   callBackend("cercaVeicolo_PROXY", [targa])
   .then(res => {
 
     if(!res || !res.veicolo){
       showAlert("Veicolo non trovato");
+      nascondiLoadingRicerca();
       return;
     }
 
     const c = res.cliente || {};
     const v = res.veicolo || {};
 
+    // 🔥 Popola form cliente
     document.getElementById("nome").value = c.nome || "";
     document.getElementById("indirizzo").value = c.indirizzo || "";
     document.getElementById("telefono").value = c.telefono || "";
     document.getElementById("data").value = c.dataNascita || "";
     document.getElementById("cf").value = c.codiceFiscale || "";
 
+    // 🔥 Popola form veicolo
     document.getElementById("veicolo").value = v.veicolo || "";
     document.getElementById("motore").value = v.motore || "";
     document.getElementById("targa").value = v.targa || "";
     document.getElementById("immatricolazione").value = v.immatricolazione || "";
 
+    // 🔥 NUOVO: Imposta REVISIONE (colonna J)
+    const revisioneInput = document.getElementById("revisioneInput");
+    if (revisioneInput && v.revisione) {
+      revisioneInput.value = formatData(v.revisione);
+      revisioneInput.dataset.raw = v.revisione;
+    }
+
+    // 🔥 NUOVO: Mostra pulsante LIBRETTO se c'è URL
+    if (res.librettoUrl) {
+      const link = document.getElementById("librettoLink");
+      if (link) {
+        link.href = res.librettoUrl;
+        link.classList.remove("hidden");
+        link.style.display = "inline-block";
+        link.onclick = () => window.open(res.librettoUrl, "_blank");
+      }
+    }
+
+    // 🔥 NUOVO: Mostra pulsante TARGA se c'è URL
+    if (res.targaUrl) {
+      const link = document.getElementById("targaLink");
+      if (link) {
+        link.href = res.targaUrl;
+        link.classList.remove("hidden");
+        link.style.display = "inline-block";
+        link.onclick = () => window.open(res.targaUrl, "_blank");
+      }
+    }
+
+    // 🔥 NUOVO: Mostra pulsante CARTELLA CLIENTE
+    if (res.cartellaClienteUrl) {
+      const btn = document.getElementById("btnCartellaCliente");
+      if (btn) {
+        btn.href = res.cartellaClienteUrl;
+        btn.classList.remove("hidden");
+        btn.style.display = "inline-block";
+        btn.onclick = (e) => {
+          e.preventDefault();
+          window.open(res.cartellaClienteUrl, "_blank");
+        };
+      }
+    }
+
     clienteEsistente = true;
     nascondiLoadingRicerca();
 
   })
-  .catch(err=>{
-  nascondiLoadingRicerca();
-  UI.error("Errore caricamento cliente: " + err.message, "selezionaClienteRicerca");
-});
+  .catch(err => {
+    nascondiLoadingRicerca();
+    UI.error("Errore caricamento cliente: " + err.message, "selezionaClienteRicerca");
+  });
 }
 
 function mostraLoadingRicerca(){
