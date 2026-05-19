@@ -1347,13 +1347,13 @@ async function uploadLibretto(e){
 }
 
 function resetClienti() {
-
   console.log("Reset clienti...");
 
   // reset variabili globali
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
+  ID_CLIENTE_SCELTO = null;  // 🔥 Resetta anche questo!
 
   // reset tutti gli input
   document
@@ -1362,25 +1362,29 @@ function resetClienti() {
       input.value = "";
     });
 
-  // 🔥 AGGIUNGI QUESTO IN FONDO:
+  // 🔥 NASCONDI PULSANTI DOCUMENTI (usa classList, non style.display)
+  const librettoLink = document.getElementById("librettoLink");
+  if (librettoLink) {
+    librettoLink.classList.add("hidden");  // ← FIX
+    librettoLink.href = "#";
+  }
+
+  const targaLink = document.getElementById("targaLink");
+  if (targaLink) {
+    targaLink.classList.add("hidden");  // ← FIX
+    targaLink.href = "#";
+  }
+
+  const btnCartella = document.getElementById("btnCartellaCliente");
+  if (btnCartella) {
+    btnCartella.classList.add("hidden");  // ← FIX
+  }
+
+  // 🔥 NASCONDI PULSANTE ELIMINA
   const btnElimina = document.getElementById("btnEliminaCliente");
   if (btnElimina) {
     btnElimina.classList.add("hidden");
     delete btnElimina.dataset.clienteId;
-  }
-
-  // nascondi preview libretto
-  const librettoLink = document.getElementById("librettoLink");
-  if (librettoLink) {
-    librettoLink.style.display = "none";
-    librettoLink.href = "#";
-  }
-
-  // nascondi preview targa
-  const targaLink = document.getElementById("targaLink");
-  if (targaLink) {
-    targaLink.style.display = "none";
-    targaLink.href = "#";
   }
 
   // reset contatore documenti
@@ -1389,19 +1393,12 @@ function resetClienti() {
     altriCount.textContent = "";
   }
 
-  // nascondi cartella cliente
-  const btnCartella = document.getElementById("btnCartellaCliente");
-  if (btnCartella) {
-    btnCartella.style.display = "none";
-  }
-
   // reset messaggi
   const esito = document.getElementById("esitoRicerca");
   if (esito) esito.textContent = "";
 
   const stato = document.getElementById("stato");
   if (stato) stato.textContent = "";
-
 }
 
 function messaggioBot(testo) {
