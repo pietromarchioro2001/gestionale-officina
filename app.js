@@ -739,59 +739,53 @@ function selezionaClienteRicerca(targa){
     const c = res.cliente || {};
     const v = res.veicolo || {};
 
-    // 🔥 Popola form cliente
+    // Popola campi standard
     document.getElementById("nome").value = c.nome || "";
     document.getElementById("indirizzo").value = c.indirizzo || "";
     document.getElementById("telefono").value = c.telefono || "";
     document.getElementById("data").value = c.dataNascita || "";
     document.getElementById("cf").value = c.codiceFiscale || "";
 
-    // 🔥 Popola form veicolo
     document.getElementById("veicolo").value = v.veicolo || "";
     document.getElementById("motore").value = v.motore || "";
     document.getElementById("targa").value = v.targa || "";
     document.getElementById("immatricolazione").value = v.immatricolazione || "";
 
-    // 🔥 NUOVO: Imposta REVISIONE (colonna J)
+    // 🔥 FIX REVISIONE: Leggi, formatta e salva dataset.raw
     const revisioneInput = document.getElementById("revisioneInput");
     if (revisioneInput && v.revisione) {
-      revisioneInput.value = formatData(v.revisione);
-      revisioneInput.dataset.raw = v.revisione;
+      const rawDate = v.revisione; // Formato backend: yyyy-MM-dd
+      
+      // Mostra in formato italiano (gg/mm/aaaa)
+      revisioneInput.value = formatData(rawDate);
+      
+      // Salva il formato ISO per il salvataggio futuro
+      revisioneInput.dataset.raw = rawDate;
     }
 
-    // 🔥 NUOVO: Mostra pulsante LIBRETTO se c'è URL
+    // Mostra pulsanti documenti se presenti
     if (res.librettoUrl) {
       const link = document.getElementById("librettoLink");
       if (link) {
         link.href = res.librettoUrl;
         link.classList.remove("hidden");
         link.style.display = "inline-block";
-        link.onclick = () => window.open(res.librettoUrl, "_blank");
       }
     }
-
-    // 🔥 NUOVO: Mostra pulsante TARGA se c'è URL
     if (res.targaUrl) {
       const link = document.getElementById("targaLink");
       if (link) {
         link.href = res.targaUrl;
         link.classList.remove("hidden");
         link.style.display = "inline-block";
-        link.onclick = () => window.open(res.targaUrl, "_blank");
       }
     }
-
-    // 🔥 NUOVO: Mostra pulsante CARTELLA CLIENTE
     if (res.cartellaClienteUrl) {
       const btn = document.getElementById("btnCartellaCliente");
       if (btn) {
         btn.href = res.cartellaClienteUrl;
         btn.classList.remove("hidden");
         btn.style.display = "inline-block";
-        btn.onclick = (e) => {
-          e.preventDefault();
-          window.open(res.cartellaClienteUrl, "_blank");
-        };
       }
     }
 
