@@ -3288,21 +3288,38 @@ function preloadClientiVeicoli(){
 function caricaAppuntamentiOggi() {
   const box = document.getElementById("oggiEventi");
   const toggleBtn = document.getElementById("toggleOggi");
-  if (!box) return;
+  
+  console.log("📅 caricaAppuntamentiOggi chiamata");
+  console.log("📦 Elemento oggiEventi:", box);
+  
+  if (!box) {
+    console.error("❌ Elemento #oggiEventi non trovato!");
+    return;
+  }
 
+  // Mostra loading
+  box.innerHTML = "<p style='color: #666; text-align: center;'>Caricamento...</p>";
+  
   // Nascondi toggle all'inizio
   if (toggleBtn) toggleBtn.style.display = "none";
 
   callBackend("getAppuntamentiOggi")
     .then(eventi => {
+      console.log("📅 Appuntamenti ricevuti:", eventi);
+      
       if (!eventi || eventi.length === 0) {
-        box.innerHTML = "<p>Nessun appuntamento oggi</p>";
+        console.log("⚠️ Nessun appuntamento oggi");
+        box.innerHTML = "<p style='color: #666; text-align: center; padding: 10px;'>Nessun appuntamento oggi</p>";
         return;
       }
 
+      console.log("✅ " + eventi.length + " appuntamenti trovati");
+
       // Lista semplice e rapida da leggere
       box.innerHTML = eventi.map(e => 
-        `<div class="evento-oggi"><strong>${e.ora}</strong> – ${e.titolo}</div>`
+        `<div class="evento-oggi">
+          <strong>${e.ora}</strong> – ${e.titolo}
+        </div>`
       ).join("");
 
       // Gestione toggle solo se ce ne sono più di 5
@@ -3325,8 +3342,9 @@ function caricaAppuntamentiOggi() {
         box.style.overflow = "visible";
       }
     })
-    .catch(() => {
-      box.innerHTML = "<p>Errore caricamento</p>";
+    .catch(err => {
+      console.error("❌ Errore caricamento appuntamenti:", err);
+      box.innerHTML = "<p style='color: #f44336; text-align: center;'>Errore caricamento</p>";
     });
 }
 
