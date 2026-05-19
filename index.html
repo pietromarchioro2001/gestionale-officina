@@ -10,7 +10,11 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#2e7d32">
 
-  <link rel="preload" href="/gestionale-officina/logo.png" as="image" fetchpriority="high">
+  <!-- Se l'app è nella root del dominio: -->
+  <link rel="preload" href="logo.png" as="image" fetchpriority="high">
+  
+  <!-- OPPURE, se è in una sottocartella: -->
+  <link rel="preload" href="./logo.png" as="image" fetchpriority="high">
 
   <!-- CSS -->
   <link rel="stylesheet" href="style.css">
@@ -59,7 +63,13 @@
 <header class="topbar">
   <div class="topbar-inner">
   <div class="brand" onclick="toggleFullscreenMenu()">
-    <img src="logo.png" class="logo" alt="GoldenCar">
+    <img src="logo.png" 
+     class="logo" 
+     alt="GoldenCar"
+     width="52" 
+     height="52"
+     loading="eager"
+     fetchpriority="high">
     <span class="brand-name">GOLDENCAR</span>
   </div>
 
