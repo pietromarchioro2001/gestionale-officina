@@ -1313,6 +1313,31 @@ a#targaLink:hover {
    }
 }
 
+/* ===== FIX PULSANTE RILEVA (VA A CAPO) ===== */
+
+/* Sezione libretto: permetti wrap */
+#clienti .section:first-of-type .doc-row {
+  flex-wrap: wrap !important;
+  gap: 8px 12px !important;
+}
+
+/* Pulsante Rileva: forza nuova riga e centrato */
+#btnAnalizza {
+  order: 10 !important;           /* Sposta in fondo al flex */
+  width: 100% !important;         /* Occupa tutta la riga */
+  max-width: 200px !important;    /* Ma non troppo largo */
+  margin: 12px auto 0 auto !important; /* Centrato con spazio sopra */
+  display: block !important;      /* Ignora flex per questo elemento */
+}
+
+/* Mobile: ancora più compatto */
+@media (max-width: 768px) {
+  #btnAnalizza {
+    max-width: 100% !important;
+    margin-top: 8px !important;
+  }
+}
+
 /* =========================================================
    10. SCHEDE
 ========================================================= */
