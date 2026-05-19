@@ -491,37 +491,34 @@
   </div>
 </div>
 
-<!-- Popup selezione cliente -->
-<div id="popupCliente" class="popup-cliente hidden">
-  <div class="popup-cliente-box">
-    <h3>Vuoi abbinare a un cliente già esistente?</h3>
-    <input type="text" id="ricercaClientePopup" placeholder="Nome cliente">
-    <div id="listaClientiPopup" class="lista-clienti-popup"></div>
-    <div class="popup-clienti-actions">
-      <button onclick="nuovoClientePopup()">Nuovo cliente</button>
-      <button onclick="chiudiPopupCliente()">Annulla</button>
-    </div>
-  </div>
-</div>
-
-<!-- 🔥 NUOVO: Popup modalità salvataggio -->
-<div id="popupModalitaSalvataggio" class="popup-cliente hidden">
-  <div class="popup-cliente-box">
-    <h3>Come vuoi procedere?</h3>
-    <div style="display: flex; flex-direction: column; gap: 12px; margin: 20px 0;">
-      <button class="secondary" onclick="confermaModalitaSalvataggio('nuovo')" style="text-align: left; padding: 14px; border-left: 4px solid #4CAF50;">
-        <strong>Nuovo cliente</strong><br>
+<!-- 🔥 NUOVO POPUP: Scelta eliminazione Cliente o Veicolo -->
+<div id="popupEliminaScelta" class="popup-cliente hidden">
+  <div class="popup-cliente-box" style="max-width: 400px;">
+    
+    <h3 style="margin-bottom: 20px;">Cosa vuoi eliminare?</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      
+      <!-- 🔹 Elimina SOLO Veicolo -->
+      <button class="secondary" onclick="confermaElimina('veicolo')" style="text-align: left; padding: 16px; border-left: 4px solid #FF9800;">
+        <strong>🚗 Elimina solo VEICOLO</strong><br>
+        <small style="color: #666;">Rimuove il veicolo corrente e la sua cartella Drive.</small>
       </button>
-      <button class="secondary" onclick="confermaModalitaSalvataggio('sovrascrivi')" style="text-align: left; padding: 14px; border-left: 4px solid #2196F3;">
-        <strong>Sovrascrivi </strong><br>
+      
+      <!-- 🔹 Elimina Cliente + tutti i veicoli -->
+      <button class="secondary" onclick="confermaElimina('cliente')" style="text-align: left; padding: 16px; border-left: 4px solid #f44336;">
+        <strong>👤 Elimina CLIENTE e tutti i veicoli</strong><br>
+        <small style="color: #666;">Rimuove il profilo cliente, tutti i veicoli associati e le relative cartelle Drive.</small>
       </button>
-      <button class="secondary" onclick="confermaModalitaSalvataggio('nuovo_veicolo')" style="text-align: left; padding: 14px; border-left: 4px solid #FF9800;">
-        <strong>Nuovo veicolo</strong><br>
+      
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+      <button onclick="chiudiPopupElimina()" style="background: transparent; border: 1px solid #ccc; padding: 8px 20px; border-radius: 6px; cursor: pointer;">
+        Annulla
       </button>
     </div>
-    <div class="popup-clienti-actions">
-      <button onclick="chiudiPopupModalitaSalvataggio()">Annulla</button>
-    </div>
+    
   </div>
 </div>
 
