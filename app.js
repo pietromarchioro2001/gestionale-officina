@@ -764,30 +764,30 @@ function selezionaClienteRicerca(targa){
     }
 
     // Mostra pulsanti documenti se presenti
-    if (res.librettoUrl) {
-      const link = document.getElementById("librettoLink");
-      if (link) {
-        link.href = res.librettoUrl;
-        link.classList.remove("hidden");
-        link.style.display = "inline-block";
-      }
-    }
-    if (res.targaUrl) {
-      const link = document.getElementById("targaLink");
-      if (link) {
-        link.href = res.targaUrl;
-        link.classList.remove("hidden");
-        link.style.display = "inline-block";
-      }
-    }
-    if (res.cartellaClienteUrl) {
-      const btn = document.getElementById("btnCartellaCliente");
-      if (btn) {
-        btn.href = res.cartellaClienteUrl;
-        btn.classList.remove("hidden");
-        btn.style.display = "inline-block";
-      }
-    }
+    // 🔥 Mostra pulsanti documenti se ci sono URL
+if (res.librettoUrl) {
+  const link = document.getElementById("librettoLink");
+  if (link) {
+    link.href = res.librettoUrl;  // ← Ora funziona perché è un <a>!
+    link.classList.remove("hidden");
+  }
+}
+
+if (res.targaUrl) {
+  const link = document.getElementById("targaLink");
+  if (link) {
+    link.href = res.targaUrl;
+    link.classList.remove("hidden");
+  }
+}
+
+if (res.cartellaClienteUrl) {
+  const link = document.getElementById("btnCartellaCliente");
+  if (link) {
+    link.href = res.cartellaClienteUrl;
+    link.classList.remove("hidden");
+  }
+}
 
     clienteEsistente = true;
     nascondiLoadingRicerca();
