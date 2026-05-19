@@ -621,6 +621,10 @@ function raccogliDatiCliente(){
   const telefonoRaw = document.getElementById("telefono")?.value || "";
   const telefonoSanitized = sanitizeInput(telefonoRaw, "phone");
   
+  // 🔥 DEBUG: controlla ID_CLIENTE_SCELTO
+  console.log("🔍 ID_CLIENTE_SCELTO (window):", window.ID_CLIENTE_SCELTO);
+  console.log("🔍 ID_CLIENTE_SCELTO (locale):", ID_CLIENTE_SCELTO);
+  
   const dati = {
     nomeCliente: sanitizeInput(document.getElementById("nome").value),
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
@@ -636,14 +640,12 @@ function raccogliDatiCliente(){
     tempTargaId: TEMP_TARGA_ID,
     altriDocumenti: TEMP_ALTRI_DOCUMENTI,
     
-    // 🔥 QUESTO È FONDAMENTALE:
-    idClienteForzato: window.ID_CLIENTE_SCELTO || null
+    // 🔥 FIX: Usa ID_CLIENTE_SCELTO direttamente (non window.ID_CLIENTE_SCELTO)
+    idClienteForzato: ID_CLIENTE_SCELTO || null
   };
   
-  // 🔥 LOG DEBUG
   console.log("📦 Dati da inviare:", dati);
-  console.log("🔑 ID_CLIENTE_FORZATO:", dati.idClienteForzato);
-  console.log("🔑 ID_CLIENTE_SCELTO (globale):", window.ID_CLIENTE_SCELTO);
+  console.log("🔑 idClienteForzato:", dati.idClienteForzato);
   
   return dati;
 }
@@ -4363,10 +4365,11 @@ async function confermaModalitaSalvataggio(modalita) {
   
   const dati = DATI_SALVATAGGIO_TEMP;
   
-  // 🔥 LOG DEBUG PRIMA DI INVIARE
-  console.log(" Invio salvataggio modalità:", modalita);
+  // 🔥 DEBUG FINALE
+  console.log("🚀 Invio salvataggio modalità:", modalita);
   console.log("📋 Dati completi:", dati);
   console.log("🔑 idClienteForzato:", dati.idClienteForzato);
+  console.log("🔑 ID_CLIENTE_SCELTO (al momento invio):", ID_CLIENTE_SCELTO);
   
   chiudiPopupModalitaSalvataggio();
   showAlert("⏳ Elaborazione in corso...");
