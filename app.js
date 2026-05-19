@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbwikN6_5VGIiEflBsUi8FQD5ZQXNl-T1sO97Ahn4hij490OJHsuc5HjlmXriJhdh2qq/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxQz8hMb7b0jSrVlofd2VTMThio4qizttl-rNIbY_j_PVFZ9_rMF7kQWrqqvmWCTJGv/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -1469,10 +1469,8 @@ function showSection(id) {
     case "ordini":
   if (!autoOpenSection) {
     toggleBadgeOrdini(false);
-    // 🔥 Carica solo se non c'è cache valida
-    if (!CACHE_ORDINI || Date.now() - CACHE_TS >= 10 * 60 * 1000) {
-      caricaOrdiniUI();
-    }
+    // 🔥 FORZA SEMPRE il caricamento quando apri la pagina
+    caricaOrdiniUI(true);
   }
   break;
 
@@ -2590,7 +2588,7 @@ function bipMicrofono() {
 function caricaOrdiniUI(force = false) {
   const now = Date.now();
 
-  // 🔥 1️⃣ MOSTRA SUBITO LA CACHE (se esiste)
+  // 🔥 Mostra subito cache se esiste
   if (CACHE_ORDINI) {
     renderOrdini(
       CACHE_ORDINI.ordini || [],
@@ -2599,38 +2597,33 @@ function caricaOrdiniUI(force = false) {
       CACHE_ORDINI.fornitori || []
     );
   } else {
-    // Mostra loading se non c'è cache
     const container = document.getElementById("listaOrdini");
     if (container) {
       container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Caricamento ordini...</div>';
     }
   }
 
-  // 🔥 2️⃣ Se cache valida (meno di 10 min) → non chiamo backend
-  if (!force && CACHE_ORDINI && now - CACHE_TS < 10 * 60 * 1000) {
-    return;
+  // 🔥 Se force=true o cache scaduta, chiama backend
+  if (force || !CACHE_ORDINI || now - CACHE_TS >= 10 * 60 * 1000) {
+    callBackend("getOrdiniBundle")
+      .then(res => {
+        const ordini = res?.ordini || [];
+        const clienti = res?.clienti || [];
+        const veicoli = res?.veicoli || [];
+        const fornitori = res?.fornitori || [];
+
+        CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
+        CACHE_TS = Date.now();
+        
+        // 🔥 AGGIORNA VEICOLI_ALL per le select dinamiche
+        VEICOLI_ALL = veicoli;
+
+        renderOrdini(ordini, clienti, veicoli, fornitori);
+      })
+      .catch(err => {
+        UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
+      });
   }
-
-  // 🔥 3️⃣ Aggiornamento backend in BACKGROUND
-  callBackend("getOrdiniBundle")
-    .then(res => {
-      const ordini = res?.ordini || [];
-      const clienti = res?.clienti || [];
-      const veicoli = res?.veicoli || [];
-      const fornitori = res?.fornitori || [];
-
-      CACHE_ORDINI = { ordini, clienti, veicoli, fornitori };
-      CACHE_TS = Date.now();
-      VEICOLI_ALL = veicoli.map(v => ({
-      clienteNome: v.clienteNome?.trim(),
-      veicolo: v.veicolo?.trim()
-    }));
-
-      renderOrdini(ordini, clienti, veicoli, fornitori);
-    })
-    .catch(err => {
-      UI.error("Errore caricamento ordini: " + err.message, "caricaOrdiniUI");
-    });
 }
 
 function renderOrdini(ordini, clienti, veicoli, fornitori) {
@@ -2924,28 +2917,35 @@ function onToggleCheckbox(row, checked) {
 }
 
 function aggiornaSelectVeicoliUI(row, cliente) {
-  // 🔥 Trova la select veicolo usando data-row attribute (più affidabile)
+  console.log("🔍 Aggiorno veicoli per cliente:", cliente);
+  console.log("📦 VEICOLI_ALL:", VEICOLI_ALL);
+  
   const selectVeicolo = document.querySelector(
     `select[data-row="${row}"][onchange*="onChangeVeicolo"]`
   );
 
-  if (!selectVeicolo) return;
+  if (!selectVeicolo) {
+    console.error("❌ Select veicolo non trovata per row:", row);
+    return;
+  }
 
-  // 🔥 Filtra veicoli: se c'è un cliente, mostra solo i suoi veicoli
-  const lista = cliente 
+  // 🔥 Filtra veicoli per cliente
+  const lista = cliente && cliente.trim() !== ""
     ? VEICOLI_ALL.filter(v => {
-        // Confronto case-insensitive e trimmato
-        return v.clienteNome?.trim().toLowerCase() === cliente.trim().toLowerCase();
+        const match = v.clienteNome?.trim().toLowerCase() === cliente.trim().toLowerCase();
+        if (match) console.log("✅ Veicolo trovato:", v.veicolo);
+        return match;
       })
     : VEICOLI_ALL;
 
-  // 🔥 Mantieni la selezione corrente se ancora valida
+  console.log("🚗 Veicoli filtrati:", lista.length);
+
   const selected = selectVeicolo.value;
   const stillValid = lista.some(v => v.veicolo === selected);
 
   selectVeicolo.innerHTML = `
     <option value="" disabled ${!selected || !stillValid ? 'selected' : ''}>
-      Seleziona veicolo
+      ${lista.length === 0 ? 'Nessun veicolo' : 'Seleziona veicolo'}
     </option>
     ${lista.map(v => 
       `<option value="${v.veicolo}" ${v.veicolo === selected ? 'selected' : ''}>
