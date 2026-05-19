@@ -3105,36 +3105,40 @@ button:active {
 
 }
 
-/* ===== PULSANTI DOCUMENTI CLIENTI ===== */
+/* ===== LINK DOCUMENTI CLIENTI (GRIGIO/NERO MINIMAL) ===== */
 
-/* Mostra link quando non sono .hidden */
-/* ===== PULSANTI DOCUMENTI (STILE GRIGIO/NERO MINIMAL) ===== */
-
-#librettoLink:not(.hidden),
-#targaLink:not(.hidden),
-#btnCartellaCliente:not(.hidden) {
-  background-color: #f4f4f4 !important; /* Grigio chiarissimo */
-  color: #000 !important;               /* Testo nero */
-  border: 1px solid #d0d0d0 !important; /* Bordo sottile */
-  border-radius: 8px !important;        /* Bordi arrotondati */
-  padding: 6px 12px !important;         /* Compatto */
+.doc-link {
+  background-color: #f4f4f4 !important;
+  color: #000 !important;
+  border: 1px solid #d0d0d0 !important;
+  border-radius: 8px !important;
+  padding: 6px 12px !important;
   font-size: 13px !important;
   font-weight: 600 !important;
   text-decoration: none !important;
-  display: inline-flex !important;      /* Per allineare icona e testo */
+  display: none !important; /* Nascosto di default */
   align-items: center !important;
-  gap: 6px !important;                  /* Spazio tra icona e testo */
-  box-shadow: none !important;          /* Rimuove ombre verdi */
-  cursor: pointer;
-  transition: background 0.2s ease;
+  gap: 6px !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
 }
 
-/* Effetto Hover: diventa un po' più scuro */
-#librettoLink:not(.hidden):hover,
-#targaLink:not(.hidden):hover,
-#btnCartellaCliente:not(.hidden):hover {
+/* Mostra quando non è .hidden */
+.doc-link:not(.hidden) {
+  display: inline-flex !important;
+}
+
+/* Hover */
+.doc-link:hover {
   background-color: #e8e8e8 !important;
   border-color: #bbb !important;
+}
+
+/* Icona SVG dentro il link */
+.doc-link svg {
+  stroke: currentColor !important;
+  flex-shrink: 0;
 }
 
 /* Zoom desktop */
