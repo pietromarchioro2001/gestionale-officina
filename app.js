@@ -848,17 +848,21 @@ if (res.cartellaClienteUrl) {
 // 🔥 VARIABILE GLOBALE PER ELIMINAZIONE
 let TIPO_ELIMINAZIONE_TEMP = null;
 
-/**
- * Apre il popup di scelta eliminazione - VERSIONE DEBUG
- */
-function apriPopupEliminaScelta() {
+
+function apriPopupEliminaScelta(e) {
   console.log("🗑️ [DEBUG] apriPopupEliminaScelta chiamata");
+  
+  // 🔥 FERMA LA PROPAGAZIONE DEL CLICK
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
   
   const btnElimina = document.getElementById("btnEliminaCliente");
   console.log("🔍 [DEBUG] btnElimina:", btnElimina);
   
   if (!btnElimina) {
-    console.error("❌ [DEBUG] Pulsante btnEliminaCliente NON trovato nel DOM!");
+    console.error("❌ [DEBUG] Pulsante btnEliminaCliente NON trovato!");
     showAlert("⚠️ Errore: pulsante elimina non trovato");
     return;
   }
@@ -866,26 +870,25 @@ function apriPopupEliminaScelta() {
   console.log("🔍 [DEBUG] dataset.clienteId:", btnElimina.dataset.clienteId);
   
   if (!btnElimina.dataset.clienteId) {
-    console.error("❌ [DEBUG] ID cliente NON presente nel dataset!");
-    showAlert("⚠️ Nessun cliente selezionato per l'eliminazione");
+    console.error("❌ [DEBUG] ID cliente NON presente!");
+    showAlert("⚠️ Nessun cliente selezionato");
     return;
   }
   
   const popup = document.getElementById("popupEliminaScelta");
   console.log("🔍 [DEBUG] popupEliminaScelta:", popup);
-  console.log("🔍 [DEBUG] classList prima:", popup?.classList);
   
   if (!popup) {
-    console.error("❌ [DEBUG] Popup #popupEliminaScelta NON trovato nel DOM!");
-    showAlert("⚠️ Errore: popup eliminazione non trovato");
+    console.error("❌ [DEBUG] Popup NON trovato!");
+    showAlert("⚠️ Errore: popup non trovato");
     return;
   }
   
-  // Rimuovi hidden e forza il rendering
+  // Mostra il popup
   popup.classList.remove("hidden");
-  console.log("✅ [DEBUG] Popup mostrato, classList dopo:", popup.classList);
+  console.log("✅ [DEBUG] Popup mostrato");
   
-  // Forza un reflow per assicurarsi che il popup appaia
+  // Forza reflow
   void popup.offsetWidth;
 }
 
@@ -967,15 +970,24 @@ async function confermaElimina(tipo) {
   }
 }
 
-// 🔥 Chiudi popup se si clicca fuori - VERSIONE DEBUG
+// 🔥 Chiudi popup se si clicca FUORI - VERSIONE FIX
 document.addEventListener("click", function(e) {
   const popup = document.getElementById("popupEliminaScelta");
+  
   if (popup && !popup.classList.contains("hidden")) {
     const box = popup.querySelector(".popup-cliente-box");
-    if (box && !box.contains(e.target)) {
-      console.log("🖱️ [DEBUG] Click fuori dal popup, chiudo");
-      chiudiPopupElimina();
+    const btnElimina = document.getElementById("btnEliminaCliente");
+    
+    // 🔥 NON chiudere se:
+    // 1. Si clicca dentro il popup
+    // 2. Si clicca sul pulsante cestino
+    if (box.contains(e.target) || btnElimina.contains(e.target)) {
+      console.log("🖱️ [DEBUG] Click dentro popup o sul pulsante, NON chiudo");
+      return;
     }
+    
+    console.log("🖱️ [DEBUG] Click fuori dal popup, chiudo");
+    chiudiPopupElimina();
   }
 });
 
