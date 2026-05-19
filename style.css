@@ -934,6 +934,38 @@ overflow:hidden !important;
   100% { opacity: 1; }
 }
 
+/* ===== FIX: Messaggio "Nessun appuntamento oggi" su Desktop ===== */
+
+#oggiEventi p {
+  margin: 0 !important;
+  padding: 12px !important;
+  text-align: center !important;
+  color: #666 !important;
+  font-size: 14px !important;
+  font-style: italic !important;
+  background: #f9f9f9 !important;
+  border-radius: 8px !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Assicurati che il contenitore sia visibile anche se vuoto */
+#oggiEventi {
+  min-height: 50px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+}
+
+/* Stile per quando ci sono appuntamenti (desktop) */
+#oggiEventi .evento-oggi {
+  padding: 8px 12px !important;
+  background: #fff !important;
+  border-radius: 6px !important;
+  border-left: 3px solid #f5c400 !important;
+  margin-bottom: 6px !important;
+}
+
 /* =========================================================
    8. APPUNTAMENTI
 ========================================================= */
