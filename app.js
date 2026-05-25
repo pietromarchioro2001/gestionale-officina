@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyOwY6T9E8RDJleZ-tiHiw8BfFQI0Z9J7OWW2gkRKdLSKx4-IUtwxmYaNHUr2bWCqwz/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxioYBEFnfbPH0acetesbz9xt7FHRlCPapfGujqAQKS8uLKQiRqdrKO4cl2HfujNsYp/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
