@@ -543,6 +543,43 @@
   </div>
 </div>
 
+<!-- 🔥 NUOVO POPUP: Scelta modalità salvataggio -->
+<div id="popupModalitaSalvataggio" class="popup-cliente hidden">
+  <div class="popup-cliente-box" style="max-width: 450px;">
+    
+    <h3 style="margin-bottom: 20px;">Come vuoi procedere?</h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      
+      <!-- 🔹 Nuovo Cliente -->
+      <button class="secondary" onclick="event.stopPropagation(); confermaModalitaSalvataggio('nuovo')" style="text-align: left; padding: 16px; border-left: 4px solid #4CAF50;">
+        <strong>➕ Nuovo cliente + veicolo</strong><br>
+        <small style="color: #666;">Crea un nuovo profilo cliente e veicolo. Controlla che CF e targa non esistano.</small>
+      </button>
+      
+      <!-- 🔹 Sovrascrivi -->
+      <button class="secondary" onclick="event.stopPropagation(); confermaModalitaSalvataggio('sovrascrivi')" style="text-align: left; padding: 16px; border-left: 4px solid #2196F3;">
+        <strong>✏️ Sovrascrivi cliente esistente</strong><br>
+        <small style="color: #666;">Aggiorna i dati del cliente selezionato. Mantiene i veicoli esistenti.</small>
+      </button>
+      
+      <!-- 🔹 Nuovo Veicolo -->
+      <button class="secondary" onclick="event.stopPropagation(); confermaModalitaSalvataggio('nuovo_veicolo')" style="text-align: left; padding: 16px; border-left: 4px solid #FF9800;">
+        <strong>🚗 Aggiungi nuovo veicolo</strong><br>
+        <small style="color: #666;">Aggiungi un veicolo al cliente esistente. Controlla che la targa non sia duplicata.</small>
+      </button>
+      
+    </div>
+    
+    <div style="margin-top: 20px; text-align: center;">
+      <button onclick="event.stopPropagation(); chiudiPopupModalitaSalvataggio()" style="background: transparent; border: 1px solid #ccc; padding: 8px 20px; border-radius: 6px; cursor: pointer;">
+        Annulla
+      </button>
+    </div>
+    
+  </div>
+</div>
+
 <!-- ================= JS ================= -->
 <!-- 🔥 Versione aggiornata -->
 <script src="./app.js?v=20"></script>
