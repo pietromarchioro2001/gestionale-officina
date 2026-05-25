@@ -662,10 +662,11 @@ function caricaClientiPopup(force = false) {
 }
 
 function renderListaClienti(lista){
-  const box = document.getElementById("listaClientiPopup");
+  // 🔥 FIX: Usa l'ID corretto che esiste nell'HTML
+  const box = document.getElementById("listaRicercaCliente");
   
   if (!box) {
-    console.error("❌ ERRORE: #listaClientiPopup non trovato nel DOM!");
+    console.error("❌ ERRORE: #listaRicercaCliente non trovato nel DOM!");
     return;
   }
   
