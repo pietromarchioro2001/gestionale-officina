@@ -4508,8 +4508,19 @@ let DATI_SALVATAGGIO_TEMP = null;
  * Apre il popup con le 3 modalità di salvataggio
  */
 function apriPopupModalitaSalvataggio(dati) {
-  DATI_SALVATAGGIO_TEMP = dati; // Salva i dati temporaneamente
-  document.getElementById("popupModalitaSalvataggio").classList.remove("hidden");
+  console.log("🔵 Step 3: Apro popup modalità salvataggio");
+  
+  const popup = document.getElementById("popupModalitaSalvataggio");
+  
+  if (!popup) {
+    console.error("❌ ERRORE: Popup #popupModalitaSalvataggio NON trovato nel DOM!");
+    showAlert("⚠️ Errore: popup salvataggio non trovato. Ricarica la pagina.");
+    return;
+  }
+  
+  window.DATI_SALVATAGGIO_TEMP = dati; // Salva i dati temporaneamente
+  popup.classList.remove("hidden");
+  console.log("✅ Popup mostrato con successo");
 }
 
 /**
