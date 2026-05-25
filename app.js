@@ -4511,16 +4511,21 @@ let DATI_SALVATAGGIO_TEMP = null;
  */
 function apriPopupModalitaSalvataggio(dati) {
   console.log("🔵 Step 3: Apro popup modalità salvataggio");
+  console.log("📦 Dati ricevuti:", dati);
   
   const popup = document.getElementById("popupModalitaSalvataggio");
   
   if (!popup) {
-    console.error("❌ ERRORE: Popup #popupModalitaSalvataggio NON trovato nel DOM!");
-    showAlert("⚠️ Errore: popup salvataggio non trovato. Ricarica la pagina.");
+    console.error("❌ ERRORE: Popup #popupModalitaSalvataggio NON trovato!");
+    showAlert("⚠️ Errore: popup salvataggio non trovato.");
     return;
   }
   
-  window.DATI_SALVATAGGIO_TEMP = dati; // Salva i dati temporaneamente
+  // 🔥 FIX: Salva i dati nella variabile globale
+  window.DATI_SALVATAGGIO_TEMP = dati;
+  
+  console.log("✅ Dati salvati in DATI_SALVATAGGIO_TEMP:", window.DATI_SALVATAGGIO_TEMP);
+  
   popup.classList.remove("hidden");
   console.log("✅ Popup mostrato con successo");
 }
@@ -4533,51 +4538,43 @@ function chiudiPopupModalitaSalvataggio() {
   DATI_SALVATAGGIO_TEMP = null;
 }
 
-/**
- * Gestisce la scelta dell'utente e chiama la funzione backend corretta
- */
 async function confermaModalitaSalvataggio(modalita) {
+  console.log("🚀 Conferma modalità:", modalita);
+  console.log("📦 DATI_SALVATAGGIO_TEMP:", window.DATI_SALVATAGGIO_TEMP);
   
-  if (!DATI_SALVATAGGIO_TEMP) {
-    showAlert("⚠️ Errore: dati di salvataggio non trovati");
-    chiudiPopupModalitaSalvataggio();
+  // 🔥 FIX: Controlla se i dati esistono
+  if (!window.DATI_SALVATAGGIO_TEMP) {
+    console.error("❌ DATI_SALVATAGGIO_TEMP è null!");
+    showAlert("⚠️ Errore: dati di salvataggio non trovati. Riprova.");
     return;
   }
   
-  const dati = DATI_SALVATAGGIO_TEMP;
+  const dati = window.DATI_SALVATAGGIO_TEMP;
   
-  // 🔥 DEBUG FINALE
-  console.log("🚀 Invio salvataggio modalità:", modalita);
-  console.log("📋 Dati completi:", dati);
-  console.log("🔑 idClienteForzato:", dati.idClienteForzato);
-  console.log("🔑 ID_CLIENTE_SCELTO (al momento invio):", ID_CLIENTE_SCELTO);
+  // Chiudi popup
+  const popup = document.getElementById("popupModalitaSalvataggio");
+  if (popup) {
+    popup.classList.add("hidden");
+  }
   
-  chiudiPopupModalitaSalvataggio();
   showAlert("⏳ Elaborazione in corso...");
   
   try {
+    console.log("📡 Invio al backend...", { dati, modalita });
     
     const res = await callBackend("salvaClienteConModalita", [dati, modalita]);
     
     console.log("📩 Risposta backend:", res);
     
     if (!res.ok) {
+      let msg = "❌ Errore: " + (res.error || "Operazione fallita");
       switch(res.error) {
-        case "CF_ESISTENTE":
-          showAlert("⚠️ Esiste già un cliente con questo Codice Fiscale.");
-          break;
-        case "TARGA_ESISTENTE":
-          showAlert("⚠️ Esiste già un veicolo con questa targa.");
-          break;
-        case "CLIENTE_NON_TROVATO":
-          showAlert("⚠️ Cliente non trovato. ID: " + dati.idClienteForzato);
-          break;
-        case "TARGA_GIA_ASSOCIATA":
-          showAlert("⚠️ Questo veicolo è già associato al cliente.");
-          break;
-        default:
-          showAlert("❌ Errore: " + res.error);
+        case "CF_ESISTENTE": msg = "⚠️ Esiste già un cliente con questo CF."; break;
+        case "TARGA_ESISTENTE": msg = "⚠️ Esiste già un veicolo con questa targa."; break;
+        case "CLIENTE_NON_TROVATO": msg = "⚠️ Cliente non trovato."; break;
+        case "TARGA_GIA_ASSOCIATA": msg = "⚠️ Veicolo già associato."; break;
       }
+      showAlert(msg);
       return;
     }
     
@@ -4585,18 +4582,18 @@ async function confermaModalitaSalvataggio(modalita) {
     let msg = "✅ Operazione completata!";
     if (res.clienteNuovo) msg = "✅ Nuovo cliente creato!";
     if (res.veicoloNuovo) msg = "✅ Nuovo veicolo aggiunto!";
-    if (modalita === "sovrascrivi") msg = "✅ Dati cliente aggiornati!";
+    if (modalita === "sovrascrivi") msg = "✅ Dati aggiornati!";
     
     showAlert(msg);
     
+    // Reset form se non è sovrascrivi
     if (modalita !== "sovrascrivi") {
       resetClienti();
     }
     
+    // Apri cartella se esiste
     if (res.cartellaVeicoloUrl) {
-      setTimeout(() => {
-        window.open(res.cartellaVeicoloUrl, "_blank");
-      }, 1000);
+      setTimeout(() => window.open(res.cartellaVeicoloUrl, "_blank"), 1000);
     }
     
   } catch(err) {
