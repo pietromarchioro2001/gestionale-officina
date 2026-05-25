@@ -662,12 +662,16 @@ function caricaClientiPopup(force = false) {
 }
 
 function renderListaClienti(lista){
-
   const box = document.getElementById("listaClientiPopup");
+  
+  if (!box) {
+    console.error("❌ ERRORE: #listaClientiPopup non trovato nel DOM!");
+    return;
+  }
+  
   box.innerHTML = "";
 
   lista.forEach(c => {
-
     const div = document.createElement("div");
     div.className = "cliente-riga-popup";
 
@@ -675,16 +679,13 @@ function renderListaClienti(lista){
       <strong>${c.nome}</strong><br>
       ${c.indirizzo || "-"}<br>
       <span style="color:#666;font-size:13px">
-        ${c.targhe.join(", ") || "NESSUN VEICOLO"}
+        ${c.targhe?.join(", ") || "NESSUN VEICOLO"}
       </span>
     `;
 
     div.onclick = () => selezionaClientePopup(c.id);
-
     box.appendChild(div);
-
   });
-
 }
 
 // Nel frontend (app.js), quando raccogli i dati:
