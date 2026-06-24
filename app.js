@@ -1560,11 +1560,13 @@ function resetClienti() {
   ID_CLIENTE_SCELTO = null;  // 🔥 Resetta anche questo!
 
   // reset tutti gli input
-  document
-    .querySelectorAll("#clienti input")
-    .forEach(input => {
-      input.value = "";
-    });
+  document.querySelectorAll("#clienti input").forEach(input => {
+  try {
+    input.value = "";
+  } catch (e) {
+    console.warn("Input non resettabile:", input.id, input.type);
+  }
+});
 
   // 🔥 NASCONDI PULSANTI DOCUMENTI (usa classList, non style.display)
   const librettoLink = document.getElementById("librettoLink");
