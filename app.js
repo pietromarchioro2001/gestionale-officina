@@ -23,9 +23,6 @@ const UI = {
     if (typeof showAlert === "function") {
       showAlert("⚠️ " + (msg || "Si è verificato un errore"));
     }
-  
-    // Opzionale: log remoto nel backend (se vuoi tracciare gli errori)
-    // callBackend("logErrore", [context, msg, navigator.userAgent]).catch(()=>{});
   },
   
   /**
