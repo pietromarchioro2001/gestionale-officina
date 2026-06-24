@@ -25,9 +25,6 @@ const UI = {
     }
   },
   
-  /**
-   * Mostra messaggio di successo
-   */
   success(msg) {
     console.log("✅", msg);
     if (typeof showAlert === "function") {
