@@ -59,6 +59,7 @@ let ORDINI_CACHE = null;
 // 🔥 CACHE PER RICERCA CLIENTI
 let CLIENTI_CACHE_POPUP = null;
 let CLIENTI_CACHE_TS = 0;
+let uploadLibrettoInCorso = false;
 const CLIENTI_CACHE_TTL = 5 * 60 * 1000; // 5 minuti
 
 // 🔥 AGGIUNGI QUESTA FUNZIONE:
@@ -407,62 +408,54 @@ let rispostaInElaborazione = false;
 
 async function analizza() {
 
-  startLoading("loadingOCR");
-
-  // 🔥 FIX: Ferma loading se manca il libretto
-  if (!TEMP_LIBRETTO_ID) {
-    stopLoading("loadingOCR");  // ← AGGIUNTO: ferma il loading!
-    showAlert("⚠️ Carica prima il libretto");
+  if (uploadLibrettoInCorso) {
+    showAlert("⏳ Attendi: il libretto è ancora in caricamento.");
     return;
   }
 
-  try {
-    console.log("🔍 Avvio OCR...");
+  if (!TEMP_LIBRETTO_ID) {
+    showAlert("⚠️ Carica prima il libretto e attendi il completamento.");
+    return;
+  }
 
-    const res = await callBackend(
-      "ocrLibrettoDaFile",
-      [TEMP_LIBRETTO_ID]
-    );
+  startLoading("loadingOCR");
+
+  try {
+    console.log("🔍 Avvio OCR con fileId:", TEMP_LIBRETTO_ID);
+
+    const res = await callBackend("ocrLibrettoDaFile", [TEMP_LIBRETTO_ID]);
 
     console.log("RISPOSTA OCR:", res);
 
     if (!res?.ok) {
-      stopLoading("loadingOCR");  // ← Ferma loading in caso di errore backend
-      
-      if (res.error === "VEICOLO_ESISTENTE") {
-        showAlert("⚠️ Veicolo già presente nel sistema.");
-        return;
-      }
-    
-      throw new Error(res.error);
+      throw new Error(res?.error || "OCR fallito");
     }
 
-    const dati = res.datiOCR;
+    const dati = res.datiOCR || {};
 
-    // 🔥 CONTROLLO TARGA ESISTENTE
+    if (!Object.keys(dati).length) {
+      showAlert("⚠️ OCR completato ma non sono stati letti dati utili. Prova una foto più nitida.");
+      return;
+    }
+
     if (dati?.targa) {
-      const check = await callBackend(
-        "checkTargaEsistente",
-        [dati.targa]
-      );
+      const check = await callBackend("checkTargaEsistente", [dati.targa]);
 
       if (check === true) {
-        stopLoading("loadingOCR");  // ← Ferma loading se veicolo esiste
         showAlert("⚠️ Veicolo già esistente nel sistema.");
         cercaVeicoloConTarga(dati.targa);
         return;
       }
     }
 
-    // ✔️ OCR completato con successo
     popolaFormOCR(dati);
-    stopLoading("loadingOCR");  // ← Ferma loading alla fine
+    showAlert("✅ OCR completato");
 
   } catch(err) {
     console.error("❌ Errore OCR:", err);
     UI.error("Errore OCR: " + err.message, "analizza");
-    stopLoading("loadingOCR");  // ← Ferma loading in caso di eccezione
-    showAlert("❌ Errore durante l'analisi del libretto");
+  } finally {
+    stopLoading("loadingOCR");
   }
 }
 
@@ -1512,47 +1505,49 @@ function fileToBase64(file){
 async function uploadLibretto(e){
 
   startLoading("loadingLibretto");
+  uploadLibrettoInCorso = true;
+  TEMP_LIBRETTO_ID = null;
 
-  try{
-
+  try {
     const file = e.target.files[0];
-    if (!file) return;
+
+    if (!file) {
+      return;
+    }
 
     console.log("Upload libretto avviato...");
 
     const base64 = await fileToBase64(file);
 
     const form = new FormData();
-
     form.append("action", "uploadTempFile");
     form.append("base64", base64);
-    form.append("nomeFile", file.name);
-    form.append("mimeType", file.type);
+    form.append("nomeFile", file.name || "LIBRETTO.jpg");
+    form.append("mimeType", file.type || "image/jpeg");
 
     const res = await fetch(API_URL, {
-
       method: "POST",
       body: form
-
     });
 
     const json = await res.json();
 
-    if (!json.ok)
-      throw new Error(json.error);
+    if (!json.ok) {
+      throw new Error(json.error || "Upload libretto fallito");
+    }
 
     TEMP_LIBRETTO_ID = json.fileId;
 
-    console.log("Upload Drive OK:", TEMP_LIBRETTO_ID);
+    console.log("✅ Upload Drive OK:", TEMP_LIBRETTO_ID);
+    showAlert("✅ Libretto caricato. Ora puoi fare OCR.");
 
+  } catch(err) {
+    TEMP_LIBRETTO_ID = null;
+    UI.error("Errore upload libretto: " + err.message, "uploadLibretto");
+  } finally {
+    uploadLibrettoInCorso = false;
     stopLoading("loadingLibretto");
-
   }
-  catch(err){
-  UI.error("Errore upload libretto: " + err.message, "uploadLibretto");
-  stopLoading("loadingLibretto");
-}
-
 }
 
 function resetClienti() {
@@ -1762,7 +1757,6 @@ function showSection(id) {
       break;
 
     case "clienti":
-      resetClienti?.();
       // 🔥 PRELOAD CLIENTI quando apri la sezione
       if (!CLIENTI_CACHE_POPUP || Date.now() - CLIENTI_CACHE_TS > CLIENTI_CACHE_TTL) {
         console.log("🔄 Preload clienti in background...");
