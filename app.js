@@ -522,39 +522,70 @@ function salva() {
 }
 
 function apriPopupCliente() {
-  console.log("🗂️ apriPopupCliente chiamata");
-  
-  const popup = document.getElementById("popupCliente");
-  const input = document.getElementById("ricercaClientePopup");
-  const lista = document.getElementById("listaClientiPopup");
-  
+
+  console.log(
+    "🗂️ apriPopupCliente chiamata"
+  );
+
+  const popup =
+    document.getElementById(
+      "popupRicercaCliente"
+    );
+
+  const input =
+    document.getElementById(
+      "ricercaClientePopup"
+    );
+
+  const lista =
+    document.getElementById(
+      "listaRicercaCliente"
+    );
+
   if (!popup || !input || !lista) {
-    console.error("❌ Elementi popup non trovati");
+
+    console.error(
+      "❌ Elementi popup clienti non trovati",
+      {
+        popup,
+        input,
+        lista
+      }
+    );
+
     return;
   }
-  
-  // Reset input e mostra popup
+
   input.value = "";
   popup.classList.remove("hidden");
-  
-  // 🔥 Focus con leggero delay per evitare glitch
+
   setTimeout(() => {
     input.focus();
   }, 100);
-  
-  // 🔥 Se c'è cache, mostra subito; altrimenti carica
-  if (CLIENTI_CACHE_POPUP && Date.now() - CLIENTI_CACHE_TS <= CLIENTI_CACHE_TTL) {
-    console.log("✅ Mostro cache clienti subito");
-    renderListaClienti(CLIENTI_CACHE_POPUP);
+
+  if (
+    CLIENTI_CACHE_POPUP &&
+    Date.now() - CLIENTI_CACHE_TS <=
+      CLIENTI_CACHE_TTL
+  ) {
+
+    renderListaClienti(
+      CLIENTI_CACHE_POPUP
+    );
+
   } else {
-    console.log("🔄 Carico clienti (cache scaduta o assente)");
+
     caricaClientiPopup(false);
   }
-  
-  // Inizializza filtro (se non già fatto)
-  if (!input.dataset.filtroInizializzato) {
+
+  if (
+    !input.dataset.filtroInizializzato
+  ) {
+
     initFiltroClientiPopup();
-    input.dataset.filtroInizializzato = "true";
+
+    input.dataset.filtroInizializzato =
+      "true";
   }
 }
 
@@ -564,10 +595,21 @@ function chiudiPopupRicerca(){
     .classList.add("hidden");
 }
 
-function chiudiPopupCliente(){
+function chiudiPopupCliente() {
 
-  document.getElementById("popupCliente").classList.add("hidden");
+  const popup =
+    document.getElementById(
+      "popupRicercaCliente"
+    );
 
+  if (!popup) {
+    console.error(
+      "❌ Popup #popupRicercaCliente non trovato"
+    );
+    return;
+  }
+
+  popup.classList.add("hidden");
 }
 
 function nuovoClientePopup(){
@@ -622,7 +664,10 @@ function initFiltroClientiPopup() {
 
 function caricaClientiPopup(force = false) {
   const now = Date.now();
-  const box = document.getElementById("listaClientiPopup");
+  const box =
+  document.getElementById(
+    "listaRicercaCliente"
+  );
   
   console.log("🔍 caricaClientiPopup - force:", force, "cache:", !!CLIENTI_CACHE_POPUP);
   
