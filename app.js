@@ -2563,6 +2563,21 @@ function domandaCorrente() {
   faiDomanda(testo);
 }
 
+function registraRispostaNelloStorico(
+  campo,
+  valorePrecedente
+) {
+
+  sessioneAssistente.storicoStep =
+    sessioneAssistente.storicoStep || [];
+
+  sessioneAssistente.storicoStep.push({
+    step: campo,
+    valorePrecedente:
+      copiaValore(valorePrecedente)
+  });
+}
+
 function completaStepNelloStorico(campo) {
 
   const snapshot =
@@ -2632,7 +2647,7 @@ async function tornaAllaDomandaPrecedente() {
     rispostaInElaborazione = false;
 
     rispostaConPausa(
-      "Non ci sono domande precedenti.",
+      "Non ci sono risposte precedenti.",
       700,
       () => domandaCorrente()
     );
@@ -2640,110 +2655,139 @@ async function tornaAllaDomandaPrecedente() {
     return;
   }
 
-  const precedente = storico.pop();
+  const ultimaRisposta =
+    storico.pop();
 
   const campo =
-    precedente.step;
+    ultimaRisposta.step;
 
   const valorePrecedente =
-    copiaValore(precedente.valorePrecedente);
+    copiaValore(
+      ultimaRisposta.valorePrecedente
+    );
+
+  let valoreFoglio =
+    valorePrecedente;
+
+  if (
+    campo === "PROBLEMI" ||
+    campo === "LAVORI" ||
+    campo === "PRODOTTI"
+  ) {
+
+    valoreFoglio =
+      listaInTesto(valorePrecedente);
+  }
 
   /*
-   * La domanda corrente non è stata ancora
-   * completata. La rimettiamo davanti alla coda.
+   * Conserviamo lo step in cui ci trovavamo.
+   * Se stiamo tornando da un campo successivo,
+   * dovrà essere ripreso dopo aver corretto
+   * la risposta annullata.
    */
   const stepCorrente =
     sessioneAssistente.step;
 
-  if (
-    stepCorrente &&
-    stepCorrente !== campo &&
-    stepCorrente !== "CHIUSURA"
-  ) {
+  try {
 
+    await sovrascriviCampoScheda(
+      campo,
+      valoreFoglio
+    );
+
+    impostaValoreLocaleCampo(
+      campo,
+      valorePrecedente
+    );
+
+    await aggiornaRiepilogoScheda();
+
+    /*
+     * Rimette il campo corrente nella coda
+     * soltanto quando è realmente successivo
+     * rispetto al campo annullato.
+     *
+     * Evita inoltre duplicati nella coda.
+     */
     if (
-      sessioneAssistente.stepQueue[0] !==
-      stepCorrente
+      stepCorrente &&
+      stepCorrente !== campo &&
+      stepCorrente !== "CHIUSURA" &&
+      !sessioneAssistente.stepQueue.includes(
+        stepCorrente
+      )
     ) {
+
       sessioneAssistente.stepQueue.unshift(
         stepCorrente
       );
     }
+
+    /*
+     * La nuova domanda deve essere quella
+     * relativa alla risposta appena eliminata.
+     */
+    sessioneAssistente.step =
+      campo;
+
+    /*
+     * Evita che domandaCorrente crei uno
+     * snapshot riferito alla situazione sbagliata.
+     */
+    sessioneAssistente.snapshotStep = null;
+
+    rispostaInElaborazione = false;
+
+    const messaggi = {
+      PROBLEMI:
+        "Ultimo problema eliminato.",
+
+      LAVORI:
+        "Ultimo lavoro eliminato.",
+
+      PRODOTTI:
+        "Ultimo prodotto eliminato.",
+
+      CHILOMETRI:
+        "Valore dei chilometri eliminato.",
+
+      ORE_IMPIEGATE:
+        "Valore delle ore eliminato.",
+
+      NOTE:
+        "Note eliminate."
+    };
+
+    rispostaConPausa(
+      messaggi[campo] ||
+      "Ultima risposta eliminata.",
+      700,
+      () => domandaCorrente()
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Errore comando indietro:",
+      err
+    );
+
+    /*
+     * Se il backend fallisce, rimette
+     * l'operazione nello storico.
+     */
+    storico.push(
+      ultimaRisposta
+    );
+
+    rispostaInElaborazione = false;
+
+    rispostaConPausa(
+      "Non sono riuscito a eliminare l'ultima risposta.",
+      700,
+      () => domandaCorrente()
+    );
   }
-
-  impostaValoreLocaleCampo(
-    campo,
-    valorePrecedente
-  );
-
-  /*
-   * Nelle nuove schede il foglio verrà comunque
-   * aggiornato alla chiusura.
-   *
-   * Nelle schede riprese aggiorniamo subito
-   * anche il foglio.
-   */
-  if (
-    sessioneAssistente.inRipresa &&
-    sessioneAssistente.schedaId
-  ) {
-
-    let valoreFoglio =
-      valorePrecedente;
-
-    if (
-      campo === "PROBLEMI" ||
-      campo === "LAVORI" ||
-      campo === "PRODOTTI"
-    ) {
-      valoreFoglio =
-        listaInTesto(valorePrecedente);
-    }
-
-    try {
-
-      await callBackend(
-        "sovrascriviSchedaCampo",
-        [
-          sessioneAssistente.schedaId,
-          campo,
-          valoreFoglio
-        ]
-      );
-
-      await aggiornaRiepilogoScheda();
-
-    } catch (err) {
-
-      console.error(
-        "Errore ripristino campo:",
-        err
-      );
-
-      storico.push(precedente);
-
-      rispostaInElaborazione = false;
-
-      rispostaConPausa(
-        "Non sono riuscito a tornare indietro.",
-        700,
-        () => domandaCorrente()
-      );
-
-      return;
-    }
-  }
-
-  sessioneAssistente.step =
-    campo;
-
-  rispostaInElaborazione = false;
-
-  rispostaConPausa(
-    "Ultima risposta eliminata.",
-    700,
-    () => domandaCorrente()
-  );
 }
 
 function avviaCorrezioneCampo(campo) {
@@ -3596,147 +3640,214 @@ async function gestisciRisposta(testo) {
 
     case "PROBLEMI": {
 
-      if (isComandoUscita(testo)) {
+  if (isComandoUscita(testo)) {
 
-        completaStepNelloStorico(
-          "PROBLEMI"
-        );
+    rispostaInElaborazione = false;
 
-        rispostaInElaborazione = false;
+    rispostaConPausa(
+      "Perfetto.",
+      1200,
+      () => prossimaDomanda()
+    );
 
-        rispostaConPausa(
-          "Perfetto.",
-          1200,
-          () => prossimaDomanda()
-        );
+    return;
+  }
 
-        return;
+  const problema =
+    pulisciTesto(testo);
+
+  if (!problema) {
+
+    rispostaInElaborazione = false;
+
+    faiDomanda(
+      "Non ho capito. Inserisci il problema rilevato."
+    );
+
+    return;
+  }
+
+  sessioneAssistente.dati.problemi =
+    sessioneAssistente.dati.problemi || [];
+
+  /*
+   * Salva la lista prima di inserire
+   * il nuovo problema.
+   */
+  registraRispostaNelloStorico(
+    "PROBLEMI",
+    sessioneAssistente.dati.problemi
+  );
+
+  sessioneAssistente.dati.problemi.push(
+    problema
+  );
+
+  sessioneAssistente.listaProblemi = [
+    ...sessioneAssistente.dati.problemi
+  ];
+
+  rispostaInElaborazione = false;
+
+  rispostaConPausa(
+    "Ok. Altro problema?",
+    1200,
+    () => {
+
+      if (
+        modalitaAssistente === "vocale"
+      ) {
+
+        bipMicrofono();
+
+        try {
+          recognition.start();
+        } catch {}
       }
-
-      sessioneAssistente.dati.problemi =
-        sessioneAssistente.dati.problemi || [];
-
-      sessioneAssistente.dati.problemi.push(
-        pulisciTesto(testo)
-      );
-
-      rispostaInElaborazione = false;
-
-      rispostaConPausa(
-        "Ok. Altro problema?",
-        1200,
-        () => {
-
-          if (
-            modalitaAssistente === "vocale"
-          ) {
-            bipMicrofono();
-
-            try {
-              recognition.start();
-            } catch {}
-          }
-        }
-      );
-
-      return;
     }
+  );
+
+  return;
+}
 
     case "LAVORI": {
 
-      if (isComandoUscita(testo)) {
+  if (isComandoUscita(testo)) {
 
-        completaStepNelloStorico(
-          "LAVORI"
-        );
+    rispostaInElaborazione = false;
 
-        rispostaInElaborazione = false;
+    rispostaConPausa(
+      "Perfetto.",
+      1200,
+      () => prossimaDomanda()
+    );
 
-        rispostaConPausa(
-          "Perfetto.",
-          1200,
-          () => prossimaDomanda()
-        );
+    return;
+  }
 
-        return;
+  const lavoro =
+    pulisciTesto(testo);
+
+  if (!lavoro) {
+
+    rispostaInElaborazione = false;
+
+    faiDomanda(
+      "Non ho capito. Inserisci il lavoro effettuato."
+    );
+
+    return;
+  }
+
+  sessioneAssistente.dati.lavori =
+    sessioneAssistente.dati.lavori || [];
+
+  /*
+   * Salva la lista prima del singolo
+   * nuovo lavoro.
+   */
+  registraRispostaNelloStorico(
+    "LAVORI",
+    sessioneAssistente.dati.lavori
+  );
+
+  sessioneAssistente.dati.lavori.push(
+    lavoro
+  );
+
+  sessioneAssistente.listaLavori = [
+    ...sessioneAssistente.dati.lavori
+  ];
+
+  rispostaInElaborazione = false;
+
+  rispostaConPausa(
+    "Ok. Altro lavoro?",
+    1200,
+    () => {
+
+      if (
+        modalitaAssistente === "vocale"
+      ) {
+
+        bipMicrofono();
+
+        try {
+          recognition.start();
+        } catch {}
       }
-
-      sessioneAssistente.dati.lavori =
-        sessioneAssistente.dati.lavori || [];
-
-      sessioneAssistente.dati.lavori.push(
-        pulisciTesto(testo)
-      );
-
-      rispostaInElaborazione = false;
-
-      rispostaConPausa(
-        "Ok. Altro lavoro?",
-        1200,
-        () => {
-
-          if (
-            modalitaAssistente === "vocale"
-          ) {
-            bipMicrofono();
-
-            try {
-              recognition.start();
-            } catch {}
-          }
-        }
-      );
-
-      return;
     }
+  );
 
+  return;
+}
     case "PRODOTTI": {
 
-      if (isComandoUscita(testo)) {
+  if (isComandoUscita(testo)) {
 
-        completaStepNelloStorico(
-          "PRODOTTI"
-        );
+    rispostaInElaborazione = false;
 
-        rispostaInElaborazione = false;
+    rispostaConPausa(
+      "Perfetto.",
+      1200,
+      () => prossimaDomanda()
+    );
 
-        rispostaConPausa(
-          "Perfetto.",
-          1200,
-          () => prossimaDomanda()
-        );
+    return;
+  }
 
-        return;
+  const prodotto =
+    pulisciTesto(testo);
+
+  if (!prodotto) {
+
+    rispostaInElaborazione = false;
+
+    faiDomanda(
+      "Non ho capito. Inserisci il prodotto utilizzato."
+    );
+
+    return;
+  }
+
+  sessioneAssistente.dati.prodotti =
+    sessioneAssistente.dati.prodotti || [];
+
+  registraRispostaNelloStorico(
+    "PRODOTTI",
+    sessioneAssistente.dati.prodotti
+  );
+
+  sessioneAssistente.dati.prodotti.push(
+    prodotto
+  );
+
+  sessioneAssistente.listaProdotti = [
+    ...sessioneAssistente.dati.prodotti
+  ];
+
+  rispostaInElaborazione = false;
+
+  rispostaConPausa(
+    "Ok. Altro prodotto?",
+    1200,
+    () => {
+
+      if (
+        modalitaAssistente === "vocale"
+      ) {
+
+        bipMicrofono();
+
+        try {
+          recognition.start();
+        } catch {}
       }
-
-      sessioneAssistente.dati.prodotti =
-        sessioneAssistente.dati.prodotti || [];
-
-      sessioneAssistente.dati.prodotti.push(
-        pulisciTesto(testo)
-      );
-
-      rispostaInElaborazione = false;
-
-      rispostaConPausa(
-        "Ok. Altro prodotto?",
-        1200,
-        () => {
-
-          if (
-            modalitaAssistente === "vocale"
-          ) {
-            bipMicrofono();
-
-            try {
-              recognition.start();
-            } catch {}
-          }
-        }
-      );
-
-      return;
     }
+  );
+
+  return;
+}
 
     case "ORE_IMPIEGATE": {
 
