@@ -239,11 +239,29 @@ function callBackend(action, args = []) {
     }, 30000);
 
     window[cb] = function(res) {
-      clearTimeout(timeout);
-      cleanup();
-      resolve(res);
-    };
-
+  
+    clearTimeout(timeout);
+    cleanup();
+  
+    if (
+      res &&
+      typeof res === "object" &&
+      !Array.isArray(res) &&
+      res.ok === false
+    ) {
+  
+      reject(
+        new Error(
+          res.error ||
+          "Errore restituito dal backend"
+        )
+      );
+  
+      return;
+    }
+  
+    resolve(res);
+  };
     script.src =
       `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
 
@@ -4710,66 +4728,227 @@ function preloadClientiVeicoli(){
 }
 
 function caricaAppuntamentiOggi() {
-  const box = document.getElementById("oggiEventi");
-  const toggleBtn = document.getElementById("toggleOggi");
-  
-  console.log("📅 caricaAppuntamentiOggi chiamata");
-  console.log("📦 Elemento oggiEventi:", box);
-  
+
+  const box =
+    document.getElementById("oggiEventi");
+
+  const toggleBtn =
+    document.getElementById("toggleOggi");
+
+  console.log(
+    "📅 caricaAppuntamentiOggi chiamata"
+  );
+
   if (!box) {
-    console.error("❌ Elemento #oggiEventi non trovato!");
+    console.error(
+      "❌ Elemento #oggiEventi non trovato"
+    );
     return;
   }
 
-  // Mostra loading
-  box.innerHTML = "<p style='color: #666; text-align: center;'>Caricamento...</p>";
-  
-  // Nascondi toggle all'inizio
-  if (toggleBtn) toggleBtn.style.display = "none";
+  box.innerHTML = `
+    <p style="
+      color:#666;
+      text-align:center;
+    ">
+      Caricamento...
+    </p>
+  `;
+
+  if (toggleBtn) {
+    toggleBtn.style.display = "none";
+  }
 
   callBackend("getAppuntamentiOggi")
-    .then(eventi => {
-      console.log("📅 Appuntamenti ricevuti:", eventi);
-      
-      if (!eventi || eventi.length === 0) {
-        console.log("⚠️ Nessun appuntamento oggi");
-        box.innerHTML = "<p style='color: #666; text-align: center; padding: 10px;'>Nessun appuntamento oggi</p>";
+    .then(risposta => {
+
+      const eventi = Array.isArray(risposta)
+    ? risposta
+    : Array.isArray(risposta?.data)
+      ? risposta.data
+      : Array.isArray(risposta?.eventi)
+        ? risposta.eventi
+        : [];
+
+  if (!eventi.length) {
+    container.innerHTML =
+      "<p>Nessun appuntamento questa settimana</p>";
+    return;
+  }
+
+      console.log(
+        "📅 Risposta appuntamenti:",
+        risposta
+      );
+
+      if (
+        risposta &&
+        typeof risposta === "object" &&
+        !Array.isArray(risposta) &&
+        risposta.ok === false
+      ) {
+        throw new Error(
+          risposta.error ||
+          "Errore restituito dal backend"
+        );
+      }
+
+      let eventi = [];
+
+      if (Array.isArray(risposta)) {
+
+        eventi = risposta;
+
+      } else if (
+        Array.isArray(risposta?.data)
+      ) {
+
+        eventi = risposta.data;
+
+      } else if (
+        Array.isArray(risposta?.eventi)
+      ) {
+
+        eventi = risposta.eventi;
+
+      } else {
+
+        console.warn(
+          "⚠️ Formato appuntamenti non riconosciuto:",
+          risposta
+        );
+
+        throw new Error(
+          "Formato risposta appuntamenti non valido"
+        );
+      }
+
+      if (eventi.length === 0) {
+
+        console.log(
+          "⚠️ Nessun appuntamento oggi"
+        );
+
+        box.innerHTML = `
+          <p style="
+            color:#666;
+            text-align:center;
+            padding:10px;
+          ">
+            Nessun appuntamento oggi
+          </p>
+        `;
+
+        box.style.maxHeight = "none";
+        box.style.overflow = "visible";
+
         return;
       }
 
-      console.log("✅ " + eventi.length + " appuntamenti trovati");
+      console.log(
+        `✅ ${eventi.length} appuntamenti trovati`
+      );
 
-      // Lista semplice e rapida da leggere
-      box.innerHTML = eventi.map(e => 
-        `<div class="evento-oggi">
-          <strong>${e.ora}</strong> – ${e.titolo}
-        </div>`
-      ).join("");
+      box.innerHTML = eventi
+        .map(evento => {
 
-      // Gestione toggle solo se ce ne sono più di 5
-      const el = box.querySelectorAll(".evento-oggi");
-      if (el.length > 5) {
+          const ora =
+            escapeHTMLAppuntamenti(
+              evento?.ora || ""
+            );
+
+          const titolo =
+            escapeHTMLAppuntamenti(
+              evento?.titolo ||
+              "Appuntamento"
+            );
+
+          return `
+            <div class="evento-oggi">
+              <strong>${ora}</strong>
+              ${ora ? " – " : ""}
+              ${titolo}
+            </div>
+          `;
+        })
+        .join("");
+
+      const elementi =
+        box.querySelectorAll(
+          ".evento-oggi"
+        );
+
+      if (elementi.length > 5) {
+
         box.style.maxHeight = "120px";
         box.style.overflow = "hidden";
-        box.style.transition = "max-height 0.3s ease";
+        box.style.transition =
+          "max-height 0.3s ease";
+
         if (toggleBtn) {
-          toggleBtn.style.display = "inline-block";
+
+          toggleBtn.style.display =
+            "inline-block";
+
           toggleBtn.textContent = "▼";
+
           toggleBtn.onclick = () => {
-            const expanded = box.style.maxHeight !== "none";
-            box.style.maxHeight = expanded ? "120px" : "none";
-            toggleBtn.textContent = expanded ? "▼" : "▲";
+
+            const chiuso =
+              box.style.maxHeight ===
+              "120px";
+
+            box.style.maxHeight =
+              chiuso
+                ? `${box.scrollHeight}px`
+                : "120px";
+
+            toggleBtn.textContent =
+              chiuso ? "▲" : "▼";
           };
         }
+
       } else {
+
         box.style.maxHeight = "none";
         box.style.overflow = "visible";
+
+        if (toggleBtn) {
+          toggleBtn.style.display = "none";
+        }
       }
     })
     .catch(err => {
-      console.error("❌ Errore caricamento appuntamenti:", err);
-      box.innerHTML = "<p style='color: #f44336; text-align: center;'>Errore caricamento</p>";
+
+      console.error(
+        "❌ Errore caricamento appuntamenti:",
+        err
+      );
+
+      box.innerHTML = `
+        <p style="
+          color:#f44336;
+          text-align:center;
+          padding:10px;
+        ">
+          Errore caricamento appuntamenti
+        </p>
+      `;
+
+      if (toggleBtn) {
+        toggleBtn.style.display = "none";
+      }
     });
+}
+
+function escapeHTMLAppuntamenti(valore) {
+
+  return String(valore ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
 
 function caricaAgendaSettimanale() {
