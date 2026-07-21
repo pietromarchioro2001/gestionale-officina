@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbx0U5pQ7KqMfMhn3yq5TEcMeAMIJwhK5kxBVJvGmJrTsMX4m_T2SPPGEYOX8pFhXHoO/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbzcbCAaCMD8H3K0UWwJ5VEI_So7zK11RPxgpZXXjcbhF781lBVV0QNsFhUqmZJ6HvB_/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -6197,21 +6197,98 @@ async function confermaModalitaSalvataggio(modalita) {
         case "TARGA_ESISTENTE": msg = "⚠️ Esiste già un veicolo con questa targa."; break;
         case "CLIENTE_NON_TROVATO": msg = "⚠️ Cliente non trovato."; break;
         case "TARGA_GIA_ASSOCIATA": msg = "⚠️ Veicolo già associato."; break;
+        case "VEICOLO_NON_SELEZIONATO":
+          msg =
+            "⚠️ Prima carica un veicolo dalla ricerca.";
+          break;
+        
+        case "VEICOLO_NON_TROVATO":
+          msg =
+            "⚠️ Il veicolo da aggiornare non è stato trovato.";
+          break;
+        
+        case "VEICOLO_NON_ASSOCIATO":
+          msg =
+            "⚠️ Il veicolo non appartiene al cliente selezionato.";
+          break;
+        
+        case "TARGA_MANCANTE":
+          msg =
+            "⚠️ Inserisci la targa del veicolo.";
+          break;
       }
       showAlert(msg);
       return;
     }
     
     // Successo
-    let msg = "✅ Operazione completata!";
-    if (res.clienteNuovo) msg = "✅ Nuovo cliente creato!";
-    if (res.veicoloNuovo) msg = "✅ Nuovo veicolo aggiunto!";
-    if (modalita === "sovrascrivi") msg = "✅ Dati aggiornati!";
+    let msg =
+      "✅ Operazione completata!";
+    
+    if (res.clienteNuovo) {
+      msg =
+        "✅ Nuovo cliente creato!";
+    }
+    
+    if (res.veicoloNuovo) {
+      msg =
+        "✅ Nuovo veicolo aggiunto!";
+    }
+    
+    if (
+      modalita === "sovrascrivi"
+    ) {
+      msg =
+        "✅ Dati del cliente aggiornati!";
+    }
+    
+    if (
+      modalita === "aggiorna_veicolo"
+    ) {
+      msg =
+        "✅ Dati del veicolo aggiornati!";
+    }
     
     showAlert(msg);
+
+    if (
+      modalita === "aggiorna_veicolo"
+    ) {
+    
+      /*
+       * La nuova targa diventa la targa originale
+       * per eventuali aggiornamenti successivi.
+       */
+      TARGA_VEICOLO_ORIGINALE =
+        String(dati.targa || "")
+          .toUpperCase()
+          .replace(/[^A-Z0-9]/g, "");
+    
+      /*
+       * I file temporanei sono già stati utilizzati
+       * dal backend: non devono essere reinviati.
+       */
+      TEMP_LIBRETTO_ID = null;
+      TEMP_TARGA_ID = null;
+      TEMP_ALTRI_DOCUMENTI = [];
+    
+      /*
+       * Invalida le cache contenenti ancora
+       * i dati precedenti del veicolo.
+       */
+      CLIENTI_CACHE_POPUP = null;
+      CLIENTI_CACHE_TS = 0;
+      CLIENTI_VEICOLI_CACHE = [];
+    
+      preloadClientiVeicoli();
+    }
     
     // Reset form se non è sovrascrivi
-    if (modalita !== "sovrascrivi") {
+    const mantieniForm =
+      modalita === "sovrascrivi" ||
+      modalita === "aggiorna_veicolo";
+    
+    if (!mantieniForm) {
       resetClienti();
     }
     
