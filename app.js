@@ -4762,25 +4762,6 @@ function caricaAppuntamentiOggi() {
   callBackend("getAppuntamentiOggi")
     .then(risposta => {
 
-      const eventi = Array.isArray(risposta)
-    ? risposta
-    : Array.isArray(risposta?.data)
-      ? risposta.data
-      : Array.isArray(risposta?.eventi)
-        ? risposta.eventi
-        : [];
-
-  if (!eventi.length) {
-    container.innerHTML =
-      "<p>Nessun appuntamento questa settimana</p>";
-    return;
-  }
-
-      console.log(
-        "📅 Risposta appuntamenti:",
-        risposta
-      );
-
       if (
         risposta &&
         typeof risposta === "object" &&
