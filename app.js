@@ -10,11 +10,6 @@ const ICON_CALENDAR = `
 `;
 
 const UI = {
-  /**
-   * Mostra errore all'utente + log in console
-   * @param {string} msg - Messaggio da mostrare
-   * @param {string} context - Contesto per il log (es. "uploadLibretto")
-   */
   error(msg, context = "") {
     const fullMsg = context ? `[${context}] ${msg}` : msg;
     console.error("❌", fullMsg);
