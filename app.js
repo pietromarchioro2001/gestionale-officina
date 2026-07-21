@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbzcbCAaCMD8H3K0UWwJ5VEI_So7zK11RPxgpZXXjcbhF781lBVV0QNsFhUqmZJ6HvB_/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby574cSO37slENphCsZKjUC2-hXG5H9SzBAqUgFDp28IuY4pBHYZqvxpwJcUTxRSd4Z/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -1225,17 +1225,32 @@ function bindFileCount(inputId, countId, linkId){
 
   document.getElementById("altriDocumenti")?.addEventListener("change", uploadAltriDocumenti);
 
-  document.addEventListener("input", function(e){
+  document.addEventListener("input", function(e) {
 
-    // solo se siamo nella sezione CLIENTI
-    const clientiSection = document.getElementById("clienti");
-    if (!clientiSection) return;
-  
-    if (clientiSection.contains(e.target) && e.target.tagName === "INPUT") {
-      e.target.value = e.target.value.toUpperCase();
-    }
-  
-  });
+  const clientiSection =
+    document.getElementById("clienti");
+
+  if (!clientiSection) return;
+
+  const input = e.target;
+
+  const tipiDaEscludere = [
+    "file",
+    "date",
+    "checkbox",
+    "radio"
+  ];
+
+  if (
+    !clientiSection.contains(input) ||
+    input.tagName !== "INPUT" ||
+    tipiDaEscludere.includes(input.type)
+  ) {
+    return;
+  }
+
+  input.value = input.value.toUpperCase();
+});
 
   abilitaPreview("librettoGallery", "librettoLink");
   abilitaPreview("librettoCamera", "librettoLink");
