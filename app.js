@@ -50,7 +50,6 @@ let CLIENTI_VEICOLI_CACHE = [];
 let autoOpenSection = false;
 let currentSection = "home";
 let ORDINI_CACHE = null;
-// 🔥 CACHE PER RICERCA CLIENTI
 let CLIENTI_CACHE_POPUP = null;
 let CLIENTI_CACHE_TS = 0;
 let uploadLibrettoInCorso = false;
