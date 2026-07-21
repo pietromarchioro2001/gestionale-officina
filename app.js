@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyBk1po0TcovE1yjvoyqeB1mem7cdEJnvm7e1GgPY1xhTA29Fg9Hlg3XyqfIK0c5CSr/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycby1xDhR4FwhxJFTw6oSrx4P9CjiR9inoOJ00c3p83cSiXcG7LRSKd2dHE2T50szdhR5/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -1276,7 +1276,15 @@ let sessioneAssistente = {
   ultimoLavoro: null,
   ultimoProdotto: null,
 
-  valoriEsistenti: {}
+  valoriEsistenti: {},
+
+  // Storico delle risposte inserite durante la sessione
+  storicoStep: [],
+
+  // Gestione comando CORREGGI
+  correzioneAttiva: false,
+  campoInCorrezione: null,
+  stepDaRiprendere: null
 };
 
 async function uploadTargaFile(file){
@@ -1799,48 +1807,188 @@ function isComandoUscita(testo) {
 }
 
 function normalizzaOre(testo) {
-  const t = testo.toUpperCase().trim();
 
-  // 🔒 Se è comando uscita → non interpretare come numero
-  if (isComandoUscita(t)) return "";
+  let t = String(testo || "")
+    .toUpperCase()
+    .trim();
 
-  // 1️⃣ minuti espliciti
-  if (t.includes("MINUTO")) {
-    const num = t.replace(/[^\d]/g, "");
-    if (!num) return "";
-    return (parseInt(num, 10) / 60).toFixed(2);
+  if (!t || isComandoUscita(t)) {
+    return "";
   }
 
-  // 2️⃣ numeri con cifre
-  const cifre = t.replace(/[^\d.,]/g, "");
-  if (cifre) {
-    return cifre.replace(",", ".");
-  }
+  t = t
+    .replace(/[’']/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-  // 3️⃣ numeri in lettere (MATCH PAROLA INTERA)
-  const oreMap = {
-    "UNA": 1,
-    "UN": 1,
-    "UNO": 1,
-    "DUE": 2,
-    "TRE": 3,
-    "QUATTRO": 4,
-    "CINQUE": 5,
-    "SEI": 6,
-    "SETTE": 7,
-    "OTTO": 8,
-    "NOVE": 9,
-    "DIECI": 10
+  const numeriLettere = {
+    ZERO: 0,
+    UN: 1,
+    UNO: 1,
+    UNA: 1,
+    DUE: 2,
+    TRE: 3,
+    QUATTRO: 4,
+    CINQUE: 5,
+    SEI: 6,
+    SETTE: 7,
+    OTTO: 8,
+    NOVE: 9,
+    DIECI: 10,
+    UNDICI: 11,
+    DODICI: 12
   };
 
-  for (const k in oreMap) {
-    const regex = new RegExp(`\\b${k}\\b`);
-    if (regex.test(t)) {
-      return String(oreMap[k]);
+  function trovaNumero(parte) {
+
+    const numeroCifre =
+      parte.match(/\d+(?:[.,]\d+)?/);
+
+    if (numeroCifre) {
+      return parseFloat(
+        numeroCifre[0].replace(",", ".")
+      );
+    }
+
+    for (const [parola, numero] of Object.entries(
+      numeriLettere
+    )) {
+
+      const regex =
+        new RegExp(`\\b${parola}\\b`);
+
+      if (regex.test(parte)) {
+        return numero;
+      }
+    }
+
+    return null;
+  }
+
+  // Mezz'ora
+  if (
+    /\bMEZZORA\b/.test(t) ||
+    /\bMEZZA ORA\b/.test(t) ||
+    t === "MEZZA"
+  ) {
+    return "0.5";
+  }
+
+  let ore = 0;
+  let minuti = 0;
+  let riconosciuto = false;
+
+  // Parte riferita alle ore
+  const matchOre = t.match(
+    /(.+?)\s+OR(?:A|E)\b/
+  );
+
+  if (matchOre) {
+
+    const numeroOre =
+      trovaNumero(matchOre[1]);
+
+    if (numeroOre !== null) {
+      ore = numeroOre;
+      riconosciuto = true;
     }
   }
 
-  return "";
+  // Parte riferita ai minuti
+  const matchMinuti = t.match(
+    /(\d+|ZERO|UN|UNO|UNA|DUE|TRE|QUATTRO|CINQUE|SEI|SETTE|OTTO|NOVE|DIECI|UNDICI|DODICI|TREDICI|QUATTORDICI|QUINDICI|SEDICI|DICIASSETTE|DICIOTTO|DICIANNOVE|VENTI|TRENTA|QUARANTA|CINQUANTA)\s+MINUT[OI]/
+  );
+
+  if (matchMinuti) {
+
+    const minutiNumerici =
+      trovaNumero(matchMinuti[1]);
+
+    if (minutiNumerici !== null) {
+      minuti = minutiNumerici;
+      riconosciuto = true;
+    } else {
+
+      const minutiParole = {
+        TREDICI: 13,
+        QUATTORDICI: 14,
+        QUINDICI: 15,
+        SEDICI: 16,
+        DICIASSETTE: 17,
+        DICIOTTO: 18,
+        DICIANNOVE: 19,
+        VENTI: 20,
+        TRENTA: 30,
+        QUARANTA: 40,
+        CINQUANTA: 50
+      };
+
+      minuti =
+        minutiParole[matchMinuti[1]] || 0;
+
+      riconosciuto = true;
+    }
+  }
+
+  // Frazioni pronunciate
+  if (
+    /\bMEZZ[AO]\b/.test(t) &&
+    !/\bMEZZORA\b/.test(t)
+  ) {
+    minuti += 30;
+    riconosciuto = true;
+  }
+
+  if (
+    /\bUN QUARTO\b/.test(t) ||
+    /\bQUARTO D ORA\b/.test(t)
+  ) {
+    minuti += 15;
+    riconosciuto = true;
+  }
+
+  if (
+    /\bTRE QUARTI\b/.test(t) ||
+    /\bTRE QUARTI D ORA\b/.test(t)
+  ) {
+    minuti += 45;
+    riconosciuto = true;
+  }
+
+  // Solo minuti: "30 minuti"
+  if (
+    !matchOre &&
+    matchMinuti
+  ) {
+    ore = 0;
+  }
+
+  // Numero decimale semplice: "2,5"
+  if (!riconosciuto) {
+
+    const numeroSemplice =
+      trovaNumero(t);
+
+    if (numeroSemplice !== null) {
+      return String(numeroSemplice);
+    }
+
+    return "";
+  }
+
+  const totale =
+    ore + minuti / 60;
+
+  if (
+    !Number.isFinite(totale) ||
+    totale < 0
+  ) {
+    return "";
+  }
+
+  return String(
+    Math.round(totale * 100) / 100
+  );
 }
 
 function normalizzaChilometri(testo) {
@@ -1935,44 +2083,29 @@ function apriAssistente() {
   showSection("assistente");
 
   Object.assign(sessioneAssistente, {
-      schedaId: null,
-      inRipresa: false,
-      step: "TARGA",
-      stepQueue: [],
-      listaProblemi: [],
-      listaLavori: [],
-      listaProdotti: [],
-      valoriEsistenti: {},
-      dati: {
-        targa: "",
-        chilometri: "",
-        nomeCliente: "",
-        veicolo: "",
-        problemi: [],
-        lavori: [],
-        prodotti: [],
-        ore: "",
-        note: ""
-      }
-    });
-
-  document.getElementById("assistenteChat").innerHTML = "";
-
-  setTimeout(scrollAssistenteBottom, 200);
-
-  if (modalitaAssistente === "vocale" && !recognition) {
-    initVoce();
-  }
-
-  Object.assign(sessioneAssistente, {
     schedaId: null,
     inRipresa: false,
-    step: "TARGA",   // 🔥 ORA PARTE DIRETTAMENTE DA QUI
+
+    step: "TARGA",
     stepQueue: [],
+
     listaProblemi: [],
     listaLavori: [],
     listaProdotti: [],
+
     valoriEsistenti: {},
+
+    // Storico delle domande completate
+    storicoStep: [],
+
+    // Valore presente prima di iniziare la domanda corrente
+    snapshotStep: null,
+
+    // Gestione comando CORREGGI
+    correzioneAttiva: false,
+    campoInCorrezione: null,
+    stepDaRiprendere: null,
+
     dati: {
       targa: "",
       nomeCliente: "",
@@ -1986,12 +2119,53 @@ function apriAssistente() {
     }
   });
 
-  const input = document.getElementById("assistenteInput");
-  input.disabled = false;
-  input.focus();
+  rispostaInElaborazione = false;
+
+  const chat =
+    document.getElementById("assistenteChat");
+
+  if (chat) {
+    chat.innerHTML = "";
+  }
+
+  document
+    .getElementById("statoSchedaBox")
+    ?.classList.add("hidden");
+
+  setTimeout(scrollAssistenteBottom, 200);
+
+  if (
+    modalitaAssistente === "vocale" &&
+    !recognition
+  ) {
+    initVoce();
+  }
+
+  const input =
+    document.getElementById("assistenteInput");
+
+  if (input) {
+    input.disabled = false;
+    input.focus();
+  }
 
   messaggioBot("Inserisci la targa del veicolo.");
+}
 
+function testoInLista(testo) {
+
+  if (!testo) return [];
+
+  return String(testo)
+    .split("\n")
+    .map(elemento =>
+      elemento
+        .trim()
+        .replace(/^•\s*/, "")
+        .replace(/^-\s*/, "")
+        .trim()
+    )
+    .filter(Boolean);
 }
 
 function esciAssistente() {
@@ -2034,7 +2208,9 @@ function riprendiScheda(id) {
 
   setTimeout(() => {
 
-    const chat = document.getElementById("assistenteChat");
+    const chat =
+      document.getElementById("assistenteChat");
+
     if (!chat) {
       console.error("assistenteChat non trovato");
       return;
@@ -2045,36 +2221,88 @@ function riprendiScheda(id) {
     Object.assign(sessioneAssistente, {
       schedaId: id,
       inRipresa: true,
+
       step: null,
       stepQueue: [],
+
       listaProblemi: [],
       listaLavori: [],
       listaProdotti: [],
-      valoriEsistenti: {}
+
+      valoriEsistenti: {},
+
+      storicoStep: [],
+      snapshotStep: null,
+
+      correzioneAttiva: false,
+      campoInCorrezione: null,
+      stepDaRiprendere: null,
+
+      dati: {
+        targa: "",
+        nomeCliente: "",
+        veicolo: "",
+        chilometri: "",
+        problemi: [],
+        lavori: [],
+        prodotti: [],
+        ore: "",
+        note: ""
+      }
     });
+
+    rispostaInElaborazione = false;
 
     callBackend("statoScheda", [id])
       .then(info => {
 
         const v = info.valori || {};
 
-          sessioneAssistente.dati = {
-            targa: v.TARGA || "",
-            chilometri: v.CHILOMETRI || "",
-            nomeCliente: v.NOME_CLIENTE || "",
-            veicolo: v.VEICOLO || "",
-            problemi: v.PROBLEMI ? v.PROBLEMI.split("\n").filter(Boolean) : [],
-            lavori: v.LAVORI ? v.LAVORI.split("\n").filter(Boolean) : [],
-            prodotti: v.PRODOTTI ? v.PRODOTTI.split("\n").filter(Boolean) : [],
-            ore: v.ORE_IMPIEGATE || "",
-            note: v.NOTE || ""
-          };
+        const problemi =
+          testoInLista(v.PROBLEMI);
 
-        messaggioBot(`Stai riprendendo la scheda numero ${info.numero}.`);
+        const lavori =
+          testoInLista(v.LAVORI);
 
-        if (Array.isArray(info.mancanti) &&
-            info.mancanti.includes("CHILOMETRI")) {
-          sessioneAssistente.stepQueue.push("CHILOMETRI");
+        const prodotti =
+          testoInLista(v.PRODOTTI);
+
+        sessioneAssistente.dati = {
+          targa: v.TARGA || "",
+          nomeCliente: v.NOME_CLIENTE || "",
+          veicolo: v.VEICOLO || "",
+          chilometri: v.CHILOMETRI || "",
+          problemi,
+          lavori,
+          prodotti,
+          ore: v.ORE_IMPIEGATE || "",
+          note: v.NOTE || ""
+        };
+
+        // Manteniamo sincronizzate anche le vecchie proprietà
+        sessioneAssistente.listaProblemi =
+          [...problemi];
+
+        sessioneAssistente.listaLavori =
+          [...lavori];
+
+        sessioneAssistente.listaProdotti =
+          [...prodotti];
+
+        sessioneAssistente.valoriEsistenti =
+          v;
+
+        messaggioBot(
+          `Stai riprendendo la scheda numero ${info.numero}.`
+        );
+
+        if (
+          Array.isArray(info.mancanti) &&
+          info.mancanti.includes("CHILOMETRI")
+        ) {
+          sessioneAssistente.stepQueue.push(
+            "CHILOMETRI"
+          );
         }
 
         sessioneAssistente.stepQueue.push(
@@ -2086,8 +2314,6 @@ function riprendiScheda(id) {
           "CHIUSURA"
         );
 
-        sessioneAssistente.valoriEsistenti = info.valori || {};
-
         document
           .getElementById("statoSchedaBox")
           ?.classList.remove("hidden");
@@ -2096,10 +2322,19 @@ function riprendiScheda(id) {
 
         rispostaInElaborazione = false;
         prossimaDomanda();
-
       })
       .catch(err => {
-        console.error("Errore ripresa scheda", err);
+
+        rispostaInElaborazione = false;
+
+        console.error(
+          "Errore ripresa scheda",
+          err
+        );
+
+        messaggioBot(
+          "Non sono riuscito a caricare la scheda."
+        );
       });
 
   }, 200);
@@ -2241,38 +2476,91 @@ function pulisciTesto(testo) {
 }
 
 function domandaCorrente() {
+
   let testo = "";
 
-  switch (sessioneAssistente.step) {
+  const step =
+    sessioneAssistente.step;
+
+  switch (step) {
+
     case "TARGA":
       testo = "Targa del veicolo?";
       break;
+
     case "CHILOMETRI":
       testo = "Chilometri del veicolo?";
       break;
+
     case "PROBLEMI":
       testo = "Problemi rilevati?";
       break;
+
     case "LAVORI":
       testo = "Lavori effettuati?";
       break;
+
     case "PRODOTTI":
       testo = "Prodotti utilizzati?";
       break;
+
     case "ORE_IMPIEGATE":
-      testo = "Quante ore sono state impiegate?";
+      testo =
+        "Quante ore sono state impiegate?";
       break;
+
     case "NOTE":
-      testo = "Vuoi aggiungere altre note?";
+      testo =
+        "Vuoi aggiungere altre note?";
       break;
+
     case "CHIUSURA":
-      testo = "Vuoi chiudere la scheda definitivamente?";
+      testo =
+        "Vuoi chiudere la scheda definitivamente?";
       break;
   }
 
-  // ❌ NON usare più messaggioBot qui
-  // ✅ QUESTO è l’unico punto corretto
+  /*
+   * Salva il valore esistente prima che
+   * l'utente risponda alla domanda.
+   */
+  if (
+    step &&
+    step !== "TARGA" &&
+    step !== "CHIUSURA"
+  ) {
+
+    sessioneAssistente.snapshotStep = {
+      step,
+      valorePrecedente: copiaValore(
+        getValoreLocaleCampo(step)
+      )
+    };
+
+  } else {
+
+    sessioneAssistente.snapshotStep = null;
+  }
+
   faiDomanda(testo);
+}
+
+function completaStepNelloStorico(campo) {
+
+  const snapshot =
+    sessioneAssistente.snapshotStep;
+
+  if (!snapshot || snapshot.step !== campo) {
+    return;
+  }
+
+  sessioneAssistente.storicoStep.push({
+    step: campo,
+    valorePrecedente:
+      copiaValore(snapshot.valorePrecedente)
+  });
+
+  sessioneAssistente.snapshotStep = null;
 }
 
 function isComandoFine(testo) {
@@ -2287,6 +2575,375 @@ function isComandoFine(testo) {
   ];
 
   return comandi.some(cmd => t === cmd);
+}
+
+async function aggiornaRiepilogoScheda() {
+
+  if (!sessioneAssistente.schedaId) {
+    return;
+  }
+
+  try {
+
+    const info = await callBackend(
+      "statoScheda",
+      [sessioneAssistente.schedaId]
+    );
+
+    sessioneAssistente.valoriEsistenti =
+      info.valori || {};
+
+    renderStatoScheda(info);
+
+  } catch (err) {
+
+    console.warn(
+      "Riepilogo scheda non aggiornato:",
+      err
+    );
+  }
+}
+
+async function tornaAllaDomandaPrecedente() {
+
+  const storico =
+    sessioneAssistente.storicoStep || [];
+
+  if (!storico.length) {
+
+    rispostaInElaborazione = false;
+
+    rispostaConPausa(
+      "Non ci sono domande precedenti.",
+      700,
+      () => domandaCorrente()
+    );
+
+    return;
+  }
+
+  const precedente = storico.pop();
+
+  const campo =
+    precedente.step;
+
+  const valorePrecedente =
+    copiaValore(precedente.valorePrecedente);
+
+  /*
+   * La domanda corrente non è stata ancora
+   * completata. La rimettiamo davanti alla coda.
+   */
+  const stepCorrente =
+    sessioneAssistente.step;
+
+  if (
+    stepCorrente &&
+    stepCorrente !== campo &&
+    stepCorrente !== "CHIUSURA"
+  ) {
+
+    if (
+      sessioneAssistente.stepQueue[0] !==
+      stepCorrente
+    ) {
+      sessioneAssistente.stepQueue.unshift(
+        stepCorrente
+      );
+    }
+  }
+
+  impostaValoreLocaleCampo(
+    campo,
+    valorePrecedente
+  );
+
+  /*
+   * Nelle nuove schede il foglio verrà comunque
+   * aggiornato alla chiusura.
+   *
+   * Nelle schede riprese aggiorniamo subito
+   * anche il foglio.
+   */
+  if (
+    sessioneAssistente.inRipresa &&
+    sessioneAssistente.schedaId
+  ) {
+
+    let valoreFoglio =
+      valorePrecedente;
+
+    if (
+      campo === "PROBLEMI" ||
+      campo === "LAVORI" ||
+      campo === "PRODOTTI"
+    ) {
+      valoreFoglio =
+        listaInTesto(valorePrecedente);
+    }
+
+    try {
+
+      await callBackend(
+        "sovrascriviSchedaCampo",
+        [
+          sessioneAssistente.schedaId,
+          campo,
+          valoreFoglio
+        ]
+      );
+
+      await aggiornaRiepilogoScheda();
+
+    } catch (err) {
+
+      console.error(
+        "Errore ripristino campo:",
+        err
+      );
+
+      storico.push(precedente);
+
+      rispostaInElaborazione = false;
+
+      rispostaConPausa(
+        "Non sono riuscito a tornare indietro.",
+        700,
+        () => domandaCorrente()
+      );
+
+      return;
+    }
+  }
+
+  sessioneAssistente.step =
+    campo;
+
+  rispostaInElaborazione = false;
+
+  rispostaConPausa(
+    "Ultima risposta eliminata.",
+    700,
+    () => domandaCorrente()
+  );
+}
+
+function avviaCorrezioneCampo(campo) {
+
+  sessioneAssistente.correzioneAttiva = true;
+  sessioneAssistente.campoInCorrezione = campo;
+  sessioneAssistente.stepDaRiprendere =
+    sessioneAssistente.step;
+
+  const domande = {
+    CHILOMETRI:
+      "Inserisci i chilometri corretti.",
+
+    PROBLEMI:
+      "Inserisci nuovamente tutti i problemi.",
+
+    LAVORI:
+      "Inserisci nuovamente tutti i lavori.",
+
+    PRODOTTI:
+      "Inserisci nuovamente tutti i prodotti.",
+
+    ORE_IMPIEGATE:
+      "Inserisci il numero corretto di ore.",
+
+    NOTE:
+      "Inserisci le note corrette."
+  };
+
+  rispostaInElaborazione = false;
+
+  faiDomanda(
+    domande[campo] ||
+    "Inserisci il nuovo valore."
+  );
+}
+
+async function gestisciNuovoValoreCorretto(testo) {
+
+  const campo =
+    sessioneAssistente.campoInCorrezione;
+
+  const stepDaRiprendere =
+    sessioneAssistente.stepDaRiprendere;
+
+  let valoreLocale;
+  let valoreFoglio;
+
+  switch (campo) {
+
+    case "CHILOMETRI": {
+
+      const kmRaw =
+        normalizzaChilometri(testo);
+
+      const km = kmRaw
+        ? sanitizeInput(kmRaw, "number")
+        : "";
+
+      if (!km) {
+
+        rispostaInElaborazione = false;
+
+        rispostaConPausa(
+          "Non ho capito i chilometri.",
+          500,
+          () => faiDomanda(
+            "Inserisci i chilometri corretti."
+          )
+        );
+
+        return;
+      }
+
+      valoreLocale = km + " km";
+      valoreFoglio = valoreLocale;
+
+      break;
+    }
+
+    case "ORE_IMPIEGATE": {
+
+      const oreNum =
+        normalizzaOre(testo);
+
+      /*
+       * Meglio non usare !oreNum perché 0
+       * verrebbe considerato non valido.
+       */
+      if (
+        oreNum === null ||
+        oreNum === undefined ||
+        oreNum === "" ||
+        Number.isNaN(Number(oreNum))
+      ) {
+
+        rispostaInElaborazione = false;
+
+        rispostaConPausa(
+          "Non ho capito le ore.",
+          500,
+          () => faiDomanda(
+            "Inserisci il numero corretto di ore."
+          )
+        );
+
+        return;
+      }
+
+      valoreLocale = oreNum + " h";
+      valoreFoglio = valoreLocale;
+
+      break;
+    }
+
+    case "PROBLEMI":
+    case "LAVORI":
+    case "PRODOTTI": {
+
+      const valorePulito =
+        pulisciTesto(testo);
+
+      if (!valorePulito) {
+
+        rispostaInElaborazione = false;
+        faiDomanda("Ripeti il nuovo valore.");
+        return;
+      }
+
+      /*
+       * Per CORREGGI sostituiamo tutto il campo
+       * con questa nuova risposta.
+       */
+      valoreLocale = [valorePulito];
+      valoreFoglio =
+        listaInTesto(valoreLocale);
+
+      break;
+    }
+
+    case "NOTE": {
+
+      if (isComandoUscita(testo)) {
+        valoreLocale = "";
+        valoreFoglio = "";
+      } else {
+        valoreLocale = pulisciTesto(testo);
+        valoreFoglio = valoreLocale;
+      }
+
+      break;
+    }
+
+    default:
+
+      rispostaInElaborazione = false;
+      messaggioBot("Campo non correggibile.");
+      return;
+  }
+
+  impostaValoreLocaleCampo(
+    campo,
+    valoreLocale
+  );
+
+  /*
+   * Se la scheda esiste già sul foglio,
+   * aggiorniamo immediatamente il campo.
+   */
+  if (sessioneAssistente.schedaId) {
+
+    try {
+
+      await callBackend(
+        "sovrascriviSchedaCampo",
+        [
+          sessioneAssistente.schedaId,
+          campo,
+          valoreFoglio
+        ]
+      );
+
+      if (sessioneAssistente.inRipresa) {
+        await aggiornaRiepilogoScheda();
+      }
+
+    } catch (err) {
+
+      console.error(
+        "Errore correzione:",
+        err
+      );
+
+      rispostaInElaborazione = false;
+
+      rispostaConPausa(
+        "Non sono riuscito a salvare la correzione.",
+        700,
+        () => domandaCorrente()
+      );
+
+      return;
+    }
+  }
+
+  sessioneAssistente.correzioneAttiva = false;
+  sessioneAssistente.campoInCorrezione = null;
+  sessioneAssistente.stepDaRiprendere = null;
+  sessioneAssistente.step =
+    stepDaRiprendere;
+
+  rispostaInElaborazione = false;
+
+  rispostaConPausa(
+    "Correzione salvata.",
+    700,
+    () => domandaCorrente()
+  );
 }
 
 function rispostaConPausa(testo, pausa = 1200, callback = null) {
@@ -2310,36 +2967,468 @@ function rispostaConPausa(testo, pausa = 1200, callback = null) {
   }
 }
 
+const CAMPI_CORREGGIBILI = {
+  "CHILOMETRI": "CHILOMETRI",
+  "CHILOMETRO": "CHILOMETRI",
+  "KM": "CHILOMETRI",
+
+  "PROBLEMI": "PROBLEMI",
+  "PROBLEMA": "PROBLEMI",
+
+  "LAVORI": "LAVORI",
+  "LAVORO": "LAVORI",
+
+  "PRODOTTI": "PRODOTTI",
+  "PRODOTTO": "PRODOTTI",
+
+  "ORE": "ORE_IMPIEGATE",
+  "ORA": "ORE_IMPIEGATE",
+  "ORE IMPIEGATE": "ORE_IMPIEGATE",
+  "TEMPO": "ORE_IMPIEGATE",
+
+  "NOTE": "NOTE",
+  "NOTA": "NOTE"
+};
+
+function estraiCampoCorrezione(testo) {
+
+  const comando = String(testo || "")
+    .toUpperCase()
+    .trim();
+
+  if (!comando.startsWith("CORREGGI")) {
+    return null;
+  }
+
+  const nomeCampo = comando
+    .replace(/^CORREGGI\s*/, "")
+    .trim();
+
+  return CAMPI_CORREGGIBILI[nomeCampo] || null;
+}
+
+function copiaValore(valore) {
+
+  return Array.isArray(valore)
+    ? [...valore]
+    : valore;
+}
+
+function getValoreLocaleCampo(campo) {
+
+  const dati =
+    sessioneAssistente.dati || {};
+
+  switch (campo) {
+
+    case "CHILOMETRI":
+      return dati.chilometri || "";
+
+    case "PROBLEMI":
+      return [...(dati.problemi || [])];
+
+    case "LAVORI":
+      return [...(dati.lavori || [])];
+
+    case "PRODOTTI":
+      return [...(dati.prodotti || [])];
+
+    case "ORE_IMPIEGATE":
+      return dati.ore || "";
+
+    case "NOTE":
+      return dati.note || "";
+
+    default:
+      return "";
+  }
+}
+
+function listaInTesto(lista) {
+
+  if (!Array.isArray(lista) || !lista.length) {
+    return "";
+  }
+
+  return lista
+    .map(elemento =>
+      String(elemento || "")
+        .trim()
+        .replace(/^•\s*/, "")
+    )
+    .filter(Boolean)
+    .map(elemento => "• " + elemento)
+    .join("\n");
+}
+
+function impostaValoreLocaleCampo(campo, valore) {
+
+  if (!sessioneAssistente.dati) {
+    sessioneAssistente.dati = {};
+  }
+
+  switch (campo) {
+
+    case "CHILOMETRI":
+
+      sessioneAssistente.dati.chilometri =
+        valore || "";
+
+      break;
+
+    case "PROBLEMI": {
+
+      const lista = Array.isArray(valore)
+        ? [...valore]
+        : testoInLista(valore);
+
+      sessioneAssistente.dati.problemi =
+        lista;
+
+      sessioneAssistente.listaProblemi =
+        [...lista];
+
+      break;
+    }
+
+    case "LAVORI": {
+
+      const lista = Array.isArray(valore)
+        ? [...valore]
+        : testoInLista(valore);
+
+      sessioneAssistente.dati.lavori =
+        lista;
+
+      sessioneAssistente.listaLavori =
+        [...lista];
+
+      break;
+    }
+
+    case "PRODOTTI": {
+
+      const lista = Array.isArray(valore)
+        ? [...valore]
+        : testoInLista(valore);
+
+      sessioneAssistente.dati.prodotti =
+        lista;
+
+      sessioneAssistente.listaProdotti =
+        [...lista];
+
+      break;
+    }
+
+    case "ORE_IMPIEGATE":
+
+      sessioneAssistente.dati.ore =
+        valore || "";
+
+      break;
+
+    case "NOTE":
+
+      sessioneAssistente.dati.note =
+        valore || "";
+
+      break;
+  }
+}
+
+function avviaCorrezioneCampo(campo) {
+
+  if (!campo) {
+    return false;
+  }
+
+  sessioneAssistente.correzioneAttiva = true;
+  sessioneAssistente.campoInCorrezione = campo;
+  sessioneAssistente.stepDaRiprendere =
+    sessioneAssistente.step;
+
+  rispostaInElaborazione = false;
+
+  const domande = {
+    CHILOMETRI:
+      "Inserisci il nuovo valore dei chilometri.",
+
+    PROBLEMI:
+      "Inserisci nuovamente tutti i problemi.",
+
+    LAVORI:
+      "Inserisci nuovamente tutti i lavori.",
+
+    PRODOTTI:
+      "Inserisci nuovamente tutti i prodotti.",
+
+    ORE_IMPIEGATE:
+      "Inserisci il nuovo numero di ore.",
+
+    NOTE:
+      "Inserisci nuovamente le note."
+  };
+
+  faiDomanda(
+    domande[campo] ||
+    "Inserisci il nuovo valore."
+  );
+
+  return true;
+}
+
+async function gestisciNuovoValoreCorretto(testo) {
+
+  const campo =
+    sessioneAssistente.campoInCorrezione;
+
+  const stepDaRiprendere =
+    sessioneAssistente.stepDaRiprendere;
+
+  let valoreLocale;
+  let valoreFoglio;
+
+  try {
+
+    switch (campo) {
+
+      case "CHILOMETRI": {
+
+        const kmRaw =
+          normalizzaChilometri(testo);
+
+        const km = kmRaw
+          ? sanitizeInput(kmRaw, "number")
+          : "";
+
+        if (!km) {
+
+          rispostaInElaborazione = false;
+
+          rispostaConPausa(
+            "Non ho capito i chilometri. Ripeti il nuovo valore.",
+            700,
+            () => faiDomanda(
+              "Inserisci il nuovo valore dei chilometri."
+            )
+          );
+
+          return;
+        }
+
+        valoreLocale = km;
+        valoreFoglio = km;
+
+        break;
+      }
+
+      case "ORE_IMPIEGATE": {
+
+        const ore =
+          normalizzaOre(testo);
+
+        if (
+          ore === "" ||
+          ore === null ||
+          ore === undefined
+        ) {
+
+          rispostaInElaborazione = false;
+
+          rispostaConPausa(
+            "Non ho capito le ore. Ripeti il nuovo valore.",
+            700,
+            () => faiDomanda(
+              "Inserisci il nuovo numero di ore."
+            )
+          );
+
+          return;
+        }
+
+        valoreLocale = ore;
+        valoreFoglio = ore;
+
+        break;
+      }
+
+      case "PROBLEMI":
+      case "LAVORI":
+      case "PRODOTTI": {
+
+        const valorePulito =
+          pulisciTesto(testo);
+
+        if (!valorePulito) {
+
+          rispostaInElaborazione = false;
+          faiDomanda("Ripeti il nuovo valore.");
+          return;
+        }
+
+        /*
+         * In questa prima versione CORREGGI sostituisce
+         * l'intero campo con la nuova risposta.
+         */
+        valoreLocale = [valorePulito];
+        valoreFoglio =
+          listaInTesto(valoreLocale);
+
+        break;
+      }
+
+      case "NOTE": {
+
+        const note =
+          pulisciTesto(testo);
+
+        valoreLocale = note;
+        valoreFoglio = note;
+
+        break;
+      }
+
+      default:
+        throw new Error(
+          "Campo di correzione non valido"
+        );
+    }
+
+    await sovrascriviCampoScheda(
+      campo,
+      valoreFoglio
+    );
+
+    impostaValoreLocaleCampo(
+      campo,
+      valoreLocale
+    );
+
+    sessioneAssistente.correzioneAttiva = false;
+    sessioneAssistente.campoInCorrezione = null;
+    sessioneAssistente.stepDaRiprendere = null;
+
+    sessioneAssistente.step =
+      stepDaRiprendere;
+
+    rispostaInElaborazione = false;
+
+    rispostaConPausa(
+      "Correzione salvata.",
+      700,
+      () => domandaCorrente()
+    );
+
+  } catch (err) {
+
+    console.error(
+      "Errore correzione campo:",
+      err
+    );
+
+    rispostaInElaborazione = false;
+
+    rispostaConPausa(
+      "Non sono riuscito a salvare la correzione.",
+      700,
+      () => domandaCorrente()
+    );
+  }
+}
+
 async function gestisciRisposta(testo) {
 
   if (!sessioneAssistente.dati) {
-    sessioneAssistente.dati = sessioneAssistente.dati || {
-    targa: "",
-    chilometri: "",
-    nomeCliente: "",
-    veicolo: "",
-    problemi: [],
-    lavori: [],
-    prodotti: [],
-    ore: "",
-    note: ""
-  };
-}
+
+    sessioneAssistente.dati = {
+      targa: "",
+      chilometri: "",
+      nomeCliente: "",
+      veicolo: "",
+      problemi: [],
+      lavori: [],
+      prodotti: [],
+      ore: "",
+      note: ""
+    };
+  }
 
   if (rispostaInElaborazione) return;
+
   rispostaInElaborazione = true;
 
-  testo = testo.toUpperCase().trim();
+  testo = String(testo || "")
+    .toUpperCase()
+    .trim();
 
-  // 🔥 SALTO DIRETTO ALLA CHIUSURA
+  /*
+   * INDIETRO e RIPETI:
+   * stesso identico comportamento.
+   */
+  if (
+    testo === "INDIETRO" ||
+    testo === "RIPETI"
+  ) {
+
+    await tornaAllaDomandaPrecedente();
+    return;
+  }
+
+  /*
+   * Avvio comando CORREGGI.
+   */
+  if (testo.startsWith("CORREGGI")) {
+
+    const campo =
+      estraiCampoCorrezione(testo);
+
+    if (!campo) {
+
+      rispostaInElaborazione = false;
+
+      rispostaConPausa(
+        "Puoi correggere chilometri, problemi, lavori, prodotti, ore oppure note.",
+        800,
+        () => domandaCorrente()
+      );
+
+      return;
+    }
+
+    avviaCorrezioneCampo(campo);
+    return;
+  }
+
+  /*
+   * L'assistente sta aspettando il nuovo
+   * valore richiesto da CORREGGI.
+   */
+  if (
+    sessioneAssistente.correzioneAttiva &&
+    sessioneAssistente.campoInCorrezione
+  ) {
+
+    await gestisciNuovoValoreCorretto(testo);
+    return;
+  }
+
+  // Salto diretto alla chiusura
   if (isComandoFine(testo)) {
 
     rispostaInElaborazione = false;
 
-    rispostaConPausa("Ok, passo alla chiusura.", 1200, () => {
-      sessioneAssistente.step = "CHIUSURA";
-      faiDomanda("Vuoi chiudere definitivamente la scheda?");
-    });
+    rispostaConPausa(
+      "Ok, passo alla chiusura.",
+      1200,
+      () => {
+
+        sessioneAssistente.step =
+          "CHIUSURA";
+
+        domandaCorrente();
+      }
+    );
 
     return;
   }
@@ -2347,51 +3436,72 @@ async function gestisciRisposta(testo) {
   switch (sessioneAssistente.step) {
 
     case "assistente":
-      // niente preload
-    break;
+      rispostaInElaborazione = false;
+      return;
 
     case "TARGA": {
 
-      const targaNorm = sanitizeInput(normalizzaTarga(testo), "targa");
-    
+      const targaNorm = sanitizeInput(
+        normalizzaTarga(testo),
+        "targa"
+      );
+
       if (!targaNorm) {
+
         rispostaInElaborazione = false;
         messaggioBot("Targa non valida. Ripeti.");
         return;
       }
-    
-      let veicolo = CLIENTI_VEICOLI_CACHE?.find(
-        v => v.targa === targaNorm
-      );
-    
+
+      let veicolo =
+        CLIENTI_VEICOLI_CACHE?.find(
+          v =>
+            String(v.targa || "")
+              .toUpperCase() === targaNorm
+        );
+
       if (!veicolo) {
+
         try {
+
           veicolo = await callBackend(
             "checkTargaEsistenteFull",
             [targaNorm]
           );
-        } catch (e) {}
+
+        } catch (err) {
+
+          console.warn(
+            "Ricerca targa backend fallita:",
+            err
+          );
+        }
       }
-    
+
       if (!veicolo) {
+
         rispostaInElaborazione = false;
-        messaggioBot("Veicolo non trovato. Ripeti la targa.");
+
+        messaggioBot(
+          "Veicolo non trovato. Ripeti la targa."
+        );
+
         return;
       }
-    
-      // 🔥 CREA SCHEDA SOLO ORA
-      const crea = await callBackend("creaNuovaScheda");
 
-      sessioneAssistente.dati.targa = targaNorm;
-      sessioneAssistente.dati.nomeCliente = veicolo.nomeCliente;
-      sessioneAssistente.dati.veicolo = veicolo.veicolo;
-    
-      sessioneAssistente.schedaId = crea.docId;
-    
+      const crea = await callBackend(
+        "creaNuovaScheda"
+      );
+
+      sessioneAssistente.schedaId =
+        crea.docId;
+
       sessioneAssistente.dati = {
         targa: targaNorm,
-        nomeCliente: veicolo.nomeCliente,
-        veicolo: veicolo.veicolo,
+        nomeCliente:
+          veicolo.nomeCliente || "",
+        veicolo:
+          veicolo.veicolo || "",
         chilometri: "",
         problemi: [],
         lavori: [],
@@ -2399,12 +3509,12 @@ async function gestisciRisposta(testo) {
         ore: "",
         note: ""
       };
-    
+
       await callBackend(
         "completaSchedaDaTarga",
         [crea.docId, targaNorm]
       );
-    
+
       sessioneAssistente.stepQueue = [
         "CHILOMETRI",
         "PROBLEMI",
@@ -2414,34 +3524,54 @@ async function gestisciRisposta(testo) {
         "NOTE",
         "CHIUSURA"
       ];
-    
+
+      sessioneAssistente.storicoStep = [];
+      sessioneAssistente.snapshotStep = null;
+
       rispostaInElaborazione = false;
-    
-      messaggioBot(`Scheda #${crea.numeroScheda} creata.`);
-    
+
+      messaggioBot(
+        `Scheda #${crea.numeroScheda} creata.`
+      );
+
       prossimaDomanda();
-    
       return;
     }
-      
+
     case "CHILOMETRI": {
 
-      const kmRaw = normalizzaChilometri(testo);
-      const km = kmRaw ? sanitizeInput(kmRaw, "number") : "";
+      const kmRaw =
+        normalizzaChilometri(testo);
+
+      const km = kmRaw
+        ? sanitizeInput(kmRaw, "number")
+        : "";
 
       if (!km) {
+
         rispostaInElaborazione = false;
-        messaggioBot("Non ho capito i chilometri. Ripeti.");
+
+        messaggioBot(
+          "Non ho capito i chilometri. Ripeti."
+        );
+
         return;
       }
 
-      sessioneAssistente.dati.chilometri = km + " km";
+      sessioneAssistente.dati.chilometri =
+        km + " km";
+
+      completaStepNelloStorico(
+        "CHILOMETRI"
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa(`Chilometri registrati: ${km}`, 1200, () => {
-        prossimaDomanda();
-      });
+      rispostaConPausa(
+        `Chilometri registrati: ${km}`,
+        1200,
+        () => prossimaDomanda()
+      );
 
       return;
     }
@@ -2450,28 +3580,46 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
+        completaStepNelloStorico(
+          "PROBLEMI"
+        );
+
         rispostaInElaborazione = false;
-      
-        rispostaConPausa("Perfetto.", 1200, () => {
-          prossimaDomanda();
-        });
-      
+
+        rispostaConPausa(
+          "Perfetto.",
+          1200,
+          () => prossimaDomanda()
+        );
+
         return;
       }
 
       sessioneAssistente.dati.problemi =
         sessioneAssistente.dati.problemi || [];
 
-      sessioneAssistente.dati.problemi.push(testo);
+      sessioneAssistente.dati.problemi.push(
+        pulisciTesto(testo)
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro problema?", 1200, () => {
-        if (modalitaAssistente === "vocale") {
-          bipMicrofono();
-          recognition.start();
+      rispostaConPausa(
+        "Ok. Altro problema?",
+        1200,
+        () => {
+
+          if (
+            modalitaAssistente === "vocale"
+          ) {
+            bipMicrofono();
+
+            try {
+              recognition.start();
+            } catch {}
+          }
         }
-      });
+      );
 
       return;
     }
@@ -2480,28 +3628,46 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
+        completaStepNelloStorico(
+          "LAVORI"
+        );
+
         rispostaInElaborazione = false;
-      
-        rispostaConPausa("Perfetto.", 1200, () => {
-          prossimaDomanda();
-        });
-      
+
+        rispostaConPausa(
+          "Perfetto.",
+          1200,
+          () => prossimaDomanda()
+        );
+
         return;
       }
 
       sessioneAssistente.dati.lavori =
         sessioneAssistente.dati.lavori || [];
 
-      sessioneAssistente.dati.lavori.push(testo);
+      sessioneAssistente.dati.lavori.push(
+        pulisciTesto(testo)
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro lavoro?", 1200, () => {
-        if (modalitaAssistente === "vocale") {
-          bipMicrofono();
-          recognition.start();
+      rispostaConPausa(
+        "Ok. Altro lavoro?",
+        1200,
+        () => {
+
+          if (
+            modalitaAssistente === "vocale"
+          ) {
+            bipMicrofono();
+
+            try {
+              recognition.start();
+            } catch {}
+          }
         }
-      });
+      );
 
       return;
     }
@@ -2510,73 +3676,125 @@ async function gestisciRisposta(testo) {
 
       if (isComandoUscita(testo)) {
 
+        completaStepNelloStorico(
+          "PRODOTTI"
+        );
+
         rispostaInElaborazione = false;
-      
-        rispostaConPausa("Perfetto.", 1200, () => {
-          prossimaDomanda();
-        });
-      
+
+        rispostaConPausa(
+          "Perfetto.",
+          1200,
+          () => prossimaDomanda()
+        );
+
         return;
       }
 
       sessioneAssistente.dati.prodotti =
         sessioneAssistente.dati.prodotti || [];
 
-      sessioneAssistente.dati.prodotti.push(testo);
+      sessioneAssistente.dati.prodotti.push(
+        pulisciTesto(testo)
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Ok. Altro prodotto?", 1200, () => {
-        if (modalitaAssistente === "vocale") {
-          bipMicrofono();
-          recognition.start();
+      rispostaConPausa(
+        "Ok. Altro prodotto?",
+        1200,
+        () => {
+
+          if (
+            modalitaAssistente === "vocale"
+          ) {
+            bipMicrofono();
+
+            try {
+              recognition.start();
+            } catch {}
+          }
         }
-      });
+      );
 
       return;
     }
 
     case "ORE_IMPIEGATE": {
 
-      const oreNum = normalizzaOre(testo);
+      const oreNum =
+        normalizzaOre(testo);
 
-      if (!oreNum) {
+      /*
+       * Questa validazione è più robusta
+       * del tuo precedente if (!oreNum).
+       */
+      if (
+        oreNum === null ||
+        oreNum === undefined ||
+        oreNum === "" ||
+        Number.isNaN(Number(oreNum))
+      ) {
+
         rispostaInElaborazione = false;
-        messaggioBot("Non ho capito le ore.");
+
+        messaggioBot(
+          "Non ho capito le ore."
+        );
+
         return;
       }
 
-      sessioneAssistente.dati.ore = oreNum + " h";
+      sessioneAssistente.dati.ore =
+        oreNum + " h";
+
+      completaStepNelloStorico(
+        "ORE_IMPIEGATE"
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa(`Ore registrate: ${oreNum}`, 1200, () => {
-        prossimaDomanda();
-      });
+      rispostaConPausa(
+        `Ore registrate: ${oreNum}`,
+        1200,
+        () => prossimaDomanda()
+      );
 
       return;
     }
 
     case "NOTE": {
 
-      if (!isComandoUscita(testo)) {
-        sessioneAssistente.dati.note = testo;
+      if (isComandoUscita(testo)) {
+        sessioneAssistente.dati.note = "";
+      } else {
+        sessioneAssistente.dati.note =
+          pulisciTesto(testo);
       }
+
+      completaStepNelloStorico(
+        "NOTE"
+      );
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Perfetto.", 1200, () => {
-        prossimaDomanda();
-      });
+      rispostaConPausa(
+        "Perfetto.",
+        1200,
+        () => prossimaDomanda()
+      );
 
       return;
     }
 
     case "CHIUSURA": {
 
-      try { recognition?.stop(); } catch (e) {}
+      try {
+        recognition?.stop();
+      } catch {}
 
-      const risposta = testo.toUpperCase().trim();
+      const risposta =
+        testo.toUpperCase().trim();
 
       const negativo =
         risposta.startsWith("NO") ||
@@ -2591,13 +3809,19 @@ async function gestisciRisposta(testo) {
 
       rispostaInElaborazione = false;
 
-      rispostaConPausa("Salvataggio in corso...", 800);
+      rispostaConPausa(
+        "Salvataggio in corso...",
+        800
+      );
 
       try {
 
         await callBackend(
           "salvaSchedaCompleta",
-          [sessioneAssistente.schedaId, sessioneAssistente.dati]
+          [
+            sessioneAssistente.schedaId,
+            sessioneAssistente.dati
+          ]
         );
 
         if (positivo && !negativo) {
@@ -2607,29 +3831,49 @@ async function gestisciRisposta(testo) {
             [sessioneAssistente.schedaId]
           );
 
-          rispostaConPausa("Scheda chiusa correttamente.", 1000);
+          rispostaConPausa(
+            "Scheda chiusa correttamente.",
+            1000
+          );
 
         } else {
 
-          rispostaConPausa("Scheda salvata.", 1000);
-
+          rispostaConPausa(
+            "Scheda salvata.",
+            1000
+          );
         }
 
         setTimeout(() => {
+
           resetModalitaAssistente();
           showSection("home");
           caricaSchede(true);
+
         }, 1800);
 
       } catch (err) {
 
         console.error(err);
-        messaggioBot("Errore durante il salvataggio.");
 
+        rispostaInElaborazione = false;
+
+        messaggioBot(
+          "Errore durante il salvataggio."
+        );
       }
 
       return;
     }
+
+    default:
+
+      rispostaInElaborazione = false;
+
+      console.warn(
+        "Step assistente non riconosciuto:",
+        sessioneAssistente.step
+      );
   }
 }
       
@@ -2679,6 +3923,44 @@ async function salvaCampoScheda(campo, valore) {
   } catch (err) {
 
     console.error("Errore backend:", err);
+    throw err;
+  }
+}
+
+async function sovrascriviCampoScheda(campo, valore) {
+
+  if (!sessioneAssistente.schedaId) {
+    throw new Error("ID scheda mancante");
+  }
+
+  try {
+
+    const res = await callBackend(
+      "sovrascriviSchedaCampo",
+      [
+        sessioneAssistente.schedaId,
+        campo,
+        valore
+      ]
+    );
+
+    if (!res || res.ok === false) {
+      throw new Error(
+        res?.error ||
+        "Errore durante la sovrascrittura del campo"
+      );
+    }
+
+    return res;
+
+  } catch (err) {
+
+    console.error(
+      "Errore sovrascrittura campo:",
+      campo,
+      err
+    );
+
     throw err;
   }
 }
