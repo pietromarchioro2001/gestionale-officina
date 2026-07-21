@@ -24,7 +24,7 @@ const UI = {
       showAlert("⚠️ " + (msg || "Si è verificato un errore"));
     }
   },
-  
+
   success(msg) {
     console.log("✅", msg);
     if (typeof showAlert === "function") {
