@@ -43,6 +43,7 @@ let voceAssistente = null;
 let confirmCallback = null;
 let promptCallback = null;
 let ID_CLIENTE_SCELTO = null;
+let TARGA_VEICOLO_ORIGINALE = null;
 let CLIENTI_CACHE = [];
 let CACHE_REVISIONI = null;
 let CLIENTI_VEICOLI_CACHE = [];
@@ -776,6 +777,7 @@ function raccogliDatiCliente(){
     indirizzo: sanitizeInput(document.getElementById("indirizzo").value),
     telefono: telefonoSanitized,
     dataNascita: sanitizeInput(document.getElementById("data").value),
+    targaOriginale: TARGA_VEICOLO_ORIGINALE || null,
     codiceFiscale: sanitizeInput(document.getElementById("cf").value, "cf"),
     veicolo: sanitizeInput(document.getElementById("veicolo").value),
     motore: sanitizeInput(document.getElementById("motore").value),
@@ -917,6 +919,16 @@ function selezionaClienteRicerca(targa){
 
     const c = res.cliente || {};
     const v = res.veicolo || {};
+
+    TARGA_VEICOLO_ORIGINALE =
+  String(v.targa || "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+
+console.log(
+  "🚗 Targa originale selezionata:",
+  TARGA_VEICOLO_ORIGINALE
+);
     
     // 🔥 SALVA ID CLIENTE (fondamentale per il pulsante elimina)
     if (c.id) {
@@ -1645,7 +1657,8 @@ function resetClienti() {
   clienteEsistente = false;
   TEMP_LIBRETTO_ID = null;
   TEMP_TARGA_ID = null;
-  ID_CLIENTE_SCELTO = null;  // 🔥 Resetta anche questo!
+  ID_CLIENTE_SCELTO = null;
+  TARGA_VEICOLO_ORIGINALE = null;
 
   // reset tutti gli input
   document.querySelectorAll("#clienti input").forEach(input => {
