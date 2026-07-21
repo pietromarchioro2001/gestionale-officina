@@ -445,6 +445,30 @@ async function analizza() {
 
     const dati = res.datiOCR || {};
 
+    if (dati.targa) {
+
+  const targaNormalizzata =
+    String(dati.targa)
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, "");
+
+  const targaCredibile =
+    /^[A-Z]{2}[0-9]{3}[A-Z]{2}$/.test(
+      targaNormalizzata
+    ) ||
+    (
+      targaNormalizzata.length >= 5 &&
+      targaNormalizzata.length <= 8 &&
+      /[A-Z]/.test(targaNormalizzata) &&
+      /[0-9]/.test(targaNormalizzata)
+    );
+
+  dati.targa =
+    targaCredibile
+      ? targaNormalizzata
+      : "";
+}
+
     if (!Object.keys(dati).length) {
       showAlert("⚠️ OCR completato ma non sono stati letti dati utili. Prova una foto più nitida.");
       return;
