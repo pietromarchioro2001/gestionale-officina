@@ -6224,24 +6224,9 @@ async function confermaModalitaSalvataggio(modalita) {
   }
 }
 
-- rcu45 PTM
-- PTM STCH
-- PTM PT550 IT
-
-partire da UMM/DT, UMM/EX da pubblicare
-
-pattini da 700 single grouser pt200 usa (listino)
-
-https://pietromarchioro2001.github.io/torneo-calcio-proloco/
-
-Pubblicare sonic da bl2/s/ex
-
 // 🔥 VARIABILE PER EVITARE POPUP DUPLICATI
 let isBackendErrorPopupShown = false;
 
-/**
- * Mostra un popup elegante se il backend è irraggiungibile o non autorizzato
- */
 function mostraErroreBackend() {
   if (isBackendErrorPopupShown) return; // Evita spam
   
