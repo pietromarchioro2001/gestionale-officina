@@ -50,7 +50,7 @@ let CLIENTI_CACHE_TS = 0;
 let uploadLibrettoInCorso = false;
 const CLIENTI_CACHE_TTL = 5 * 60 * 1000; // 5 minuti
 
-// 🔥 AGGIUNGI QUESTA FUNZIONE:
+
 function sanitizeInput(str, mode = "text") {
   if (!str && str !== 0) return "";
   
