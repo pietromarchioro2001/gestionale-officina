@@ -216,73 +216,54 @@ function callBackend(action, args = []) {
   return new Promise((resolve, reject) => {
     const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
     
-    // 🔥 Crea la callback PRIMA di tutto
     window[cb] = function(res) {
-      console.log("✅ Risposta ricevuta per action:", action, res);
-      
       clearTimeout(timeout);
+      cleanup();
       
-      // Pulisci
-      try { 
-        delete window[cb]; 
-      } catch {}
-      
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
+      // Se il backend risponde con un errore specifico di autorizzazione
+      if (res && res.ok === false && (res.error.includes("Authorization") || res.error.includes("Unauthorized"))) {
+         mostraErroreBackend();
+         reject(new Error(res.error));
+         return;
       }
-      
-      // Gestione errori dal backend
-      if (
-        res &&
-        typeof res === "object" &&
-        !Array.isArray(res) &&
-        res.ok === false
-      ) {
-        reject(
-          new Error(
-            res.error ||
-            "Errore restituito dal backend"
-          )
-        );
-        return;
-      }
-      
+
       resolve(res);
     };
 
     const timeout = setTimeout(() => {
-      console.error("❌ Timeout per action:", action);
       cleanup();
+      // Se va in timeout, mostriamo l'errore solo se non è già mostrato
+      mostraErroreBackend();
       reject(new Error("Timeout backend"));
-    }, 30000);
+    }, 15000); // Ridotto a 15s per essere più reattivi
 
     const cleanup = () => {
       clearTimeout(timeout);
-      try { 
-        delete window[cb]; 
-      } catch {}
-      if (script && script.parentNode) {
-        script.parentNode.removeChild(script);
-      }
+      try { delete window[cb]; } catch {}
+      if (script.parentNode) script.parentNode.removeChild(script);
     };
 
     const script = document.createElement("script");
+    script.src = `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
     
-    script.src =
-      `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
-
     script.onerror = function() {
-      console.error("❌ Errore caricamento script per action:", action);
       cleanup();
+      mostraErroreBackend();
       reject(new Error("Errore caricamento backend"));
-    };
-
-    script.onload = function() {
-      console.log(" Script caricato per action:", action);
     };
 
     document.body.appendChild(script);
   });
+}
+
+async function verificaBackend(){
+  try{
+    await callBackend("ping");
+    resetBackendError(); // Tutto ok, nascondi eventuali errori precedenti
+  }catch(e){
+    // Non mostrare subito il popup al primo avvio, aspetta che l'utente faccia qualcosa
+    console.warn("Backend non raggiungibile all'avvio");
+  }
 }
 
 function leggiTargaItaliana(targa) {
@@ -6241,4 +6222,84 @@ async function confermaModalitaSalvataggio(modalita) {
     console.error("❌ Errore salvataggio:", err);
     showAlert("❌ Errore di connessione: " + err.message);
   }
+}
+
+- rcu45 PTM
+- PTM STCH
+- PTM PT550 IT
+
+partire da UMM/DT, UMM/EX da pubblicare
+
+pattini da 700 single grouser pt200 usa (listino)
+
+https://pietromarchioro2001.github.io/torneo-calcio-proloco/
+
+Pubblicare sonic da bl2/s/ex
+
+// 🔥 VARIABILE PER EVITARE POPUP DUPLICATI
+let isBackendErrorPopupShown = false;
+
+/**
+ * Mostra un popup elegante se il backend è irraggiungibile o non autorizzato
+ */
+function mostraErroreBackend() {
+  if (isBackendErrorPopupShown) return; // Evita spam
+  
+  isBackendErrorPopupShown = true;
+  
+  const existing = document.getElementById("backend-error-popup");
+  if (existing) existing.remove();
+
+  const popup = document.createElement("div");
+  popup.id = "backend-error-popup";
+  popup.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border-left: 5px solid #f44336;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    padding: 15px 20px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-radius: 4px;
+    animation: slideIn 0.3s ease;
+  `;
+
+  popup.innerHTML = `
+    <div style="font-size: 24px;">⚠️</div>
+    <div>
+      <strong style="display:block; margin-bottom:4px;">Connessione Backend Interrotta</strong>
+      <span style="font-size: 13px; color: #666;">L'app non riesce a comunicare con Google Sheets.<br>Contatta l'amministratore.</span>
+    </div>
+    <button onclick="this.parentElement.remove(); isBackendErrorPopupShown=false;" style="
+      background: #f44336; color: white; border: none; padding: 8px 12px; 
+      border-radius: 4px; cursor: pointer; font-weight: bold; margin-left: 10px;
+    ">Chiudi</button>
+  `;
+
+  document.body.appendChild(popup);
+
+  // Rimuovi automaticamente dopo 10 secondi se non chiuso
+  setTimeout(() => {
+    if (popup.parentElement) {
+      popup.style.opacity = '0';
+      popup.style.transition = 'opacity 0.5s';
+      setTimeout(() => {
+        popup.remove();
+        isBackendErrorPopupShown = false;
+      }, 500);
+    }
+  }, 10000);
+}
+
+/**
+ * Resetta lo stato di errore quando tutto torna a funzionare
+ */
+function resetBackendError() {
+  isBackendErrorPopupShown = false;
+  const popup = document.getElementById("backend-error-popup");
+  if (popup) popup.remove();
 }
