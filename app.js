@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyjNlr3LBys_7d47ZlZykTrbrY448Cever_Z3cASz04XSqXi_vtUfsQ9qYQy5tkZTJV/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxZZfk02o8XzpYmyeEeO7FXS2Z3CtS32bGj_AK0koGyIVI1y2n6kvOqhVziWc41CEvU/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -233,29 +233,28 @@ function callBackend(action, args = []) {
     }, 30000);
 
     window[cb] = function(res) {
-  
-    clearTimeout(timeout);
-    cleanup();
-  
-    if (
-      res &&
-      typeof res === "object" &&
-      !Array.isArray(res) &&
-      res.ok === false
-    ) {
-  
-      reject(
-        new Error(
-          res.error ||
-          "Errore restituito dal backend"
-        )
-      );
-  
-      return;
-    }
-  
-    resolve(res);
-  };
+      clearTimeout(timeout);
+      cleanup();
+      
+      // Debug log per vedere cosa arriva esattamente
+      console.log("📩 Risposta raw da backend per action:", action, res);
+    
+      if (
+        res &&
+        typeof res === "object" &&
+        !Array.isArray(res) &&
+        res.ok === false
+      ) {
+        reject(
+          new Error(
+            res.error ||
+            "Errore restituito dal backend"
+          )
+        );
+        return;
+      }
+      resolve(res);
+    };
     script.src =
       `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
 
