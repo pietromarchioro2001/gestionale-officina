@@ -213,32 +213,25 @@ function listaVoci() {
 }
 
 function callBackend(action, args = []) {
-
   return new Promise((resolve, reject) => {
-
     const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-
-    const script = document.createElement("script");
-
-    const cleanup = () => {
-      try { delete window[cb]; } catch {}
-      if (script.parentNode) {
+    
+    // 🔥 Crea la callback PRIMA di tutto
+    window[cb] = function(res) {
+      console.log("✅ Risposta ricevuta per action:", action, res);
+      
+      clearTimeout(timeout);
+      
+      // Pulisci
+      try { 
+        delete window[cb]; 
+      } catch {}
+      
+      if (script && script.parentNode) {
         script.parentNode.removeChild(script);
       }
-    };
-
-    const timeout = setTimeout(() => {
-      cleanup();
-      reject(new Error("Timeout backend"));
-    }, 30000);
-
-    window[cb] = function(res) {
-      clearTimeout(timeout);
-      cleanup();
       
-      // Debug log per vedere cosa arriva esattamente
-      console.log("📩 Risposta raw da backend per action:", action, res);
-    
+      // Gestione errori dal backend
       if (
         res &&
         typeof res === "object" &&
@@ -253,18 +246,42 @@ function callBackend(action, args = []) {
         );
         return;
       }
+      
       resolve(res);
     };
+
+    const timeout = setTimeout(() => {
+      console.error("❌ Timeout per action:", action);
+      cleanup();
+      reject(new Error("Timeout backend"));
+    }, 30000);
+
+    const cleanup = () => {
+      clearTimeout(timeout);
+      try { 
+        delete window[cb]; 
+      } catch {}
+      if (script && script.parentNode) {
+        script.parentNode.removeChild(script);
+      }
+    };
+
+    const script = document.createElement("script");
+    
     script.src =
       `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
 
     script.onerror = function() {
+      console.error("❌ Errore caricamento script per action:", action);
       cleanup();
       reject(new Error("Errore caricamento backend"));
     };
 
-    document.body.appendChild(script);
+    script.onload = function() {
+      console.log(" Script caricato per action:", action);
+    };
 
+    document.body.appendChild(script);
   });
 }
 
@@ -5898,75 +5915,6 @@ function initRevisioneCliente(){
   });
 
 }
-
-function mostraPopupBackend(){
-
-  if(document.getElementById("backendPopup")) return;
-
-  const div = document.createElement("div");
-  div.id = "backendPopup";
-  div.className = "backend-popup";
-
-  div.innerHTML = `
-    <div class="backend-box">
-      <h3>Connessione scaduta</h3>
-      <p>Serve riattivare il backend.</p>
-      <button class="primary" onclick="riattivaBackend()">Riattiva</button>
-    </div>
-  `;
-
-  document.body.appendChild(div);
-
-}
-
-function riattivaBackend(){
-  window.open("https://accounts.google.com/AccountChooser?continue=" + encodeURIComponent(API_URL), "_blank");
-}
-
-// ==========================
-// 🔁 KEEP-ALIVE ROBUSTO
-// ==========================
-let keepAliveInterval = null;
-
-function startKeepAlive() {
-  // Ferma eventuali intervalli precedenti
-  if (keepAliveInterval) clearInterval(keepAliveInterval);
-  
-  // Ping ogni 15 minuti (sotto la soglia di timeout di Google)
-  keepAliveInterval = setInterval(() => {
-    callBackend("ping")
-      .then(() => {
-        console.log("🟢 Keep-alive OK");
-        // Se c'era un popup di errore, chiudilo
-        const popup = document.getElementById("backendPopup");
-        if (popup) popup.remove();
-      })
-      .catch((err) => {
-        console.warn("⚠️ Ping fallito:", err.message);
-        // Solo se il popup non esiste già, mostralo
-        if (!document.getElementById("backendPopup")) {
-          mostraPopupBackend();
-        }
-      });
-  }, 15 * 60 * 1000); // 15 minuti in millisecondi
-}
-
-function stopKeepAlive() {
-  if (keepAliveInterval) {
-    clearInterval(keepAliveInterval);
-    keepAliveInterval = null;
-    console.log("⏸️ Keep-alive fermato");
-  }
-}
-
-// Gestione visibilità pagina: ferma il ping se l'utente cambia tab
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") {
-    startKeepAlive();
-  } else {
-    stopKeepAlive();
-  }
-});
 
 // ==========================
 // INIT PRINCIPALE
