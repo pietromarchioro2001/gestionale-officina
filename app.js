@@ -5899,16 +5899,6 @@ function initRevisioneCliente(){
 
 }
 
-async function verificaBackend(){
-
-  try{
-    await callBackend("ping");
-  }catch(e){
-    mostraPopupBackend();
-  }
-
-}
-
 function mostraPopupBackend(){
 
   if(document.getElementById("backendPopup")) return;
@@ -5982,12 +5972,6 @@ document.addEventListener("visibilitychange", () => {
 // INIT PRINCIPALE
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
-  
-  // 1. Verifica connessione iniziale
-  verificaBackend();
-  
-  // 2. Avvia keep-alive
-  startKeepAlive();
   
   // 3. Reset file input (tua logica esistente)
   resetFileInput("librettoGallery", "librettoLink");
