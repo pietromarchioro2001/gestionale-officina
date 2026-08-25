@@ -215,41 +215,49 @@ function listaVoci() {
 function callBackend(action, args = []) {
   return new Promise((resolve, reject) => {
     const cb = "cb_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-    
-    window[cb] = function(res) {
-      clearTimeout(timeout);
-      cleanup();
-      
-      // Se il backend risponde con un errore specifico di autorizzazione
-      if (res && res.ok === false && (res.error.includes("Authorization") || res.error.includes("Unauthorized"))) {
-         mostraErroreBackend();
-         reject(new Error(res.error));
-         return;
-      }
-
-      resolve(res);
-    };
-
-    const timeout = setTimeout(() => {
-      cleanup();
-      // Se va in timeout, mostriamo l'errore solo se non è già mostrato
-      mostraErroreBackend();
-      reject(new Error("Timeout backend"));
-    }, 15000); // Ridotto a 15s per essere più reattivi
+    const script = document.createElement("script");
+    let resolved = false;
 
     const cleanup = () => {
-      clearTimeout(timeout);
-      try { delete window[cb]; } catch {}
       if (script.parentNode) script.parentNode.removeChild(script);
     };
 
-    const script = document.createElement("script");
-    script.src = `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
-    
-    script.onerror = function() {
+    // 🔥 Aumentato a 60 secondi: Google Apps Script richiede più tempo al "cold start"
+    const timeout = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        cleanup();
+        reject(new Error("Timeout backend"));
+      }
+    }, 60000);
+
+    window[cb] = function(res) {
+      if (resolved) return; // 🔥 Evita risoluzioni multiple
+      resolved = true;
+      clearTimeout(timeout);
       cleanup();
-      mostraErroreBackend();
-      reject(new Error("Errore caricamento backend"));
+
+      //  Ritarda la cancellazione della callback per evitare ReferenceError 
+      // se il backend risponde pochi secondi dopo il timeout
+      setTimeout(() => { try { delete window[cb]; } catch(e) {} }, 3000);
+
+      if (res && typeof res === "object" && !Array.isArray(res) && res.ok === false) {
+        reject(new Error(res.error || "Errore restituito dal backend"));
+        return;
+      }
+      resolve(res);
+    };
+
+    script.src = `${API_URL}?action=${encodeURIComponent(action)}&payload=${encodeURIComponent(JSON.stringify(args))}&callback=${cb}`;
+
+    script.onerror = function() {
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeout);
+        cleanup();
+        try { delete window[cb]; } catch(e) {}
+        reject(new Error("Errore caricamento backend"));
+      }
     };
 
     document.body.appendChild(script);
