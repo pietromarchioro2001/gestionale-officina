@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbxoBbFQEbS3IyFYy4jCFwdIeJdUQqeyieyqVLZ8A_DpeHJgoeJG91fOcwcrvoFWtFHn/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxdRK0CDHzG9i3Dix8mkBnWdRvgeB-vG2jvxfQVqGj4uWODJqjHQzihRm3gDwg8MK3V/exec";
 
 const ICON_CALENDAR = `
 <svg viewBox="0 0 24 24">
@@ -262,16 +262,6 @@ function callBackend(action, args = []) {
 
     document.body.appendChild(script);
   });
-}
-
-async function verificaBackend(){
-  try{
-    await callBackend("ping");
-    resetBackendError(); // Tutto ok, nascondi eventuali errori precedenti
-  }catch(e){
-    // Non mostrare subito il popup al primo avvio, aspetta che l'utente faccia qualcosa
-    console.warn("Backend non raggiungibile all'avvio");
-  }
 }
 
 function leggiTargaItaliana(targa) {
@@ -1617,31 +1607,31 @@ function fileToBase64(file){
 }
 
 async function uploadLibretto(e){
-
   startLoading("loadingLibretto");
   uploadLibrettoInCorso = true;
   TEMP_LIBRETTO_ID = null;
 
   try {
     const file = e.target.files[0];
-
-    if (!file) {
-      return;
-    }
+    if (!file) return;
 
     console.log("Upload libretto avviato...");
-
     const base64 = await fileToBase64(file);
 
-    const form = new FormData();
-    form.append("action", "uploadTempFile");
-    form.append("base64", base64);
-    form.append("nomeFile", file.name || "LIBRETTO.jpg");
-    form.append("mimeType", file.type || "image/jpeg");
+    // 🔥 INVIA COME JSON INVECE DI FORMDATA
+    const payload = {
+      action: "uploadTempFile",
+      base64: base64,
+      nomeFile: file.name || "LIBRETTO.jpg",
+      mimeType: file.type || "image/jpeg"
+    };
 
     const res = await fetch(API_URL, {
       method: "POST",
-      body: form
+      headers: {
+        "Content-Type": "text/plain"  // ← Evita preflight CORS complesso
+      },
+      body: JSON.stringify(payload)    // ← JSON stringificato
     });
 
     const json = await res.json();
@@ -1651,7 +1641,6 @@ async function uploadLibretto(e){
     }
 
     TEMP_LIBRETTO_ID = json.fileId;
-
     console.log("✅ Upload Drive OK:", TEMP_LIBRETTO_ID);
     showAlert("✅ Libretto caricato. Ora puoi fare OCR.");
 
